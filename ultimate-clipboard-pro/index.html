@@ -128,5 +128,37 @@
       window.addEventListener("load", patchProductFooter, { once: true });
     })();
   </script>
+  <script>
+    (() => {
+      const checkoutUrl = "https://checkout.dodopayments.com/buy/pdt_0NeBVHHvl7TdkOznAvJOk?quantity=1";
+      const proCtaPatterns = [
+        "get pro",
+        "unlock pro",
+        "pro lifetime",
+        "obtenir pro",
+        "débloquer pro",
+        "obtener pro",
+        "ottieni pro",
+        "pro erhalten",
+        "pro lebenslang",
+        "pro à vie",
+        "pro a vita",
+        "pro de por vida"
+      ];
+
+      function isProCheckoutTarget(element) {
+        if (!element || !element.matches("button, a")) return false;
+        const label = (element.textContent || element.getAttribute("aria-label") || "").trim().toLowerCase();
+        return label && proCtaPatterns.some((pattern) => label.includes(pattern));
+      }
+
+      document.addEventListener("click", (event) => {
+        const target = event.target && event.target.closest ? event.target.closest("button, a") : null;
+        if (!isProCheckoutTarget(target)) return;
+        event.preventDefault();
+        window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+      }, true);
+    })();
+  </script>
 </body>
 </html>
