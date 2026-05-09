@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#8b5cf6">
   <title>Ultimate Clipboard Pro - ArcaWand Soft</title>
   <meta name="description" content="Ultimate Clipboard Pro captures, organizes, searches and reuses text, code and images while you browse.">
+  <link rel="icon" type="image/png" href="../assets/Arcawand_Soft_Favicon.png">
   <link rel="stylesheet" crossorigin href="./assets/index-BcSrau0n.css">
   <style>
     header.fixed.top-0.left-0.right-0 { display: none !important; }
@@ -13,11 +14,48 @@
     #hero { padding-top: 2rem !important; }
     .arcawand-root-return { position: fixed; left: 1rem; top: 1rem; z-index: 60; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; padding: 0 .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,12,22,.58); color: #fff; font: 800 .85rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 40px rgba(0,0,0,.22); }
     .arcawand-root-return:hover { background: hsl(var(--primary)); }
+    .arcawand-product-language { position: fixed; right: 1rem; top: 1rem; z-index: 60; min-height: 2.6rem; padding: 0 2.1rem 0 .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,12,22,.58); color: #fff; font: 800 .85rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 40px rgba(0,0,0,.22); cursor: pointer; appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+    .arcawand-product-language option { color: #111827; background: #fff; }
+    @media (max-width: 640px) {
+      .arcawand-root-return { left: .75rem; top: .75rem; }
+      .arcawand-product-language { right: .75rem; top: .75rem; }
+    }
   </style>
   <script type="module" crossorigin src="./assets/index-BRdfzjER.js"></script>
 </head>
 <body>
   <a class="arcawand-root-return" href="../" aria-label="Back to ArcaWand Soft">← ArcaWand Soft</a>
+  <select class="arcawand-product-language" aria-label="Language">
+    <option value="en">EN</option>
+    <option value="fr">FR</option>
+    <option value="es">ES</option>
+    <option value="it">IT</option>
+    <option value="de">DE</option>
+  </select>
   <div id="root"></div>
+  <script>
+    (() => {
+      const supported = ["en", "fr", "es", "it", "de"];
+      const detectLang = () => {
+        const saved = localStorage.getItem("arcawand-lang") || localStorage.getItem("ucp-lang");
+        if (supported.includes(saved)) return saved;
+        const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"];
+        return langs.map((lang) => String(lang).slice(0, 2).toLowerCase()).find((lang) => supported.includes(lang)) || "en";
+      };
+      const select = document.querySelector(".arcawand-product-language");
+      const lang = detectLang();
+      document.documentElement.lang = lang;
+      localStorage.setItem("arcawand-lang", lang);
+      localStorage.setItem("ucp-lang", lang);
+      if (select) {
+        select.value = lang;
+        select.addEventListener("change", () => {
+          localStorage.setItem("arcawand-lang", select.value);
+          localStorage.setItem("ucp-lang", select.value);
+          window.location.reload();
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
