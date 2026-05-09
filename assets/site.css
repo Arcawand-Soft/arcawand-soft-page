@@ -85,6 +85,7 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
 .content-panel h2 { color: #fff; margin: 28px 0 10px; font-size: 1.4rem; }
 .content-panel h2:first-child { margin-top: 0; }
 .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.contact-grid-single { grid-template-columns: minmax(0, 620px); justify-content: center; }
 .site-footer { border-top: 1px solid hsl(var(--border)); padding: 34px 0; color: hsl(var(--muted-foreground)); }
 .footer-inner { width: min(1180px, calc(100% - 32px)); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
 .footer-links { display: flex; gap: 16px; flex-wrap: wrap; font-weight: 800; }

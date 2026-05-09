@@ -17,6 +17,10 @@
     .ucp-product-mark { position: fixed; left: 50%; top: 1rem; z-index: 60; display: inline-flex; align-items: center; gap: .7rem; min-height: 2.6rem; transform: translateX(-50%); color: #fff; font: 950 1.08rem/1 Geist, system-ui, sans-serif; letter-spacing: 0; text-shadow: 0 10px 28px rgba(0,0,0,.34); pointer-events: none; }
     .ucp-product-mark img { width: 2.85rem; height: 2.85rem; object-fit: contain; display: block; background: transparent; border: 0; box-shadow: none; }
     .ucp-product-title { white-space: nowrap; }
+    .ucp-footer-product-icon-wrap { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 0; box-shadow: none; border-radius: 0; flex: 0 0 auto; }
+    .ucp-footer-product-icon { width: 2.55rem; height: 2.55rem; display: block; object-fit: contain; background: transparent; border: 0; box-shadow: none; }
+    .ucp-footer-arcawand-link { display: inline-flex; width: max-content; align-items: center; background: transparent; border: 0; }
+    .ucp-footer-arcawand-logo { width: clamp(112px, 11vw, 150px); height: auto; display: block; object-fit: contain; background: transparent; border: 0; }
     .arcawand-product-language { position: fixed; right: 1rem; top: 1rem; z-index: 60; min-height: 2.6rem; padding: 0 2.1rem 0 .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,12,22,.58); color: #fff; font: 800 .85rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 40px rgba(0,0,0,.22); cursor: pointer; appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
     .arcawand-product-language option { color: #111827; background: #fff; }
     @media (max-width: 640px) {
@@ -65,6 +69,63 @@
           window.location.reload();
         });
       }
+    })();
+  </script>
+  <script>
+    (() => {
+      const homeUrl = "https://arcawand-soft.com/";
+      const productIconUrl = "../assets/ultimate_clipboard_pro_icon.png";
+      const arcawandLogoUrl = "../assets/Arcawand_Soft_Logo.png";
+
+      function patchProductFooter() {
+        const footer = document.querySelector("footer");
+        if (!footer) return false;
+
+        const iconBox = Array.from(footer.querySelectorAll("div")).find((node) =>
+          node.classList.contains("w-8") &&
+          node.classList.contains("h-8") &&
+          node.classList.contains("bg-gradient-to-br") &&
+          node.classList.contains("justify-center")
+        );
+
+        if (iconBox && !iconBox.dataset.arcawandFooterIcon) {
+          iconBox.dataset.arcawandFooterIcon = "true";
+          iconBox.className = "ucp-footer-product-icon-wrap";
+          iconBox.replaceChildren();
+          const icon = document.createElement("img");
+          icon.className = "ucp-footer-product-icon";
+          icon.src = productIconUrl;
+          icon.alt = "";
+          icon.setAttribute("aria-hidden", "true");
+          iconBox.appendChild(icon);
+        }
+
+        const brandText = footer.querySelector(".space-y-4 > p.text-sm.text-muted-foreground");
+        if (brandText && !brandText.dataset.arcawandFooterLogo) {
+          brandText.dataset.arcawandFooterLogo = "true";
+          brandText.replaceChildren();
+          const link = document.createElement("a");
+          link.className = "ucp-footer-arcawand-link";
+          link.href = homeUrl;
+          link.setAttribute("aria-label", "ArcaWand Soft");
+          const logo = document.createElement("img");
+          logo.className = "ucp-footer-arcawand-logo";
+          logo.src = arcawandLogoUrl;
+          logo.alt = "ArcaWand Soft";
+          link.appendChild(logo);
+          brandText.appendChild(link);
+        }
+
+        return Boolean(iconBox || brandText);
+      }
+
+      if (!patchProductFooter()) {
+        const observer = new MutationObserver(() => {
+          if (patchProductFooter()) observer.disconnect();
+        });
+        observer.observe(document.getElementById("root") || document.body, { childList: true, subtree: true });
+      }
+      window.addEventListener("load", patchProductFooter, { once: true });
     })();
   </script>
 </body>
