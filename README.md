@@ -2,7 +2,7 @@
 
 Official static GitHub Pages website for ArcaWand Soft.
 
-ArcaWand Soft builds premium browser extensions, mobile apps and productivity software for demanding users who want faster, cleaner and more reliable digital workflows.
+ArcaWand Soft builds premium browser extensions, mobile apps and productivity apps for demanding users who want faster, cleaner and more reliable digital workflows.
 
 ## Pages
 
