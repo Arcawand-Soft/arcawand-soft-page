@@ -45,14 +45,24 @@
     .ucp-footer-product-icon { width: 2.55rem; height: 2.55rem; display: block; object-fit: contain; background: transparent; border: 0; box-shadow: none; }
     .ucp-footer-arcawand-link { display: inline-flex; width: max-content; align-items: center; background: transparent; border: 0; }
     .ucp-footer-arcawand-logo { width: clamp(112px, 11vw, 150px); height: auto; display: block; object-fit: contain; background: transparent; border: 0; }
-    .arcawand-product-language { position: fixed; right: 1rem; top: 1rem; z-index: 60; min-height: 2.6rem; padding: 0 2.1rem 0 .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,12,22,.58); color: #fff; font: 800 .85rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 40px rgba(0,0,0,.22); cursor: pointer; appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
-    .arcawand-product-language option { color: #111827; background: #fff; }
+    .arcawand-product-language-menu { position: fixed; right: 1rem; top: 1rem; z-index: 70; }
+    .arcawand-product-language-menu .language-menu-button { display: inline-flex; align-items: center; gap: .55rem; min-height: 2.85rem; padding: .36rem .72rem .36rem .42rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.16); background: linear-gradient(145deg, rgba(10,12,22,.74), rgba(42,29,78,.64)); color: #fff; font: 900 .92rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 44px rgba(0,0,0,.28); cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+    .arcawand-product-language-menu .language-menu-button:hover, .arcawand-product-language-menu.is-open .language-menu-button { transform: translateY(-1px); border-color: hsl(var(--primary)); background: linear-gradient(145deg, hsl(var(--primary) / .32), rgba(10,12,22,.82)); }
+    .arcawand-product-language-menu .language-menu-button img, .arcawand-product-language-menu .language-menu-option img { width: 1.85rem; height: 1.85rem; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.2), 0 8px 18px rgba(0,0,0,.24); }
+    .arcawand-product-language-menu .language-menu-chevron { width: .48rem; height: .48rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.12rem); opacity: .76; transition: transform .18s ease; }
+    .arcawand-product-language-menu.is-open .language-menu-chevron { transform: rotate(225deg) translate(-.14rem, -.04rem); }
+    .arcawand-product-language-menu .language-menu-panel { position: absolute; top: calc(100% + .65rem); right: 0; width: 14.2rem; padding: .5rem; border-radius: 1.1rem; border: 1px solid rgba(255,255,255,.14); background: linear-gradient(145deg, rgba(10,12,22,.96), rgba(44,31,83,.96)); box-shadow: 0 28px 74px rgba(0,0,0,.42); opacity: 0; pointer-events: none; transform: translateY(.45rem) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .18s ease; }
+    .arcawand-product-language-menu.is-open .language-menu-panel { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .arcawand-product-language-menu .language-menu-option { width: 100%; min-height: 2.9rem; display: flex; align-items: center; gap: .7rem; padding: .48rem .6rem; border: 0; border-radius: .82rem; background: transparent; color: rgba(255,255,255,.72); text-align: left; font: 900 .93rem Geist, system-ui, sans-serif; cursor: pointer; transition: background .16s ease, color .16s ease, transform .16s ease; }
+    .arcawand-product-language-menu .language-menu-option:hover, .arcawand-product-language-menu .language-menu-option[aria-selected="true"] { color: #fff; background: hsl(var(--primary) / .22); }
+    .arcawand-product-language-menu .language-menu-option:hover { transform: translateX(.12rem); }
     @media (max-width: 640px) {
       .arcawand-root-return { left: .75rem; top: .75rem; }
       .ucp-product-mark { top: .72rem; }
       .ucp-product-mark img { width: 2.55rem; height: 2.55rem; }
       .ucp-product-title { display: none; }
-      .arcawand-product-language { right: .75rem; top: .75rem; }
+      .arcawand-product-language-menu { right: .75rem; top: .75rem; }
+      .arcawand-product-language-menu .language-menu-button span:not(.language-menu-chevron) { display: none; }
     }
   </style>
   <script type="module" crossorigin src="./assets/index-BRdfzjER.js"></script>
@@ -64,16 +74,10 @@
     <img src="../assets/ultimate_clipboard_pro_icon.png" alt="">
     <span class="ucp-product-title">Ultimate Clipboard Pro</span>
   </div>
-  <select class="arcawand-product-language" aria-label="Language">
-    <option value="en" selected>EN</option>
-    <option value="fr">FR</option>
-    <option value="es">ES</option>
-    <option value="it">IT</option>
-    <option value="de">DE</option>
-  </select>
+  <div class="language-menu arcawand-product-language-menu" data-current-lang="en"><button class="language-menu-button" type="button" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/english.png" alt="" loading="lazy"><span>English</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="Language"><button class="language-menu-option" type="button" role="option" data-lang="en" aria-selected="true"><img src="/assets/flags/english.png" alt="" loading="lazy"><span>English</span></button><button class="language-menu-option" type="button" role="option" data-lang="fr"><img src="/assets/flags/french.png" alt="" loading="lazy"><span>Français</span></button><button class="language-menu-option" type="button" role="option" data-lang="es"><img src="/assets/flags/spanish.png" alt="" loading="lazy"><span>Español</span></button><button class="language-menu-option" type="button" role="option" data-lang="it"><img src="/assets/flags/italian.png" alt="" loading="lazy"><span>Italiano</span></button><button class="language-menu-option" type="button" role="option" data-lang="de"><img src="/assets/flags/german.png" alt="" loading="lazy"><span>Deutsch</span></button></div></div>
   <div id="root"></div>
   <script>window.__ARCAWAND_LANG__="en";localStorage.setItem('arcawand-lang',"en");localStorage.setItem('ucp-lang',"en");</script>
-<script>(()=>{const routeMap={"en":"https://arcawand-soft.com/ultimate-clipboard-pro/","fr":"https://arcawand-soft.com/fr/ultimate-clipboard-pro/","es":"https://arcawand-soft.com/es/ultimate-clipboard-pro/","it":"https://arcawand-soft.com/it/ultimate-clipboard-pro/","de":"https://arcawand-soft.com/de/ultimate-clipboard-pro/"};const select=document.querySelector('.arcawand-product-language');if(select){select.value="en";select.addEventListener('change',()=>{const next=select.value;localStorage.setItem('arcawand-lang',next);localStorage.setItem('ucp-lang',next);window.location.href=routeMap[next]||routeMap.en;});}})();</script>
+<script>(()=>{const routeMap={"en":"https://arcawand-soft.com/ultimate-clipboard-pro/","fr":"https://arcawand-soft.com/fr/ultimate-clipboard-pro/","es":"https://arcawand-soft.com/es/ultimate-clipboard-pro/","it":"https://arcawand-soft.com/it/ultimate-clipboard-pro/","de":"https://arcawand-soft.com/de/ultimate-clipboard-pro/"};const menu=document.querySelector('.arcawand-product-language-menu');if(menu){const button=menu.querySelector('.language-menu-button');const panel=menu.querySelector('.language-menu-panel');const close=()=>{menu.classList.remove('is-open');button?.setAttribute('aria-expanded','false');};button?.addEventListener('click',(event)=>{event.stopPropagation();const open=!menu.classList.contains('is-open');document.querySelectorAll('.language-menu.is-open').forEach((node)=>node.classList.remove('is-open'));menu.classList.toggle('is-open',open);button.setAttribute('aria-expanded',String(open));});panel?.addEventListener('click',(event)=>{const option=event.target.closest('[data-lang]');if(!option)return;const next=option.dataset.lang;localStorage.setItem('arcawand-lang',next);localStorage.setItem('ucp-lang',next);window.location.href=routeMap[next]||routeMap.en;});document.addEventListener('click',close);document.addEventListener('keydown',(event)=>{if(event.key==='Escape')close();});}})();</script>
   <script>
     (() => {
       const homeUrl = "https://arcawand-soft.com/";

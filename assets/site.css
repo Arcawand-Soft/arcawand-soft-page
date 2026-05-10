@@ -30,8 +30,8 @@ img { max-width: 100%; display: block; }
 .brand-logo { width: clamp(112px, 12vw, 148px); height: auto; border-radius: 0; object-fit: contain; filter: drop-shadow(0 14px 28px hsl(var(--primary) / .18)); }
 .brand-name { font-weight: 900; letter-spacing: -.02em; font-size: 1.05rem; }
 .nav { display: flex; align-items: center; gap: 8px; }
-.nav-link, .nav-drop-button, .language-select { border: 1px solid transparent; border-radius: 999px; background: transparent; color: hsl(var(--muted-foreground)); padding: 10px 14px; font-weight: 800; cursor: pointer; transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease; }
-.nav-link:hover, .nav-drop:hover .nav-drop-button, .language-select:hover { color: #fff; background: hsl(var(--muted) / .86); border-color: hsl(var(--border)); }
+.nav-link, .nav-drop-button { border: 1px solid transparent; border-radius: 999px; background: transparent; color: hsl(var(--muted-foreground)); padding: 10px 14px; font-weight: 800; cursor: pointer; transition: background .2s ease, color .2s ease, transform .2s ease, border-color .2s ease; }
+.nav-link:hover, .nav-drop:hover .nav-drop-button { color: #fff; background: hsl(var(--muted) / .86); border-color: hsl(var(--border)); }
 .nav-drop { position: relative; }
 .nav-drop::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
 .nav-drop-menu { position: absolute; top: calc(100% + 10px); right: 0; min-width: 250px; padding: 10px; border-radius: 18px; border: 1px solid hsl(var(--border) / .7); background: linear-gradient(145deg, hsl(var(--card) / .94), hsl(248 40% 13% / .94)); box-shadow: 0 24px 70px rgba(0,0,0,.34); opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .18s ease, transform .18s ease; }
@@ -40,7 +40,17 @@ img { max-width: 100%; display: block; }
 .nav-drop-item:hover { background: hsl(var(--primary) / .18); }
 .nav-drop-item strong { font-size: .94rem; }
 .nav-drop-item span { color: hsl(var(--muted-foreground)); font-size: .82rem; line-height: 1.35; }
-.language-select { appearance: none; padding-right: 28px; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 15px) 50%, calc(100% - 10px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.language-menu { position: relative; z-index: 5; }
+.language-menu-button { display: inline-flex; align-items: center; gap: 9px; min-height: 42px; padding: 7px 12px 7px 8px; border: 1px solid hsl(var(--border) / .78); border-radius: 999px; background: linear-gradient(145deg, hsl(var(--card) / .78), hsl(var(--muted) / .72)); color: #fff; font-weight: 900; cursor: pointer; box-shadow: 0 18px 46px rgba(0,0,0,.22); transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.language-menu-button:hover, .language-menu.is-open .language-menu-button { transform: translateY(-1px); border-color: hsl(var(--primary) / .75); background: linear-gradient(145deg, hsl(var(--primary) / .22), hsl(var(--card) / .9)); }
+.language-menu-button img, .language-menu-option img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex: 0 0 auto; box-shadow: 0 0 0 1px rgba(255,255,255,.22), 0 8px 18px rgba(0,0,0,.22); }
+.language-menu-chevron { width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); opacity: .72; transition: transform .18s ease; }
+.language-menu.is-open .language-menu-chevron { transform: rotate(225deg) translate(-2px, -1px); }
+.language-menu-panel { position: absolute; top: calc(100% + 10px); right: 0; width: 218px; padding: 8px; border: 1px solid hsl(var(--border) / .76); border-radius: 18px; background: linear-gradient(145deg, hsl(var(--card) / .96), hsl(248 40% 13% / .96)); box-shadow: 0 28px 74px rgba(0,0,0,.4); opacity: 0; pointer-events: none; transform: translateY(8px) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .18s ease; }
+.language-menu.is-open .language-menu-panel { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.language-menu-option { width: 100%; min-height: 46px; display: flex; align-items: center; gap: 11px; padding: 8px 10px; border: 0; border-radius: 13px; background: transparent; color: hsl(var(--muted-foreground)); text-align: left; font-weight: 900; cursor: pointer; transition: background .16s ease, color .16s ease, transform .16s ease; }
+.language-menu-option:hover, .language-menu-option[aria-selected="true"] { color: #fff; background: hsl(var(--primary) / .2); }
+.language-menu-option:hover { transform: translateX(2px); }
 .mobile-toggle { display: none; }
 main { padding-top: 74px; }
 .section { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 86px 0; }
@@ -88,7 +98,11 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
 @media (max-width: 920px) {
   .nav { display: none; position: absolute; left: 16px; right: 16px; top: 82px; padding: 14px; border: 1px solid hsl(var(--border)); border-radius: 22px; background: hsl(var(--card) / .96); flex-direction: column; align-items: stretch; }
   .nav.is-open { display: flex; }
-  .nav-link, .nav-drop-button, .language-select { width: 100%; text-align: left; }
+  .nav-link, .nav-drop-button { width: 100%; text-align: left; }
+  .language-menu, .language-menu-button { width: 100%; }
+  .language-menu-button { justify-content: flex-start; }
+  .language-menu-panel { position: static; width: 100%; margin-top: 8px; display: none; transform: none; opacity: 1; pointer-events: auto; }
+  .language-menu.is-open .language-menu-panel { display: block; transform: none; }
   .nav-drop-menu { position: static; opacity: 1; pointer-events: auto; transform: none; display: none; margin-top: 8px; }
   .nav-drop:hover .nav-drop-menu, .nav-drop:focus-within .nav-drop-menu { display: block; }
   .mobile-toggle { display: inline-flex; width: 42px; height: 42px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--muted)); color: #fff; align-items: center; justify-content: center; }
