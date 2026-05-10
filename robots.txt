@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://arcawand-soft.com/sitemap.xml

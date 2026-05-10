@@ -60,34 +60,8 @@ const translations = {
   de: {navHome: "Home", navSofts: "Neueste Software", navPrivacy: "Datenschutz", navContact: "Kontakt", navUcpTitle: "Ultimate Clipboard Pro", navUcpDesc: "Erweiterter Clipboard-Workspace für Chrome.", heroEyebrow: "Browser-Erweiterungen, Apps und fokussierte Produktivität", heroTitle: "Apps für echte Workflows.", heroLead: "ArcaWand Soft entwickelt Premium-Erweiterungen, mobile Apps und lokale Tools für Creator, Entwickler, KI-Nutzer, Forscher und Power-User.", heroPrimary: "Ultimate Clipboard Pro entdecken", heroSecondary: "ArcaWand Soft kontaktieren", pillarsEyebrow: "Philosophie", pillarsTitle: "Apps für echte Workflows.", pillarsLead: "Wir bevorzugen schnelle, private, nützliche und reibungsarme Werkzeuge.", p1Title: "Local-first", p1Text: "Produkte sollen sensible Arbeit unter Kontrolle des Nutzers halten.", p2Title: "Für große Mengen", p2Text: "Interfaces für tägliches Erfassen, Suchen, Sortieren und Wiederverwenden.", p3Title: "Premium ohne Lärm", p3Text: "Dichte, nützliche Funktionen statt dekorativer Komplexität.", softEyebrow: "Ausgewählte Software", softTitle: "Ultimate Clipboard Pro", softLead: "Ein kompletter Workspace für Text, Code, Bilder, Screenshots und Webseiten in Chrome.", softCta: "Produktseite öffnen", softInstall: "Extension installieren", softPro: "Pro erhalten", li1: "Text, Code und Bilder beim Browsen erfassen.", li2: "Mit Kategorien, Favoriten, Pins, Papierkorb und Vault organisieren.", li3: "Semantisch, visuell und nach Quellen-Timeline suchen.", li4: "20 lokale Tools, ZIP-Backup, Drive-Sync und Pro-Workflows.", scopeEyebrow: "Was wir bauen", scopeTitle: "Wir bauen nützliche Apps für anspruchsvolle Nutzer.", scopeLead: "Wir bauen Erweiterungen, mobile Apps, Produktivität und Automatisierung.", c1Title: "Browser-Erweiterungen", c1Text: "Tiefe Chrome-Workflows genau dort, wo Nutzer arbeiten.", c2Title: "Mobile Apps", c2Text: "Nützliche, schnelle und klare Apps für den Alltag.", c3Title: "KI-Produktivität", c3Text: "Prompts, Outputs, Quellen, Versionen und Wissen verwalten.", bandTitle: "Die nächsten Releases verfolgen?", bandText: "Das erste Flaggschiff ist Ultimate Clipboard Pro.", bandButton: "Produkt ansehen", privacyTitle: "Datenschutzerklärung", privacyLead: "Klarer Datenschutz für ArcaWand Soft Websites.", privacyBody: "Diese Website ist statisch und informativ. Wir verlangen kein Konto. Technische Logs dienen Betrieb und Sicherheit.", privacyDataTitle: "Produktdaten", privacyData: "Ultimate Clipboard Pro ist local-first. Optionale Funktionen kommunizieren nur bei Aktivierung mit Anbietern.", privacyContactTitle: "Kontakt", privacyContact: "Für Datenschutzfragen bitte per E-Mail kontaktieren.", contactTitle: "Kontakt", contactLead: "Für Support, Partnerschaften, Presse oder Produktfragen kontaktieren Sie ArcaWand Soft.", contactEmailTitle: "E-Mail", contactEmailText: "Nutzen Sie E-Mail für Support und Feedback.", contactProductTitle: "Support", contactProductText: "Bitte Produkt, Browser, System und kurze Beschreibung angeben.", footerText: "ArcaWand Soft. Premium-Software für anspruchsvolle Nutzer."
   }
 };
-function getBase(){
-  const path = window.location.pathname;
-  return path.includes('/privacy/') || path.includes('/contact/') ? '../' : './';
-}
-function applyLang(lang){
-  const dict = translations[lang] || translations.en;
-  document.documentElement.lang = lang;
-  document.querySelectorAll('[data-i18n]').forEach((node)=>{ const key=node.dataset.i18n; if(dict[key]) node.textContent=dict[key]; });
-  document.querySelectorAll('[data-i18n-title]').forEach((node)=>{ const key=node.dataset.i18nTitle; if(dict[key]) node.title=dict[key]; });
-  document.querySelectorAll('.language-select').forEach((select)=>{ select.value=lang; });
-  localStorage.setItem('arcawand-lang', lang);
-  localStorage.setItem('ucp-lang', lang);
-}
-function detectLang(){
-  const supported = Object.keys(translations);
-  const saved = localStorage.getItem('arcawand-lang') || localStorage.getItem('ucp-lang');
-  if (supported.includes(saved)) return saved;
-  const browserLangs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
-  const match = browserLangs.map((value)=>String(value).slice(0,2).toLowerCase()).find((value)=>supported.includes(value));
-  return match || 'en';
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  const lang = detectLang();
-  applyLang(lang);
-  document.querySelectorAll('.language-select').forEach((select)=>select.addEventListener('change',()=>applyLang(select.value)));
-  const toggle=document.querySelector('.mobile-toggle');
-  const nav=document.querySelector('.nav');
-  toggle?.addEventListener('click',()=>nav?.classList.toggle('is-open'));
-});
-
-
+function getLangFromPath(){const first=window.location.pathname.split('/').filter(Boolean)[0];return Object.keys(translations).includes(first)?first:'en';}
+function getPageKey(){const path=window.location.pathname;if(path.includes('/ultimate-clipboard-pro/'))return'product';if(path.includes('/contact/'))return'contact';if(path.includes('/privacy/'))return'privacy';return'home';}
+const routeMap={"en":{"home":"https://arcawand-soft.com/","product":"https://arcawand-soft.com/ultimate-clipboard-pro/","contact":"https://arcawand-soft.com/contact/","privacy":"https://arcawand-soft.com/privacy/"},"fr":{"home":"https://arcawand-soft.com/fr/","product":"https://arcawand-soft.com/fr/ultimate-clipboard-pro/","contact":"https://arcawand-soft.com/fr/contact/","privacy":"https://arcawand-soft.com/fr/privacy/"},"es":{"home":"https://arcawand-soft.com/es/","product":"https://arcawand-soft.com/es/ultimate-clipboard-pro/","contact":"https://arcawand-soft.com/es/contact/","privacy":"https://arcawand-soft.com/es/privacy/"},"it":{"home":"https://arcawand-soft.com/it/","product":"https://arcawand-soft.com/it/ultimate-clipboard-pro/","contact":"https://arcawand-soft.com/it/contact/","privacy":"https://arcawand-soft.com/it/privacy/"},"de":{"home":"https://arcawand-soft.com/de/","product":"https://arcawand-soft.com/de/ultimate-clipboard-pro/","contact":"https://arcawand-soft.com/de/contact/","privacy":"https://arcawand-soft.com/de/privacy/"}};
+function applyLang(lang){const dict=translations[lang]||translations.en;document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach((node)=>{const key=node.dataset.i18n;if(dict[key])node.textContent=dict[key];});document.querySelectorAll('[data-i18n-title]').forEach((node)=>{const key=node.dataset.i18nTitle;if(dict[key])node.title=dict[key];});document.querySelectorAll('.language-select').forEach((select)=>{select.value=lang;});localStorage.setItem('arcawand-lang',lang);localStorage.setItem('ucp-lang',lang);}
+document.addEventListener('DOMContentLoaded',()=>{const lang=getLangFromPath();applyLang(lang);document.querySelectorAll('.language-select').forEach((select)=>select.addEventListener('change',()=>{const next=select.value;localStorage.setItem('arcawand-lang',next);localStorage.setItem('ucp-lang',next);window.location.href=routeMap[next]?.[getPageKey()]||routeMap.en.home;}));const toggle=document.querySelector('.mobile-toggle');const nav=document.querySelector('.nav');toggle?.addEventListener('click',()=>nav?.classList.toggle('is-open'));});
