@@ -34,6 +34,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+(() => {
+  const rootPaths = new Set(["", "/"]);
+  const path = window.location.pathname.replace(/\/+$/, "/");
+  if (!rootPaths.has(path)) return;
+  if (new URLSearchParams(window.location.search).has("no_lang_redirect")) return;
+  const botPattern = /bot|crawler|spider|crawling|googlebot|bingbot|duckduckbot|baiduspider|yandex|slurp|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|ahrefs|semrush|siteaudit/i;
+  if (botPattern.test(navigator.userAgent || "")) return;
+  const supported = new Set(["fr", "es", "it", "de"]);
+  const saved = localStorage.getItem("arcawand-lang") || localStorage.getItem("ucp-lang");
+  const detected = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"])
+    .map((language) => String(language).slice(0, 2).toLowerCase())
+    .find((language) => supported.has(language));
+  const next = supported.has(saved) ? saved : detected;
+  if (next) window.location.replace(`/${next}/`);
+})();
+</script>
 <link rel="stylesheet" href="assets/site.css">
 <script defer src="assets/site.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"ArcaWand Soft","url":"https://arcawand-soft.com/","logo":"https://arcawand-soft.com/assets/Arcawand_Soft_Logo.png","email":"contact@arcawand-soft.com","sameAs":["https://github.com/Arcawand-Soft"]}</script>
