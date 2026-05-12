@@ -167,6 +167,13 @@
   filter: brightness(1.06);
 }
 
+.ucp-email-float__button:disabled {
+  cursor: wait;
+  opacity: .72;
+  transform: none;
+  filter: none;
+}
+
 .ucp-email-float__note {
   margin: .7rem 0 0;
   color: rgba(255, 255, 255, .58);

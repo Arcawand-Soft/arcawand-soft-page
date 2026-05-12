@@ -1,7 +1,7 @@
 const UCP_EMAIL_FORM_CONFIG = {
-  senderFormAction: "",
+  senderFormAction: "https://ucp-launch-signup.h-michael-camarena.workers.dev/",
   method: "POST",
-  usePlaceholderMode: true,
+  usePlaceholderMode: false,
   emailFieldName: "email",
   hiddenFields: []
 };
@@ -27,6 +27,7 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "No spam. Only the launch announcement.",
       placeholderSuccess: "Thanks! Sign-up will be enabled very soon.",
       realSuccess: "Thanks! We will notify you when Ultimate Clipboard Pro launches.",
+      submitError: "Something went wrong. Please try again in a moment.",
       emailError: "Enter a valid email address.",
       closeLabel: "Close signup window",
       emailLabel: "Email address"
@@ -40,6 +41,7 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Pas de spam. Uniquement l’annonce de sortie.",
       placeholderSuccess: "Merci ! L’inscription sera activée très bientôt.",
       realSuccess: "Merci ! Tu seras prévenu dès la sortie d’Ultimate Clipboard Pro.",
+      submitError: "Un problème est survenu. Réessaie dans un instant.",
       emailError: "Entre une adresse email valide.",
       closeLabel: "Fermer la fenêtre d’inscription",
       emailLabel: "Adresse email"
@@ -53,6 +55,7 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Sin spam. Solo el anuncio del lanzamiento.",
       placeholderSuccess: "¡Gracias! El registro se activará muy pronto.",
       realSuccess: "¡Gracias! Te avisaremos cuando se lance Ultimate Clipboard Pro.",
+      submitError: "Algo salió mal. Inténtalo de nuevo en un momento.",
       emailError: "Introduce un email válido.",
       closeLabel: "Cerrar la ventana de registro",
       emailLabel: "Email"
@@ -66,6 +69,7 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Niente spam. Solo l’annuncio del lancio.",
       placeholderSuccess: "Grazie! L’iscrizione sarà attivata molto presto.",
       realSuccess: "Grazie! Ti avviseremo quando Ultimate Clipboard Pro sarà disponibile.",
+      submitError: "Qualcosa è andato storto. Riprova tra poco.",
       emailError: "Inserisci un indirizzo email valido.",
       closeLabel: "Chiudi la finestra di iscrizione",
       emailLabel: "Email"
@@ -79,6 +83,7 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Kein Spam. Nur die Ankündigung zum Start.",
       placeholderSuccess: "Danke! Die Anmeldung wird sehr bald aktiviert.",
       realSuccess: "Danke! Wir benachrichtigen dich, sobald Ultimate Clipboard Pro erscheint.",
+      submitError: "Etwas ist schiefgelaufen. Bitte versuche es gleich erneut.",
       emailError: "Gib eine gültige E-Mail-Adresse ein.",
       closeLabel: "Anmeldefenster schließen",
       emailLabel: "E-Mail-Adresse"
@@ -259,23 +264,45 @@ const UCP_EMAIL_FORM_CONFIG = {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const copy = getCopy();
     if (!emailInput?.checkValidity()) {
-      event.preventDefault();
       setMessage(copy.emailError, "error");
       emailInput?.focus({ preventScroll: true });
       return;
     }
 
     if (!UCP_EMAIL_FORM_CONFIG.senderFormAction || UCP_EMAIL_FORM_CONFIG.usePlaceholderMode) {
-      event.preventDefault();
       setMessage(copy.placeholderSuccess, "success");
       return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.submitted, "true");
-    setMessage(copy.realSuccess, "success");
+    const submitButton = form?.querySelector(".ucp-email-float__button");
+    submitButton?.setAttribute("disabled", "disabled");
+
+    try {
+      const response = await fetch(UCP_EMAIL_FORM_CONFIG.senderFormAction, {
+        method: UCP_EMAIL_FORM_CONFIG.method || "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          [UCP_EMAIL_FORM_CONFIG.emailFieldName || "email"]: emailInput.value.trim()
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Signup request failed: ${response.status}`);
+      }
+
+      localStorage.setItem(STORAGE_KEYS.submitted, "true");
+      setMessage(copy.realSuccess, "success");
+      window.setTimeout(() => hide({ persistDismissal: false }), 1200);
+    } catch (_) {
+      setMessage(copy.submitError, "error");
+      submitButton?.removeAttribute("disabled");
+    }
   };
 
   const getScrollProgress = () => {
