@@ -67,3 +67,43 @@ function applyLang(lang){const dict=translations[lang]||translations.en;document
 function closeLanguageMenus(){document.querySelectorAll('.language-menu.is-open').forEach((menu)=>{menu.classList.remove('is-open');menu.querySelector('.language-menu-button')?.setAttribute('aria-expanded','false');});}
 function setupLanguageMenus(){document.querySelectorAll('.language-menu').forEach((menu)=>{const button=menu.querySelector('.language-menu-button');const panel=menu.querySelector('.language-menu-panel');button?.addEventListener('click',(event)=>{event.stopPropagation();const open=!menu.classList.contains('is-open');closeLanguageMenus();menu.classList.toggle('is-open',open);button.setAttribute('aria-expanded',String(open));});panel?.addEventListener('click',(event)=>{const option=event.target.closest('[data-lang]');if(!option)return;const next=option.dataset.lang;localStorage.setItem('arcawand-lang',next);localStorage.setItem('ucp-lang',next);window.location.href=routeMap[next]?.[getPageKey()]||routeMap.en.home;});});document.addEventListener('click',closeLanguageMenus);document.addEventListener('keydown',(event)=>{if(event.key==='Escape')closeLanguageMenus();});}
 document.addEventListener('DOMContentLoaded',()=>{const lang=getLangFromPath();applyLang(lang);setupLanguageMenus();const toggle=document.querySelector('.mobile-toggle');const nav=document.querySelector('.nav');toggle?.addEventListener('click',()=>nav?.classList.toggle('is-open'));});
+
+function hydrateLazyVideos() {
+  const videos = Array.from(document.querySelectorAll('video.js-lazy-video:not([data-loaded="true"])'));
+  if (!videos.length) return;
+
+  const loadVideo = (video) => {
+    if (!video || video.dataset.loaded === "true") return;
+    video.querySelectorAll("source[data-src]").forEach((source) => {
+      source.src = source.dataset.src;
+      source.removeAttribute("data-src");
+    });
+    video.dataset.loaded = "true";
+    video.load();
+    const playPromise = video.play?.();
+    if (playPromise && typeof playPromise.catch === "function") playPromise.catch(() => {});
+  };
+
+  const start = () => {
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          loadVideo(entry.target);
+          observer.unobserve(entry.target);
+        });
+      }, { rootMargin: "220px 0px" });
+      videos.forEach((video) => observer.observe(video));
+      return;
+    }
+    videos.forEach(loadVideo);
+  };
+
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(start, { timeout: 1400 });
+  } else {
+    window.setTimeout(start, 700);
+  }
+}
+
+window.addEventListener("load", hydrateLazyVideos, { once: true });

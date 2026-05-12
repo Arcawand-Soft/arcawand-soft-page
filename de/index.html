@@ -31,10 +31,8 @@
 <meta name="twitter:description" content="ArcaWand Soft entwickelt Premium-Browser-Erweiterungen, mobile Apps und Produktivitätstools für Kreative, Entwickler, KI-Nutzer und anspruchsvolle Profis.">
 <meta name="twitter:image" content="https://arcawand-soft.com/assets/preview_social_networks.png">
 <link rel="icon" type="image/png" href="../assets/Arcawand_Soft_Favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/site.css">
+<link rel="preload" as="image" href="../assets/animated_home_video_3_poster.webp" fetchpriority="high">
 <script defer src="../assets/site.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"ArcaWand Soft","url":"https://arcawand-soft.com/","logo":"https://arcawand-soft.com/assets/Arcawand_Soft_Logo.png","email":"contact@arcawand-soft.com","sameAs":["https://github.com/Arcawand-Soft"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"ArcaWand Soft","url":"https://arcawand-soft.com/","inLanguage":"de","publisher":{"@type":"Organization","name":"ArcaWand Soft"}}</script>
@@ -46,7 +44,7 @@
   <div class="nav-wrap">
     <a class="brand" href="./" aria-label="ArcaWand Soft home">
       <span class="brand-stack">
-        <img class="brand-logo" src="../assets/Arcawand_Soft_Logo.png" alt="ArcaWand Soft">
+        <img class="brand-logo" src="../assets/Arcawand_Soft_Logo.png" alt="ArcaWand Soft" width="1118" height="309" decoding="async" fetchpriority="high">
         
       </span>
     </a>
@@ -60,7 +58,7 @@
         </div>
       </div>
       <a class="nav-link" href="contact/" data-i18n="navContact">Kontakt</a>
-      <div class="language-menu" data-current-lang="de"><button class="language-menu-button" type="button" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/german.png" alt="" loading="lazy"><span>Deutsch</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="Language"><button class="language-menu-option" type="button" role="option" data-lang="en"><img src="/assets/flags/english.png" alt="" loading="lazy"><span>English</span></button><button class="language-menu-option" type="button" role="option" data-lang="fr"><img src="/assets/flags/french.png" alt="" loading="lazy"><span>Français</span></button><button class="language-menu-option" type="button" role="option" data-lang="es"><img src="/assets/flags/spanish.png" alt="" loading="lazy"><span>Español</span></button><button class="language-menu-option" type="button" role="option" data-lang="it"><img src="/assets/flags/italian.png" alt="" loading="lazy"><span>Italiano</span></button><button class="language-menu-option" type="button" role="option" data-lang="de" aria-selected="true"><img src="/assets/flags/german.png" alt="" loading="lazy"><span>Deutsch</span></button></div></div>
+      <div class="language-menu" data-current-lang="de"><button class="language-menu-button" type="button" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/german.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Deutsch</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="Language"><button class="language-menu-option" type="button" role="option" data-lang="en"><img src="/assets/flags/english.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>English</span></button><button class="language-menu-option" type="button" role="option" data-lang="fr"><img src="/assets/flags/french.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Français</span></button><button class="language-menu-option" type="button" role="option" data-lang="es"><img src="/assets/flags/spanish.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Español</span></button><button class="language-menu-option" type="button" role="option" data-lang="it"><img src="/assets/flags/italian.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Italiano</span></button><button class="language-menu-option" type="button" role="option" data-lang="de" aria-selected="true"><img src="/assets/flags/german.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Deutsch</span></button></div></div>
     </nav>
   </div>
 </header>
@@ -74,8 +72,8 @@
     </div>
     <div class="hero-visual" aria-hidden="true">
       <div class="product-orbit">
-        <video class="home-hero-video" autoplay muted loop playsinline preload="metadata">
-          <source src="../assets/animated_home_video_3.mp4" type="video/mp4">
+        <video class="home-hero-video js-lazy-video" autoplay muted loop playsinline preload="none" poster="../assets/animated_home_video_3_poster.webp" width="960" height="960" aria-hidden="true">
+          <source data-src="../assets/animated_home_video_3.optimized.mp4" type="video/mp4">
         </video>
       </div>
     </div>
@@ -85,7 +83,7 @@
     <div class="grid-cards"><article class="card"><h3 data-i18n="p1Title">Local-first</h3><p data-i18n="p1Text">Produkte sollen sensible Arbeit unter Kontrolle des Nutzers halten.</p></article><article class="card"><h3 data-i18n="p2Title">Für große Mengen</h3><p data-i18n="p2Text">Interfaces für tägliches Erfassen, Suchen, Sortieren und Wiederverwenden.</p></article><article class="card"><h3 data-i18n="p3Title">Premium ohne Lärm</h3><p data-i18n="p3Text">Dichte, nützliche Funktionen statt dekorativer Komplexität.</p></article></div>
   </section>
   <section class="section product-feature" id="softs">
-    <article class="card product-card"><img src="../assets/products/image-big-panel-rectangular.png" alt="Ultimate Clipboard Pro image manager"></article>
+    <article class="card product-card"><picture><source srcset="../assets/products/image-big-panel-rectangular.webp" type="image/webp"><img src="../assets/products/image-big-panel-rectangular.png" alt="Ultimate Clipboard Pro image manager" width="1920" height="1080" loading="lazy" decoding="async"></picture></article>
     <div class="product-copy"><span class="eyebrow" data-i18n="softEyebrow">Ausgewählte App</span><h2 data-i18n="softTitle">Ultimate Clipboard Pro</h2><p class="lead" data-i18n="softLead">Ein kompletter Workspace für Text, Code, Bilder, Screenshots und Webseiten in Chrome.</p><ul><li data-i18n="li1">Text, Code und Bilder beim Browsen erfassen.</li><li data-i18n="li2">Mit Kategorien, Favoriten, Pins, Papierkorb und Vault organisieren.</li><li data-i18n="li3">Semantisch, visuell und nach Quellen-Timeline suchen.</li><li data-i18n="li4">20 lokale Tools, ZIP-Backup, Drive-Sync und Pro-Workflows.</li></ul><div class="hero-actions"><a class="btn btn-primary" href="ultimate-clipboard-pro/" data-i18n="softCta">Produktseite öffnen</a><a class="btn btn-ghost" href="https://checkout.dodopayments.com/buy/pdt_0NeBVHHvl7TdkOznAvJOk?quantity=1" target="_blank" rel="noopener noreferrer" data-i18n="softPro">Pro erhalten</a></div></div>
   </section>
   <section class="section">

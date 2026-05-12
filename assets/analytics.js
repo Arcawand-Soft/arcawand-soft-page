@@ -6,10 +6,31 @@
     window.dataLayer.push(arguments);
   };
 
-  const script = document.createElement("script");
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(script);
+  let analyticsStarted = false;
+  const startAnalytics = () => {
+    if (analyticsStarted) return;
+    analyticsStarted = true;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(script);
+
+    window.gtag("js", new Date());
+    window.gtag("config", GA_ID, {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname,
+      language: pageLanguage,
+      page_type: pageType,
+      transport_type: "beacon"
+    });
+
+    window.gtag("event", "page_context", {
+      language: pageLanguage,
+      page_type: pageType
+    });
+  };
 
   const getLanguage = () => {
     const path = window.location.pathname;
@@ -28,19 +49,13 @@
   const pageLanguage = getLanguage();
   const pageType = getPageType();
 
-  window.gtag("js", new Date());
-  window.gtag("config", GA_ID, {
-    page_title: document.title,
-    page_location: window.location.href,
-    page_path: window.location.pathname,
-    language: pageLanguage,
-    page_type: pageType
-  });
-
-  window.gtag("event", "page_context", {
-    language: pageLanguage,
-    page_type: pageType
-  });
+  window.addEventListener("load", () => {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(startAnalytics, { timeout: 2500 });
+    } else {
+      window.setTimeout(startAnalytics, 1200);
+    }
+  }, { once: true });
 
   const sendEvent = (name, params) => {
     if (typeof window.gtag !== "function") return;
