@@ -1,14 +1,9 @@
 const UCP_EMAIL_FORM_CONFIG = {
   senderFormAction: "",
   method: "POST",
-  usePlaceholderMode: false,
+  usePlaceholderMode: true,
   emailFieldName: "email",
-  hiddenFields: [],
-  useSenderEmbed: true,
-  senderAccountId: "3c436811c35406",
-  senderFormId: "erkr86",
-  senderUniversalScript: "https://cdn.sender.net/accounts_resources/universal.js",
-  senderHostedFormUrl: "https://stats.sender.net/forms/erkr86/view"
+  hiddenFields: []
 };
 
 (() => {
@@ -32,7 +27,6 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "No spam. Only the launch announcement.",
       placeholderSuccess: "Thanks! Sign-up will be enabled very soon.",
       realSuccess: "Thanks! We will notify you when Ultimate Clipboard Pro launches.",
-      loadError: "The signup form could not be loaded. Open it here.",
       emailError: "Enter a valid email address.",
       closeLabel: "Close signup window",
       emailLabel: "Email address"
@@ -46,7 +40,6 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Pas de spam. Uniquement l’annonce de sortie.",
       placeholderSuccess: "Merci ! L’inscription sera activée très bientôt.",
       realSuccess: "Merci ! Tu seras prévenu dès la sortie d’Ultimate Clipboard Pro.",
-      loadError: "Le formulaire d’inscription n’a pas pu se charger. Ouvre-le ici.",
       emailError: "Entre une adresse email valide.",
       closeLabel: "Fermer la fenêtre d’inscription",
       emailLabel: "Adresse email"
@@ -60,7 +53,6 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Sin spam. Solo el anuncio del lanzamiento.",
       placeholderSuccess: "¡Gracias! El registro se activará muy pronto.",
       realSuccess: "¡Gracias! Te avisaremos cuando se lance Ultimate Clipboard Pro.",
-      loadError: "No se pudo cargar el formulario de registro. Ábrelo aquí.",
       emailError: "Introduce un email válido.",
       closeLabel: "Cerrar la ventana de registro",
       emailLabel: "Email"
@@ -74,7 +66,6 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Niente spam. Solo l’annuncio del lancio.",
       placeholderSuccess: "Grazie! L’iscrizione sarà attivata molto presto.",
       realSuccess: "Grazie! Ti avviseremo quando Ultimate Clipboard Pro sarà disponibile.",
-      loadError: "Impossibile caricare il modulo di iscrizione. Aprilo qui.",
       emailError: "Inserisci un indirizzo email valido.",
       closeLabel: "Chiudi la finestra di iscrizione",
       emailLabel: "Email"
@@ -88,7 +79,6 @@ const UCP_EMAIL_FORM_CONFIG = {
       note: "Kein Spam. Nur die Ankündigung zum Start.",
       placeholderSuccess: "Danke! Die Anmeldung wird sehr bald aktiviert.",
       realSuccess: "Danke! Wir benachrichtigen dich, sobald Ultimate Clipboard Pro erscheint.",
-      loadError: "Das Anmeldeformular konnte nicht geladen werden. Öffne es hier.",
       emailError: "Gib eine gültige E-Mail-Adresse ein.",
       closeLabel: "Anmeldefenster schließen",
       emailLabel: "E-Mail-Adresse"
@@ -101,8 +91,6 @@ const UCP_EMAIL_FORM_CONFIG = {
   let form;
   let emailInput;
   let message;
-  let senderEmbed;
-  let senderScriptPromise;
   let hasShown = false;
   let hideTimer = 0;
   let scrollTicking = false;
@@ -136,19 +124,6 @@ const UCP_EMAIL_FORM_CONFIG = {
     return true;
   };
 
-  const shouldUseSenderEmbed = () =>
-    Boolean(
-      UCP_EMAIL_FORM_CONFIG.useSenderEmbed &&
-      UCP_EMAIL_FORM_CONFIG.senderAccountId &&
-      UCP_EMAIL_FORM_CONFIG.senderFormId &&
-      UCP_EMAIL_FORM_CONFIG.senderUniversalScript
-    );
-
-  const markSubmitted = () => {
-    localStorage.setItem(STORAGE_KEYS.submitted, "true");
-    window.setTimeout(() => hide({ persistDismissal: false }), 900);
-  };
-
   const setMessage = (text, tone) => {
     if (!message) return;
     message.textContent = text || "";
@@ -175,105 +150,6 @@ const UCP_EMAIL_FORM_CONFIG = {
     });
 
     return fragment;
-  };
-
-  const ensureSenderStub = () => {
-    const senderName = "sender";
-    window.Sender = senderName;
-    window[senderName] = window[senderName] || function senderQueue() {
-      (window[senderName].q = window[senderName].q || []).push(arguments);
-    };
-    window[senderName].l = window[senderName].l || 1 * new Date();
-    window[senderName].on = window[senderName].on || function senderOn(event, callback) {
-      window[senderName].listeners = window[senderName].listeners || {};
-      (window[senderName].listeners[event] = window[senderName].listeners[event] || []).push(callback);
-    };
-    return window[senderName];
-  };
-
-  const registerSenderSubmissionListeners = () => {
-    const sender = window.sender;
-    if (typeof sender !== "function" || sender.__ucpEmailListenersAttached) return;
-    sender.__ucpEmailListenersAttached = true;
-    [
-      "success",
-      "submitted",
-      "submit",
-      "form_submit",
-      "form_submitted",
-      "subscription_success",
-      "subscriber_created"
-    ].forEach((eventName) => {
-      try {
-        sender.on(eventName, markSubmitted);
-      } catch (_) {
-        // Sender event names are public-widget dependent; unsupported names are harmless.
-      }
-    });
-  };
-
-  const loadSenderScript = () => {
-    if (!shouldUseSenderEmbed()) return Promise.reject(new Error("Sender embed is not configured."));
-    if (senderScriptPromise) return senderScriptPromise;
-
-    const sender = ensureSenderStub();
-    registerSenderSubmissionListeners();
-    sender(UCP_EMAIL_FORM_CONFIG.senderAccountId);
-
-    senderScriptPromise = new Promise((resolve, reject) => {
-      const existing = document.querySelector('script[data-ucp-sender-universal="true"]');
-      if (existing) {
-        if (existing.dataset.loaded === "true") {
-          resolve();
-          return;
-        }
-        existing.addEventListener("load", () => resolve(), { once: true });
-        existing.addEventListener("error", () => reject(new Error("Sender script failed to load.")), { once: true });
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.async = true;
-      script.src = UCP_EMAIL_FORM_CONFIG.senderUniversalScript;
-      script.dataset.ucpSenderUniversal = "true";
-      script.addEventListener("load", () => {
-        script.dataset.loaded = "true";
-        registerSenderSubmissionListeners();
-        resolve();
-      }, { once: true });
-      script.addEventListener("error", () => reject(new Error("Sender script failed to load.")), { once: true });
-      document.head.appendChild(script);
-    });
-
-    return senderScriptPromise;
-  };
-
-  const renderSenderEmbed = () => {
-    if (!senderEmbed || senderEmbed.dataset.senderLoading === "true") return;
-    senderEmbed.dataset.senderLoading = "true";
-    loadSenderScript()
-      .then(() => {
-        registerSenderSubmissionListeners();
-        const sender = window.sender;
-        if (typeof sender === "function") {
-          try {
-            sender("render");
-          } catch (_) {
-            // The universal script usually renders matching nodes automatically.
-          }
-        }
-      })
-      .catch(() => {
-        const copy = getCopy();
-        senderEmbed.replaceChildren();
-        const fallback = document.createElement("a");
-        fallback.className = "ucp-email-float__fallback-link";
-        fallback.href = UCP_EMAIL_FORM_CONFIG.senderHostedFormUrl || "#";
-        fallback.target = "_blank";
-        fallback.rel = "noopener noreferrer";
-        fallback.textContent = copy.loadError;
-        senderEmbed.appendChild(fallback);
-      });
   };
 
   const buildComponent = () => {
@@ -312,6 +188,34 @@ const UCP_EMAIL_FORM_CONFIG = {
     text.className = "ucp-email-float__text";
     text.textContent = copy.text;
 
+    form = document.createElement("form");
+    form.className = "ucp-email-float__form";
+    form.method = UCP_EMAIL_FORM_CONFIG.method || "POST";
+    form.noValidate = false;
+    if (UCP_EMAIL_FORM_CONFIG.senderFormAction) {
+      form.action = UCP_EMAIL_FORM_CONFIG.senderFormAction;
+    }
+
+    const label = document.createElement("label");
+    label.className = "ucp-email-float__label";
+    label.htmlFor = "ucp-email-float-email";
+    label.textContent = copy.emailLabel;
+
+    emailInput = document.createElement("input");
+    emailInput.id = "ucp-email-float-email";
+    emailInput.className = "ucp-email-float__input";
+    emailInput.type = "email";
+    emailInput.required = true;
+    emailInput.autocomplete = "email";
+    emailInput.inputMode = "email";
+    emailInput.name = UCP_EMAIL_FORM_CONFIG.emailFieldName || "email";
+    emailInput.placeholder = copy.placeholder;
+
+    const submit = document.createElement("button");
+    submit.className = "ucp-email-float__button";
+    submit.type = "submit";
+    submit.textContent = copy.button;
+
     const note = document.createElement("p");
     note.className = "ucp-email-float__note";
     note.textContent = copy.note;
@@ -321,54 +225,15 @@ const UCP_EMAIL_FORM_CONFIG = {
     message.setAttribute("role", "status");
 
     top.append(badge, close);
-    content.append(top, title, text);
-
-    if (shouldUseSenderEmbed()) {
-      senderEmbed = document.createElement("div");
-      senderEmbed.className = "ucp-email-float__sender sender-form-field";
-      senderEmbed.dataset.senderFormId = UCP_EMAIL_FORM_CONFIG.senderFormId;
-      content.append(senderEmbed);
-    } else {
-      form = document.createElement("form");
-      form.className = "ucp-email-float__form";
-      form.method = UCP_EMAIL_FORM_CONFIG.method || "POST";
-      form.noValidate = false;
-      if (UCP_EMAIL_FORM_CONFIG.senderFormAction) {
-        form.action = UCP_EMAIL_FORM_CONFIG.senderFormAction;
-      }
-
-      const label = document.createElement("label");
-      label.className = "ucp-email-float__label";
-      label.htmlFor = "ucp-email-float-email";
-      label.textContent = copy.emailLabel;
-
-      emailInput = document.createElement("input");
-      emailInput.id = "ucp-email-float-email";
-      emailInput.className = "ucp-email-float__input";
-      emailInput.type = "email";
-      emailInput.required = true;
-      emailInput.autocomplete = "email";
-      emailInput.inputMode = "email";
-      emailInput.name = UCP_EMAIL_FORM_CONFIG.emailFieldName || "email";
-      emailInput.placeholder = copy.placeholder;
-
-      const submit = document.createElement("button");
-      submit.className = "ucp-email-float__button";
-      submit.type = "submit";
-      submit.textContent = copy.button;
-
-      form.append(label, emailInput, submit, createHiddenFields());
-      content.append(form);
-    }
-
-    content.append(note, message);
+    form.append(label, emailInput, submit, createHiddenFields());
+    content.append(top, title, text, form, note, message);
     panel.append(content);
     root.append(panel);
     document.body.appendChild(root);
 
     close.addEventListener("click", () => hide({ persistDismissal: true }));
-    form?.addEventListener("submit", handleSubmit);
-    emailInput?.addEventListener("input", () => setMessage(""));
+    form.addEventListener("submit", handleSubmit);
+    emailInput.addEventListener("input", () => setMessage(""));
 
     return root;
   };
@@ -380,17 +245,8 @@ const UCP_EMAIL_FORM_CONFIG = {
     root.classList.add("is-visible");
     root.setAttribute("aria-hidden", "false");
     hasShown = true;
-    if (shouldUseSenderEmbed()) {
-      renderSenderEmbed();
-    }
     if (focus) {
-      requestAnimationFrame(() => {
-        if (emailInput) {
-          emailInput.focus({ preventScroll: true });
-        } else {
-          root.querySelector(".ucp-email-float__close")?.focus({ preventScroll: true });
-        }
-      });
+      requestAnimationFrame(() => emailInput?.focus({ preventScroll: true }));
     }
   };
 
@@ -505,15 +361,6 @@ const UCP_EMAIL_FORM_CONFIG = {
     });
     bindSoonModalCloseDetection();
   };
-
-  window.addEventListener("message", (event) => {
-    const origin = String(event.origin || "");
-    if (!origin.includes("sender.net")) return;
-    const payload = typeof event.data === "string" ? event.data : JSON.stringify(event.data || {});
-    if (/success|submitted|subscribed|subscriber/i.test(payload)) {
-      markSubmitted();
-    }
-  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
