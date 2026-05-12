@@ -49,15 +49,26 @@
   const pageLanguage = getLanguage();
   const pageType = getPageType();
 
-  window.addEventListener("load", () => {
-    if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(startAnalytics, { timeout: 2500 });
-    } else {
-      window.setTimeout(startAnalytics, 1200);
-    }
-  }, { once: true });
+  const scheduleAnalytics = () => {
+    let fallbackTimer = window.setTimeout(startAnalytics, 8000);
+    const startFromIntent = () => {
+      window.clearTimeout(fallbackTimer);
+      startAnalytics();
+    };
+
+    ["pointerdown", "keydown", "scroll"].forEach((eventName) => {
+      window.addEventListener(eventName, startFromIntent, { once: true, passive: true });
+    });
+  };
+
+  if (document.readyState === "complete") {
+    scheduleAnalytics();
+  } else {
+    window.addEventListener("load", scheduleAnalytics, { once: true });
+  }
 
   const sendEvent = (name, params) => {
+    startAnalytics();
     if (typeof window.gtag !== "function") return;
     window.gtag("event", name, {
       language: pageLanguage,
