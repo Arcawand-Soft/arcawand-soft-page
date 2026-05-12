@@ -288,7 +288,8 @@ const UCP_EMAIL_FORM_CONFIG = {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          [UCP_EMAIL_FORM_CONFIG.emailFieldName || "email"]: emailInput.value.trim()
+          [UCP_EMAIL_FORM_CONFIG.emailFieldName || "email"]: emailInput.value.trim(),
+          lang: getLanguage()
         })
       });
 
