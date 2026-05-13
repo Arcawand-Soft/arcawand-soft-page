@@ -317,6 +317,145 @@ for (const [lang, additions] of Object.entries(enhancedPrivacySections)) {
   langs[lang].privacySections = [existing[0], ...additions, ...existing.slice(1)];
 }
 
+const termsContent = {
+  en: {
+    terms: "Terms of use",
+    termsTitle: "Ultimate Clipboard Pro Terms of Use",
+    termsDesc: "Terms of Use for Ultimate Clipboard Pro, covering the Chrome extension, Pro lifetime license, launch pricing, backups, Google Drive sync, acceptable use and user responsibilities.",
+    termsKicker: "Product terms",
+    termsLead: "These Terms explain how Ultimate Clipboard Pro may be used, what the Pro lifetime license includes, what remains the user's responsibility, and how ArcaWand Soft limits misuse and risk.",
+    termsSections: [
+      ["Acceptance of these Terms", ["By installing, accessing or using Ultimate Clipboard Pro, you agree to these Terms of Use and to the product Privacy Policy. If you do not agree, do not install or use the extension.", "These Terms apply to the Chrome extension, the public product pages, documentation, Pro licensing workflows and related support communications."]],
+      ["Publisher and contact", ["Ultimate Clipboard Pro is published by ArcaWand Soft. Product, legal, support and privacy questions can be sent to contact@arcawand-soft.com."]],
+      ["Product purpose", ["Ultimate Clipboard Pro is a productivity extension for capturing, organizing, searching, editing and reusing text, code, images, screenshots and web page captures while browsing.", "The extension is not a legal, medical, financial, compliance or security auditing tool. Users remain responsible for how they use captured content."]],
+      ["Free version", ["The free version may include limits such as a maximum number of stored text, code or image captures and access to a limited set of tools.", "Free features may evolve over time to improve the product, maintain service quality or align with Chrome Web Store requirements."]],
+      ["Pro lifetime license", ["A Pro lifetime license unlocks Pro features for the supported product version and licensing system, subject to these Terms and normal technical compatibility.", "Pro may include unlimited text, code and image captures, vault access, trash access, capture versioning, montage workflows, additional tools, Google Drive sync and other advanced features described on the product page.", "Lifetime means the lifetime of the Ultimate Clipboard Pro product as operated by ArcaWand Soft, not the lifetime of the user, a browser, an operating system, a third-party service or a store platform."]],
+      ["Price and launch offer", ["The standard Pro lifetime license price is USD 69.", "A launch price of USD 49 may be offered for an undefined promotional period. ArcaWand Soft may end, change or replace the launch price at any time without retroactive price changes for completed purchases.", "Taxes, currency conversion, payment fees or regional charges may be handled by the payment provider."]],
+      ["Payments, activation and refunds", ["Payments may be processed by third-party providers such as Dodo Payments or another provider selected by ArcaWand Soft. Payment card data is handled by the payment provider, not inside the extension.", "License activation may require a valid license key or account-related verification. Sharing, reselling, publishing, bypassing or attempting to forge a Pro license is prohibited.", "Refund eligibility, where available, may depend on the payment provider, applicable law and the circumstances of the purchase."]],
+      ["User content and responsibility", ["Users are responsible for the legality, accuracy, sensitivity and security of the content they capture, store, copy, export or synchronize.", "Do not use the extension to capture, store or distribute content you are not allowed to handle, including unlawful, infringing, harmful or confidential third-party material."]],
+      ["Local storage, backups and data loss", ["Ultimate Clipboard Pro is designed as a local-first extension, but local browser storage can be affected by browser resets, extension removal, profile corruption, operating system issues or user actions.", "Users should create backups when content matters. ArcaWand Soft is not responsible for loss of local captures, deleted items, failed imports, damaged backups or data removed from Google Drive by the user or a third-party service."]],
+      ["Optional Google Drive synchronization", ["Google Drive sync is optional. If enabled, the user authorizes the extension to create, update, read or restore backup files required for the synchronization feature.", "The user remains responsible for their Google account, Drive storage, permissions, network availability and any manual deletion or modification of synced files."]],
+      ["Acceptable use", ["Users must not reverse engineer license checks, attack the extension, abuse APIs, interfere with synchronization, distribute modified versions, use the product to violate rights or laws, or attempt to access data belonging to other users.", "Automated abuse, scraping of product services, license sharing and attempts to bypass Pro restrictions are prohibited."]],
+      ["Availability and changes", ["ArcaWand Soft may update, improve, remove, rename or reorganize features to improve quality, performance, security, compatibility or compliance.", "The extension depends on Chrome, browser APIs, Google services, payment providers and other third-party environments that may change independently."]],
+      ["Intellectual property", ["Ultimate Clipboard Pro, ArcaWand Soft, product names, logos, interface design, copy, assets and original product materials are owned by ArcaWand Soft or its licensors.", "Using the extension does not transfer ownership of the product, brand or source materials to the user."]],
+      ["Disclaimer", ["The product is provided as a productivity tool on an as-is and as-available basis, to the maximum extent permitted by law.", "ArcaWand Soft does not guarantee uninterrupted operation, perfect capture accuracy, compatibility with every website, permanent availability of third-party services or recovery of deleted data."]],
+      ["Limitation of liability", ["To the maximum extent permitted by law, ArcaWand Soft is not liable for indirect, incidental, special, consequential or punitive damages, loss of profits, loss of data, loss of business, loss of opportunity or third-party service failures arising from use of the product."]],
+      ["Termination", ["ArcaWand Soft may suspend or revoke access to Pro features if a license is fraudulent, refunded, shared publicly, obtained through abuse or used in violation of these Terms.", "Users may stop using the extension at any time and uninstall it from Chrome."]],
+      ["Changes to these Terms", ["These Terms may be updated to reflect product, legal, pricing, payment, Chrome Web Store or third-party service changes. The date shown on this page indicates the latest published update."]],
+      ["Governing interpretation", ["If a translated version differs from the English version, the English version should be used as the reference interpretation unless applicable law requires otherwise."]]
+    ]
+  },
+  fr: {
+    terms: "CGU",
+    termsTitle: "Conditions générales d’utilisation Ultimate Clipboard Pro",
+    termsDesc: "CGU de Ultimate Clipboard Pro : extension Chrome, licence Pro lifetime, prix de lancement, sauvegardes, synchronisation Google Drive, usages autorisés et responsabilités utilisateur.",
+    termsKicker: "Conditions produit",
+    termsLead: "Ces conditions expliquent comment utiliser Ultimate Clipboard Pro, ce que comprend la licence Pro lifetime, ce qui reste sous la responsabilité de l’utilisateur et comment ArcaWand Soft encadre les risques et abus.",
+    termsSections: [
+      ["Acceptation des conditions", ["En installant, accédant à ou utilisant Ultimate Clipboard Pro, vous acceptez ces Conditions générales d’utilisation ainsi que la Politique de confidentialité du produit. Si vous n’acceptez pas ces conditions, n’installez pas et n’utilisez pas l’extension.", "Ces conditions couvrent l’extension Chrome, les pages produit publiques, la documentation, les workflows de licence Pro et les échanges de support associés."]],
+      ["Éditeur et contact", ["Ultimate Clipboard Pro est publié par ArcaWand Soft. Pour toute question produit, juridique, support ou confidentialité, contactez contact@arcawand-soft.com."]],
+      ["Objet du produit", ["Ultimate Clipboard Pro est une extension de productivité destinée à capturer, organiser, rechercher, éditer et réutiliser textes, codes, images, captures d’écran et captures de pages web pendant la navigation.", "L’extension n’est pas un outil juridique, médical, financier, de conformité ou d’audit de sécurité. L’utilisateur reste responsable de l’usage des contenus capturés."]],
+      ["Version gratuite", ["La version gratuite peut comporter des limites, par exemple un nombre maximal de captures texte, code ou image stockées, ainsi qu’un accès limité à certains outils.", "Les fonctions gratuites peuvent évoluer afin d’améliorer le produit, maintenir la qualité du service ou respecter les exigences du Chrome Web Store."]],
+      ["Licence Pro lifetime", ["Une licence Pro lifetime débloque les fonctions Pro pour la version du produit et le système de licence supportés, sous réserve du respect de ces conditions et de la compatibilité technique normale.", "Pro peut inclure captures texte, code et image illimitées, coffre-fort, corbeille, versioning des captures, montage, outils supplémentaires, synchronisation Google Drive et autres fonctions avancées décrites sur la page produit.", "Lifetime désigne la durée de vie du produit Ultimate Clipboard Pro tel qu’exploité par ArcaWand Soft, et non la durée de vie de l’utilisateur, d’un navigateur, d’un système d’exploitation, d’un service tiers ou d’une plateforme de store."]],
+      ["Prix et offre de lancement", ["Le prix standard de la licence Pro lifetime est de 69 USD.", "Un prix de lancement de 49 USD peut être proposé pendant une durée promotionnelle non définie. ArcaWand Soft peut mettre fin, modifier ou remplacer ce prix de lancement à tout moment, sans effet rétroactif sur les achats déjà finalisés.", "Les taxes, conversions de devise, frais de paiement ou frais régionaux peuvent être gérés par le prestataire de paiement."]],
+      ["Paiements, activation et remboursements", ["Les paiements peuvent être traités par des prestataires tiers tels que Dodo Payments ou tout autre prestataire choisi par ArcaWand Soft. Les données de carte bancaire sont traitées par le prestataire de paiement, pas dans l’extension.", "L’activation de la licence peut nécessiter une clé valide ou une vérification liée au compte. Le partage, la revente, la publication, le contournement ou la falsification d’une licence Pro sont interdits.", "Les remboursements éventuels dépendent du prestataire de paiement, de la loi applicable et des circonstances de l’achat."]],
+      ["Contenu utilisateur et responsabilité", ["L’utilisateur est responsable de la légalité, exactitude, sensibilité et sécurité des contenus qu’il capture, stocke, copie, exporte ou synchronise.", "N’utilisez pas l’extension pour capturer, stocker ou diffuser des contenus que vous n’êtes pas autorisé à traiter, notamment des contenus illicites, contrefaisants, nuisibles ou confidentiels appartenant à des tiers."]],
+      ["Stockage local, sauvegardes et perte de données", ["Ultimate Clipboard Pro est conçu comme une extension local-first, mais le stockage local du navigateur peut être affecté par une réinitialisation, une désinstallation, une corruption de profil, un problème système ou une action utilisateur.", "L’utilisateur doit créer des sauvegardes lorsque ses contenus sont importants. ArcaWand Soft n’est pas responsable de la perte de captures locales, d’éléments supprimés, d’imports échoués, de sauvegardes endommagées ou de données supprimées de Google Drive par l’utilisateur ou un service tiers."]],
+      ["Synchronisation Google Drive optionnelle", ["La synchronisation Google Drive est optionnelle. Si elle est activée, l’utilisateur autorise l’extension à créer, mettre à jour, lire ou restaurer les fichiers nécessaires à la sauvegarde synchronisée.", "L’utilisateur reste responsable de son compte Google, de son stockage Drive, de ses permissions, de sa connexion réseau et de toute suppression ou modification manuelle des fichiers synchronisés."]],
+      ["Usages autorisés", ["Il est interdit de contourner la licence, attaquer l’extension, abuser des APIs, perturber la synchronisation, distribuer des versions modifiées, utiliser le produit pour violer des droits ou lois, ou tenter d’accéder aux données d’autres utilisateurs.", "L’abus automatisé, le partage de licence, le scraping des services produit et le contournement des restrictions Pro sont interdits."]],
+      ["Disponibilité et évolutions", ["ArcaWand Soft peut mettre à jour, améliorer, supprimer, renommer ou réorganiser des fonctions pour améliorer la qualité, la performance, la sécurité, la compatibilité ou la conformité.", "L’extension dépend de Chrome, des APIs navigateur, de Google, de prestataires de paiement et d’environnements tiers susceptibles d’évoluer indépendamment."]],
+      ["Propriété intellectuelle", ["Ultimate Clipboard Pro, ArcaWand Soft, les noms, logos, interfaces, textes, assets et éléments originaux du produit appartiennent à ArcaWand Soft ou à ses concédants.", "L’utilisation de l’extension ne transfère aucun droit de propriété sur le produit, la marque ou les éléments sources."]],
+      ["Exclusion de garanties", ["Le produit est fourni comme outil de productivité, en l’état et selon disponibilité, dans la mesure permise par la loi.", "ArcaWand Soft ne garantit pas un fonctionnement ininterrompu, une capture parfaite, une compatibilité avec tous les sites, la disponibilité permanente de services tiers ou la récupération de données supprimées."]],
+      ["Limitation de responsabilité", ["Dans la mesure permise par la loi, ArcaWand Soft n’est pas responsable des dommages indirects, incidents, spéciaux, consécutifs ou punitifs, pertes de profits, pertes de données, pertes d’activité, pertes d’opportunités ou défaillances de services tiers liées à l’usage du produit."]],
+      ["Résiliation", ["ArcaWand Soft peut suspendre ou révoquer l’accès Pro si une licence est frauduleuse, remboursée, partagée publiquement, obtenue par abus ou utilisée en violation de ces conditions.", "L’utilisateur peut cesser d’utiliser l’extension à tout moment et la désinstaller de Chrome."]],
+      ["Modification des conditions", ["Ces conditions peuvent être mises à jour pour refléter les évolutions produit, juridiques, tarifaires, de paiement, Chrome Web Store ou de services tiers. La date affichée indique la dernière mise à jour publiée."]],
+      ["Interprétation", ["En cas d’écart entre une traduction et la version anglaise, la version anglaise sert de référence d’interprétation, sauf exigence contraire de la loi applicable."]]
+    ]
+  }
+};
+
+termsContent.es = {
+  terms: "Términos de uso",
+  termsTitle: "Términos de uso de Ultimate Clipboard Pro",
+  termsDesc: "Términos de uso de Ultimate Clipboard Pro: extensión Chrome, licencia Pro lifetime, precio de lanzamiento, copias de seguridad, Google Drive, uso aceptable y responsabilidades.",
+  termsKicker: "Términos del producto",
+  termsLead: "Estos términos explican cómo usar Ultimate Clipboard Pro, qué incluye la licencia Pro lifetime, qué sigue siendo responsabilidad del usuario y cómo ArcaWand Soft limita abusos y riesgos.",
+  termsSections: [
+    ["Aceptación", ["Al instalar, acceder o usar Ultimate Clipboard Pro, aceptas estos Términos de uso y la Política de privacidad. Si no estás de acuerdo, no instales ni uses la extensión.", "Estos términos se aplican a la extensión Chrome, páginas del producto, documentación, licencia Pro y comunicaciones de soporte."]],
+    ["Editor y contacto", ["Ultimate Clipboard Pro es publicado por ArcaWand Soft. Para cuestiones de producto, legales, soporte o privacidad, escribe a contact@arcawand-soft.com."]],
+    ["Finalidad del producto", ["Ultimate Clipboard Pro es una extensión de productividad para capturar, organizar, buscar, editar y reutilizar textos, código, imágenes, capturas y páginas web durante la navegación.", "No es una herramienta legal, médica, financiera, de cumplimiento ni de auditoría de seguridad. El usuario es responsable del uso de sus capturas."]],
+    ["Versión gratuita", ["La versión gratuita puede incluir límites de capturas y acceso limitado a herramientas.", "Las funciones gratuitas pueden cambiar para mejorar calidad, seguridad, compatibilidad o cumplimiento con Chrome Web Store."]],
+    ["Licencia Pro lifetime", ["La licencia Pro lifetime desbloquea funciones Pro para el producto y sistema de licencia soportados, sujeto a estos términos y compatibilidad técnica.", "Pro puede incluir capturas ilimitadas, bóveda, papelera, versionado, montaje, herramientas adicionales, Google Drive opcional y otras funciones avanzadas.", "Lifetime significa la vida del producto Ultimate Clipboard Pro operado por ArcaWand Soft, no la vida del usuario, navegador, sistema operativo, servicio tercero o tienda."]],
+    ["Precio y oferta de lanzamiento", ["El precio estándar de la licencia Pro lifetime es de 69 USD.", "Puede ofrecerse un precio de lanzamiento de 49 USD durante un periodo promocional indefinido. ArcaWand Soft puede cambiar o finalizar esta oferta sin afectar compras ya completadas.", "Impuestos, conversión de divisa o cargos regionales pueden ser gestionados por el proveedor de pago."]],
+    ["Pagos, activación y reembolsos", ["Los pagos pueden ser procesados por terceros como Dodo Payments. Los datos de tarjeta son tratados por el proveedor de pago, no dentro de la extensión.", "Compartir, revender, publicar, falsificar o evitar una licencia Pro está prohibido.", "Los reembolsos dependen del proveedor, la ley aplicable y las circunstancias de compra."]],
+    ["Contenido y responsabilidad", ["El usuario es responsable de la legalidad, precisión, sensibilidad y seguridad del contenido que captura, almacena, copia, exporta o sincroniza.", "No uses la extensión para tratar contenido ilegal, infractor, dañino o confidencial de terceros sin autorización."]],
+    ["Almacenamiento, copias y pérdida de datos", ["Aunque el producto es local-first, el almacenamiento del navegador puede verse afectado por reinicios, desinstalación, corrupción de perfil, problemas del sistema o acciones del usuario.", "El usuario debe hacer copias de seguridad importantes. ArcaWand Soft no responde por pérdidas de datos locales, eliminaciones, importaciones fallidas, backups dañados o archivos borrados de Google Drive."]],
+    ["Google Drive opcional", ["Si se activa, el usuario autoriza a la extensión a crear, leer, actualizar o restaurar archivos de backup necesarios.", "El usuario sigue siendo responsable de su cuenta Google, almacenamiento, permisos, red y modificaciones manuales."]],
+    ["Uso aceptable", ["Está prohibido atacar la extensión, abusar de APIs, alterar sincronización, distribuir versiones modificadas, violar leyes o derechos, acceder a datos ajenos o evitar restricciones Pro."]],
+    ["Cambios y disponibilidad", ["ArcaWand Soft puede actualizar, mejorar, eliminar o reorganizar funciones por calidad, seguridad, compatibilidad o cumplimiento.", "La extensión depende de Chrome, APIs, Google, pagos y servicios terceros que pueden cambiar independientemente."]],
+    ["Propiedad intelectual", ["Ultimate Clipboard Pro, ArcaWand Soft, nombres, logos, diseño, textos, assets y materiales originales pertenecen a ArcaWand Soft o sus licenciantes."]],
+    ["Exención y límite de responsabilidad", ["El producto se ofrece como herramienta de productividad tal cual y según disponibilidad.", "En la medida permitida por la ley, ArcaWand Soft no será responsable por daños indirectos, pérdida de datos, beneficios, negocio, oportunidad o fallos de servicios terceros."]],
+    ["Terminación", ["ArcaWand Soft puede suspender o revocar Pro si la licencia es fraudulenta, reembolsada, compartida públicamente, abusiva o contraria a estos términos.", "El usuario puede dejar de usar y desinstalar la extensión en cualquier momento."]],
+    ["Actualizaciones e interpretación", ["Estos términos pueden actualizarse por cambios de producto, legales, precio, pagos, Chrome Web Store o terceros.", "Si una traducción difiere del inglés, la versión inglesa sirve como referencia salvo obligación legal contraria."]]
+  ]
+};
+
+termsContent.it = {
+  terms: "Termini d’uso",
+  termsTitle: "Termini d’uso di Ultimate Clipboard Pro",
+  termsDesc: "Termini d’uso di Ultimate Clipboard Pro: estensione Chrome, licenza Pro lifetime, prezzo di lancio, backup, Google Drive, uso accettabile e responsabilità.",
+  termsKicker: "Termini prodotto",
+  termsLead: "Questi termini spiegano come usare Ultimate Clipboard Pro, cosa include la licenza Pro lifetime, cosa resta responsabilità dell’utente e come ArcaWand Soft limita abusi e rischi.",
+  termsSections: [
+    ["Accettazione", ["Installando, accedendo o usando Ultimate Clipboard Pro, accetti questi Termini d’uso e l’Informativa privacy. Se non accetti, non installare né usare l’estensione.", "I termini si applicano a estensione Chrome, pagine prodotto, documentazione, licenza Pro e supporto."]],
+    ["Editore e contatto", ["Ultimate Clipboard Pro è pubblicata da ArcaWand Soft. Per prodotto, aspetti legali, supporto o privacy: contact@arcawand-soft.com."]],
+    ["Scopo del prodotto", ["Ultimate Clipboard Pro è un’estensione di produttività per catturare, organizzare, cercare, modificare e riutilizzare testi, codice, immagini, screenshot e pagine web.", "Non è uno strumento legale, medico, finanziario, di compliance o audit di sicurezza. L’utente resta responsabile dei contenuti."]],
+    ["Versione gratuita", ["La versione gratuita può includere limiti di catture e accesso ridotto agli strumenti.", "Le funzioni gratuite possono evolvere per qualità, sicurezza, compatibilità o requisiti Chrome Web Store."]],
+    ["Licenza Pro lifetime", ["La licenza Pro lifetime sblocca funzioni Pro per il prodotto e il sistema licenza supportati, secondo questi termini e compatibilità tecnica.", "Pro può includere catture illimitate, vault, cestino, versioning, montaggio, strumenti extra, Google Drive opzionale e altre funzioni avanzate.", "Lifetime indica la vita del prodotto Ultimate Clipboard Pro gestito da ArcaWand Soft, non la vita dell’utente, browser, sistema operativo, servizio terzo o store."]],
+    ["Prezzo e offerta di lancio", ["Il prezzo standard della licenza Pro lifetime è 69 USD.", "Un prezzo di lancio di 49 USD può essere offerto per un periodo promozionale non definito. ArcaWand Soft può cambiarlo o terminarlo senza effetto retroattivo sugli acquisti completati.", "Tasse, conversioni o costi regionali possono essere gestiti dal provider di pagamento."]],
+    ["Pagamenti, attivazione e rimborsi", ["I pagamenti possono essere gestiti da terzi come Dodo Payments. I dati carta sono trattati dal provider, non nell’estensione.", "Condividere, rivendere, pubblicare, falsificare o aggirare una licenza Pro è vietato.", "Eventuali rimborsi dipendono da provider, legge applicabile e circostanze."]],
+    ["Contenuti e responsabilità", ["L’utente è responsabile di legalità, accuratezza, sensibilità e sicurezza dei contenuti catturati, salvati, copiati, esportati o sincronizzati.", "Non usare l’estensione per contenuti illegali, lesivi, dannosi o riservati di terzi senza autorizzazione."]],
+    ["Storage, backup e perdita dati", ["Il prodotto è local-first, ma lo storage browser può essere alterato da reset, disinstallazione, profilo corrotto, problemi sistema o azioni utente.", "L’utente deve creare backup importanti. ArcaWand Soft non risponde di perdite locali, cancellazioni, import falliti, backup danneggiati o file cancellati da Drive."]],
+    ["Google Drive opzionale", ["Se abilitato, l’utente autorizza l’estensione a creare, leggere, aggiornare o ripristinare file backup necessari.", "L’utente resta responsabile di account Google, spazio Drive, permessi, rete e modifiche manuali."]],
+    ["Uso accettabile", ["È vietato attaccare l’estensione, abusare API, alterare sync, distribuire versioni modificate, violare leggi o diritti, accedere a dati altrui o aggirare Pro."]],
+    ["Disponibilità e modifiche", ["ArcaWand Soft può aggiornare, migliorare, rimuovere o riorganizzare funzioni per qualità, sicurezza, compatibilità o compliance.", "L’estensione dipende da Chrome, API, Google, pagamenti e servizi terzi che possono cambiare indipendentemente."]],
+    ["Proprietà intellettuale", ["Ultimate Clipboard Pro, ArcaWand Soft, nomi, loghi, design, testi, asset e materiali originali appartengono ad ArcaWand Soft o licenzianti."]],
+    ["Esclusione e limite di responsabilità", ["Il prodotto è fornito come strumento di produttività così com’è e secondo disponibilità.", "Nei limiti di legge, ArcaWand Soft non risponde di danni indiretti, perdita dati, profitti, attività, opportunità o guasti di servizi terzi."]],
+    ["Terminazione", ["ArcaWand Soft può sospendere o revocare Pro se una licenza è fraudolenta, rimborsata, condivisa pubblicamente, abusiva o contraria ai termini.", "L’utente può smettere di usare e disinstallare l’estensione in qualsiasi momento."]],
+    ["Aggiornamenti e interpretazione", ["I termini possono cambiare per motivi di prodotto, legali, prezzo, pagamenti, Chrome Web Store o terzi.", "Se una traduzione differisce dall’inglese, la versione inglese è riferimento salvo obbligo legale contrario."]]
+  ]
+};
+
+termsContent.de = {
+  terms: "Nutzungsbedingungen",
+  termsTitle: "Nutzungsbedingungen für Ultimate Clipboard Pro",
+  termsDesc: "Nutzungsbedingungen für Ultimate Clipboard Pro: Chrome-Erweiterung, Pro-Lifetime-Lizenz, Einführungspreis, Backups, Google Drive, zulässige Nutzung und Verantwortung.",
+  termsKicker: "Produktbedingungen",
+  termsLead: "Diese Bedingungen erklären die Nutzung von Ultimate Clipboard Pro, den Umfang der Pro-Lifetime-Lizenz, die Verantwortung der Nutzer und wie ArcaWand Soft Missbrauch und Risiken begrenzt.",
+  termsSections: [
+    ["Annahme", ["Durch Installation, Zugriff oder Nutzung von Ultimate Clipboard Pro akzeptieren Sie diese Nutzungsbedingungen und die Datenschutzrichtlinie. Wenn Sie nicht zustimmen, installieren oder nutzen Sie die Erweiterung nicht.", "Die Bedingungen gelten für Chrome-Erweiterung, Produktseiten, Dokumentation, Pro-Lizenzierung und Support-Kommunikation."]],
+    ["Herausgeber und Kontakt", ["Ultimate Clipboard Pro wird von ArcaWand Soft veröffentlicht. Für Produkt-, Rechts-, Support- oder Datenschutzfragen: contact@arcawand-soft.com."]],
+    ["Produktzweck", ["Ultimate Clipboard Pro ist eine Produktivitätserweiterung zum Erfassen, Organisieren, Suchen, Bearbeiten und Wiederverwenden von Texten, Code, Bildern, Screenshots und Webseiten.", "Es ist kein Rechts-, Medizin-, Finanz-, Compliance- oder Sicherheitsaudit-Tool. Nutzer bleiben für ihre Inhalte verantwortlich."]],
+    ["Kostenlose Version", ["Die kostenlose Version kann Capture-Limits und eingeschränkten Tool-Zugriff enthalten.", "Kostenlose Funktionen können sich aus Qualitäts-, Sicherheits-, Kompatibilitäts- oder Chrome-Web-Store-Gründen ändern."]],
+    ["Pro-Lifetime-Lizenz", ["Eine Pro-Lifetime-Lizenz schaltet Pro-Funktionen für das unterstützte Produkt und Lizenzsystem frei, vorbehaltlich dieser Bedingungen und normaler technischer Kompatibilität.", "Pro kann unbegrenzte Captures, Vault, Papierkorb, Versionierung, Montage, zusätzliche Tools, optionalen Google-Drive-Sync und weitere Funktionen enthalten.", "Lifetime bedeutet die Lebensdauer des Produkts Ultimate Clipboard Pro, wie es von ArcaWand Soft betrieben wird, nicht die Lebensdauer des Nutzers, Browsers, Betriebssystems, Drittanbieterdienstes oder Stores."]],
+    ["Preis und Einführungsangebot", ["Der Standardpreis der Pro-Lifetime-Lizenz beträgt 69 USD.", "Ein Einführungspreis von 49 USD kann für einen nicht definierten Aktionszeitraum angeboten werden. ArcaWand Soft kann diesen Preis jederzeit ändern oder beenden, ohne abgeschlossene Käufe rückwirkend zu ändern.", "Steuern, Währungsumrechnung oder regionale Gebühren können vom Zahlungsanbieter verarbeitet werden."]],
+    ["Zahlungen, Aktivierung und Erstattungen", ["Zahlungen können durch Drittanbieter wie Dodo Payments verarbeitet werden. Kartendaten werden vom Zahlungsanbieter verarbeitet, nicht in der Erweiterung.", "Teilen, Weiterverkaufen, Veröffentlichen, Fälschen oder Umgehen einer Pro-Lizenz ist verboten.", "Erstattungen hängen von Anbieter, geltendem Recht und Umständen ab."]],
+    ["Inhalte und Verantwortung", ["Nutzer sind für Rechtmäßigkeit, Richtigkeit, Sensibilität und Sicherheit der Inhalte verantwortlich, die sie erfassen, speichern, kopieren, exportieren oder synchronisieren.", "Nutzen Sie die Erweiterung nicht für illegale, rechtsverletzende, schädliche oder vertrauliche Drittinhalte ohne Berechtigung."]],
+    ["Speicher, Backups und Datenverlust", ["Das Produkt ist local-first, aber Browserspeicher kann durch Reset, Deinstallation, Profilfehler, Systemprobleme oder Nutzeraktionen betroffen sein.", "Nutzer sollten wichtige Backups erstellen. ArcaWand Soft haftet nicht für lokale Datenverluste, Löschungen, fehlgeschlagene Importe, beschädigte Backups oder aus Drive entfernte Dateien."]],
+    ["Optionaler Google Drive Sync", ["Wenn aktiviert, autorisiert der Nutzer die Erweiterung, notwendige Backup-Dateien zu erstellen, lesen, aktualisieren oder wiederherstellen.", "Der Nutzer bleibt verantwortlich für Google-Konto, Drive-Speicher, Berechtigungen, Netzwerk und manuelle Änderungen."]],
+    ["Zulässige Nutzung", ["Angriffe auf die Erweiterung, API-Missbrauch, Sync-Störungen, modifizierte Distributionen, Rechtsverletzungen, Zugriff auf fremde Daten oder Umgehung von Pro sind verboten."]],
+    ["Verfügbarkeit und Änderungen", ["ArcaWand Soft kann Funktionen für Qualität, Sicherheit, Kompatibilität oder Compliance aktualisieren, verbessern, entfernen oder neu organisieren.", "Die Erweiterung hängt von Chrome, APIs, Google, Zahlungen und Drittanbietern ab, die sich unabhängig ändern können."]],
+    ["Geistiges Eigentum", ["Ultimate Clipboard Pro, ArcaWand Soft, Namen, Logos, Design, Texte, Assets und Originalmaterialien gehören ArcaWand Soft oder Lizenzgebern."]],
+    ["Haftungsausschluss und Begrenzung", ["Das Produkt wird als Produktivitätstool wie besehen und nach Verfügbarkeit bereitgestellt.", "Soweit gesetzlich zulässig haftet ArcaWand Soft nicht für indirekte Schäden, Datenverlust, Gewinnverlust, Geschäftsverlust, Chancenverlust oder Ausfälle von Drittanbietern."]],
+    ["Beendigung", ["ArcaWand Soft kann Pro sperren oder widerrufen, wenn eine Lizenz betrügerisch, erstattet, öffentlich geteilt, missbräuchlich oder vertragswidrig ist.", "Nutzer können die Erweiterung jederzeit nicht mehr verwenden und deinstallieren."]],
+    ["Aktualisierungen und Auslegung", ["Diese Bedingungen können sich wegen Produkt-, Rechts-, Preis-, Zahlungs-, Chrome-Web-Store- oder Drittanbieteränderungen ändern.", "Wenn eine Übersetzung von Englisch abweicht, gilt Englisch als Auslegungsreferenz, soweit kein zwingendes Recht anderes verlangt."]]
+  ]
+};
+
+for (const [lang, content] of Object.entries(termsContent)) {
+  Object.assign(langs[lang], content);
+}
+
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 }
@@ -356,7 +495,7 @@ function structuredData(lang, page, title, desc, canonical) {
         {
           "@type": "ListItem",
           position: 3,
-          name: page === "faq" ? l.faq : l.privacy,
+          name: page === "faq" ? l.faq : page === "terms" ? l.terms : l.privacy,
           item: canonical
         }
       ]
@@ -406,19 +545,35 @@ function structuredData(lang, page, title, desc, canonical) {
       }))
     });
   }
+  if (page === "terms") {
+    graph.push({
+      "@context": "https://schema.org",
+      "@type": "TermsOfService",
+      name: title,
+      description: desc,
+      url: canonical,
+      inLanguage: l.html,
+      provider: {
+        "@type": "Organization",
+        name: "ArcaWand Soft",
+        url: "https://arcawand-soft.com/"
+      }
+    });
+  }
   return graph.map((entry) => `<script type="application/ld+json">${jsonLd(entry)}</script>`).join("\n");
 }
 function relFromProductPage(page) {
   return page === "presentation"
-    ? { presentation: "./", faq: "faq/", privacy: "privacy/" }
-    : { presentation: "../", faq: "../faq/", privacy: "../privacy/" };
+    ? { presentation: "./", faq: "faq/", privacy: "privacy/", terms: "terms/" }
+    : { presentation: "../", faq: "../faq/", privacy: "../privacy/", terms: "../terms/" };
 }
 function homeHrefs(depth) {
   const prefix = depth === 0 ? "" : "../".repeat(depth);
   return {
     presentation: `${prefix}ultimate-clipboard-pro/`,
     faq: `${prefix}ultimate-clipboard-pro/faq/`,
-    privacy: `${prefix}ultimate-clipboard-pro/privacy/`
+    privacy: `${prefix}ultimate-clipboard-pro/privacy/`,
+    terms: `${prefix}ultimate-clipboard-pro/terms/`
   };
 }
 function languageMenu(current) {
@@ -429,19 +584,19 @@ function languageMenu(current) {
 }
 function productNav(lang, active, rel) {
   const l = langs[lang];
-  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a></nav>`;
+  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
 }
 function staticProductPage(lang, page) {
   const l = langs[lang];
   const rel = relFromProductPage(page);
-  const title = page === "faq" ? l.faqTitle : l.privacyTitle;
-  const desc = page === "faq" ? l.faqDesc : l.privacyDesc;
-  const kicker = page === "faq" ? l.faqKicker : l.privacyKicker;
-  const lead = page === "faq" ? l.faqLead : l.privacyLead;
+  const title = page === "faq" ? l.faqTitle : page === "terms" ? l.termsTitle : l.privacyTitle;
+  const desc = page === "faq" ? l.faqDesc : page === "terms" ? l.termsDesc : l.privacyDesc;
+  const kicker = page === "faq" ? l.faqKicker : page === "terms" ? l.termsKicker : l.privacyKicker;
+  const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : l.privacyLead;
   const canonical = absProduct(lang, page);
   const main = page === "faq"
     ? `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`
-    : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${l.privacySections.map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
+    : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${(page === "terms" ? l.termsSections : l.privacySections).map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
   return `<!doctype html>
 <html lang="${l.html}">
 <head>
@@ -479,7 +634,7 @@ ${languageMenu(lang)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
 <section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${esc(title)}</h1><p>${esc(lead)}</p></section>
-<section class="ucp-page-grid"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a></nav></aside></section>
+<section class="ucp-page-grid"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(l.terms)}</a></nav></aside></section>
 </main>
 <footer class="ucp-static-footer"><span>${esc(l.footer)}</span><span><a href="mailto:contact@arcawand-soft.com">contact@arcawand-soft.com</a></span></footer>
 </body>
@@ -489,7 +644,7 @@ ${productNav(lang, page, rel)}
 function navDrop(lang, depth) {
   const l = langs[lang];
   const href = homeHrefs(depth);
-  return `<div class="nav-drop"><button class="nav-drop-button" type="button" data-i18n="navSofts">${esc(l.navSofts)}</button><div class="nav-drop-menu nav-apps-menu"><div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${href.presentation}"><strong data-i18n="navUcpTitle">Ultimate Clipboard Pro</strong><span data-i18n="navUcpDesc">${esc(l.desc)}</span></a><div class="nav-app-links"><a href="${href.presentation}">${esc(l.presentation)}</a><a href="${href.faq}">${esc(l.faq)}</a><a href="${href.privacy}">${esc(l.privacy)}</a></div></div></div></div>`;
+  return `<div class="nav-drop"><button class="nav-drop-button" type="button" data-i18n="navSofts">${esc(l.navSofts)}</button><div class="nav-drop-menu nav-apps-menu"><div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${href.presentation}"><strong data-i18n="navUcpTitle">Ultimate Clipboard Pro</strong><span data-i18n="navUcpDesc">${esc(l.desc)}</span></a><div class="nav-app-links"><a href="${href.presentation}">${esc(l.presentation)}</a><a href="${href.faq}">${esc(l.faq)}</a><a href="${href.privacy}">${esc(l.privacy)}</a><a href="${href.terms}">${esc(l.terms)}</a></div></div></div></div>`;
 }
 function patchSiteNav(file, lang, depth) {
   let content = fs.readFileSync(file, "utf8");
@@ -519,7 +674,7 @@ function patchSiteJs() {
 function writeProductPages() {
   for (const lang of Object.keys(langs)) {
     patchProductIndex(lang);
-    for (const page of ["faq", "privacy"]) {
+    for (const page of ["faq", "privacy", "terms"]) {
       const dir = path.join(root, productBase(lang), page);
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, "index.html"), staticProductPage(lang, page), "utf8");
@@ -529,7 +684,7 @@ function writeProductPages() {
 function patchSitemap() {
   const file = path.join(root, "sitemap.xml");
   let content = fs.readFileSync(file, "utf8");
-  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "faq"), absProduct(lang, "privacy")]);
+  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "faq"), absProduct(lang, "privacy"), absProduct(lang, "terms")]);
   const additions = urls.filter((url) => !content.includes(`<loc>${url}</loc>`)).map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>`).join("\n");
   if (additions) content = content.replace("</urlset>", `${additions}\n</urlset>`);
   fs.writeFileSync(file, content, "utf8");

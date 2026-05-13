@@ -324,7 +324,7 @@ body.ucp-static-page img { max-width: 100%; display: block; }
 .nav-app-card { display: grid; gap: .45rem; }
 .nav-app-links {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: .35rem;
   padding: 0 .2rem .2rem;
 }

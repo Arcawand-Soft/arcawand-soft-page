@@ -1,37 +1,42 @@
 (() => {
   const supportedLangs = ["en", "fr", "es", "it", "de"];
   const labels = {
-    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy" },
-    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité" },
-    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad" },
-    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy" },
-    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz" }
+    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use" },
+    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU" },
+    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso" },
+    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso" },
+    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen" }
   };
   const routes = {
     en: {
       presentation: "https://arcawand-soft.com/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/ultimate-clipboard-pro/faq/",
-      privacy: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/"
+      privacy: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/",
+      terms: "https://arcawand-soft.com/ultimate-clipboard-pro/terms/"
     },
     fr: {
       presentation: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/faq/",
-      privacy: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/privacy/"
+      privacy: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/privacy/",
+      terms: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/terms/"
     },
     es: {
       presentation: "https://arcawand-soft.com/es/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/es/ultimate-clipboard-pro/faq/",
-      privacy: "https://arcawand-soft.com/es/ultimate-clipboard-pro/privacy/"
+      privacy: "https://arcawand-soft.com/es/ultimate-clipboard-pro/privacy/",
+      terms: "https://arcawand-soft.com/es/ultimate-clipboard-pro/terms/"
     },
     it: {
       presentation: "https://arcawand-soft.com/it/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/it/ultimate-clipboard-pro/faq/",
-      privacy: "https://arcawand-soft.com/it/ultimate-clipboard-pro/privacy/"
+      privacy: "https://arcawand-soft.com/it/ultimate-clipboard-pro/privacy/",
+      terms: "https://arcawand-soft.com/it/ultimate-clipboard-pro/terms/"
     },
     de: {
       presentation: "https://arcawand-soft.com/de/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/de/ultimate-clipboard-pro/faq/",
-      privacy: "https://arcawand-soft.com/de/ultimate-clipboard-pro/privacy/"
+      privacy: "https://arcawand-soft.com/de/ultimate-clipboard-pro/privacy/",
+      terms: "https://arcawand-soft.com/de/ultimate-clipboard-pro/terms/"
     }
   };
 
@@ -44,6 +49,7 @@
     const path = window.location.pathname;
     if (path.includes("/ultimate-clipboard-pro/faq")) return "faq";
     if (path.includes("/ultimate-clipboard-pro/privacy")) return "privacy";
+    if (path.includes("/ultimate-clipboard-pro/terms")) return "terms";
     return "presentation";
   }
 
