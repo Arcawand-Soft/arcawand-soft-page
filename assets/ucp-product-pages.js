@@ -1,0 +1,103 @@
+(() => {
+  const supportedLangs = ["en", "fr", "es", "it", "de"];
+  const labels = {
+    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy" },
+    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité" },
+    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad" },
+    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy" },
+    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz" }
+  };
+  const routes = {
+    en: {
+      presentation: "https://arcawand-soft.com/ultimate-clipboard-pro/",
+      faq: "https://arcawand-soft.com/ultimate-clipboard-pro/faq/",
+      privacy: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/"
+    },
+    fr: {
+      presentation: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/",
+      faq: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/faq/",
+      privacy: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/privacy/"
+    },
+    es: {
+      presentation: "https://arcawand-soft.com/es/ultimate-clipboard-pro/",
+      faq: "https://arcawand-soft.com/es/ultimate-clipboard-pro/faq/",
+      privacy: "https://arcawand-soft.com/es/ultimate-clipboard-pro/privacy/"
+    },
+    it: {
+      presentation: "https://arcawand-soft.com/it/ultimate-clipboard-pro/",
+      faq: "https://arcawand-soft.com/it/ultimate-clipboard-pro/faq/",
+      privacy: "https://arcawand-soft.com/it/ultimate-clipboard-pro/privacy/"
+    },
+    de: {
+      presentation: "https://arcawand-soft.com/de/ultimate-clipboard-pro/",
+      faq: "https://arcawand-soft.com/de/ultimate-clipboard-pro/faq/",
+      privacy: "https://arcawand-soft.com/de/ultimate-clipboard-pro/privacy/"
+    }
+  };
+
+  function getLangFromPath() {
+    const first = window.location.pathname.split("/").filter(Boolean)[0];
+    return supportedLangs.includes(first) ? first : "en";
+  }
+
+  function getProductPage() {
+    const path = window.location.pathname;
+    if (path.includes("/ultimate-clipboard-pro/faq")) return "faq";
+    if (path.includes("/ultimate-clipboard-pro/privacy")) return "privacy";
+    return "presentation";
+  }
+
+  function setupLanguageMenu() {
+    const menu = document.querySelector(".arcawand-product-language-menu");
+    if (!menu) return;
+    const button = menu.querySelector(".language-menu-button");
+    const panel = menu.querySelector(".language-menu-panel");
+    const close = () => {
+      menu.classList.remove("is-open");
+      button?.setAttribute("aria-expanded", "false");
+    };
+
+    button?.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const open = !menu.classList.contains("is-open");
+      document.querySelectorAll(".language-menu.is-open").forEach((node) => node.classList.remove("is-open"));
+      menu.classList.toggle("is-open", open);
+      button.setAttribute("aria-expanded", String(open));
+    });
+
+    panel?.addEventListener("click", (event) => {
+      const option = event.target.closest("[data-lang]");
+      if (!option) return;
+      const next = option.dataset.lang;
+      const page = getProductPage();
+      try {
+        localStorage.setItem("arcawand-lang", next);
+        localStorage.setItem("ucp-lang", next);
+      } catch (error) {}
+      window.location.href = routes[next]?.[page] || routes.en.presentation;
+    });
+
+    document.addEventListener("click", close);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close();
+    });
+  }
+
+  function setupProductNav() {
+    const lang = getLangFromPath();
+    const page = getProductPage();
+    document.querySelectorAll("[data-ucp-nav]").forEach((link) => {
+      const key = link.dataset.ucpNav;
+      link.textContent = labels[lang]?.[key] || labels.en[key] || link.textContent;
+      if (key === page) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const lang = getLangFromPath();
+    document.documentElement.lang = lang;
+    setupLanguageMenu();
+    setupProductNav();
+  });
+})();
