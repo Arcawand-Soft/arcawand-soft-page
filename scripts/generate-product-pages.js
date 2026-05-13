@@ -456,6 +456,18 @@ for (const [lang, content] of Object.entries(termsContent)) {
   Object.assign(langs[lang], content);
 }
 
+const languageButtonLabels = {
+  en: "Change language",
+  fr: "Changer de langue",
+  es: "Cambiar idioma",
+  it: "Cambia lingua",
+  de: "Sprache wechseln"
+};
+
+for (const [lang, label] of Object.entries(languageButtonLabels)) {
+  langs[lang].languageButtonLabel = label;
+}
+
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 }
@@ -580,7 +592,7 @@ function languageMenu(current) {
   const flag = { en: "english", fr: "french", es: "spanish", it: "italian", de: "german" };
   const name = { en: "English", fr: "Français", es: "Español", it: "Italiano", de: "Deutsch" };
   const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><img src="/assets/flags/${flag[code]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${name[code]}</span></button>`).join("");
-  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/${flag[current]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${name[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="Language">${options}</div></div>`;
+  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(langs[current].languageButtonLabel)}" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/${flag[current]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${name[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(langs[current].languageButtonLabel)}">${options}</div></div>`;
 }
 function productNav(lang, active, rel) {
   const l = langs[lang];
@@ -649,8 +661,17 @@ function navDrop(lang, depth) {
 function patchSiteNav(file, lang, depth) {
   let content = fs.readFileSync(file, "utf8");
   content = content.replace(/<div class="nav-drop">[\s\S]*?<\/div>\s*<\/div>\s*<a class="nav-link"/, `${navDrop(lang, depth)}<a class="nav-link"`);
+  content = patchLanguageButtonLabel(content, lang);
   fs.writeFileSync(file, content, "utf8");
 }
+
+function patchLanguageButtonLabel(content, lang) {
+  const label = esc(langs[lang]?.languageButtonLabel || languageButtonLabels.en);
+  return content
+    .replace(/<button class="language-menu-button" type="button"(?![^>]*aria-label=)/g, `<button class="language-menu-button" type="button" aria-label="${label}"`)
+    .replace(/<div class="language-menu-panel" role="listbox" aria-label="Language"/g, `<div class="language-menu-panel" role="listbox" aria-label="${label}"`);
+}
+
 function patchProductIndex(lang) {
   const file = path.join(root, productBase(lang), "index.html");
   let content = fs.readFileSync(file, "utf8");
@@ -663,6 +684,7 @@ function patchProductIndex(lang) {
   content = content.replace(/Fran\u00c3\u00a7ais/g, "Français").replace(/Espa\u00c3\u00b1ol/g, "Español");
   content = content.replace(/<nav class="ucp-product-nav"[\s\S]*?<\/nav>\s*/g, "");
   content = content.replace(/(<div id="root"><\/div>)/, `${productNav(lang, "presentation", relFromProductPage("presentation"))}\n  $1`);
+  content = patchLanguageButtonLabel(content, lang);
   fs.writeFileSync(file, content, "utf8");
 }
 function patchSiteJs() {

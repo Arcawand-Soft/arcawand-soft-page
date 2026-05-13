@@ -7,6 +7,13 @@
     it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso" },
     de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen" }
   };
+  const languageButtonLabels = {
+    en: "Change language",
+    fr: "Changer de langue",
+    es: "Cambiar idioma",
+    it: "Cambia lingua",
+    de: "Sprache wechseln"
+  };
   const routes = {
     en: {
       presentation: "https://arcawand-soft.com/ultimate-clipboard-pro/",
@@ -58,6 +65,12 @@
     if (!menu) return;
     const button = menu.querySelector(".language-menu-button");
     const panel = menu.querySelector(".language-menu-panel");
+    const lang = getLangFromPath();
+    const languageLabel = languageButtonLabels[lang] || languageButtonLabels.en;
+    if (button && !button.getAttribute("aria-label")) button.setAttribute("aria-label", languageLabel);
+    if (panel && (!panel.getAttribute("aria-label") || panel.getAttribute("aria-label") === "Language")) {
+      panel.setAttribute("aria-label", languageLabel);
+    }
     const close = () => {
       menu.classList.remove("is-open");
       button?.setAttribute("aria-expanded", "false");
