@@ -100,10 +100,30 @@
     });
   }
 
+  function setupProductHeaderScroll() {
+    const mark = document.querySelector(".ucp-product-mark");
+    const nav = document.querySelector(".ucp-product-nav");
+    if (!mark || !nav) return;
+    let ticking = false;
+    const update = () => {
+      const scrolled = window.scrollY > 36;
+      document.body.classList.toggle("ucp-product-scrolled", scrolled);
+      mark.classList.toggle("is-hidden", scrolled);
+      ticking = false;
+    };
+    update();
+    window.addEventListener("scroll", () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive: true });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     const lang = getLangFromPath();
     document.documentElement.lang = lang;
     setupLanguageMenu();
     setupProductNav();
+    setupProductHeaderScroll();
   });
 })();

@@ -657,6 +657,9 @@ function patchProductIndex(lang) {
   if (!content.includes("/assets/ucp-product-pages.css")) {
     content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css">');
   }
+  if (!content.includes("/assets/ucp-product-pages.js")) {
+    content = content.replace('<script defer src="/assets/analytics.js"></script>', '<script defer src="/assets/analytics.js"></script>\n<script defer src="/assets/ucp-product-pages.js"></script>');
+  }
   content = content.replace(/Fran\u00c3\u00a7ais/g, "Français").replace(/Espa\u00c3\u00b1ol/g, "Español");
   content = content.replace(/<nav class="ucp-product-nav"[\s\S]*?<\/nav>\s*/g, "");
   content = content.replace(/(<div id="root"><\/div>)/, `${productNav(lang, "presentation", relFromProductPage("presentation"))}\n  $1`);
