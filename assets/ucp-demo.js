@@ -190,7 +190,7 @@
     removeFastLauncher();
     return;
   }
-  await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-demo-fixes`);
+  await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-pro-dataset`);
   const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
   const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
     openManager,

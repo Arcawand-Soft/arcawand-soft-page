@@ -666,7 +666,7 @@ ${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=2026051
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
-${page === "demo" ? '<script defer src="/assets/ucp-demo.js?v=20260514-demo-fixes"></script>' : ""}
+${page === "demo" ? '<script defer src="/assets/ucp-demo.js?v=20260514-pro-dataset"></script>' : ""}
 </head>
 <body class="ucp-static-page${page === "demo" ? " ucp-demo-page" : ""}">
 <a class="arcawand-root-return" href="${l.home}" aria-label="${esc(l.back)}">&larr; ArcaWand Soft</a>

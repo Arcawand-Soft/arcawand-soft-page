@@ -159,6 +159,110 @@
     ]
   };
 
+  const extraTextSamples = {
+    en: [
+      ["Marketing idea", "Write a short social post that presents one practical productivity idea without hype.", "Make the post more concrete with an example from daily browser work.", "Add a softer ending that invites a simple reply from readers."],
+      ["Product feedback", "Group these product requests by user pain, frequency, revenue impact and implementation effort.", "Add a recommendation section that separates quick wins from deep product bets.", "Turn it into a roadmap note for a founder who needs to decide what ships next."],
+      ["Legal checklist", "Build a legal review checklist for privacy, user consent, data retention and third-party services.", "Add a Chrome extension angle: permissions, local storage, optional cloud sync and payment provider.", "Make the checklist easier to reuse before every release."],
+      ["Training note", "Prepare an onboarding note for a new support teammate explaining the capture workflow.", "Add common mistakes, quality standards and when to escalate a case.", "Make it concise enough to paste into an internal knowledge base."],
+      ["Prompt cleanup", "Rewrite this rough AI prompt so it has role, context, constraints, examples and output format.", "Add verification criteria and a final self-check section.", "Make the prompt reusable for several customer support scenarios."],
+      ["Sales objection", "Answer the objection: I already use the normal clipboard, why would I need this?", "Make the answer benefit-led with examples: research, code, screenshots and source history.", "Add a concise version for a pricing page FAQ."],
+      ["Vault note", "Store this sensitive onboarding token note in the vault and keep the source context attached.", "Rewrite as a private operations note with minimal exposure."],
+      ["Deleted draft", "This old campaign draft should be kept in the trash for review before permanent deletion.", "Add a short reason explaining why the draft was retired."]
+    ],
+    fr: [
+      ["Idée marketing", "Écris un post court qui présente une idée de productivité pratique sans exagération.", "Rends le post plus concret avec un exemple de travail quotidien dans le navigateur.", "Ajoute une fin plus douce qui invite à une réponse simple."],
+      ["Retour produit", "Regroupe ces demandes produit par douleur utilisateur, fréquence, impact revenu et effort d’implémentation.", "Ajoute une recommandation qui sépare les gains rapides des paris produit plus profonds.", "Transforme-le en note roadmap pour décider quoi livrer ensuite."],
+      ["Checklist juridique", "Construis une checklist juridique pour confidentialité, consentement utilisateur, conservation des données et services tiers.", "Ajoute l’angle extension Chrome : permissions, stockage local, synchro cloud optionnelle et paiement.", "Rends la checklist plus facile à réutiliser avant chaque sortie."],
+      ["Note de formation", "Prépare une note d’accueil pour un nouveau membre support qui explique le flux de capture.", "Ajoute les erreurs courantes, les standards de qualité et les cas d’escalade.", "Rends-la assez concise pour une base de connaissance interne."],
+      ["Nettoyage de prompt", "Réécris ce prompt brut avec rôle, contexte, contraintes, exemples et format de sortie.", "Ajoute des critères de vérification et une section finale d’auto-contrôle.", "Rends le prompt réutilisable pour plusieurs scénarios de support client."],
+      ["Objection commerciale", "Réponds à l’objection : j’utilise déjà le presse-papiers normal, pourquoi aurais-je besoin de ça ?", "Réponds par les bénéfices avec exemples : recherche, code, captures d’écran et historique des sources.", "Ajoute une version concise pour une FAQ tarifaire."],
+      ["Note coffre-fort", "Range cette note de jeton sensible dans le coffre-fort et garde le contexte source attaché.", "Réécris en note privée d’opérations avec exposition minimale."],
+      ["Brouillon supprimé", "Cet ancien brouillon de campagne doit rester dans la corbeille avant suppression définitive.", "Ajoute une courte raison expliquant pourquoi le brouillon a été retiré."]
+    ],
+    es: [
+      ["Idea de marketing", "Escribe una publicación corta con una idea práctica de productividad sin exageraciones.", "Hazla más concreta con un ejemplo de trabajo diario en el navegador.", "Añade un cierre suave que invite a responder fácilmente."],
+      ["Feedback de producto", "Agrupa estas solicitudes por dolor de usuario, frecuencia, impacto en ingresos y esfuerzo técnico.", "Añade una recomendación separando victorias rápidas y apuestas profundas.", "Conviértelo en una nota de roadmap para decidir qué lanzar después."],
+      ["Checklist legal", "Crea una checklist para privacidad, consentimiento, retención de datos y servicios externos.", "Añade el ángulo de extensión Chrome: permisos, almacenamiento local, nube opcional y pagos.", "Haz que sea reutilizable antes de cada lanzamiento."],
+      ["Nota de formación", "Prepara una nota para un nuevo agente de soporte explicando el flujo de capturas.", "Añade errores comunes, estándares de calidad y cuándo escalar un caso.", "Hazla breve para una base de conocimiento interna."],
+      ["Limpieza de prompt", "Reescribe este prompt con rol, contexto, restricciones, ejemplos y formato de salida.", "Añade criterios de verificación y una sección final de auto-revisión.", "Hazlo reutilizable para varios escenarios de soporte."],
+      ["Objeción comercial", "Responde: ya uso el portapapeles normal, ¿por qué necesitaría esto?", "Responde con beneficios y ejemplos: investigación, código, capturas e historial de fuentes.", "Añade una versión breve para una FAQ de precios."],
+      ["Nota de caja fuerte", "Guarda esta nota sensible en la caja fuerte con su contexto de origen.", "Reescríbela como nota privada de operaciones con exposición mínima."],
+      ["Borrador eliminado", "Este antiguo borrador de campaña debe permanecer en la papelera antes de eliminarse definitivamente.", "Añade una razón breve de por qué se retiró el borrador."]
+    ],
+    it: [
+      ["Idea marketing", "Scrivi un post breve con un’idea pratica di produttività senza enfasi inutile.", "Rendilo più concreto con un esempio di lavoro quotidiano nel browser.", "Aggiungi una chiusura morbida che inviti a una risposta semplice."],
+      ["Feedback prodotto", "Raggruppa queste richieste per dolore utente, frequenza, impatto ricavi e sforzo tecnico.", "Aggiungi una raccomandazione che separi quick win e scommesse prodotto.", "Trasformalo in una nota roadmap per decidere cosa rilasciare dopo."],
+      ["Checklist legale", "Costruisci una checklist per privacy, consenso utente, conservazione dati e servizi terzi.", "Aggiungi l’angolo estensione Chrome: permessi, storage locale, cloud opzionale e pagamenti.", "Rendila facile da riutilizzare prima di ogni rilascio."],
+      ["Nota formazione", "Prepara una nota per un nuovo membro supporto che spieghi il flusso di cattura.", "Aggiungi errori comuni, standard qualità e quando escalare un caso.", "Rendila breve per una knowledge base interna."],
+      ["Pulizia prompt", "Riscrivi questo prompt con ruolo, contesto, vincoli, esempi e formato output.", "Aggiungi criteri di verifica e una sezione finale di auto-controllo.", "Rendilo riutilizzabile per diversi scenari di supporto cliente."],
+      ["Obiezione commerciale", "Rispondi: uso già gli appunti normali, perché dovrei averne bisogno?", "Rispondi con benefici ed esempi: ricerca, codice, screenshot e cronologia fonti.", "Aggiungi una versione breve per una FAQ prezzi."],
+      ["Nota cassaforte", "Salva questa nota sensibile nella cassaforte con il contesto sorgente.", "Riscrivila come nota operativa privata con esposizione minima."],
+      ["Bozza eliminata", "Questa vecchia bozza campagna deve restare nel cestino prima della cancellazione definitiva.", "Aggiungi una breve ragione per cui è stata ritirata."]
+    ],
+    de: [
+      ["Marketing-Idee", "Schreibe einen kurzen Social Post mit einer praktischen Produktivitätsidee ohne Hype.", "Mach ihn konkreter mit einem Beispiel aus der täglichen Browserarbeit.", "Füge einen weicheren Abschluss hinzu, der zu einer einfachen Antwort einlädt."],
+      ["Produktfeedback", "Gruppiere diese Anfragen nach Nutzerschmerz, Häufigkeit, Umsatzwirkung und Umsetzungsaufwand.", "Ergänze eine Empfehlung mit Quick Wins und tieferen Produktwetten.", "Wandle es in eine Roadmap-Notiz für die nächste Release-Entscheidung um."],
+      ["Rechtscheckliste", "Erstelle eine Checkliste für Datenschutz, Nutzereinwilligung, Datenaufbewahrung und Drittanbieter.", "Ergänze den Chrome-Erweiterungswinkel: Berechtigungen, lokaler Speicher, optionale Cloud und Zahlungen.", "Mach sie vor jedem Release leicht wiederverwendbar."],
+      ["Schulungsnotiz", "Bereite eine Onboarding-Notiz für ein neues Support-Teammitglied zum Capture-Workflow vor.", "Ergänze häufige Fehler, Qualitätsstandards und Eskalationsfälle.", "Kürze sie für eine interne Wissensdatenbank."],
+      ["Prompt-Bereinigung", "Schreibe diesen Prompt mit Rolle, Kontext, Einschränkungen, Beispielen und Ausgabeformat neu.", "Ergänze Prüfkriterien und eine finale Selbstkontrolle.", "Mach ihn für mehrere Support-Szenarien wiederverwendbar."],
+      ["Vertriebs-Einwand", "Beantworte: Ich nutze schon die normale Zwischenablage, warum brauche ich das?", "Antworte nutzenorientiert mit Beispielen: Recherche, Code, Screenshots und Quellenverlauf.", "Ergänze eine Kurzversion für eine Preis-FAQ."],
+      ["Tresor-Notiz", "Lege diese sensible Token-Notiz im Tresor ab und behalte den Quellenkontext.", "Schreibe sie als private Operations-Notiz mit minimaler Sichtbarkeit um."],
+      ["Gelöschter Entwurf", "Dieser alte Kampagnenentwurf soll vor endgültigem Löschen im Papierkorb bleiben.", "Ergänze kurz, warum der Entwurf zurückgezogen wurde."]
+    ]
+  };
+
+  Object.keys(extraTextSamples).forEach((language) => {
+    textSamples[language] = [...(textSamples[language] || []), ...extraTextSamples[language]];
+  });
+
+  const extraCodeSamples = {
+    en: [
+      ["Accessible icon button", "export function IconButton({ label, children, ...props }) {\n  return <button aria-label={label} title={label} {...props}>{children}</button>;\n}", "export function IconButton({ label, children, ...props }) {\n  return <button type=\"button\" aria-label={label} title={label} {...props}>{children}</button>;\n}"],
+      ["Clipboard write guard", "async function writeClipboard(text) {\n  await navigator.clipboard.writeText(text);\n  return true;\n}", "async function writeClipboard(text) {\n  if (!navigator.clipboard?.writeText) return false;\n  await navigator.clipboard.writeText(String(text || \"\"));\n  return true;\n}"],
+      ["Search predicate", "const matches = item.title.includes(query) || item.content.includes(query);", "const normalized = query.trim().toLowerCase();\nconst matches = [item.title, item.content, item.note, item.sourceUrl]\n  .filter(Boolean)\n  .some((value) => String(value).toLowerCase().includes(normalized));"],
+      ["Version label", "const label = `V${index + 1}`;", "const label = version.title?.trim() || `V${index + 1}`;\nconst ariaLabel = `${label} - ${version.createdAt}`;"],
+      ["Vault check", "if (!settings.vaultEnabled) throw new Error(\"vault-disabled\");", "if (!canUseFeature(\"vault\", settings)) {\n  throw new Error(\"pro-vault-required\");\n}"],
+      ["Trash restore", "item.categoryId = previousCategoryId || \"general\";", "const restoreCategoryId = item.previousCategoryId || \"general\";\nreturn { ...item, categoryId: restoreCategoryId, trashedAt: null };"]
+    ],
+    fr: [
+      ["Bouton icône accessible", "export function BoutonIcone({ libelle, children, ...props }) {\n  return <button aria-label={libelle} title={libelle} {...props}>{children}</button>;\n}", "export function BoutonIcone({ libelle, children, ...props }) {\n  return <button type=\"button\" aria-label={libelle} title={libelle} {...props}>{children}</button>;\n}"],
+      ["Écriture presse-papiers", "async function ecrirePressePapiers(texte) {\n  await navigator.clipboard.writeText(texte);\n  return true;\n}", "async function ecrirePressePapiers(texte) {\n  if (!navigator.clipboard?.writeText) return false;\n  await navigator.clipboard.writeText(String(texte || \"\"));\n  return true;\n}"],
+      ["Prédicat de recherche", "const correspond = item.title.includes(requete) || item.content.includes(requete);", "const normalise = requete.trim().toLowerCase();\nconst correspond = [item.title, item.content, item.note, item.sourceUrl]\n  .filter(Boolean)\n  .some((valeur) => String(valeur).toLowerCase().includes(normalise));"],
+      ["Libellé version", "const libelle = `V${index + 1}`;", "const libelle = version.title?.trim() || `V${index + 1}`;\nconst ariaLabel = `${libelle} - ${version.createdAt}`;"],
+      ["Contrôle coffre-fort", "if (!settings.vaultEnabled) throw new Error(\"vault-disabled\");", "if (!canUseFeature(\"vault\", settings)) {\n  throw new Error(\"pro-vault-required\");\n}"],
+      ["Restauration corbeille", "item.categoryId = previousCategoryId || \"general\";", "const categorieRestauree = item.previousCategoryId || \"general\";\nreturn { ...item, categoryId: categorieRestauree, trashedAt: null };"]
+    ],
+    es: [
+      ["Botón con icono accesible", "export function IconButton({ label, children, ...props }) {\n  return <button aria-label={label} title={label} {...props}>{children}</button>;\n}", "export function IconButton({ label, children, ...props }) {\n  return <button type=\"button\" aria-label={label} title={label} {...props}>{children}</button>;\n}"],
+      ["Escritura al portapapeles", "async function escribirPortapapeles(texto) {\n  await navigator.clipboard.writeText(texto);\n  return true;\n}", "async function escribirPortapapeles(texto) {\n  if (!navigator.clipboard?.writeText) return false;\n  await navigator.clipboard.writeText(String(texto || \"\"));\n  return true;\n}"],
+      ["Predicado de búsqueda", "const coincide = item.title.includes(query) || item.content.includes(query);", "const normalizado = query.trim().toLowerCase();\nconst coincide = [item.title, item.content, item.note, item.sourceUrl]\n  .filter(Boolean)\n  .some((valor) => String(valor).toLowerCase().includes(normalizado));"],
+      ["Etiqueta de versión", "const etiqueta = `V${index + 1}`;", "const etiqueta = version.title?.trim() || `V${index + 1}`;\nconst ariaLabel = `${etiqueta} - ${version.createdAt}`;"],
+      ["Control de caja fuerte", "if (!settings.vaultEnabled) throw new Error(\"vault-disabled\");", "if (!canUseFeature(\"vault\", settings)) {\n  throw new Error(\"pro-vault-required\");\n}"],
+      ["Restaurar papelera", "item.categoryId = previousCategoryId || \"general\";", "const categoria = item.previousCategoryId || \"general\";\nreturn { ...item, categoryId: categoria, trashedAt: null };"]
+    ],
+    it: [
+      ["Pulsante icona accessibile", "export function IconButton({ label, children, ...props }) {\n  return <button aria-label={label} title={label} {...props}>{children}</button>;\n}", "export function IconButton({ label, children, ...props }) {\n  return <button type=\"button\" aria-label={label} title={label} {...props}>{children}</button>;\n}"],
+      ["Scrittura appunti", "async function scriviAppunti(testo) {\n  await navigator.clipboard.writeText(testo);\n  return true;\n}", "async function scriviAppunti(testo) {\n  if (!navigator.clipboard?.writeText) return false;\n  await navigator.clipboard.writeText(String(testo || \"\"));\n  return true;\n}"],
+      ["Predicato ricerca", "const coincide = item.title.includes(query) || item.content.includes(query);", "const normalizzato = query.trim().toLowerCase();\nconst coincide = [item.title, item.content, item.note, item.sourceUrl]\n  .filter(Boolean)\n  .some((valore) => String(valore).toLowerCase().includes(normalizzato));"],
+      ["Etichetta versione", "const etichetta = `V${index + 1}`;", "const etichetta = version.title?.trim() || `V${index + 1}`;\nconst ariaLabel = `${etichetta} - ${version.createdAt}`;"],
+      ["Controllo cassaforte", "if (!settings.vaultEnabled) throw new Error(\"vault-disabled\");", "if (!canUseFeature(\"vault\", settings)) {\n  throw new Error(\"pro-vault-required\");\n}"],
+      ["Ripristino cestino", "item.categoryId = previousCategoryId || \"general\";", "const categoria = item.previousCategoryId || \"general\";\nreturn { ...item, categoryId: categoria, trashedAt: null };"]
+    ],
+    de: [
+      ["Zugänglicher Icon-Button", "export function IconButton({ label, children, ...props }) {\n  return <button aria-label={label} title={label} {...props}>{children}</button>;\n}", "export function IconButton({ label, children, ...props }) {\n  return <button type=\"button\" aria-label={label} title={label} {...props}>{children}</button>;\n}"],
+      ["Zwischenablage schreiben", "async function schreibeZwischenablage(text) {\n  await navigator.clipboard.writeText(text);\n  return true;\n}", "async function schreibeZwischenablage(text) {\n  if (!navigator.clipboard?.writeText) return false;\n  await navigator.clipboard.writeText(String(text || \"\"));\n  return true;\n}"],
+      ["Suchprädikat", "const passt = item.title.includes(query) || item.content.includes(query);", "const normalisiert = query.trim().toLowerCase();\nconst passt = [item.title, item.content, item.note, item.sourceUrl]\n  .filter(Boolean)\n  .some((wert) => String(wert).toLowerCase().includes(normalisiert));"],
+      ["Versionslabel", "const label = `V${index + 1}`;", "const label = version.title?.trim() || `V${index + 1}`;\nconst ariaLabel = `${label} - ${version.createdAt}`;"],
+      ["Tresorprüfung", "if (!settings.vaultEnabled) throw new Error(\"vault-disabled\");", "if (!canUseFeature(\"vault\", settings)) {\n  throw new Error(\"pro-vault-required\");\n}"],
+      ["Papierkorb wiederherstellen", "item.categoryId = previousCategoryId || \"general\";", "const kategorie = item.previousCategoryId || \"general\";\nreturn { ...item, categoryId: kategorie, trashedAt: null };"]
+    ]
+  };
+
+  Object.keys(extraCodeSamples).forEach((language) => {
+    codeSamples[language] = [...(codeSamples[language] || []), ...extraCodeSamples[language]];
+  });
+
   function resolveLanguage() {
     const queryLang = new URLSearchParams(global.location.search).get("lang");
     if (supportedLanguages.includes(queryLang)) return queryLang;
@@ -168,6 +272,28 @@
 
   function clone(value) {
     return value == null ? value : JSON.parse(JSON.stringify(value));
+  }
+
+  function enforceDemoProSettings(settings = {}) {
+    const now = Date.now();
+    return Object.assign({}, settings, {
+      demoMode: true,
+      dodoEnv: "live",
+      plan: "pro",
+      licenseStatus: "active",
+      licenseKey: settings.licenseKey || "DEMO-LIFETIME-PRO",
+      licenseKeyLast4: settings.licenseKeyLast4 || "PRO",
+      licenseKeyInstanceId: settings.licenseKeyInstanceId || "demo-instance",
+      licenseActivatedAt: settings.licenseActivatedAt || now - 86400000,
+      licenseLastVerifiedAt: now,
+      licenseLastSuccessfulVerifiedAt: now,
+      licenseDodoEnv: "live",
+      licenseProductName: "Ultimate Clipboard Pro - Lifetime License",
+      licensePlanId: "pro_lifetime",
+      licenseProof: settings.licenseProof || "demo-proof",
+      licenseProofVersion: "v1",
+      licenseIntegrityLastCheckedAt: now
+    });
   }
 
   function iconUrl(name) {
@@ -188,27 +314,31 @@
 
   function textItems(language) {
     const now = Date.now();
+    const categoryIds = ["general", "research-sources", "support-macros", "operations-weekly", "marketing-social", "product-roadmap", "legal-privacy", "people-training", "ai-prompts", "sales-objections", "vault", "trash"];
     return textSamples[language].map(([title, ...versions], index) => {
       const id = `demo-text-${index + 1}`;
       const captureVersions = makeVersions(id, title, versions, now - (index + 1) * 86400000);
-      const categoryIds = ["ai", "research", "support", "operations"];
       const l = copyByLang[language];
+      const categoryId = categoryIds[index] || "general";
+      const trashed = categoryId === "trash";
       return {
         id,
         title,
         content: versions[0],
         preview: versions[0].slice(0, 260),
         note: index === 0 ? "Demo Pro workspace" : "",
-        categoryId: categoryIds[index] || "general",
-        categoryName: [l.ai, l.research, l.support, l.operations][index] || l.general,
+        categoryId,
+        categoryName: categoryId === "vault" ? l.vault : categoryId === "trash" ? l.trash : l.general,
         sourceUrl: index === 0 ? "https://chatgpt.com/" : "https://docs.example.com/",
         sourceDomain: index === 0 ? "chatgpt.com" : "docs.example.com",
         sourceFaviconUrl: iconUrl("favicon_generic.png"),
         sourceTitle: title,
         createdAt: captureVersions[0].createdAt,
         updatedAt: captureVersions[captureVersions.length - 1].updatedAt,
-        isFavorite: index === 1,
-        isPinned: index === 0,
+        isFavorite: [1, 4, 7, 10].includes(index),
+        isPinned: [0, 5, 8].includes(index),
+        trashedAt: trashed ? now - 3600000 : null,
+        previousCategoryId: trashed ? "marketing-social" : null,
         captureVersions,
         activeVersionId: captureVersions[0].id,
         tags: []
@@ -218,27 +348,32 @@
 
   function devItems(language) {
     const now = Date.now();
+    const categoryIds = ["dev-general", "typescript-api", "react-components", "javascript-dom", "typescript-api", "react-components", "dev-vault", "dev-trash"];
     return codeSamples[language].map(([title, ...versions], index) => {
       const id = `demo-code-${index + 1}`;
       const captureVersions = makeVersions(id, title, versions, now - (index + 6) * 86400000);
+      const categoryId = categoryIds[index] || "dev-general";
+      const trashed = categoryId === "dev-trash";
       return {
         id,
         title,
         content: versions[0],
         preview: versions[0].slice(0, 260),
         note: "",
-        categoryId: index === 0 ? "javascript" : "typescript",
-        categoryName: index === 0 ? "JavaScript" : "TypeScript",
-        languageId: index === 0 ? "javascript" : "typescript",
-        languageName: index === 0 ? "JavaScript" : "TypeScript",
+        categoryId,
+        categoryName: categoryId.includes("typescript") ? "TypeScript" : categoryId.includes("react") ? "React" : categoryId === "dev-vault" ? (copyByLang[language]?.vault || "Vault") : categoryId === "dev-trash" ? (copyByLang[language]?.trash || "Trash") : "JavaScript",
+        languageId: categoryId.includes("typescript") ? "typescript" : categoryId.includes("react") ? "react" : "javascript",
+        languageName: categoryId.includes("typescript") ? "TypeScript" : categoryId.includes("react") ? "React" : "JavaScript",
         sourceUrl: "https://github.com/",
         sourceDomain: "github.com",
         sourceFaviconUrl: iconUrl("favicon_generic.png"),
         sourceTitle: title,
         createdAt: captureVersions[0].createdAt,
         updatedAt: captureVersions[captureVersions.length - 1].updatedAt,
-        isFavorite: index === 1,
-        isPinned: index === 0,
+        isFavorite: [1, 3, 6].includes(index),
+        isPinned: [0, 2, 5].includes(index),
+        trashedAt: trashed ? now - 5400000 : null,
+        previousCategoryId: trashed ? "javascript-dom" : null,
         captureVersions,
         activeVersionId: captureVersions[0].id,
         tags: []
@@ -281,9 +416,18 @@
       { id: "trash", name: l.trash, parentId: null, icon: "trash", color: "#ef4444", isSystem: true, createdAt: 0, order: 3 },
       { id: "vault", name: l.vault, parentId: null, icon: "vault", color: "#f59e0b", isSystem: true, createdAt: 0, order: 4 },
       { id: "ai", name: l.ai, parentId: null, icon: "dot", color: "#7c3aed", createdAt: 1, order: 10 },
+      { id: "ai-prompts", name: "Prompts", parentId: "ai", icon: "dot", color: "#7c3aed", createdAt: 1, order: 101 },
       { id: "research", name: l.research, parentId: null, icon: "dot", color: "#22c55e", createdAt: 1, order: 11 },
+      { id: "research-sources", name: "Sources", parentId: "research", icon: "dot", color: "#22c55e", createdAt: 1, order: 111 },
       { id: "support", name: l.support, parentId: null, icon: "dot", color: "#0ea5e9", createdAt: 1, order: 12 },
-      { id: "operations", name: l.operations, parentId: null, icon: "dot", color: "#f97316", createdAt: 1, order: 13 }
+      { id: "support-macros", name: "Macros", parentId: "support", icon: "dot", color: "#0ea5e9", createdAt: 1, order: 121 },
+      { id: "operations", name: l.operations, parentId: null, icon: "dot", color: "#f97316", createdAt: 1, order: 13 },
+      { id: "operations-weekly", name: "Weekly", parentId: "operations", icon: "dot", color: "#f97316", createdAt: 1, order: 131 },
+      { id: "marketing-social", name: "Social", parentId: null, icon: "dot", color: "#ec4899", createdAt: 1, order: 14 },
+      { id: "product-roadmap", name: "Roadmap", parentId: null, icon: "dot", color: "#06b6d4", createdAt: 1, order: 15 },
+      { id: "legal-privacy", name: "Privacy", parentId: null, icon: "dot", color: "#64748b", createdAt: 1, order: 16 },
+      { id: "people-training", name: "Training", parentId: null, icon: "dot", color: "#84cc16", createdAt: 1, order: 17 },
+      { id: "sales-objections", name: "Objections", parentId: null, icon: "dot", color: "#f59e0b", createdAt: 1, order: 18 }
     ];
   }
 
@@ -295,8 +439,11 @@
       { id: "dev-trash", name: l.trash, parentId: null, icon: "trash", color: "#ef4444", isSystem: true, createdAt: 0, order: 3 },
       { id: "dev-vault", name: l.vault, parentId: null, icon: "vault", color: "#f59e0b", isSystem: true, createdAt: 0, order: 4 },
       { id: "javascript", name: "JavaScript", parentId: null, icon: "dot", color: "#f7df1e", createdAt: 1, order: 10 },
+      { id: "javascript-dom", name: "DOM", parentId: "javascript", icon: "dot", color: "#f7df1e", createdAt: 1, order: 101 },
       { id: "typescript", name: "TypeScript", parentId: null, icon: "dot", color: "#3178c6", createdAt: 1, order: 11 },
-      { id: "react", name: "React", parentId: null, icon: "dot", color: "#61dafb", createdAt: 1, order: 12 }
+      { id: "typescript-api", name: "API", parentId: "typescript", icon: "dot", color: "#3178c6", createdAt: 1, order: 111 },
+      { id: "react", name: "React", parentId: null, icon: "dot", color: "#61dafb", createdAt: 1, order: 12 },
+      { id: "react-components", name: "Components", parentId: "react", icon: "dot", color: "#61dafb", createdAt: 1, order: 121 }
     ];
   }
 
@@ -314,7 +461,7 @@
   }
 
   function createDemoState(language = resolveLanguage()) {
-    const settings = {
+    const settings = enforceDemoProSettings({
       captureEnabled: true,
       imageCaptureEnabled: true,
       devCaptureEnabled: true,
@@ -363,7 +510,7 @@
       licenseProofVersion: "v1",
       licenseIntegrityLastCheckedAt: Date.now(),
       plan: "pro"
-    };
+    });
     return {
       settings,
       items: textItems(language),
@@ -422,7 +569,8 @@
     }
 
     function currentState() {
-      state.settings = store.mcp_settings;
+      state.settings = enforceDemoProSettings(store.mcp_settings);
+      store.mcp_settings = state.settings;
       state.items = store.mcp_clipboard_items;
       state.categories = store.mcp_categories;
       state.imageItems = store.mcp_image_items;
@@ -438,15 +586,17 @@
       let result = {};
       if (!keys) {
         result = clone(store);
+        result.mcp_settings = enforceDemoProSettings(result.mcp_settings);
       } else if (typeof keys === "string") {
-        result[keys] = clone(store[keys]);
+        result[keys] = clone(keys === "mcp_settings" ? enforceDemoProSettings(store[keys]) : store[keys]);
       } else if (Array.isArray(keys)) {
         keys.forEach((key) => {
-          result[key] = clone(store[key]);
+          result[key] = clone(key === "mcp_settings" ? enforceDemoProSettings(store[key]) : store[key]);
         });
       } else if (typeof keys === "object") {
         Object.keys(keys).forEach((key) => {
-          result[key] = store[key] === undefined ? keys[key] : clone(store[key]);
+          const value = store[key] === undefined ? keys[key] : store[key];
+          result[key] = key === "mcp_settings" ? enforceDemoProSettings(value) : clone(value);
         });
       }
       if (typeof callback === "function") {
@@ -459,8 +609,9 @@
     function storageSet(data = {}, callback) {
       const changes = {};
       Object.entries(data).forEach(([key, value]) => {
-        changes[key] = { oldValue: clone(store[key]), newValue: clone(value) };
-        store[key] = clone(value);
+        const nextValue = key === "mcp_settings" ? enforceDemoProSettings(value) : value;
+        changes[key] = { oldValue: clone(store[key]), newValue: clone(nextValue) };
+        store[key] = clone(nextValue);
       });
       changeListeners.slice().forEach((listener) => listener(changes, storageArea));
       if (typeof callback === "function") queueMicrotask(callback);
