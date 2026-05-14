@@ -8,7 +8,6 @@
   const demoFloatingHostId = "mcp-demo-floating-host";
   let managerShell = null;
   let blockedDialog = null;
-  let fastLauncher = null;
   const desktopQuery = window.matchMedia("(min-width: 1100px) and (hover: hover) and (pointer: fine)");
   const localCopyByLang = {
     en: {
@@ -122,33 +121,6 @@
     root.appendChild(message);
   }
 
-  function createFastLauncher() {
-    if (fastLauncher || !desktopQuery.matches) return;
-    fastLauncher = document.createElement("div");
-    fastLauncher.className = "ucp-demo-fast-launcher";
-    fastLauncher.setAttribute("aria-label", "Ultimate Clipboard Pro demo launcher");
-    [
-      ["icon128.png", () => showBlocked()],
-      ["tootls.png", () => showBlocked()],
-      ["manager.png", () => openManager({ mediaType: "text" })]
-    ].forEach(([icon, action]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.addEventListener("click", action);
-      const image = document.createElement("img");
-      image.src = `${runtimeBase}assets/icons/${icon}`;
-      image.alt = "";
-      button.appendChild(image);
-      fastLauncher.appendChild(button);
-    });
-    document.body.appendChild(fastLauncher);
-  }
-
-  function removeFastLauncher() {
-    fastLauncher?.remove();
-    fastLauncher = null;
-  }
-
   function closeManager() {
     if (!managerShell) return;
     managerShell.classList.remove("is-visible");
@@ -190,10 +162,8 @@
     if (event.data?.type === "UCP_DEMO_BLOCKED") showBlocked();
   });
 
-  createFastLauncher();
   if (!desktopQuery.matches) {
     renderDesktopOnlyMessage();
-    removeFastLauncher();
     return;
   }
   try {
@@ -210,11 +180,11 @@
 
     await window.UCP_DEMO_RUNTIME.loadSharedScripts();
     await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-demo-isolated-host`);
-    if (document.getElementById(demoFloatingHostId)) removeFastLauncher();
 
     root.dataset.ucpDemoRuntime = "real-extension";
   } catch (error) {
     console.warn("Ultimate Clipboard Pro demo could not start.", error);
-    root.dataset.ucpDemoRuntime = "fallback-launcher";
+    root.dataset.ucpDemoRuntime = "unavailable";
+    showBlocked();
   }
 })();

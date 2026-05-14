@@ -96,37 +96,6 @@
   min-height: 11rem;
 }
 
-.ucp-demo-fast-launcher {
-  position: fixed;
-  right: 18px;
-  bottom: 94px;
-  z-index: 2147483647;
-  display: grid;
-  gap: 8px;
-  width: 64px;
-  padding: 8px;
-  border-radius: 18px;
-  background: rgba(38, 38, 46, .92);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, .32);
-}
-
-.ucp-demo-fast-launcher button {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  border: 0;
-  border-radius: 14px;
-  background: #7c3aed;
-  cursor: pointer;
-}
-
-.ucp-demo-fast-launcher img {
-  width: 31px;
-  height: 31px;
-  object-fit: contain;
-}
-
 .ucp-demo-desktop-only {
   margin-top: 1.4rem;
   border: 1px solid rgba(255, 255, 255, .12);

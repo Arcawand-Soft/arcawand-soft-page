@@ -3,8 +3,8 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260514-demo-page";
-const demoScript = "/assets/ucp-demo.js?v=20260514-demo-isolated-host";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260514-demo-isolated-host";
+const demoScript = "/assets/ucp-demo.js?v=20260514-demo-instant-launcher";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260514-demo-instant-launcher";
 
 const langs = {
   en: {
@@ -764,6 +764,7 @@ ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-menu-fix">
 ${page === "demo" ? `<link rel="stylesheet" href="${demoStylesheet}">` : ""}
+${page === "demo" ? '<link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/icon128.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/tootls.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/screen_full_page_png.png">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
