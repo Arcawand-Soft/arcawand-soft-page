@@ -235,6 +235,8 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 }
 
 .ucp-static-hero {
+  display: grid;
+  justify-items: center;
   text-align: center;
   padding: 3rem 0 4rem;
 }
@@ -262,15 +264,24 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 }
 
 .ucp-static-hero h1 {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   margin: 1.1rem auto;
   max-width: 880px;
+  text-align: center;
   font-size: clamp(2.35rem, 5.5vw, 5.45rem);
   line-height: .98;
   letter-spacing: -.045em;
 }
 
 .ucp-heading-line {
-  display: block;
+  display: inline-block;
+  max-width: calc(100vw - 2rem);
+  margin-inline: auto;
+  text-align: center;
 }
 
 .ucp-heading-main,

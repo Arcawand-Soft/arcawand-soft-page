@@ -109,8 +109,9 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
 .band .section { padding-block: 54px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
 .band strong { display: block; font-size: clamp(1.6rem, 3vw, 2.7rem); letter-spacing: -.045em; }
 .band p { margin: 8px 0 0; color: hsl(var(--muted-foreground)); font-weight: 700; }
-.page-hero { padding-top: 150px; padding-bottom: 54px; }
-.page-hero h1 { font-size: clamp(2.6rem, 5vw, 5.3rem); }
+.page-hero { padding-top: 150px; padding-bottom: 54px; text-align: center; }
+.page-hero h1 { margin-inline: auto; font-size: clamp(2.6rem, 5vw, 5.3rem); text-align: center; }
+.page-hero .lead { margin-inline: auto; }
 .content-panel { border: 1px solid hsl(var(--border)); border-radius: 26px; background: hsl(var(--card) / .62); padding: clamp(24px,4vw,48px); color: hsl(var(--muted-foreground)); line-height: 1.75; font-weight: 620; }
 .content-panel h2 { color: #fff; margin: 28px 0 10px; font-size: 1.4rem; }
 .content-panel h2:first-child { margin-top: 0; }
