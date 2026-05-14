@@ -71,7 +71,7 @@
   position: fixed;
   right: 1.2rem;
   bottom: 1.2rem;
-  z-index: 2147483300;
+  z-index: 2147483647;
   width: min(24rem, calc(100vw - 2rem));
   opacity: 0;
   transform: translateY(.75rem);

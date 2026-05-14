@@ -330,6 +330,7 @@
       managerImageViewMode: "medium",
       managerTextViewMode: "card",
       managerDevViewMode: "card",
+      demoMode: true,
       driveSyncEnabled: false,
       driveSyncFrequency: "manual",
       dodoEnv: "live",
@@ -460,6 +461,10 @@
       if (type === "MCP_DRIVE_GET_STATUS") return { ok: true, data: { connected: false, syncEnabled: false } };
       if (type === "MCP_OPEN_MANAGER") {
         callbacks.openManager?.(message);
+        return { ok: true };
+      }
+      if (type === "MCP_CLOSE_FLOATING_PANEL") {
+        callbacks.closeManager?.();
         return { ok: true };
       }
       if (type === "MCP_CLOSE_FLOATING_PANEL") {

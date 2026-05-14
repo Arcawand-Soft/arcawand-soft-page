@@ -4409,7 +4409,7 @@
       ["floating-menu-settings", tr("ui.options")],
       ["floating-menu-privacy", tr("popup.privacy")],
       isPro ? ["floating-menu-pro-status", "", "pro-status"] : ["floating-menu-pro", tr("popup.pro"), "pro"],
-      ...(isPro ? [["floating-menu-support-developer", tr("popup.supportDeveloper"), "support"]] : []),
+      ...(isPro && !state.settings?.demoMode ? [["floating-menu-support-developer", tr("popup.supportDeveloper"), "support"]] : []),
       ["floating-menu-contact", tr("popup.contactDeveloper"), "contact"]
     ];
     menu.replaceChildren(...entries.map(([action, label, icon]) => {

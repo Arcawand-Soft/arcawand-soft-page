@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/assets/extension-runtime/sidepanel/">
     <title>Ultimate Clipboard Pro Demo Manager</title>
-    <script src="demo-runtime.js?v=20260514-real-runtime"></script>
+    <script src="../demo-runtime.js?v=20260514-real-runtime"></script>
     <script>
       (function installDemoManagerBridge() {
         const params = new URLSearchParams(location.search);
@@ -17,10 +18,11 @@
         });
         bridge.installChromeMock();
         window.__UCP_DEMO_BRIDGE__ = bridge;
+        window.close = () => parent.postMessage({ type: "UCP_DEMO_CLOSE_MANAGER" }, location.origin);
       })();
     </script>
-    <script src="shared/themeBoot.js"></script>
-    <link rel="stylesheet" href="sidepanel/sidepanel.css">
+    <script src="../shared/themeBoot.js"></script>
+    <link rel="stylesheet" href="sidepanel.css">
     <style>
       html,
       body {
@@ -35,9 +37,9 @@
       <header class="topbar">
         <div class="topbar-brand">
           <span class="topbar-app-icon-wrap">
-            <img class="topbar-app-icon" src="assets/icons/icon128.png" alt="" aria-hidden="true">
+            <img class="topbar-app-icon" src="../assets/icons/icon128.png" alt="" aria-hidden="true">
             <span class="brand-pro-badge is-manager-badge" data-role="brand-pro-badge" hidden aria-hidden="true">
-              <img src="assets/icons/pro-icon.png" alt="">
+              <img src="../assets/icons/pro-icon.png" alt="">
             </span>
           </span>
           <div class="topbar-copy">
@@ -47,24 +49,24 @@
         </div>
         <section class="media-tabs" role="tablist">
           <button id="textTab" type="button" class="is-active" aria-label="Texts" title="Texts">
-            <img class="tab-icon" src="assets/icons/text_icon.png" alt="" aria-hidden="true">
+            <img class="tab-icon" src="../assets/icons/text_icon.png" alt="" aria-hidden="true">
             <span class="sr-only media-tab-label">Texts</span>
           </button>
           <button id="devTab" type="button" aria-label="Codes" title="Codes">
-            <img class="tab-icon" src="assets/icons/dev.png" alt="" aria-hidden="true">
+            <img class="tab-icon" src="../assets/icons/dev.png" alt="" aria-hidden="true">
             <span class="sr-only media-tab-label">Codes</span>
           </button>
           <button id="imageTab" type="button" aria-label="Images" title="Images">
-            <img class="tab-icon" src="assets/icons/images_icon.png" alt="" aria-hidden="true">
+            <img class="tab-icon" src="../assets/icons/images_icon.png" alt="" aria-hidden="true">
             <span class="sr-only media-tab-label">Images</span>
           </button>
         </section>
         <div class="topbar-actions">
           <button id="openSourceTimeline" class="icon-button manager-timeline-button" type="button" aria-label="Source history" title="Source history">
-            <img src="assets/icons/historic-timeline.png" alt="" aria-hidden="true">
+            <img src="../assets/icons/historic-timeline.png" alt="" aria-hidden="true">
           </button>
           <button id="openTools" class="icon-button manager-tools-button" type="button" aria-label="Tools" title="Tools">
-            <img src="assets/icons/tootls.png" alt="" aria-hidden="true">
+            <img src="../assets/icons/tootls.png" alt="" aria-hidden="true">
           </button>
           <button id="openManagerMenu" class="manager-menu-button" type="button" aria-label="Menu" title="Menu" aria-haspopup="menu" aria-expanded="false">
             <svg class="menu-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -108,7 +110,7 @@
             <section id="itemsList" class="items-list" aria-label="Copy history"></section>
             <button id="openCreateItemFloating" class="view-create-item-button floating-create-item-button" type="button" data-manager-action="create-current-item">+</button>
             <button id="openMontage" class="advanced-search-button floating-montage-button" type="button">
-              <img class="floating-montage-icon" src="assets/icons/montage-lightmod.png" alt="" aria-hidden="true">
+              <img class="floating-montage-icon" src="../assets/icons/montage-lightmod.png" alt="" aria-hidden="true">
               <span data-role="montage-button-label">Montage</span>
             </button>
           </section>
@@ -116,27 +118,27 @@
       </section>
     </main>
 
-    <script src="shared/constants.js"></script>
-    <script src="shared/utils.js"></script>
-    <script src="shared/locales/en.js"></script>
-    <script src="shared/locales/fr.js"></script>
-    <script src="shared/locales/de.js"></script>
-    <script src="shared/locales/es.js"></script>
-    <script src="shared/locales/it.js"></script>
-    <script src="shared/i18n.js"></script>
-    <script src="shared/dodoConfig.js"></script>
-    <script src="shared/featureGate.js"></script>
-    <script src="shared/search.js"></script>
-    <script src="shared/defaultCategories.js"></script>
-    <script src="shared/defaultImageCategories.js"></script>
-    <script src="shared/defaultDevCategories.js"></script>
-    <script src="shared/codeDetector.js"></script>
-    <script src="shared/tools.js"></script>
-    <script src="shared/classifier.js"></script>
-    <script src="shared/storage.js"></script>
-    <script src="shared/licenseManager.js"></script>
-    <script src="shared/clipboard.js"></script>
-    <script src="sidepanel/sidepanel.js"></script>
+    <script src="../shared/constants.js"></script>
+    <script src="../shared/utils.js"></script>
+    <script src="../shared/locales/en.js"></script>
+    <script src="../shared/locales/fr.js"></script>
+    <script src="../shared/locales/de.js"></script>
+    <script src="../shared/locales/es.js"></script>
+    <script src="../shared/locales/it.js"></script>
+    <script src="../shared/i18n.js"></script>
+    <script src="../shared/dodoConfig.js"></script>
+    <script src="../shared/featureGate.js"></script>
+    <script src="../shared/search.js"></script>
+    <script src="../shared/defaultCategories.js"></script>
+    <script src="../shared/defaultImageCategories.js"></script>
+    <script src="../shared/defaultDevCategories.js"></script>
+    <script src="../shared/codeDetector.js"></script>
+    <script src="../shared/tools.js"></script>
+    <script src="../shared/classifier.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/licenseManager.js"></script>
+    <script src="../shared/clipboard.js"></script>
+    <script src="sidepanel.js"></script>
     <script>
       window.addEventListener("load", () => {
         const tab = new URLSearchParams(location.search).get("tab");

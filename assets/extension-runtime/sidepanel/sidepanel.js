@@ -1246,7 +1246,7 @@
       ["settings", t("ui.options")],
       ["privacy", t("popup.privacy")],
       isPro ? ["pro-status", "", "pro-status"] : ["pro", t("popup.pro"), "pro"],
-      ...(isPro ? [["support-developer", t("popup.supportDeveloper"), "support"]] : []),
+      ...(isPro && !state.settings?.demoMode ? [["support-developer", t("popup.supportDeveloper"), "support"]] : []),
       ["contact", t("popup.contactDeveloper"), "contact"]
     ];
     managerMenu.replaceChildren(...menuItems.map(([action, label, icon]) => {
