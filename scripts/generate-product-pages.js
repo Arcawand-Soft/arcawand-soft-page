@@ -662,11 +662,11 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css">
-${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css">' : ""}
+${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=20260514-copycat">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
-${page === "demo" ? '<script defer src="/assets/ucp-demo.js"></script>' : ""}
+${page === "demo" ? '<script defer src="/assets/ucp-demo.js?v=20260514-copycat"></script>' : ""}
 </head>
 <body class="ucp-static-page${page === "demo" ? " ucp-demo-page" : ""}">
 <a class="arcawand-root-return" href="${l.home}" aria-label="${esc(l.back)}">&larr; ArcaWand Soft</a>
