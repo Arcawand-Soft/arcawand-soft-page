@@ -3674,6 +3674,64 @@
     window.setTimeout(() => panel.classList.remove("mcp-launcher-pulse"), 620);
   }
 
+  function isDemoMode() {
+    return Boolean(state.settings?.demoMode);
+  }
+
+  function showDemoBlockedNotice() {
+    chrome.runtime.sendMessage({ type: "MCP_DEMO_BLOCKED" }).catch(() => {
+      showToast(tr("common.error"));
+    });
+  }
+
+  function blockDemoAction(event) {
+    if (!isDemoMode()) return false;
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    showDemoBlockedNotice();
+    return true;
+  }
+
+  const DEMO_BLOCKED_FLOATING_ACTIONS = new Set([
+    "capture-full-page",
+    "open-tool",
+    "copy-emoji",
+    "copy-special-character",
+    "start-color-pick",
+    "start-image-text-capture",
+    "search-word-replacer",
+    "replace-word-replacer",
+    "copy-color-format",
+    "copy-tool-output",
+    "capture-tool-output",
+    "floating-menu-settings",
+    "floating-menu-pro",
+    "floating-menu-pro-status",
+    "floating-menu-support-developer",
+    "capture-record",
+    "capture-pause",
+    "classify-item",
+    "toggle-favorite",
+    "toggle-image-favorite",
+    "toggle-image-pin",
+    "delete-image",
+    "classify-image",
+    "download-image",
+    "open-image-source",
+    "copy-image",
+    "toggle-pin",
+    "delete-item",
+    "edit-item",
+    "open-source",
+    "add-subcategory",
+    "confirm-subcategory",
+    "capture-dev-text-general",
+    "capture-dev-text-classify",
+    "accept-dev-suggestion",
+    "choose-dev-language",
+    "choose-dev-subcategory"
+  ]);
+
   async function handlePanelClick(event) {
     const floatingMenu = shadowRoot?.querySelector("[data-role='floating-menu']");
     if (floatingMenu && !floatingMenu.hidden && !event.target.closest("[data-role='floating-menu']") && !event.target.closest("[data-action='open-floating-menu']")) {
@@ -3685,6 +3743,7 @@
     }
     const action = event.target.closest("[data-action]")?.dataset.action;
     const actionTarget = event.target.closest("[data-action]");
+    if (DEMO_BLOCKED_FLOATING_ACTIONS.has(action) && blockDemoAction(event)) return;
     if (shouldSuppressFloatingLauncherClick(action)) {
       event.preventDefault();
       event.stopPropagation();
@@ -4290,6 +4349,7 @@
     }
 
     if (copyButton) {
+      if (blockDemoAction(event)) return;
       const item = state.items.find((current) => current.id === copyButton.dataset.copyItemId);
       const mediaType = copyButton.dataset.mediaType || activeFloatingTab;
       const resolvedItem = mediaType === "dev"
@@ -4303,6 +4363,7 @@
 
     const readyPasteCard = event.target.closest(".mcp-panel:not(.is-minimized) .mcp-item[data-item-id], .mcp-panel:not(.is-minimized) .mcp-image-card[data-item-id]");
     if (readyPasteCard && !event.target.closest("button, a, input, textarea, select, [role='button'], [data-action], [data-copy-item-id]")) {
+      if (blockDemoAction(event)) return;
       const mediaType = readyPasteCard.dataset.mediaType || activeFloatingTab;
       if (mediaType === "image") {
         const item = state.imageItems.find((current) => current.id === readyPasteCard.dataset.itemId);
@@ -7948,6 +8009,7 @@
   }
 
   async function copyFloatingTextLikeItemToClipboard(item, mediaType = "text", feedbackCard = null) {
+    if (blockDemoAction()) return;
     try {
       await navigator.clipboard.writeText(item.content);
       const nextUsageCount = (item.usageCount || 0) + 1;
@@ -7970,6 +8032,7 @@
   }
 
   async function copyImageToClipboard(item, feedbackCard = null) {
+    if (blockDemoAction()) return;
     try {
       const blob = await imageItemToBlob(item);
       if (!globalThis.ClipboardItem) throw new Error("ClipboardItem unavailable");
@@ -9264,6 +9327,7 @@
   }
 
   async function deleteItemWithConfirm(item, mediaType = "text") {
+    if (blockDemoAction()) return;
     if (state.settings.confirmBeforeDelete) {
       const confirmed = await openFloatingConfirmDialog({
         title: tr("common.delete"),
@@ -9283,6 +9347,7 @@
   }
 
   async function deleteImageWithConfirm(item) {
+    if (blockDemoAction()) return;
     if (state.settings.confirmBeforeDelete) {
       const confirmed = await openFloatingConfirmDialog({
         title: tr("common.delete"),

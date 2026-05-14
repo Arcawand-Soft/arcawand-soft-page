@@ -19,7 +19,7 @@
       design: "Design",
       web: "Web images",
       blockedTitle: "Demo mode",
-      blocked: "This is the real Ultimate Clipboard Pro interface running in demo mode. This action is disabled on the website demo.",
+      blocked: "This is the real Ultimate Clipboard Pro interface running in demo mode. This action is disabled on the website demo. Please install the extension.",
       imagePrefix: "Demo image"
     },
     fr: {
@@ -35,7 +35,7 @@
       design: "Design",
       web: "Images web",
       blockedTitle: "Mode démo",
-      blocked: "Ceci est la vraie interface Ultimate Clipboard Pro exécutée en mode démo. Cette action est désactivée sur la démo du site.",
+      blocked: "Ceci est la vraie interface Ultimate Clipboard Pro exécutée en mode démo. Cette action est désactivée sur la démo du site. Merci d'installer l'extension.",
       imagePrefix: "Image de démo"
     },
     es: {
@@ -51,7 +51,7 @@
       design: "Diseño",
       web: "Imágenes web",
       blockedTitle: "Modo demo",
-      blocked: "Esta es la interfaz real de Ultimate Clipboard Pro ejecutándose en modo demo. Esta acción está desactivada en la demo del sitio.",
+      blocked: "Esta es la interfaz real de Ultimate Clipboard Pro ejecutándose en modo demo. Esta acción está desactivada en la demo del sitio. Instala la extensión.",
       imagePrefix: "Imagen de demo"
     },
     it: {
@@ -67,7 +67,7 @@
       design: "Design",
       web: "Immagini web",
       blockedTitle: "Modalità demo",
-      blocked: "Questa è la vera interfaccia di Ultimate Clipboard Pro eseguita in modalità demo. Questa azione è disattivata nella demo del sito.",
+      blocked: "Questa è la vera interfaccia di Ultimate Clipboard Pro eseguita in modalità demo. Questa azione è disattivata nella demo del sito. Installa l'estensione.",
       imagePrefix: "Immagine demo"
     },
     de: {
@@ -83,7 +83,7 @@
       design: "Design",
       web: "Webbilder",
       blockedTitle: "Demo-Modus",
-      blocked: "Dies ist die echte Ultimate Clipboard Pro Oberfläche im Demo-Modus. Diese Aktion ist in der Website-Demo deaktiviert.",
+      blocked: "Dies ist die echte Ultimate Clipboard Pro Oberfläche im Demo-Modus. Diese Aktion ist in der Website-Demo deaktiviert. Bitte installieren Sie die Erweiterung.",
       imagePrefix: "Demo-Bild"
     }
   };
@@ -377,8 +377,34 @@
       mcp_dev_categories: state.devCategories,
       mcp_snippets: [],
       mcp_templates: [],
-      mcp_manager_view_state: {}
+      mcp_manager_view_state: {},
+      mcp_vault_auth: {
+        version: 1,
+        algorithm: "PBKDF2-SHA-256",
+        iterations: 250000,
+        salt: "AAAAAAAAAAAAAAAAAAAAAA==",
+        hash: "demo-vault-hash",
+        recovery: {
+          questionId: "1",
+          iterations: 250000,
+          salt: "AAAAAAAAAAAAAAAAAAAAAA==",
+          hash: "demo-vault-recovery"
+        },
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
     };
+
+    function showBlocked() {
+      callbacks.showBlocked?.();
+      return { ok: false, error: "Demo mode" };
+    }
+
+    function isDemoDisplayOnlyUpdate(updates = {}) {
+      const allowedKeys = new Set(["activeVersionId", "lastViewedVersionId"]);
+      const keys = Object.keys(updates || {});
+      return keys.length > 0 && keys.every((key) => allowedKeys.has(key));
+    }
 
     function currentState() {
       state.settings = store.mcp_settings;
@@ -471,29 +497,31 @@
         callbacks.closeManager?.();
         return { ok: true };
       }
+      if (type === "MCP_DEMO_BLOCKED") return showBlocked();
       if (type === "MCP_UPDATE_ITEM") {
+        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
         updateItemList("mcp_clipboard_items", message.itemId, message.updates);
         dispatch("ITEM_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
       if (type === "MCP_UPDATE_DEV_ITEM") {
+        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
         updateItemList("mcp_dev_items", message.itemId, message.updates);
         dispatch("DEV_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
       if (type === "MCP_UPDATE_IMAGE_ITEM") {
+        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
         updateItemList("mcp_image_items", message.itemId, message.updates);
         dispatch("IMAGE_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
       if (type === "MCP_FETCH_IMAGE_AS_DATA_URL") return { ok: true, dataUrl: message.url || "", data: { dataUrl: message.url || "" } };
       if (type === "MCP_OPEN_TOOLS_OVERLAY") {
-        callbacks.openTools?.();
-        return { ok: true };
+        return { ok: false, error: "Demo manager should open its local tools window." };
       }
       if (/COPY|CREATE|DELETE|OPEN_OPTIONS|OPEN_SOURCE|CAPTURE|DRIVE|DODO|RUN_OCR|START_|CLEAR|RESTORE|ACTIVATE|VALIDATE|RESET|SEARCH_OVERLAY/.test(type)) {
-        callbacks.showBlocked?.();
-        return { ok: false, error: "Demo mode" };
+        return showBlocked();
       }
       return { ok: true };
     }

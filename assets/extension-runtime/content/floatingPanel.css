@@ -270,7 +270,7 @@ input[type="checkbox"] {
   height: auto;
   min-height: 0;
   bottom: var(--launcher-bottom, 94px);
-  opacity: 0.58;
+  opacity: 1;
   overflow: visible;
   background: transparent;
   border-color: transparent;
