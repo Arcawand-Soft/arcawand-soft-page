@@ -385,13 +385,31 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
   .ucp-product-nav {
     top: 4.2rem;
     width: min(100% - 1.5rem, 34rem);
-    justify-content: center;
+    justify-content: flex-start;
     overflow-x: auto;
+    overflow-y: hidden;
+    max-width: calc(100vw - 1.5rem);
+    padding-inline: .35rem;
+    scroll-padding-inline: .35rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .28) transparent;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+  .ucp-product-nav::-webkit-scrollbar { height: .28rem; }
+  .ucp-product-nav::-webkit-scrollbar-track { background: transparent; }
+  .ucp-product-nav::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .24);
+  }
+  .ucp-product-nav a {
+    flex: 0 0 auto;
+    padding-inline: .75rem;
   }
   body.ucp-product-scrolled .ucp-product-nav {
     top: 4.2rem;
+    opacity: .5;
   }
-  .ucp-product-nav a { padding-inline: .75rem; }
   .ucp-static-main { padding-top: 9.6rem; }
   .ucp-page-grid { grid-template-columns: 1fr; }
   .ucp-side-card { position: static; }
