@@ -100,7 +100,7 @@
   position: fixed;
   right: 18px;
   bottom: 94px;
-  z-index: 2147483000;
+  z-index: 2147483647;
   display: grid;
   gap: 8px;
   width: 64px;
@@ -118,7 +118,7 @@
   border: 0;
   border-radius: 14px;
   background: #7c3aed;
-  cursor: wait;
+  cursor: pointer;
 }
 
 .ucp-demo-fast-launcher img {

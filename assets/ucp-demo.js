@@ -5,6 +5,7 @@
   if (!root || !window.location.pathname.includes("/ultimate-clipboard-pro/demo")) return;
 
   const runtimeBase = "/assets/extension-runtime/";
+  const demoFloatingHostId = "mcp-demo-floating-host";
   let managerShell = null;
   let blockedDialog = null;
   let fastLauncher = null;
@@ -125,10 +126,15 @@
     if (fastLauncher || !desktopQuery.matches) return;
     fastLauncher = document.createElement("div");
     fastLauncher.className = "ucp-demo-fast-launcher";
-    fastLauncher.setAttribute("aria-hidden", "true");
-    ["icon128.png", "tootls.png", "manager.png"].forEach((icon) => {
+    fastLauncher.setAttribute("aria-label", "Ultimate Clipboard Pro demo launcher");
+    [
+      ["icon128.png", () => showBlocked()],
+      ["tootls.png", () => showBlocked()],
+      ["manager.png", () => openManager({ mediaType: "text" })]
+    ].forEach(([icon, action]) => {
       const button = document.createElement("button");
       button.type = "button";
+      button.addEventListener("click", action);
       const image = document.createElement("img");
       image.src = `${runtimeBase}assets/icons/${icon}`;
       image.alt = "";
@@ -154,7 +160,7 @@
 
   function openManager(message = {}) {
     const lang = window.UCP_DEMO_RUNTIME?.resolveLanguage?.() || "en";
-    const floatingPanelRoot = document.querySelector("ultimate-clipboard-pro-panel")?.shadowRoot;
+    const floatingPanelRoot = document.getElementById(demoFloatingHostId)?.shadowRoot;
     floatingPanelRoot?.querySelector("[data-action='close-panel']")?.click();
     floatingPanelRoot?.querySelector(".mcp-panel")?.classList.add("is-minimized");
     if (!managerShell) {
@@ -190,20 +196,25 @@
     removeFastLauncher();
     return;
   }
-  await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-pro-dataset`);
-  const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
-  const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
-    openManager,
-    closeManager,
-    showBlocked,
-    openTools: showBlocked
-  });
-  bridge.installChromeMock();
-  window.__UCP_DEMO_BRIDGE__ = bridge;
+  try {
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-pro-dataset`);
+    const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
+    const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
+      openManager,
+      closeManager,
+      showBlocked,
+      openTools: showBlocked
+    });
+    bridge.installChromeMock();
+    window.__UCP_DEMO_BRIDGE__ = bridge;
 
-  await window.UCP_DEMO_RUNTIME.loadSharedScripts();
-  await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-demo-fixes`);
-  removeFastLauncher();
+    await window.UCP_DEMO_RUNTIME.loadSharedScripts();
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-demo-isolated-host`);
+    if (document.getElementById(demoFloatingHostId)) removeFastLauncher();
 
-  root.dataset.ucpDemoRuntime = "real-extension";
+    root.dataset.ucpDemoRuntime = "real-extension";
+  } catch (error) {
+    console.warn("Ultimate Clipboard Pro demo could not start.", error);
+    root.dataset.ucpDemoRuntime = "fallback-launcher";
+  }
 })();

@@ -3,6 +3,8 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260514-demo-page";
+const demoScript = "/assets/ucp-demo.js?v=20260514-demo-isolated-host";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260514-demo-isolated-host";
 
 const langs = {
   en: {
@@ -761,11 +763,11 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-menu-fix">
-${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=20260514-demo-reminder">' : ""}
+${page === "demo" ? `<link rel="stylesheet" href="${demoStylesheet}">` : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
-${page === "demo" ? '<script defer src="/assets/ucp-demo.js?v=20260514-pro-dataset"></script>' : ""}
+${page === "demo" ? `<script defer src="${demoScript}"></script>` : ""}
 </head>
 <body class="ucp-static-page${page === "demo" ? " ucp-demo-page" : ""}">
 <a class="arcawand-root-return" href="${l.home}" aria-label="${esc(l.back)}">&larr; ArcaWand Soft</a>

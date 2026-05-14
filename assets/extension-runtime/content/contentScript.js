@@ -1,6 +1,11 @@
 (function initContentScript() {
-  if (window.__ULTIMATE_CLIPBOARD_PRO_CONTENT_ACTIVE__) return;
-  window.__ULTIMATE_CLIPBOARD_PRO_CONTENT_ACTIVE__ = true;
+  const isDemoRuntime = Boolean(window.__UCP_DEMO_BRIDGE__);
+  const contentActiveKey = isDemoRuntime
+    ? "__ULTIMATE_CLIPBOARD_PRO_DEMO_CONTENT_ACTIVE__"
+    : "__ULTIMATE_CLIPBOARD_PRO_CONTENT_ACTIVE__";
+  const floatingHostId = isDemoRuntime ? "mcp-demo-floating-host" : "mcp-floating-host";
+  if (window[contentActiveKey]) return;
+  window[contentActiveKey] = true;
 
   const MESSAGE_TYPES = {
     COPY_DETECTED: "MCP_COPY_DETECTED",
@@ -441,7 +446,7 @@
     if (isSensitiveTarget(event.target) || isMediaPlaybackInteraction(event.target)) return;
     const control = closestInteractiveControl(event.target);
     if (!control || !isLikelyCopyControl(control)) return;
-    if (control.closest?.("#mcp-floating-host, .mcp-search-overlay, .mcp-editor-modal")) return;
+    if (control.closest?.("#mcp-floating-host, #mcp-demo-floating-host, .mcp-search-overlay, .mcp-editor-modal")) return;
     const domTextBeforeClick = extractAiCopyText(control);
     aiCopyCaptureInFlight = true;
     lastHandledCopyEventAt = Date.now();
@@ -948,7 +953,7 @@
   }
 
   async function captureFullPageScreenshot(target) {
-    const panelHost = document.getElementById("mcp-floating-host");
+    const panelHost = document.getElementById(floatingHostId);
     const previousVisibility = panelHost?.style.visibility || "";
 
     try {
@@ -1880,7 +1885,7 @@
 
   function injectFloatingPanel() {
     const editorVersion = "unified-text-editor-v5";
-    const existingHost = document.getElementById("mcp-floating-host");
+    const existingHost = document.getElementById(floatingHostId);
     if (existingHost) {
       const existingEditor = existingHost.shadowRoot?.querySelector("[data-role='editor']");
       if (existingEditor?.dataset.editorVersion === editorVersion) {
@@ -1890,7 +1895,7 @@
       existingHost.remove();
     }
     const host = document.createElement("div");
-    host.id = "mcp-floating-host";
+    host.id = floatingHostId;
     host.style.visibility = "hidden";
     document.documentElement.appendChild(host);
     shadowRoot = host.attachShadow({ mode: "open" });
