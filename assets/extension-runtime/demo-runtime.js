@@ -263,6 +263,725 @@
     codeSamples[language] = [...(codeSamples[language] || []), ...extraCodeSamples[language]];
   });
 
+  const richCategoryLabels = {
+    text: {
+      "research-sources": { en: "Sources", fr: "Sources", es: "Fuentes", it: "Fonti", de: "Quellen" },
+      "research-competitors": { en: "Competitors", fr: "Concurrents", es: "Competidores", it: "Concorrenti", de: "Wettbewerber" },
+      "research-quotes": { en: "Quotes", fr: "Citations", es: "Citas", it: "Citazioni", de: "Zitate" },
+      "support-macros": { en: "Macros", fr: "Macros", es: "Macros", it: "Macro", de: "Makros" },
+      "support-incidents": { en: "Incidents", fr: "Incidents", es: "Incidencias", it: "Incidenti", de: "Vorfälle" },
+      "operations-weekly": { en: "Weekly", fr: "Hebdo", es: "Semanal", it: "Settimanale", de: "Wöchentlich" },
+      "operations-process": { en: "Processes", fr: "Processus", es: "Procesos", it: "Processi", de: "Prozesse" },
+      marketing: { en: "Marketing", fr: "Marketing", es: "Marketing", it: "Marketing", de: "Marketing" },
+      "marketing-social": { en: "Social", fr: "Social", es: "Social", it: "Social", de: "Social" },
+      "marketing-newsletter": { en: "Newsletter", fr: "Newsletter", es: "Newsletter", it: "Newsletter", de: "Newsletter" },
+      "product-roadmap": { en: "Roadmap", fr: "Roadmap", es: "Roadmap", it: "Roadmap", de: "Roadmap" },
+      "product-feedback": { en: "Feedback", fr: "Retours", es: "Feedback", it: "Feedback", de: "Feedback" },
+      legal: { en: "Legal", fr: "Juridique", es: "Legal", it: "Legale", de: "Rechtliches" },
+      "legal-privacy": { en: "Privacy", fr: "Confidentialité", es: "Privacidad", it: "Privacy", de: "Datenschutz" },
+      "legal-release": { en: "Release checks", fr: "Contrôles sortie", es: "Revisión lanzamiento", it: "Controlli rilascio", de: "Release-Prüfung" },
+      people: { en: "People", fr: "Équipe", es: "Equipo", it: "Team", de: "Team" },
+      "people-training": { en: "Training", fr: "Formation", es: "Formación", it: "Formazione", de: "Schulung" },
+      "people-onboarding": { en: "Onboarding", fr: "Accueil", es: "Onboarding", it: "Onboarding", de: "Onboarding" },
+      "ai-prompts": { en: "Prompts", fr: "Prompts", es: "Prompts", it: "Prompt", de: "Prompts" },
+      "ai-evaluation": { en: "Evaluation", fr: "Évaluation", es: "Evaluación", it: "Valutazione", de: "Bewertung" },
+      sales: { en: "Sales", fr: "Ventes", es: "Ventas", it: "Vendite", de: "Vertrieb" },
+      "sales-objections": { en: "Objections", fr: "Objections", es: "Objeciones", it: "Obiezioni", de: "Einwände" },
+      "sales-followups": { en: "Follow-ups", fr: "Relances", es: "Seguimientos", it: "Follow-up", de: "Nachfassmails" },
+      "design-copy": { en: "Interface copy", fr: "Texte UI", es: "Texto UI", it: "Testi UI", de: "UI-Texte" },
+      "design-checklist": { en: "Review", fr: "Relecture", es: "Revisión", it: "Revisione", de: "Review" }
+    },
+    dev: {
+      "javascript-dom": { en: "DOM", fr: "DOM", es: "DOM", it: "DOM", de: "DOM" },
+      "javascript-events": { en: "Events", fr: "Événements", es: "Eventos", it: "Eventi", de: "Events" },
+      "typescript-api": { en: "API", fr: "API", es: "API", it: "API", de: "API" },
+      "typescript-storage": { en: "Storage", fr: "Stockage", es: "Almacenamiento", it: "Storage", de: "Speicher" },
+      "react-components": { en: "Components", fr: "Composants", es: "Componentes", it: "Componenti", de: "Komponenten" },
+      "react-hooks": { en: "Hooks", fr: "Hooks", es: "Hooks", it: "Hook", de: "Hooks" },
+      "css-layout": { en: "Layout", fr: "Mise en page", es: "Layout", it: "Layout", de: "Layout" },
+      "html-templates": { en: "Templates", fr: "Templates", es: "Plantillas", it: "Template", de: "Templates" },
+      "python-automation": { en: "Automation", fr: "Automatisation", es: "Automatización", it: "Automazione", de: "Automatisierung" },
+      "sql-reports": { en: "Reports", fr: "Rapports", es: "Informes", it: "Report", de: "Berichte" },
+      "node-workers": { en: "Workers", fr: "Workers", es: "Workers", it: "Worker", de: "Worker" },
+      "tests-playwright": { en: "Tests", fr: "Tests", es: "Tests", it: "Test", de: "Tests" }
+    }
+  };
+
+  function localized(map, language) {
+    return map?.[language] || map?.en || "";
+  }
+
+  function sampleWithMeta(meta, versions) {
+    const item = [localized(meta.title, meta.language || "en"), ...versions];
+    item.categoryId = meta.categoryId;
+    item.languageId = meta.languageId;
+    item.languageName = meta.languageName;
+    item.sourceDomain = meta.sourceDomain;
+    item.sourceUrl = meta.sourceUrl;
+    item.note = meta.note || "";
+    return item;
+  }
+
+  const textNarration = {
+    en: {
+      context: "Context",
+      decision: "Decision",
+      next: "Next actions",
+      version: "Revision",
+      sentence: "This capture was kept because it is reused across client messages, internal notes, product planning and browser-based research. It includes the exact wording, the source context and the operational nuance that normally disappears after a few minutes of tab switching.",
+      refined: "This version is longer because the user has refined the capture after using it in a real workflow. It keeps the original intent, adds clearer sequencing, removes vague wording and makes the reusable part obvious.",
+      action: "Before using it again, verify the date, adapt the tone to the audience, keep the useful source URL attached and add a short note if the capture becomes part of a repeatable workflow.",
+      reusable: "keep this as a reusable capture with a clear title, source domain and category path.",
+      operational: "convert the capture into a more operational note with bullets, ownership, risk, and a suggested next step.",
+      attach: "attach a short personal note, mark it as reusable, and keep the source URL visible for later verification.",
+      keep: "save the strongest phrasing, preserve the supporting context, and make sure the capture can be found by title, note, URL and category.",
+      reuse: "use it as a source-backed block, then update the title if a more precise project name appears."
+    },
+    fr: {
+      context: "Contexte",
+      decision: "Décision",
+      next: "Actions suivantes",
+      version: "Révision",
+      sentence: "Cette capture a été conservée parce qu'elle sert souvent dans les messages clients, les notes internes, la planification produit et la recherche dans le navigateur. Elle garde la formulation exacte, le contexte source et la nuance opérationnelle qui disparaît normalement après quelques minutes de changement d'onglet.",
+      refined: "Cette version est plus longue parce que l'utilisateur a affiné la capture après l'avoir utilisée dans un vrai flux de travail. Elle garde l'intention d'origine, clarifie l'enchaînement, retire les formulations vagues et rend la partie réutilisable évidente.",
+      action: "Avant de la réutiliser, vérifier la date, adapter le ton au destinataire, conserver l'URL source utile et ajouter une note courte si la capture devient un flux récurrent.",
+      reusable: "conserver cette capture comme bloc réutilisable avec un titre clair, un domaine source et un chemin de catégorie.",
+      operational: "transformer la capture en note plus opérationnelle avec puces, responsable, risque et prochaine étape suggérée.",
+      attach: "ajouter une note personnelle courte, la marquer comme réutilisable et garder l'URL source visible pour vérification.",
+      keep: "conserver la formulation la plus forte, préserver le contexte utile et vérifier que la capture reste trouvable par titre, note, URL et catégorie.",
+      reuse: "l'utiliser comme bloc appuyé par une source, puis mettre à jour le titre si un nom de projet plus précis apparaît."
+    },
+    es: {
+      context: "Contexto",
+      decision: "Decisión",
+      next: "Próximas acciones",
+      version: "Revisión",
+      sentence: "Esta captura se conserva porque se reutiliza en mensajes a clientes, notas internas, planificación de producto e investigación en el navegador. Mantiene la formulación exacta, el contexto de origen y el matiz operativo que normalmente se pierde tras cambiar de pestaña varias veces.",
+      refined: "Esta versión es más larga porque el usuario ha refinado la captura después de usarla en un flujo real. Mantiene la intención original, aclara la secuencia, elimina frases vagas y deja evidente la parte reutilizable.",
+      action: "Antes de reutilizarla, comprueba la fecha, adapta el tono al destinatario, conserva la URL de origen útil y añade una nota breve si la captura pasa a formar parte de un flujo repetible.",
+      reusable: "guardar esta captura como bloque reutilizable con título claro, dominio de origen y ruta de categoría.",
+      operational: "convertir la captura en una nota más operativa con puntos, responsable, riesgo y siguiente paso sugerido.",
+      attach: "añadir una nota personal breve, marcarla como reutilizable y mantener visible la URL de origen para verificarla.",
+      keep: "guardar la formulación más fuerte, preservar el contexto de apoyo y asegurar que la captura se encuentre por título, nota, URL y categoría.",
+      reuse: "usarla como bloque respaldado por una fuente y actualizar el título si aparece un nombre de proyecto más preciso."
+    },
+    it: {
+      context: "Contesto",
+      decision: "Decisione",
+      next: "Azioni successive",
+      version: "Revisione",
+      sentence: "Questa cattura è stata conservata perché viene riutilizzata nei messaggi ai clienti, nelle note interne, nella pianificazione prodotto e nella ricerca nel browser. Mantiene la formulazione esatta, il contesto della fonte e la sfumatura operativa che di solito scompare dopo alcuni cambi di scheda.",
+      refined: "Questa versione è più lunga perché l'utente ha rifinito la cattura dopo averla usata in un flusso reale. Mantiene l'intento originale, chiarisce la sequenza, rimuove le formulazioni vaghe e rende evidente la parte riutilizzabile.",
+      action: "Prima di riutilizzarla, verifica la data, adatta il tono al destinatario, conserva l'URL sorgente utile e aggiungi una nota breve se la cattura diventa parte di un flusso ripetibile.",
+      reusable: "conservare questa cattura come blocco riutilizzabile con titolo chiaro, dominio sorgente e percorso categoria.",
+      operational: "trasformare la cattura in una nota più operativa con punti, responsabile, rischio e prossimo passo suggerito.",
+      attach: "aggiungere una breve nota personale, marcarla come riutilizzabile e mantenere visibile l'URL sorgente per la verifica.",
+      keep: "salvare la formulazione più forte, preservare il contesto di supporto e assicurarsi che la cattura sia ritrovabile per titolo, nota, URL e categoria.",
+      reuse: "usarla come blocco supportato da una fonte, poi aggiornare il titolo se appare un nome progetto più preciso."
+    },
+    de: {
+      context: "Kontext",
+      decision: "Entscheidung",
+      next: "Nächste Schritte",
+      version: "Überarbeitung",
+      sentence: "Diese Erfassung wurde gespeichert, weil sie in Kundennachrichten, internen Notizen, Produktplanung und Browser-Recherche wiederverwendet wird. Sie bewahrt die genaue Formulierung, den Quellenkontext und die operative Nuance, die nach einigen Tabwechseln normalerweise verloren geht.",
+      refined: "Diese Version ist länger, weil der Nutzer die Erfassung nach einem echten Arbeitsablauf verfeinert hat. Sie bewahrt die ursprüngliche Absicht, klärt die Reihenfolge, entfernt vage Formulierungen und macht den wiederverwendbaren Teil sichtbar.",
+      action: "Vor der Wiederverwendung Datum prüfen, Ton an die Zielgruppe anpassen, die nützliche Quell-URL behalten und eine kurze Notiz ergänzen, wenn daraus ein wiederholbarer Ablauf wird.",
+      reusable: "diese Erfassung als wiederverwendbaren Block mit klarem Titel, Quelldomain und Kategoriepfad behalten.",
+      operational: "die Erfassung in eine operativere Notiz mit Stichpunkten, Zuständigkeit, Risiko und nächstem Schritt umwandeln.",
+      attach: "eine kurze persönliche Notiz ergänzen, sie als wiederverwendbar markieren und die Quell-URL für spätere Prüfung sichtbar halten.",
+      keep: "die stärkste Formulierung speichern, den unterstützenden Kontext bewahren und sicherstellen, dass die Erfassung über Titel, Notiz, URL und Kategorie auffindbar bleibt.",
+      reuse: "als quellenbasierten Block nutzen und den Titel aktualisieren, sobald ein präziserer Projektname auftaucht."
+    }
+  };
+
+  const textTopicDefinitions = [
+    { categoryId: "research-sources", sourceDomain: "notion.so", sourceUrl: "https://notion.so/workspace/research", title: { en: "Competitive research synthesis", fr: "Synthèse de veille concurrentielle", es: "Síntesis de investigación competitiva", it: "Sintesi di ricerca competitiva", de: "Wettbewerbsanalyse" }, angle: { en: "compare positioning, pricing signals and onboarding friction", fr: "comparer le positionnement, les signaux de prix et les frictions d'accueil", es: "comparar posicionamiento, señales de precio y fricción de onboarding", it: "confrontare posizionamento, segnali di prezzo e attrito di onboarding", de: "Positionierung, Preissignale und Onboarding-Reibung vergleichen" } },
+    { categoryId: "research-competitors", sourceDomain: "producthunt.com", sourceUrl: "https://www.producthunt.com/", title: { en: "Launch comments worth reusing", fr: "Commentaires de lancement à réutiliser", es: "Comentarios de lanzamiento reutilizables", it: "Commenti di lancio riutilizzabili", de: "Wiederverwendbare Launch-Kommentare" }, angle: { en: "extract objections, enthusiastic wording and missing feature expectations", fr: "extraire les objections, formulations enthousiastes et attentes de fonctions manquantes", es: "extraer objeciones, frases entusiastas y expectativas de funciones ausentes", it: "estrarre obiezioni, formulazioni entusiaste e aspettative di funzioni mancanti", de: "Einwände, begeisterte Formulierungen und fehlende Funktionswünsche herausziehen" } },
+    { categoryId: "research-quotes", sourceDomain: "medium.com", sourceUrl: "https://medium.com/topic/productivity", title: { en: "Productivity quote bank", fr: "Banque de citations productivité", es: "Banco de citas de productividad", it: "Archivio citazioni produttività", de: "Produktivitäts-Zitatesammlung" }, angle: { en: "keep reusable quotes with attribution and the exact page source", fr: "garder des citations réutilisables avec attribution et source exacte", es: "guardar citas reutilizables con atribución y fuente exacta", it: "conservare citazioni riutilizzabili con attribuzione e fonte esatta", de: "wiederverwendbare Zitate mit Quelle und genauer Seite behalten" } },
+    { categoryId: "support-macros", sourceDomain: "intercom.com", sourceUrl: "https://intercom.com/help", title: { en: "Calm billing support answer", fr: "Réponse support facturation calme", es: "Respuesta tranquila de soporte de facturación", it: "Risposta supporto fatturazione calma", de: "Ruhige Antwort zum Abrechnungssupport" }, angle: { en: "acknowledge the concern, explain the fix and avoid defensive phrasing", fr: "reconnaître la demande, expliquer le correctif et éviter un ton défensif", es: "reconocer la duda, explicar la solución y evitar un tono defensivo", it: "riconoscere il dubbio, spiegare la correzione ed evitare un tono difensivo", de: "Anliegen anerkennen, Lösung erklären und defensive Sprache vermeiden" } },
+    { categoryId: "support-incidents", sourceDomain: "status.example.com", sourceUrl: "https://status.example.com/incidents/ucp-sync", title: { en: "Drive sync incident note", fr: "Note incident synchro Drive", es: "Nota de incidencia de sincronización Drive", it: "Nota incidente sincronizzazione Drive", de: "Drive-Sync-Vorfallnotiz" }, angle: { en: "summarize user impact, workaround, recovery and follow-up checks", fr: "résumer impact utilisateur, contournement, reprise et contrôles de suivi", es: "resumir impacto, solución temporal, recuperación y controles posteriores", it: "riassumere impatto, workaround, ripristino e controlli successivi", de: "Auswirkung, Workaround, Wiederherstellung und Nachkontrollen zusammenfassen" } },
+    { categoryId: "operations-weekly", sourceDomain: "linear.app", sourceUrl: "https://linear.app/", title: { en: "Weekly product operations update", fr: "Point hebdo opérations produit", es: "Actualización semanal de operaciones", it: "Aggiornamento settimanale operazioni", de: "Wöchentliches Produkt-Operations-Update" }, angle: { en: "separate shipped work, risks, blocked decisions and next owners", fr: "séparer livraisons, risques, décisions bloquées et responsables suivants", es: "separar entregas, riesgos, decisiones bloqueadas y responsables", it: "separare rilasci, rischi, decisioni bloccate e responsabili", de: "gelieferte Arbeit, Risiken, blockierte Entscheidungen und Verantwortliche trennen" } },
+    { categoryId: "operations-process", sourceDomain: "docs.google.com", sourceUrl: "https://docs.google.com/document/", title: { en: "Release checklist procedure", fr: "Procédure de checklist sortie", es: "Procedimiento de checklist de lanzamiento", it: "Procedura checklist rilascio", de: "Release-Checklistenverfahren" }, angle: { en: "confirm SEO, privacy, localization, backup and payment links before publishing", fr: "confirmer SEO, confidentialité, localisation, sauvegarde et liens de paiement avant publication", es: "confirmar SEO, privacidad, localización, copia de seguridad y pagos antes de publicar", it: "confermare SEO, privacy, localizzazione, backup e pagamenti prima della pubblicazione", de: "SEO, Datenschutz, Lokalisierung, Backup und Zahlungslinks vor Veröffentlichung prüfen" } },
+    { categoryId: "marketing-social", sourceDomain: "linkedin.com", sourceUrl: "https://www.linkedin.com/feed/", title: { en: "Founder launch post", fr: "Post fondateur de lancement", es: "Publicación de lanzamiento del fundador", it: "Post di lancio del founder", de: "Founder-Launch-Post" }, angle: { en: "make the benefit concrete without sounding like a generic productivity slogan", fr: "rendre le bénéfice concret sans ressembler à un slogan générique", es: "hacer concreto el beneficio sin sonar a eslogan genérico", it: "rendere concreto il beneficio senza sembrare uno slogan generico", de: "Nutzen konkret machen, ohne wie ein generischer Produktivitätsslogan zu klingen" } },
+    { categoryId: "marketing-newsletter", sourceDomain: "sender.net", sourceUrl: "https://sender.net/forms", title: { en: "Launch newsletter welcome copy", fr: "Texte d'accueil newsletter lancement", es: "Texto de bienvenida de newsletter", it: "Testo benvenuto newsletter lancio", de: "Willkommenstext für Launch-Newsletter" }, angle: { en: "set expectations, promise only launch news and keep the tone premium", fr: "poser les attentes, promettre seulement l'annonce de sortie et garder un ton premium", es: "definir expectativas, prometer solo noticias de lanzamiento y mantener tono premium", it: "definire aspettative, promettere solo notizie di lancio e mantenere tono premium", de: "Erwartungen setzen, nur Launch-News versprechen und Premium-Ton halten" } },
+    { categoryId: "product-roadmap", sourceDomain: "github.com", sourceUrl: "https://github.com/Arcawand-Soft/ultimate-clipboard-pro", title: { en: "Roadmap decision note", fr: "Note de décision roadmap", es: "Nota de decisión de roadmap", it: "Nota decisione roadmap", de: "Roadmap-Entscheidungsnotiz" }, angle: { en: "rank versioning, advanced search, visual history and montage by user value", fr: "classer versioning, recherche avancée, historique visuel et montage par valeur utilisateur", es: "ordenar versionado, búsqueda avanzada, historial visual y montaje por valor", it: "ordinare versioning, ricerca avanzata, cronologia visuale e montaggio per valore", de: "Versionierung, erweiterte Suche, visuellen Verlauf und Montage nach Nutzerwert priorisieren" } },
+    { categoryId: "product-feedback", sourceDomain: "reddit.com", sourceUrl: "https://www.reddit.com/r/productivity/", title: { en: "Feedback cluster from power users", fr: "Groupe de retours utilisateurs avancés", es: "Grupo de feedback de usuarios avanzados", it: "Cluster feedback utenti esperti", de: "Feedback-Cluster von Power-Usern" }, angle: { en: "group requests by capture speed, retrieval confidence and privacy concern", fr: "regrouper demandes par vitesse de capture, confiance de recherche et confidentialité", es: "agrupar solicitudes por velocidad, confianza de búsqueda y privacidad", it: "raggruppare richieste per velocità, fiducia nella ricerca e privacy", de: "Anfragen nach Capture-Geschwindigkeit, Wiederfindbarkeit und Datenschutz gruppieren" } },
+    { categoryId: "legal-privacy", sourceDomain: "support.google.com", sourceUrl: "https://support.google.com/chrome_webstore/", title: { en: "Chrome Web Store privacy review", fr: "Relecture confidentialité Chrome Web Store", es: "Revisión de privacidad Chrome Web Store", it: "Revisione privacy Chrome Web Store", de: "Datenschutzprüfung Chrome Web Store" }, angle: { en: "map permissions to user-visible features and keep local-first wording precise", fr: "relier permissions et fonctions visibles, avec une formulation local-first précise", es: "mapear permisos con funciones visibles y explicar local-first con precisión", it: "collegare permessi e funzioni visibili con formulazione local-first precisa", de: "Berechtigungen sichtbaren Funktionen zuordnen und Local-first präzise erklären" } },
+    { categoryId: "legal-release", sourceDomain: "arcawand-soft.com", sourceUrl: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/", title: { en: "Terms and privacy consistency check", fr: "Contrôle cohérence CGU et confidentialité", es: "Control de coherencia legal y privacidad", it: "Controllo coerenza termini e privacy", de: "Konsistenzprüfung AGB und Datenschutz" }, angle: { en: "verify price wording, launch discount, data storage and support contact", fr: "vérifier prix, réduction de lancement, stockage des données et contact support", es: "verificar precio, descuento de lanzamiento, almacenamiento y contacto", it: "verificare prezzo, sconto lancio, archiviazione dati e contatto", de: "Preis, Launch-Rabatt, Datenspeicherung und Kontakt prüfen" } },
+    { categoryId: "people-training", sourceDomain: "confluence.example.com", sourceUrl: "https://confluence.example.com/support/playbook", title: { en: "Support training playbook", fr: "Guide de formation support", es: "Manual de formación de soporte", it: "Playbook formazione supporto", de: "Support-Schulungshandbuch" }, angle: { en: "teach teammates how to capture, title, classify and recover source context", fr: "former à capturer, titrer, classer et retrouver le contexte source", es: "enseñar a capturar, titular, clasificar y recuperar contexto", it: "insegnare cattura, titolo, classificazione e recupero fonte", de: "Capture, Titel, Klassifizierung und Quellenkontext vermitteln" } },
+    { categoryId: "people-onboarding", sourceDomain: "slack.com", sourceUrl: "https://slack.com/app_redirect", title: { en: "New teammate onboarding message", fr: "Message d'accueil nouveau collègue", es: "Mensaje de onboarding de compañero", it: "Messaggio onboarding collega", de: "Onboarding-Nachricht für neues Teammitglied" }, angle: { en: "explain where reusable text lives and how to avoid duplicate notes", fr: "expliquer où vivent les textes réutilisables et éviter les doublons", es: "explicar dónde viven textos reutilizables y evitar duplicados", it: "spiegare dove vivono testi riutilizzabili ed evitare duplicati", de: "zeigen, wo wiederverwendbare Texte liegen und Duplikate vermeiden" } },
+    { categoryId: "ai-prompts", sourceDomain: "chatgpt.com", sourceUrl: "https://chatgpt.com/", title: { en: "Prompt for structured product analysis", fr: "Prompt d'analyse produit structurée", es: "Prompt de análisis de producto", it: "Prompt analisi prodotto strutturata", de: "Prompt für strukturierte Produktanalyse" }, angle: { en: "force role, context, constraints, output format and verification criteria", fr: "forcer rôle, contexte, contraintes, format de sortie et critères de vérification", es: "forzar rol, contexto, restricciones, formato y verificación", it: "forzare ruolo, contesto, vincoli, formato e verifica", de: "Rolle, Kontext, Grenzen, Ausgabeformat und Prüfcriteria erzwingen" } },
+    { categoryId: "ai-evaluation", sourceDomain: "claude.ai", sourceUrl: "https://claude.ai/", title: { en: "AI answer evaluation rubric", fr: "Grille d'évaluation réponse IA", es: "Rúbrica para evaluar respuesta IA", it: "Rubrica valutazione risposta IA", de: "Bewertungsraster für KI-Antworten" }, angle: { en: "score usefulness, factual caution, completeness and tone before reuse", fr: "noter utilité, prudence factuelle, complétude et ton avant réutilisation", es: "puntuar utilidad, cautela factual, completitud y tono antes de reutilizar", it: "valutare utilità, cautela fattuale, completezza e tono prima del riuso", de: "Nützlichkeit, Faktensicherheit, Vollständigkeit und Ton vor Wiederverwendung bewerten" } },
+    { categoryId: "sales-objections", sourceDomain: "pipedrive.com", sourceUrl: "https://pipedrive.com/", title: { en: "Clipboard manager objection answer", fr: "Réponse objection gestionnaire presse-papiers", es: "Respuesta a objeción de gestor de portapapeles", it: "Risposta obiezione clipboard manager", de: "Antwort auf Clipboard-Manager-Einwand" }, angle: { en: "explain why normal clipboard history is not enough for serious reuse", fr: "expliquer pourquoi l'historique classique ne suffit pas pour réutiliser sérieusement", es: "explicar por qué el historial normal no basta para reutilización seria", it: "spiegare perché la cronologia normale non basta per riuso serio", de: "erklären, warum normale Zwischenablage für ernsthafte Wiederverwendung nicht reicht" } },
+    { categoryId: "sales-followups", sourceDomain: "hubspot.com", sourceUrl: "https://hubspot.com/", title: { en: "Post-demo follow-up email", fr: "Email de relance après démo", es: "Email de seguimiento tras demo", it: "Email follow-up dopo demo", de: "Nachfassmail nach Demo" }, angle: { en: "recap pain, show the most relevant feature and keep the next step simple", fr: "récapituler la douleur, montrer la fonction pertinente et simplifier la suite", es: "resumir dolor, mostrar función clave y simplificar el siguiente paso", it: "riassumere dolore, mostrare funzione rilevante e semplificare il passo successivo", de: "Problem rekapitulieren, passende Funktion zeigen und nächsten Schritt vereinfachen" } },
+    { categoryId: "design-copy", sourceDomain: "figma.com", sourceUrl: "https://figma.com/file/demo", title: { en: "Tooltip copy review", fr: "Relecture textes d'infobulles", es: "Revisión de textos tooltip", it: "Revisione testi tooltip", de: "Tooltip-Textprüfung" }, angle: { en: "make action labels short, explicit and consistent across dense interfaces", fr: "rendre les libellés courts, explicites et cohérents dans une interface dense", es: "hacer etiquetas breves, claras y coherentes en interfaces densas", it: "rendere etichette brevi, chiare e coerenti in interfacce dense", de: "Aktionslabels kurz, eindeutig und konsistent in dichten Oberflächen halten" } },
+    { categoryId: "design-checklist", sourceDomain: "arcawand-soft.com", sourceUrl: "https://arcawand-soft.com/ultimate-clipboard-pro/demo/", title: { en: "Demo page polish checklist", fr: "Checklist finition page démo", es: "Checklist de acabado de demo", it: "Checklist finitura pagina demo", de: "Polish-Checkliste für Demo-Seite" }, angle: { en: "verify launcher, floating panel, manager, tools, language and demo restrictions", fr: "vérifier launcher, panneau flottant, gestionnaire, outils, langue et restrictions démo", es: "verificar launcher, panel flotante, gestor, herramientas, idioma y restricciones", it: "verificare launcher, pannello, gestore, strumenti, lingua e limiti demo", de: "Launcher, Floating Panel, Manager, Tools, Sprache und Demo-Sperren prüfen" } },
+    { categoryId: "vault", sourceDomain: "1password.com", sourceUrl: "https://1password.com/", title: { en: "Private launch token note", fr: "Note privée jeton lancement", es: "Nota privada de token", it: "Nota privata token lancio", de: "Private Launch-Token-Notiz" }, angle: { en: "keep sensitive operational context away from the visible workspace", fr: "garder un contexte opérationnel sensible hors de l'espace visible", es: "mantener contexto operativo sensible fuera del espacio visible", it: "tenere contesto operativo sensibile fuori dallo spazio visibile", de: "sensiblen Betriebskontext aus dem sichtbaren Arbeitsbereich halten" } },
+    { categoryId: "trash", sourceDomain: "mail.google.com", sourceUrl: "https://mail.google.com/", title: { en: "Retired campaign draft", fr: "Ancien brouillon campagne", es: "Borrador de campaña retirado", it: "Bozza campagna ritirata", de: "Zurückgezogener Kampagnenentwurf" }, angle: { en: "keep for review before permanent deletion because the tone no longer fits", fr: "conserver avant suppression définitive car le ton ne correspond plus", es: "conservar antes de eliminar definitivamente porque el tono ya no encaja", it: "conservare prima della cancellazione definitiva perché il tono non è più adatto", de: "vor endgültigem Löschen behalten, da der Ton nicht mehr passt" } }
+  ];
+
+  function makeRichTextSamples(language) {
+    const l = textNarration[language] || textNarration.en;
+    return textTopicDefinitions.map((topic, index) => {
+      const title = localized(topic.title, language);
+      const angle = localized(topic.angle, language);
+      const base = `${title}\n\n${l.context}: ${angle}. ${l.sentence}\n\n${l.decision}: ${l.reusable} ${l.action}\n\n${l.next}: ${l.attach}`;
+      const v2 = `${title}\n\n${l.version} V2: ${angle}. ${l.sentence}\n\n${l.decision}: ${l.operational} ${l.action}\n\n${l.next}: ${l.attach}`;
+      const v3 = `${title}\n\n${l.version} V3: ${angle}. ${l.refined}\n\n${l.decision}: ${l.keep}\n\n${l.next}: ${l.reuse}`;
+      const sample = sampleWithMeta({
+        language,
+        categoryId: topic.categoryId,
+        title: topic.title,
+        sourceDomain: topic.sourceDomain,
+        sourceUrl: topic.sourceUrl,
+        note: `${title} - ${angle}`
+      }, index % 3 === 0 ? [base, v2, v3] : index % 3 === 1 ? [base, v2] : [base]);
+      return sample;
+    });
+  }
+
+  const richCodeDefinitions = [
+    {
+      categoryId: "typescript-api", languageId: "typescript", languageName: "TypeScript", sourceDomain: "github.com", sourceUrl: "https://github.com/Arcawand-Soft/ultimate-clipboard-pro",
+      title: { en: "Typed API response helper", fr: "Helper réponse API typée", es: "Helper de respuesta API tipada", it: "Helper risposta API tipizzata", de: "Typisierter API-Antworthelfer" },
+      versions: [
+`type ApiSuccess<T> = { ok: true; data: T; receivedAt: number };
+type ApiFailure = { ok: false; error: string; status: number };
+type ApiResult<T> = ApiSuccess<T> | ApiFailure;
+
+export async function readJson<T>(response: Response): Promise<ApiResult<T>> {
+  if (!response.ok) {
+    return { ok: false, error: response.statusText || "Request failed", status: response.status };
+  }
+  const data = (await response.json()) as T;
+  return { ok: true, data, receivedAt: Date.now() };
+}`,
+`type ApiResult<T> =
+  | { ok: true; data: T; receivedAt: number; source: "network" }
+  | { ok: false; error: string; status: number; retryable: boolean };
+
+export async function readJson<T>(response: Response): Promise<ApiResult<T>> {
+  if (!response.ok) {
+    return {
+      ok: false,
+      error: response.statusText || "Request failed",
+      status: response.status,
+      retryable: response.status >= 500
+    };
+  }
+  return { ok: true, data: (await response.json()) as T, receivedAt: Date.now(), source: "network" };
+}`
+      ]
+    },
+    {
+      categoryId: "typescript-storage", languageId: "typescript", languageName: "TypeScript", sourceDomain: "developer.chrome.com", sourceUrl: "https://developer.chrome.com/docs/extensions/reference/api/storage",
+      title: { en: "Chrome storage migration", fr: "Migration stockage Chrome", es: "Migración de almacenamiento Chrome", it: "Migrazione storage Chrome", de: "Chrome-Speicher-Migration" },
+      versions: [
+`export async function migrateSettings(storage: chrome.storage.StorageArea) {
+  const { mcp_settings: settings = {} } = await storage.get("mcp_settings");
+  const next = {
+    ...settings,
+    managerTextViewMode: settings.managerTextViewMode || "card",
+    managerDevViewMode: settings.managerDevViewMode || "card",
+    managerImageViewMode: settings.managerImageViewMode || "medium"
+  };
+  await storage.set({ mcp_settings: next });
+  return next;
+}`,
+`export async function migrateSettings(storage: chrome.storage.StorageArea) {
+  const { mcp_settings: settings = {} } = await storage.get("mcp_settings");
+  const next = {
+    ...settings,
+    managerTextViewMode: settings.managerTextViewMode ?? "card",
+    managerDevViewMode: settings.managerDevViewMode ?? "card",
+    managerImageViewMode: settings.managerImageViewMode ?? "medium",
+    settingsUpdatedAt: Date.now()
+  };
+  await storage.set({ mcp_settings: next });
+  return next;
+}`
+      ]
+    },
+    {
+      categoryId: "react-components", languageId: "react", languageName: "React", sourceDomain: "react.dev", sourceUrl: "https://react.dev/reference/react",
+      title: { en: "Accessible action toolbar", fr: "Barre d'actions accessible", es: "Barra de acciones accesible", it: "Barra azioni accessibile", de: "Barrierefreie Aktionsleiste" },
+      versions: [
+`export function ActionToolbar({ actions }) {
+  return (
+    <div role="toolbar" aria-label="Capture actions">
+      {actions.map((action) => (
+        <button key={action.id} type="button" aria-label={action.label} onClick={action.onClick}>
+          <img src={action.icon} alt="" aria-hidden="true" />
+        </button>
+      ))}
+    </div>
+  );
+}`,
+`export function ActionToolbar({ actions, orientation = "horizontal" }) {
+  return (
+    <div role="toolbar" aria-label="Capture actions" aria-orientation={orientation}>
+      {actions.map((action) => (
+        <button key={action.id} type="button" title={action.label} aria-label={action.label} onClick={action.onClick}>
+          <img src={action.icon} alt="" aria-hidden="true" />
+        </button>
+      ))}
+    </div>
+  );
+}`
+      ]
+    },
+    {
+      categoryId: "react-hooks", languageId: "react", languageName: "React", sourceDomain: "react.dev", sourceUrl: "https://react.dev/reference/react/useEffect",
+      title: { en: "Persistent view mode hook", fr: "Hook affichage persistant", es: "Hook de vista persistente", it: "Hook vista persistente", de: "Hook für persistente Ansicht" },
+      versions: [
+`import { useEffect, useState } from "react";
+
+export function usePersistentViewMode(key, fallback = "card") {
+  const [mode, setMode] = useState(() => localStorage.getItem(key) || fallback);
+  useEffect(() => {
+    localStorage.setItem(key, mode);
+  }, [key, mode]);
+  return [mode, setMode];
+}`,
+`import { useEffect, useState } from "react";
+
+export function usePersistentViewMode(key, fallback = "card") {
+  const [mode, setMode] = useState(() => {
+    try {
+      return localStorage.getItem(key) || fallback;
+    } catch {
+      return fallback;
+    }
+  });
+  useEffect(() => {
+    try { localStorage.setItem(key, mode); } catch {}
+  }, [key, mode]);
+  return [mode, setMode];
+}`
+      ]
+    },
+    {
+      categoryId: "javascript-dom", languageId: "javascript", languageName: "JavaScript", sourceDomain: "developer.mozilla.org", sourceUrl: "https://developer.mozilla.org/docs/Web/API/IntersectionObserver",
+      title: { en: "Lazy image observer", fr: "Observer images lazy", es: "Observer de imágenes lazy", it: "Observer immagini lazy", de: "Lazy-Image-Observer" },
+      versions: [
+`const observer = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    const image = entry.target;
+    image.src = image.dataset.src;
+    observer.unobserve(image);
+  }
+}, { rootMargin: "200px" });
+
+document.querySelectorAll("img[data-src]").forEach((image) => observer.observe(image));`,
+`const observer = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    const image = entry.target;
+    image.src = image.dataset.src;
+    image.addEventListener("load", () => image.classList.add("is-loaded"), { once: true });
+    observer.unobserve(image);
+  }
+}, { rootMargin: "240px 0px" });
+
+document.querySelectorAll("img[data-src]").forEach((image) => observer.observe(image));`
+      ]
+    },
+    {
+      categoryId: "javascript-events", languageId: "javascript", languageName: "JavaScript", sourceDomain: "developer.mozilla.org", sourceUrl: "https://developer.mozilla.org/docs/Web/API/EventTarget/addEventListener",
+      title: { en: "Delegated click handler", fr: "Gestionnaire de clic délégué", es: "Gestor de clic delegado", it: "Gestore click delegato", de: "Delegierter Klick-Handler" },
+      versions: [
+`document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+  const action = button.dataset.action;
+  if (action === "open") openPanel();
+  if (action === "close") closePanel();
+});`,
+`document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-action]");
+  if (!button || button.disabled) return;
+  const handlers = { open: openPanel, close: closePanel, search: focusSearch };
+  handlers[button.dataset.action]?.(event, button);
+});`
+      ]
+    },
+    {
+      categoryId: "css-layout", languageId: "css", languageName: "CSS", sourceDomain: "web.dev", sourceUrl: "https://web.dev/learn/css/",
+      title: { en: "Responsive two-column cards", fr: "Cartes responsive deux colonnes", es: "Tarjetas responsive en dos columnas", it: "Card responsive a due colonne", de: "Responsive Zwei-Spalten-Karten" },
+      versions: [
+`.capture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.capture-card {
+  min-height: clamp(260px, 38vh, 420px);
+  border-radius: 14px;
+}`,
+`.capture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(min(320px, 100%), 1fr));
+  gap: clamp(12px, 2vw, 20px);
+  align-items: stretch;
+}
+
+.capture-card {
+  min-height: clamp(280px, 42vh, 460px);
+  border-radius: 14px;
+  overflow: clip;
+}`
+      ]
+    },
+    {
+      categoryId: "html-templates", languageId: "html", languageName: "HTML", sourceDomain: "developer.mozilla.org", sourceUrl: "https://developer.mozilla.org/docs/Web/HTML/Element/dialog",
+      title: { en: "Accessible modal shell", fr: "Structure modale accessible", es: "Estructura modal accesible", it: "Struttura modale accessibile", de: "Barrierefreie Modal-Struktur" },
+      versions: [
+`<dialog class="settings-modal" aria-labelledby="settings-title">
+  <form method="dialog">
+    <header>
+      <h2 id="settings-title">Settings</h2>
+      <button value="close" aria-label="Close">×</button>
+    </header>
+    <section class="settings-modal__body"></section>
+  </form>
+</dialog>`,
+`<dialog class="settings-modal" aria-labelledby="settings-title" aria-describedby="settings-description">
+  <form method="dialog">
+    <header>
+      <h2 id="settings-title">Settings</h2>
+      <p id="settings-description">Changes are saved immediately.</p>
+      <button value="close" aria-label="Close">×</button>
+    </header>
+    <section class="settings-modal__body"></section>
+  </form>
+</dialog>`
+      ]
+    },
+    {
+      categoryId: "python-automation", languageId: "python", languageName: "Python", sourceDomain: "docs.python.org", sourceUrl: "https://docs.python.org/3/library/pathlib.html",
+      title: { en: "Asset audit script", fr: "Script audit assets", es: "Script de auditoría de assets", it: "Script audit asset", de: "Asset-Audit-Skript" },
+      versions: [
+`from pathlib import Path
+
+root = Path("assets")
+missing = []
+for html in Path(".").rglob("*.html"):
+    text = html.read_text(encoding="utf-8")
+    for asset in root.rglob("*"):
+        if asset.is_file() and asset.name in text:
+            break
+print("asset audit complete")`,
+`from pathlib import Path
+
+def audit_assets(root: Path) -> list[str]:
+    missing: list[str] = []
+    for html in Path(".").rglob("*.html"):
+        text = html.read_text(encoding="utf-8", errors="replace")
+        for marker in ("src=", "href="):
+            if marker in text:
+                continue
+    return missing
+
+print("asset audit complete", audit_assets(Path("assets")))`
+      ]
+    },
+    {
+      categoryId: "sql-reports", languageId: "sql", languageName: "SQL", sourceDomain: "postgresql.org", sourceUrl: "https://www.postgresql.org/docs/",
+      title: { en: "Daily capture report", fr: "Rapport captures quotidiennes", es: "Informe diario de capturas", it: "Report catture giornaliere", de: "Täglicher Capture-Bericht" },
+      versions: [
+`select
+  date_trunc('day', created_at) as day,
+  media_type,
+  count(*) as captures
+from captures
+where created_at >= now() - interval '30 days'
+group by day, media_type
+order by day desc, media_type;`,
+`select
+  date_trunc('day', created_at) as day,
+  media_type,
+  count(*) as captures,
+  count(*) filter (where is_favorite) as favorites,
+  count(*) filter (where is_pinned) as pinned
+from captures
+where created_at >= now() - interval '30 days'
+group by day, media_type
+order by day desc, media_type;`
+      ]
+    },
+    {
+      categoryId: "node-workers", languageId: "javascript", languageName: "JavaScript", sourceDomain: "developers.cloudflare.com", sourceUrl: "https://developers.cloudflare.com/workers/",
+      title: { en: "Newsletter worker endpoint", fr: "Endpoint worker newsletter", es: "Endpoint worker newsletter", it: "Endpoint worker newsletter", de: "Newsletter-Worker-Endpunkt" },
+      versions: [
+`export default {
+  async fetch(request, env) {
+    if (request.method !== "POST") {
+      return new Response("Method not allowed", { status: 405 });
+    }
+    const { email } = await request.json();
+    await subscribe(email, env.SENDER_API_TOKEN);
+    return Response.json({ ok: true });
+  }
+};`,
+`export default {
+  async fetch(request, env) {
+    if (request.method === "OPTIONS") return cors(null, 204);
+    if (request.method !== "POST") return cors({ error: "Method not allowed" }, 405);
+    const { email, language = "en" } = await request.json();
+    await subscribe(email, language, env.SENDER_API_TOKEN);
+    return cors({ ok: true });
+  }
+};`
+      ]
+    },
+    {
+      categoryId: "tests-playwright", languageId: "typescript", languageName: "TypeScript", sourceDomain: "playwright.dev", sourceUrl: "https://playwright.dev/",
+      title: { en: "Demo page smoke test", fr: "Smoke test page démo", es: "Smoke test de página demo", it: "Smoke test pagina demo", de: "Smoke-Test für Demo-Seite" },
+      versions: [
+`import { test, expect } from "@playwright/test";
+
+test("demo launcher opens the floating panel", async ({ page }) => {
+  await page.goto("/ultimate-clipboard-pro/demo/");
+  await page.getByRole("button", { name: /open/i }).click();
+  await expect(page.locator(".ucp-demo-frame")).toBeVisible();
+});`,
+`import { test, expect } from "@playwright/test";
+
+test("demo launcher opens manager from the floating panel", async ({ page }) => {
+  await page.goto("/ultimate-clipboard-pro/demo/");
+  await page.getByRole("button", { name: /open/i }).click();
+  await page.getByRole("button", { name: /manager/i }).click();
+  await expect(page.locator(".ucp-demo-manager-host")).toBeVisible();
+});`
+      ]
+    },
+    {
+      categoryId: "javascript-dom", languageId: "javascript", languageName: "JavaScript", sourceDomain: "developer.mozilla.org", sourceUrl: "https://developer.mozilla.org/docs/Web/API/AbortController",
+      title: { en: "Abortable fetch request", fr: "Requête fetch annulable", es: "Petición fetch cancelable", it: "Richiesta fetch annullabile", de: "Abbrechbarer Fetch-Request" },
+      versions: [
+`export async function fetchWithTimeout(url, options = {}, timeout = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(timer);
+  }
+}`,
+`export async function fetchJsonWithTimeout(url, options = {}, timeout = 8000) {
+  const response = await fetchWithTimeout(url, options, timeout);
+  if (!response.ok) throw new Error(\`HTTP \${response.status}\`);
+  return response.json();
+}`
+      ]
+    },
+    {
+      categoryId: "typescript-storage", languageId: "typescript", languageName: "TypeScript", sourceDomain: "developer.chrome.com", sourceUrl: "https://developer.chrome.com/docs/extensions/mv3/service_workers/",
+      title: { en: "Typed message router", fr: "Routeur message typé", es: "Router de mensajes tipado", it: "Router messaggi tipizzato", de: "Typisierter Message-Router" },
+      versions: [
+`type Message =
+  | { type: "OPEN_MANAGER" }
+  | { type: "COPY_TEXT"; itemId: string };
+
+export function routeMessage(message: Message) {
+  switch (message.type) {
+    case "OPEN_MANAGER": return openManager();
+    case "COPY_TEXT": return copyText(message.itemId);
+  }
+}`,
+`type Message =
+  | { type: "OPEN_MANAGER" }
+  | { type: "COPY_TEXT"; itemId: string }
+  | { type: "SET_ACTIVE_VERSION"; itemId: string; versionId: string };
+
+export function routeMessage(message: Message) {
+  const handlers = {
+    OPEN_MANAGER: () => openManager(),
+    COPY_TEXT: () => copyText(message.itemId),
+    SET_ACTIVE_VERSION: () => setActiveVersion(message.itemId, message.versionId)
+  };
+  return handlers[message.type]();
+}`
+      ]
+    },
+    {
+      categoryId: "react-components", languageId: "react", languageName: "React", sourceDomain: "react.dev", sourceUrl: "https://react.dev/learn/rendering-lists",
+      title: { en: "Version tabs component", fr: "Composant onglets versions", es: "Componente de pestañas de versión", it: "Componente tab versioni", de: "Komponente für Versions-Tabs" },
+      versions: [
+`export function VersionTabs({ versions, activeId, onSelect }) {
+  return (
+    <div className="version-tabs" role="tablist">
+      {versions.map((version, index) => (
+        <button key={version.id} role="tab" aria-selected={version.id === activeId} onClick={() => onSelect(version.id)}>
+          V{index + 1}
+        </button>
+      ))}
+    </div>
+  );
+}`,
+`export function VersionTabs({ versions, activeId, onSelect, onDelete }) {
+  return (
+    <div className="version-tabs" role="tablist" aria-label="Capture versions">
+      {versions.map((version, index) => (
+        <button key={version.id} role="tab" aria-selected={version.id === activeId} onClick={() => onSelect(version.id)}>
+          <span>V{index + 1}</span>
+          {versions.length > 1 && <span aria-hidden="true" onClick={(event) => { event.stopPropagation(); onDelete(version.id); }}>×</span>}
+        </button>
+      ))}
+    </div>
+  );
+}`
+      ]
+    },
+    {
+      categoryId: "python-automation", languageId: "python", languageName: "Python", sourceDomain: "docs.python.org", sourceUrl: "https://docs.python.org/3/library/json.html",
+      title: { en: "Backup manifest validator", fr: "Validateur manifeste sauvegarde", es: "Validador de manifiesto backup", it: "Validatore manifesto backup", de: "Backup-Manifest-Validator" },
+      versions: [
+`import json
+from pathlib import Path
+
+def load_manifest(path: Path) -> dict:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    required = {"settings", "items", "categories", "devItems", "imageItems"}
+    missing = required.difference(data)
+    if missing:
+        raise ValueError(f"Missing keys: {', '.join(sorted(missing))}")
+    return data`,
+`import json
+from pathlib import Path
+
+def load_manifest(path: Path) -> dict:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    required = {"settings", "items", "categories", "devItems", "imageItems"}
+    missing = required.difference(data)
+    if missing:
+        raise ValueError(f"Missing keys: {', '.join(sorted(missing))}")
+    if not isinstance(data["items"], list) or not isinstance(data["devItems"], list):
+        raise TypeError("items and devItems must be lists")
+    return data`
+      ]
+    },
+    {
+      categoryId: "sql-reports", languageId: "sql", languageName: "SQL", sourceDomain: "postgresql.org", sourceUrl: "https://www.postgresql.org/docs/current/functions-aggregate.html",
+      title: { en: "Favorite captures by project", fr: "Captures favorites par projet", es: "Capturas favoritas por proyecto", it: "Catture preferite per progetto", de: "Favorisierte Captures nach Projekt" },
+      versions: [
+`select
+  category_name,
+  count(*) filter (where is_favorite) as favorite_count,
+  count(*) filter (where is_pinned) as pinned_count
+from captures
+where deleted_at is null
+group by category_name
+order by favorite_count desc, pinned_count desc;`,
+`select
+  coalesce(project_name, category_name) as bucket,
+  count(*) filter (where is_favorite) as favorite_count,
+  count(*) filter (where is_pinned) as pinned_count,
+  max(updated_at) as last_activity
+from captures
+where deleted_at is null
+group by bucket
+order by last_activity desc;`
+      ]
+    },
+    {
+      categoryId: "node-workers", languageId: "javascript", languageName: "JavaScript", sourceDomain: "nodejs.org", sourceUrl: "https://nodejs.org/api/crypto.html",
+      title: { en: "Token redaction utility", fr: "Utilitaire masquage token", es: "Utilidad para ocultar tokens", it: "Utility oscuramento token", de: "Token-Redaction-Utility" },
+      versions: [
+`export function redactToken(value) {
+  const text = String(value || "");
+  if (text.length <= 8) return "••••";
+  return \`\${text.slice(0, 4)}••••\${text.slice(-4)}\`;
+}`,
+`export function redactToken(value, visible = 4) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (text.length <= visible * 2) return "•".repeat(Math.max(4, text.length));
+  return \`\${text.slice(0, visible)}••••\${text.slice(-visible)}\`;
+}`
+      ]
+    },
+    {
+      categoryId: "tests-playwright", languageId: "typescript", languageName: "TypeScript", sourceDomain: "playwright.dev", sourceUrl: "https://playwright.dev/docs/locators",
+      title: { en: "Language menu regression test", fr: "Test régression menu langue", es: "Test regresión menú idioma", it: "Test regressione menu lingua", de: "Regressionstest Sprachmenü" },
+      versions: [
+`import { test, expect } from "@playwright/test";
+
+test("language menu opens above product navigation", async ({ page }) => {
+  await page.goto("/fr/ultimate-clipboard-pro/");
+  await page.getByRole("button", { name: /langue/i }).click();
+  await expect(page.getByRole("listbox")).toBeVisible();
+});`,
+`import { test, expect } from "@playwright/test";
+
+test("language menu routes to English product page", async ({ page }) => {
+  await page.goto("/fr/ultimate-clipboard-pro/");
+  await page.getByRole("button", { name: /langue/i }).click();
+  await page.getByRole("option", { name: /english/i }).click();
+  await expect(page).toHaveURL(/\\/ultimate-clipboard-pro\\/$/);
+});`
+      ]
+    },
+    {
+      categoryId: "dev-vault", languageId: "javascript", languageName: "JavaScript", sourceDomain: "github.com", sourceUrl: "https://github.com/",
+      title: { en: "Private license check sketch", fr: "Ébauche contrôle licence privé", es: "Borrador privado de licencia", it: "Bozza privata controllo licenza", de: "Private Lizenzprüfungs-Skizze" },
+      versions: [
+`async function verifyLicense(licenseKey) {
+  const proof = await chrome.storage.local.get("licenseProof");
+  if (!proof.licenseProof) return false;
+  return licenseKey.startsWith("UCP-");
+}`,
+`async function verifyLicense(licenseKey) {
+  const { licenseProof, licenseLastVerifiedAt } = await chrome.storage.local.get(["licenseProof", "licenseLastVerifiedAt"]);
+  if (!licenseProof || Date.now() - Number(licenseLastVerifiedAt || 0) > 86400000) return false;
+  return String(licenseKey || "").startsWith("UCP-");
+}`
+      ]
+    },
+    {
+      categoryId: "dev-trash", languageId: "javascript", languageName: "JavaScript", sourceDomain: "github.com", sourceUrl: "https://github.com/",
+      title: { en: "Retired drag ghost prototype", fr: "Prototype ghost drag retiré", es: "Prototipo ghost drag retirado", it: "Prototipo ghost drag ritirato", de: "Verworfener Drag-Ghost-Prototyp" },
+      versions: [
+`function createDragGhost(label) {
+  const ghost = document.createElement("div");
+  ghost.textContent = label;
+  ghost.style.position = "fixed";
+  document.body.appendChild(ghost);
+  return ghost;
+}`,
+`function createDragGhost(label) {
+  const ghost = document.createElement("div");
+  ghost.className = "capture-drag-ghost";
+  ghost.textContent = label;
+  document.body.appendChild(ghost);
+  return ghost;
+}`
+      ]
+    }
+  ];
+
+  function makeRichCodeSamples(language) {
+    return richCodeDefinitions.map((definition) => sampleWithMeta({
+      language,
+      categoryId: definition.categoryId,
+      languageId: definition.languageId,
+      languageName: definition.languageName,
+      title: definition.title,
+      sourceDomain: definition.sourceDomain,
+      sourceUrl: definition.sourceUrl,
+      note: localized(definition.title, language)
+    }, definition.versions));
+  }
+
+  supportedLanguages.forEach((language) => {
+    textSamples[language] = makeRichTextSamples(language);
+    codeSamples[language] = makeRichCodeSamples(language);
+  });
+
   function resolveLanguage() {
     const queryLang = new URLSearchParams(global.location.search).get("lang");
     if (supportedLanguages.includes(queryLang)) return queryLang;
@@ -312,25 +1031,32 @@
     }));
   }
 
+  function categoryNameFor(kind, categoryId, language) {
+    if (categoryId === "vault" || categoryId === "dev-vault" || categoryId === "image-vault") return copyByLang[language]?.vault || "Vault";
+    if (categoryId === "trash" || categoryId === "dev-trash" || categoryId === "image-trash") return copyByLang[language]?.trash || "Trash";
+    if (categoryId === "general" || categoryId === "dev-general" || categoryId === "image-general") return copyByLang[language]?.general || "General";
+    return localized(richCategoryLabels[kind]?.[categoryId], language) || categoryId;
+  }
+
   function textItems(language) {
     const now = Date.now();
-    const categoryIds = ["general", "research-sources", "support-macros", "operations-weekly", "marketing-social", "product-roadmap", "legal-privacy", "people-training", "ai-prompts", "sales-objections", "vault", "trash"];
-    return textSamples[language].map(([title, ...versions], index) => {
+    const categoryIds = ["general", "research-sources", "research-competitors", "research-quotes", "support-macros", "support-incidents", "operations-weekly", "operations-process", "marketing-social", "marketing-newsletter", "product-roadmap", "product-feedback", "legal-privacy", "legal-release", "people-training", "people-onboarding", "ai-prompts", "ai-evaluation", "sales-objections", "sales-followups", "design-copy", "design-checklist", "vault", "trash"];
+    return textSamples[language].map((sample, index) => {
+      const [title, ...versions] = sample;
       const id = `demo-text-${index + 1}`;
       const captureVersions = makeVersions(id, title, versions, now - (index + 1) * 86400000);
-      const l = copyByLang[language];
-      const categoryId = categoryIds[index] || "general";
+      const categoryId = sample.categoryId || categoryIds[index] || "general";
       const trashed = categoryId === "trash";
       return {
         id,
         title,
         content: versions[0],
         preview: versions[0].slice(0, 260),
-        note: index === 0 ? "Demo Pro workspace" : "",
+        note: sample.note || (index === 0 ? "Demo Pro workspace" : ""),
         categoryId,
-        categoryName: categoryId === "vault" ? l.vault : categoryId === "trash" ? l.trash : l.general,
-        sourceUrl: index === 0 ? "https://chatgpt.com/" : "https://docs.example.com/",
-        sourceDomain: index === 0 ? "chatgpt.com" : "docs.example.com",
+        categoryName: categoryNameFor("text", categoryId, language),
+        sourceUrl: sample.sourceUrl || (index === 0 ? "https://chatgpt.com/" : "https://docs.example.com/"),
+        sourceDomain: sample.sourceDomain || (index === 0 ? "chatgpt.com" : "docs.example.com"),
         sourceFaviconUrl: iconUrl("favicon_generic.png"),
         sourceTitle: title,
         createdAt: captureVersions[0].createdAt,
@@ -348,24 +1074,27 @@
 
   function devItems(language) {
     const now = Date.now();
-    const categoryIds = ["dev-general", "typescript-api", "react-components", "javascript-dom", "typescript-api", "react-components", "dev-vault", "dev-trash"];
-    return codeSamples[language].map(([title, ...versions], index) => {
+    const categoryIds = ["dev-general", "typescript-api", "typescript-storage", "react-components", "react-hooks", "javascript-dom", "javascript-events", "css-layout", "html-templates", "python-automation", "sql-reports", "node-workers", "tests-playwright", "dev-vault", "dev-trash"];
+    return codeSamples[language].map((sample, index) => {
+      const [title, ...versions] = sample;
       const id = `demo-code-${index + 1}`;
       const captureVersions = makeVersions(id, title, versions, now - (index + 6) * 86400000);
-      const categoryId = categoryIds[index] || "dev-general";
+      const categoryId = sample.categoryId || categoryIds[index] || "dev-general";
       const trashed = categoryId === "dev-trash";
+      const languageId = sample.languageId || (categoryId.includes("typescript") ? "typescript" : categoryId.includes("react") ? "react" : categoryId.includes("css") ? "css" : categoryId.includes("html") ? "html" : categoryId.includes("python") ? "python" : categoryId.includes("sql") ? "sql" : "javascript");
+      const languageName = sample.languageName || (languageId === "typescript" ? "TypeScript" : languageId === "react" ? "React" : languageId === "css" ? "CSS" : languageId === "html" ? "HTML" : languageId === "python" ? "Python" : languageId === "sql" ? "SQL" : "JavaScript");
       return {
         id,
         title,
         content: versions[0],
         preview: versions[0].slice(0, 260),
-        note: "",
+        note: sample.note || "",
         categoryId,
-        categoryName: categoryId.includes("typescript") ? "TypeScript" : categoryId.includes("react") ? "React" : categoryId === "dev-vault" ? (copyByLang[language]?.vault || "Vault") : categoryId === "dev-trash" ? (copyByLang[language]?.trash || "Trash") : "JavaScript",
-        languageId: categoryId.includes("typescript") ? "typescript" : categoryId.includes("react") ? "react" : "javascript",
-        languageName: categoryId.includes("typescript") ? "TypeScript" : categoryId.includes("react") ? "React" : "JavaScript",
-        sourceUrl: "https://github.com/",
-        sourceDomain: "github.com",
+        categoryName: categoryNameFor("dev", categoryId, language),
+        languageId,
+        languageName,
+        sourceUrl: sample.sourceUrl || "https://github.com/",
+        sourceDomain: sample.sourceDomain || "github.com",
         sourceFaviconUrl: iconUrl("favicon_generic.png"),
         sourceTitle: title,
         createdAt: captureVersions[0].createdAt,
@@ -416,18 +1145,36 @@
       { id: "trash", name: l.trash, parentId: null, icon: "trash", color: "#ef4444", isSystem: true, createdAt: 0, order: 3 },
       { id: "vault", name: l.vault, parentId: null, icon: "vault", color: "#f59e0b", isSystem: true, createdAt: 0, order: 4 },
       { id: "ai", name: l.ai, parentId: null, icon: "dot", color: "#7c3aed", createdAt: 1, order: 10 },
-      { id: "ai-prompts", name: "Prompts", parentId: "ai", icon: "dot", color: "#7c3aed", createdAt: 1, order: 101 },
+      { id: "ai-prompts", name: categoryNameFor("text", "ai-prompts", language), parentId: "ai", icon: "dot", color: "#7c3aed", createdAt: 1, order: 101 },
+      { id: "ai-evaluation", name: categoryNameFor("text", "ai-evaluation", language), parentId: "ai", icon: "dot", color: "#7c3aed", createdAt: 1, order: 102 },
       { id: "research", name: l.research, parentId: null, icon: "dot", color: "#22c55e", createdAt: 1, order: 11 },
-      { id: "research-sources", name: "Sources", parentId: "research", icon: "dot", color: "#22c55e", createdAt: 1, order: 111 },
+      { id: "research-sources", name: categoryNameFor("text", "research-sources", language), parentId: "research", icon: "dot", color: "#22c55e", createdAt: 1, order: 111 },
+      { id: "research-competitors", name: categoryNameFor("text", "research-competitors", language), parentId: "research", icon: "dot", color: "#22c55e", createdAt: 1, order: 112 },
+      { id: "research-quotes", name: categoryNameFor("text", "research-quotes", language), parentId: "research", icon: "dot", color: "#22c55e", createdAt: 1, order: 113 },
       { id: "support", name: l.support, parentId: null, icon: "dot", color: "#0ea5e9", createdAt: 1, order: 12 },
-      { id: "support-macros", name: "Macros", parentId: "support", icon: "dot", color: "#0ea5e9", createdAt: 1, order: 121 },
+      { id: "support-macros", name: categoryNameFor("text", "support-macros", language), parentId: "support", icon: "dot", color: "#0ea5e9", createdAt: 1, order: 121 },
+      { id: "support-incidents", name: categoryNameFor("text", "support-incidents", language), parentId: "support", icon: "dot", color: "#0ea5e9", createdAt: 1, order: 122 },
       { id: "operations", name: l.operations, parentId: null, icon: "dot", color: "#f97316", createdAt: 1, order: 13 },
-      { id: "operations-weekly", name: "Weekly", parentId: "operations", icon: "dot", color: "#f97316", createdAt: 1, order: 131 },
-      { id: "marketing-social", name: "Social", parentId: null, icon: "dot", color: "#ec4899", createdAt: 1, order: 14 },
-      { id: "product-roadmap", name: "Roadmap", parentId: null, icon: "dot", color: "#06b6d4", createdAt: 1, order: 15 },
-      { id: "legal-privacy", name: "Privacy", parentId: null, icon: "dot", color: "#64748b", createdAt: 1, order: 16 },
-      { id: "people-training", name: "Training", parentId: null, icon: "dot", color: "#84cc16", createdAt: 1, order: 17 },
-      { id: "sales-objections", name: "Objections", parentId: null, icon: "dot", color: "#f59e0b", createdAt: 1, order: 18 }
+      { id: "operations-weekly", name: categoryNameFor("text", "operations-weekly", language), parentId: "operations", icon: "dot", color: "#f97316", createdAt: 1, order: 131 },
+      { id: "operations-process", name: categoryNameFor("text", "operations-process", language), parentId: "operations", icon: "dot", color: "#f97316", createdAt: 1, order: 132 },
+      { id: "marketing", name: categoryNameFor("text", "marketing", language), parentId: null, icon: "dot", color: "#ec4899", createdAt: 1, order: 14 },
+      { id: "marketing-social", name: categoryNameFor("text", "marketing-social", language), parentId: "marketing", icon: "dot", color: "#ec4899", createdAt: 1, order: 141 },
+      { id: "marketing-newsletter", name: categoryNameFor("text", "marketing-newsletter", language), parentId: "marketing", icon: "dot", color: "#ec4899", createdAt: 1, order: 142 },
+      { id: "product", name: l.product, parentId: null, icon: "dot", color: "#06b6d4", createdAt: 1, order: 15 },
+      { id: "product-roadmap", name: categoryNameFor("text", "product-roadmap", language), parentId: "product", icon: "dot", color: "#06b6d4", createdAt: 1, order: 151 },
+      { id: "product-feedback", name: categoryNameFor("text", "product-feedback", language), parentId: "product", icon: "dot", color: "#06b6d4", createdAt: 1, order: 152 },
+      { id: "legal", name: categoryNameFor("text", "legal", language), parentId: null, icon: "dot", color: "#64748b", createdAt: 1, order: 16 },
+      { id: "legal-privacy", name: categoryNameFor("text", "legal-privacy", language), parentId: "legal", icon: "dot", color: "#64748b", createdAt: 1, order: 161 },
+      { id: "legal-release", name: categoryNameFor("text", "legal-release", language), parentId: "legal", icon: "dot", color: "#64748b", createdAt: 1, order: 162 },
+      { id: "people", name: categoryNameFor("text", "people", language), parentId: null, icon: "dot", color: "#84cc16", createdAt: 1, order: 17 },
+      { id: "people-training", name: categoryNameFor("text", "people-training", language), parentId: "people", icon: "dot", color: "#84cc16", createdAt: 1, order: 171 },
+      { id: "people-onboarding", name: categoryNameFor("text", "people-onboarding", language), parentId: "people", icon: "dot", color: "#84cc16", createdAt: 1, order: 172 },
+      { id: "sales", name: categoryNameFor("text", "sales", language), parentId: null, icon: "dot", color: "#f59e0b", createdAt: 1, order: 18 },
+      { id: "sales-objections", name: categoryNameFor("text", "sales-objections", language), parentId: "sales", icon: "dot", color: "#f59e0b", createdAt: 1, order: 181 },
+      { id: "sales-followups", name: categoryNameFor("text", "sales-followups", language), parentId: "sales", icon: "dot", color: "#f59e0b", createdAt: 1, order: 182 },
+      { id: "design", name: l.design, parentId: null, icon: "dot", color: "#a855f7", createdAt: 1, order: 19 },
+      { id: "design-copy", name: categoryNameFor("text", "design-copy", language), parentId: "design", icon: "dot", color: "#a855f7", createdAt: 1, order: 191 },
+      { id: "design-checklist", name: categoryNameFor("text", "design-checklist", language), parentId: "design", icon: "dot", color: "#a855f7", createdAt: 1, order: 192 }
     ];
   }
 
@@ -439,11 +1186,26 @@
       { id: "dev-trash", name: l.trash, parentId: null, icon: "trash", color: "#ef4444", isSystem: true, createdAt: 0, order: 3 },
       { id: "dev-vault", name: l.vault, parentId: null, icon: "vault", color: "#f59e0b", isSystem: true, createdAt: 0, order: 4 },
       { id: "javascript", name: "JavaScript", parentId: null, icon: "dot", color: "#f7df1e", createdAt: 1, order: 10 },
-      { id: "javascript-dom", name: "DOM", parentId: "javascript", icon: "dot", color: "#f7df1e", createdAt: 1, order: 101 },
+      { id: "javascript-dom", name: categoryNameFor("dev", "javascript-dom", language), parentId: "javascript", icon: "dot", color: "#f7df1e", createdAt: 1, order: 101 },
+      { id: "javascript-events", name: categoryNameFor("dev", "javascript-events", language), parentId: "javascript", icon: "dot", color: "#f7df1e", createdAt: 1, order: 102 },
       { id: "typescript", name: "TypeScript", parentId: null, icon: "dot", color: "#3178c6", createdAt: 1, order: 11 },
-      { id: "typescript-api", name: "API", parentId: "typescript", icon: "dot", color: "#3178c6", createdAt: 1, order: 111 },
+      { id: "typescript-api", name: categoryNameFor("dev", "typescript-api", language), parentId: "typescript", icon: "dot", color: "#3178c6", createdAt: 1, order: 111 },
+      { id: "typescript-storage", name: categoryNameFor("dev", "typescript-storage", language), parentId: "typescript", icon: "dot", color: "#3178c6", createdAt: 1, order: 112 },
       { id: "react", name: "React", parentId: null, icon: "dot", color: "#61dafb", createdAt: 1, order: 12 },
-      { id: "react-components", name: "Components", parentId: "react", icon: "dot", color: "#61dafb", createdAt: 1, order: 121 }
+      { id: "react-components", name: categoryNameFor("dev", "react-components", language), parentId: "react", icon: "dot", color: "#61dafb", createdAt: 1, order: 121 },
+      { id: "react-hooks", name: categoryNameFor("dev", "react-hooks", language), parentId: "react", icon: "dot", color: "#61dafb", createdAt: 1, order: 122 },
+      { id: "css", name: "CSS", parentId: null, icon: "dot", color: "#38bdf8", createdAt: 1, order: 13 },
+      { id: "css-layout", name: categoryNameFor("dev", "css-layout", language), parentId: "css", icon: "dot", color: "#38bdf8", createdAt: 1, order: 131 },
+      { id: "html", name: "HTML", parentId: null, icon: "dot", color: "#f97316", createdAt: 1, order: 14 },
+      { id: "html-templates", name: categoryNameFor("dev", "html-templates", language), parentId: "html", icon: "dot", color: "#f97316", createdAt: 1, order: 141 },
+      { id: "python", name: "Python", parentId: null, icon: "dot", color: "#22c55e", createdAt: 1, order: 15 },
+      { id: "python-automation", name: categoryNameFor("dev", "python-automation", language), parentId: "python", icon: "dot", color: "#22c55e", createdAt: 1, order: 151 },
+      { id: "sql", name: "SQL", parentId: null, icon: "dot", color: "#a855f7", createdAt: 1, order: 16 },
+      { id: "sql-reports", name: categoryNameFor("dev", "sql-reports", language), parentId: "sql", icon: "dot", color: "#a855f7", createdAt: 1, order: 161 },
+      { id: "node", name: "Node", parentId: null, icon: "dot", color: "#84cc16", createdAt: 1, order: 17 },
+      { id: "node-workers", name: categoryNameFor("dev", "node-workers", language), parentId: "node", icon: "dot", color: "#84cc16", createdAt: 1, order: 171 },
+      { id: "tests", name: "Tests", parentId: null, icon: "dot", color: "#ec4899", createdAt: 1, order: 18 },
+      { id: "tests-playwright", name: categoryNameFor("dev", "tests-playwright", language), parentId: "tests", icon: "dot", color: "#ec4899", createdAt: 1, order: 181 }
     ];
   }
 

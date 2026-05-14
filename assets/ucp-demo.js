@@ -167,7 +167,7 @@
     return;
   }
   try {
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-pro-dataset`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260515-rich-dataset`);
     const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
     const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
       openManager,
