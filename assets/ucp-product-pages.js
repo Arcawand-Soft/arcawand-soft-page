@@ -67,7 +67,8 @@
 
   function setupLanguageMenu() {
     const menu = document.querySelector(".arcawand-product-language-menu");
-    if (!menu) return;
+    if (!menu || menu.dataset.languageMenuReady === "true") return;
+    menu.dataset.languageMenuReady = "true";
     const button = menu.querySelector(".language-menu-button");
     const panel = menu.querySelector(".language-menu-panel");
     const lang = getLangFromPath();
@@ -76,27 +77,36 @@
     if (panel && (!panel.getAttribute("aria-label") || panel.getAttribute("aria-label") === "Language")) {
       panel.setAttribute("aria-label", languageLabel);
     }
-    const hasLegacyInlineLanguageMenu = Array.from(document.scripts).some((script) =>
-      script.textContent.includes("const routeMap=") &&
-      script.textContent.includes("arcawand-product-language-menu")
-    );
-    if (hasLegacyInlineLanguageMenu) return;
     const close = () => {
       menu.classList.remove("is-open");
       button?.setAttribute("aria-expanded", "false");
     };
 
+    const openMenu = () => {
+      document.querySelectorAll(".language-menu.is-open").forEach((node) => {
+        if (node !== menu) node.classList.remove("is-open");
+      });
+      menu.classList.add("is-open");
+      button?.setAttribute("aria-expanded", "true");
+    };
+
+    const toggleMenu = () => {
+      if (menu.classList.contains("is-open")) close();
+      else openMenu();
+    };
+
     button?.addEventListener("click", (event) => {
+      event.preventDefault();
       event.stopPropagation();
-      const open = !menu.classList.contains("is-open");
-      document.querySelectorAll(".language-menu.is-open").forEach((node) => node.classList.remove("is-open"));
-      menu.classList.toggle("is-open", open);
-      button.setAttribute("aria-expanded", String(open));
+      event.stopImmediatePropagation();
+      toggleMenu();
     });
 
     panel?.addEventListener("click", (event) => {
+      event.stopPropagation();
       const option = event.target.closest("[data-lang]");
       if (!option) return;
+      event.preventDefault();
       const next = option.dataset.lang;
       const page = getProductPage();
       try {
@@ -106,7 +116,12 @@
       window.location.href = routes[next]?.[page] || routes.en.presentation;
     });
 
-    document.addEventListener("click", close);
+    document.addEventListener("pointerdown", (event) => {
+      if (!event.target.closest(".arcawand-product-language-menu")) close();
+    }, true);
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".arcawand-product-language-menu")) close();
+    }, true);
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") close();
     });
@@ -171,12 +186,18 @@
     window.setTimeout(() => observer.disconnect(), 8000);
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function init() {
     const lang = getLangFromPath();
     document.documentElement.lang = lang;
     setupLanguageMenu();
     setupProductNav();
     setupProductHeaderScroll();
     setupProductFooterLinks();
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
 })();
