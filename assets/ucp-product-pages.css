@@ -29,10 +29,14 @@ body.ucp-static-page img { max-width: 100%; display: block; }
 
 .arcawand-root-return,
 .ucp-product-mark,
-.arcawand-product-language-menu,
 .ucp-product-nav {
   position: fixed;
   z-index: 70;
+}
+
+.arcawand-product-language-menu {
+  position: fixed;
+  z-index: 120;
 }
 
 .arcawand-root-return {
@@ -402,12 +406,14 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
     overflow-x: auto;
     overflow-y: hidden;
     max-width: calc(100vw - 1.5rem);
-    padding-inline: .35rem;
+    padding: .35rem .35rem .62rem;
     scroll-padding-inline: .35rem;
+    scrollbar-gutter: stable;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, .28) transparent;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
+    clip-path: inset(0 round 999px);
   }
   .ucp-product-nav::-webkit-scrollbar { height: .28rem; }
   .ucp-product-nav::-webkit-scrollbar-track { background: transparent; }
