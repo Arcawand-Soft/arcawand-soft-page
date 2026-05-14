@@ -258,9 +258,22 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 .ucp-static-hero h1 {
   margin: 1.1rem auto;
   max-width: 880px;
-  font-size: clamp(2.8rem, 6vw, 5.8rem);
-  line-height: .94;
-  letter-spacing: -.06em;
+  font-size: clamp(2.35rem, 5.5vw, 5.45rem);
+  line-height: .98;
+  letter-spacing: -.045em;
+}
+
+.ucp-heading-line {
+  display: block;
+}
+
+.ucp-heading-main,
+.ucp-heading-product {
+  white-space: nowrap;
+}
+
+.ucp-heading-product {
+  font-size: .92em;
 }
 
 .ucp-static-hero p {
@@ -411,6 +424,10 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
     opacity: .5;
   }
   .ucp-static-main { padding-top: 9.6rem; }
+  .ucp-static-hero h1 {
+    font-size: clamp(1.45rem, 7.2vw, 2.45rem);
+    letter-spacing: -.025em;
+  }
   .ucp-page-grid { grid-template-columns: 1fr; }
   .ucp-side-card { position: static; }
 }

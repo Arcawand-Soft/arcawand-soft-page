@@ -20,6 +20,12 @@
   margin: 0 0 .75rem;
   color: #fff;
   font-size: clamp(1.65rem, 3vw, 2.35rem);
+  line-height: 1.08;
+  letter-spacing: -.025em;
+}
+
+.ucp-demo-intro h2 .ucp-heading-product {
+  white-space: nowrap;
 }
 
 .ucp-demo-intro p,
@@ -39,6 +45,50 @@
   gap: .7rem;
   margin: 1.25rem 0 0;
   padding-left: 1.1rem;
+}
+
+.ucp-demo-reminder {
+  margin-top: 1.25rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, .10);
+}
+
+.ucp-demo-reminder h3 {
+  margin: 0 0 .85rem;
+  color: #fff;
+  font-size: 1rem;
+  letter-spacing: -.01em;
+}
+
+.ucp-demo-reminder ul {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .65rem .95rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ucp-demo-reminder li {
+  position: relative;
+  padding-left: 1.05rem;
+}
+
+.ucp-demo-reminder li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .72em;
+  width: .4rem;
+  height: .4rem;
+  border-radius: 999px;
+  background: #8b5cf6;
+  box-shadow: 0 0 18px rgba(139, 92, 246, .55);
+}
+
+@media (max-width: 720px) {
+  .ucp-demo-reminder ul {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ucp-demo-root {

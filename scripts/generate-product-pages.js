@@ -397,6 +397,97 @@ const termsContent = {
   }
 };
 
+const visiblePageTitles = {
+  en: {
+    demo: "Interactive Demo",
+    faq: "FAQ",
+    privacy: "Privacy Policy",
+    terms: "Terms of Use"
+  },
+  fr: {
+    demo: "Démo interactive",
+    faq: "FAQ",
+    privacy: "Politique de confidentialité",
+    terms: "Conditions générales d’utilisation"
+  },
+  es: {
+    demo: "Demo interactiva",
+    faq: "FAQ",
+    privacy: "Política de privacidad",
+    terms: "Términos de uso"
+  },
+  it: {
+    demo: "Demo interattiva",
+    faq: "FAQ",
+    privacy: "Informativa privacy",
+    terms: "Termini d’uso"
+  },
+  de: {
+    demo: "Interaktive Demo",
+    faq: "FAQ",
+    privacy: "Datenschutz",
+    terms: "Nutzungsbedingungen"
+  }
+};
+
+const demoFeatureReminders = {
+  en: {
+    title: "Reminder",
+    items: [
+      "Text, code and image captures in dedicated workspaces.",
+      "Floating launcher, side panel and full manager window.",
+      "Categories, subcategories, favorites, pinned items, trash and vault.",
+      "Versioning for text and code captures.",
+      "Advanced search, source history and visual browsing.",
+      "Capture montage, built-in tools and Google Drive sync."
+    ]
+  },
+  fr: {
+    title: "Rappel",
+    items: [
+      "Captures de textes, codes et images dans des espaces dédiés.",
+      "Launcher flottant, fenêtre latérale et gestionnaire complet.",
+      "Catégories, sous-catégories, favoris, épingles, corbeille et coffre-fort.",
+      "Versioning des captures de texte et de code.",
+      "Recherche avancée, historique des sources et navigation visuelle.",
+      "Montage des captures, outils intégrés et synchronisation Google Drive."
+    ]
+  },
+  es: {
+    title: "Recordatorio",
+    items: [
+      "Capturas de texto, código e imágenes en espacios dedicados.",
+      "Launcher flotante, panel lateral y gestor completo.",
+      "Categorías, subcategorías, favoritos, fijados, papelera y bóveda.",
+      "Versionado de capturas de texto y código.",
+      "Búsqueda avanzada, historial de fuentes y navegación visual.",
+      "Montaje de capturas, herramientas integradas y sincronización Google Drive."
+    ]
+  },
+  it: {
+    title: "Promemoria",
+    items: [
+      "Catture di testi, codice e immagini in spazi dedicati.",
+      "Launcher flottante, pannello laterale e gestore completo.",
+      "Categorie, sottocategorie, preferiti, elementi fissati, cestino e vault.",
+      "Versioning delle catture di testo e codice.",
+      "Ricerca avanzata, cronologia delle fonti e navigazione visiva.",
+      "Montaggio delle catture, strumenti integrati e sincronizzazione Google Drive."
+    ]
+  },
+  de: {
+    title: "Zur Erinnerung",
+    items: [
+      "Text-, Code- und Bild-Captures in eigenen Arbeitsbereichen.",
+      "Floating Launcher, Seitenfenster und vollständiger Manager.",
+      "Kategorien, Unterkategorien, Favoriten, Pins, Papierkorb und Vault.",
+      "Versionierung für Text- und Code-Captures.",
+      "Erweiterte Suche, Quellenverlauf und visuelles Browsing.",
+      "Capture-Montage, integrierte Tools und Google-Drive-Sync."
+    ]
+  }
+};
+
 termsContent.es = {
   terms: "Términos de uso",
   termsTitle: "Términos de uso de Ultimate Clipboard Pro",
@@ -493,6 +584,14 @@ for (const [lang, label] of Object.entries(languageButtonLabels)) {
 
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+}
+function productHeading(lang, page) {
+  const pageTitle = visiblePageTitles[lang]?.[page] || visiblePageTitles.en[page];
+  return `<span class="ucp-heading-line ucp-heading-main">${esc(pageTitle)}</span><span class="ucp-heading-line ucp-heading-product">Ultimate Clipboard Pro</span>`;
+}
+function demoFeatureList(lang) {
+  const reminder = demoFeatureReminders[lang] || demoFeatureReminders.en;
+  return `<div class="ucp-demo-reminder"><h3>${esc(reminder.title)}</h3><ul>${reminder.items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>`;
 }
 function langBase(lang) {
   return lang === "en" ? "" : `${langs[lang].dir}/`;
@@ -632,7 +731,7 @@ function staticProductPage(lang, page) {
   const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : page === "demo" ? l.demoLead : l.privacyLead;
   const canonical = absProduct(lang, page);
   const main = page === "demo"
-    ? `<section class="ucp-demo-intro"><article><h2>${esc(l.demoTitle)}</h2><p class="ucp-demo-instruction">${esc(l.demoLead)}</p></article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
+    ? `<section class="ucp-demo-intro"><article><h2>${productHeading(lang, "demo")}</h2><p class="ucp-demo-instruction">${esc(l.demoLead)}</p>${demoFeatureList(lang)}</article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
     : page === "faq"
     ? `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`
     : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${(page === "terms" ? l.termsSections : l.privacySections).map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
@@ -661,8 +760,8 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta name="twitter:image" content="https://arcawand-soft.com/assets/ultimate-keyboard-pro-preview-social-networks.png">
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
-<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-nav-scroll">
-${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=20260514-demo-fixes">' : ""}
+<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-headings">
+${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=20260514-demo-reminder">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
@@ -674,7 +773,7 @@ ${page === "demo" ? '<script defer src="/assets/ucp-demo.js?v=20260514-pro-datas
 ${languageMenu(lang)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
-<section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${esc(title)}</h1><p>${esc(lead)}</p></section>
+<section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${productHeading(lang, page)}</h1><p>${esc(lead)}</p></section>
 <section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(l.terms)}</a></nav></aside></section>
 </main>
 <footer class="ucp-static-footer"><span>${esc(l.footer)}</span><span><a href="mailto:contact@arcawand-soft.com">contact@arcawand-soft.com</a></span></footer>
@@ -705,9 +804,9 @@ function patchProductIndex(lang) {
   const file = path.join(root, productBase(lang), "index.html");
   let content = fs.readFileSync(file, "utf8");
   if (!content.includes("/assets/ucp-product-pages.css")) {
-    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-nav-scroll">');
+    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-headings">');
   }
-  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-nav-scroll">');
+  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-headings">');
   if (!content.includes("/assets/ucp-product-pages.js")) {
     content = content.replace('<script defer src="/assets/analytics.js"></script>', `<script defer src="/assets/analytics.js"></script>\n<script defer src="${productPagesScript}"></script>`);
   }
