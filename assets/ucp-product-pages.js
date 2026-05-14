@@ -1,11 +1,11 @@
 (() => {
   const supportedLangs = ["en", "fr", "es", "it", "de"];
   const labels = {
-    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use", contact: "Contact" },
-    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU", contact: "Contact" },
-    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso", contact: "Contacto" },
-    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso", contact: "Contatto" },
-    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen", contact: "Kontakt" }
+    en: { presentation: "Presentation", demo: "Demo", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use", contact: "Contact" },
+    fr: { presentation: "Présentation", demo: "Démo", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU", contact: "Contact" },
+    es: { presentation: "Presentación", demo: "Demo", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso", contact: "Contacto" },
+    it: { presentation: "Presentazione", demo: "Demo", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso", contact: "Contatto" },
+    de: { presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen", contact: "Kontakt" }
   };
   const languageButtonLabels = {
     en: "Change language",
@@ -17,6 +17,7 @@
   const routes = {
     en: {
       presentation: "https://arcawand-soft.com/ultimate-clipboard-pro/",
+      demo: "https://arcawand-soft.com/ultimate-clipboard-pro/demo/",
       faq: "https://arcawand-soft.com/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/",
       terms: "https://arcawand-soft.com/ultimate-clipboard-pro/terms/",
@@ -24,6 +25,7 @@
     },
     fr: {
       presentation: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/",
+      demo: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/demo/",
       faq: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/privacy/",
       terms: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/terms/",
@@ -31,6 +33,7 @@
     },
     es: {
       presentation: "https://arcawand-soft.com/es/ultimate-clipboard-pro/",
+      demo: "https://arcawand-soft.com/es/ultimate-clipboard-pro/demo/",
       faq: "https://arcawand-soft.com/es/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/es/ultimate-clipboard-pro/privacy/",
       terms: "https://arcawand-soft.com/es/ultimate-clipboard-pro/terms/",
@@ -38,6 +41,7 @@
     },
     it: {
       presentation: "https://arcawand-soft.com/it/ultimate-clipboard-pro/",
+      demo: "https://arcawand-soft.com/it/ultimate-clipboard-pro/demo/",
       faq: "https://arcawand-soft.com/it/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/it/ultimate-clipboard-pro/privacy/",
       terms: "https://arcawand-soft.com/it/ultimate-clipboard-pro/terms/",
@@ -45,6 +49,7 @@
     },
     de: {
       presentation: "https://arcawand-soft.com/de/ultimate-clipboard-pro/",
+      demo: "https://arcawand-soft.com/de/ultimate-clipboard-pro/demo/",
       faq: "https://arcawand-soft.com/de/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/de/ultimate-clipboard-pro/privacy/",
       terms: "https://arcawand-soft.com/de/ultimate-clipboard-pro/terms/",
@@ -59,6 +64,7 @@
 
   function getProductPage() {
     const path = window.location.pathname;
+    if (path.includes("/ultimate-clipboard-pro/demo")) return "demo";
     if (path.includes("/ultimate-clipboard-pro/faq")) return "faq";
     if (path.includes("/ultimate-clipboard-pro/privacy")) return "privacy";
     if (path.includes("/ultimate-clipboard-pro/terms")) return "terms";
@@ -159,7 +165,7 @@
 
   function setupProductFooterLinks() {
     const lang = getLangFromPath();
-    const items = ["presentation", "faq", "privacy", "terms", "contact"];
+    const items = ["presentation", "demo", "faq", "privacy", "terms", "contact"];
     const apply = () => {
       const footer = document.querySelector("footer");
       if (!footer) return false;

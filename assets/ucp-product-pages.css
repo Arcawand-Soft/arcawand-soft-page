@@ -348,7 +348,7 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 .nav-app-card { display: grid; gap: .45rem; }
 .nav-app-links {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: .35rem;
   padding: 0 .2rem .2rem;
 }
@@ -368,6 +368,10 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 .nav-app-links a:hover { background: hsl(var(--primary) / .2); color: #fff; }
 
 @media (max-width: 920px) {
+  .nav-app-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
   .nav-app-links { grid-template-columns: 1fr; }
 }
 

@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const productPagesScript = "/assets/ucp-product-pages.js?v=20260514-language-menu";
+const productPagesScript = "/assets/ucp-product-pages.js?v=20260514-demo-page";
 
 const langs = {
   en: {
@@ -13,6 +13,7 @@ const langs = {
     desc: "The ultimate clipboard manager",
     back: "Back to ArcaWand Soft",
     presentation: "Presentation",
+    demo: "Demo",
     faq: "FAQ",
     privacy: "Privacy policy",
     footer: "ArcaWand Soft. Premium apps for demanding users.",
@@ -20,6 +21,13 @@ const langs = {
     sideText: "Navigate the Ultimate Clipboard Pro product area.",
     updated: "Last updated: May 13, 2026",
     faqTitle: "Ultimate Clipboard Pro FAQ",
+    demoTitle: "Ultimate Clipboard Pro Interactive Demo",
+    demoDesc: "Try a visual demo of Ultimate Clipboard Pro with the floating launcher, side panel, manager, categories, versions and sample captures.",
+    demoKicker: "Interactive product demo",
+    demoLead: "Explore a realistic, browser-based demo of the Ultimate Clipboard Pro interface. It is visual only: capture, copy, tools, settings and paid workflows are disabled, but you can open the launcher, browse captures, pin items, mark favorites and switch versions.",
+    demoBrowse: "Open the floating launcher and browse a realistic Pro workspace.",
+    demoSafe: "Demo mode cannot capture, copy, open settings or run tools.",
+    demoAllowed: "You can pin captures, mark favorites and switch text or code versions.",
     faqDesc: "Answers about Ultimate Clipboard Pro features, privacy, Pro licensing, captures, Google Drive sync and Chrome extension usage.",
     faqKicker: "Product support",
     faqLead: "Everything a demanding user should understand before installing Ultimate Clipboard Pro: what it captures, what stays local, what Pro unlocks and how daily workflows are protected.",
@@ -62,6 +70,7 @@ const langs = {
     desc: "Le gestionnaire de presse-papiers ultime",
     back: "Retour vers ArcaWand Soft",
     presentation: "Présentation",
+    demo: "Démo",
     faq: "FAQ",
     privacy: "Politique de confidentialité",
     footer: "ArcaWand Soft. Apps premium pour utilisateurs exigeants.",
@@ -69,6 +78,13 @@ const langs = {
     sideText: "Naviguez dans l’espace produit Ultimate Clipboard Pro.",
     updated: "Dernière mise à jour : 13 mai 2026",
     faqTitle: "FAQ Ultimate Clipboard Pro",
+    demoTitle: "Démo interactive Ultimate Clipboard Pro",
+    demoDesc: "Essayez une démo visuelle d’Ultimate Clipboard Pro avec le launcher flottant, la fenêtre latérale, le gestionnaire, les catégories, les versions et des captures d’exemple.",
+    demoKicker: "Démo produit interactive",
+    demoLead: "Explorez une démo réaliste de l’interface Ultimate Clipboard Pro directement dans le navigateur. Elle est uniquement visuelle : capture, copie, outils, paramètres et workflows payants sont désactivés, mais vous pouvez ouvrir le launcher, parcourir les captures, épingler des items, ajouter des favoris et changer de version.",
+    demoBrowse: "Ouvrez le launcher flottant et parcourez un espace Pro réaliste.",
+    demoSafe: "Le mode Démo ne peut pas capturer, copier, ouvrir les paramètres ni lancer les outils.",
+    demoAllowed: "Vous pouvez épingler des captures, ajouter des favoris et changer de version texte ou code.",
     faqDesc: "Réponses sur les fonctionnalités, la confidentialité, la licence Pro, les captures, la synchronisation Google Drive et l’utilisation de l’extension Chrome Ultimate Clipboard Pro.",
     faqKicker: "Support produit",
     faqLead: "Tout ce qu’un utilisateur exigeant doit comprendre avant d’installer Ultimate Clipboard Pro : ce qui est capturé, ce qui reste local, ce que Pro débloque et comment les flux de travail quotidiens sont protégés.",
@@ -104,7 +120,9 @@ const langs = {
     ]
   },
   es: {
-    dir: "es", html: "es", home: "/es/", navSofts: "Nuestras apps", desc: "El gestor de portapapeles definitivo", back: "Volver a ArcaWand Soft", presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", footer: "ArcaWand Soft. Apps premium para usuarios exigentes.", sideTitle: "Páginas del producto", sideText: "Navega por el espacio de producto Ultimate Clipboard Pro.", updated: "Última actualización: 13 de mayo de 2026",
+    dir: "es", html: "es", home: "/es/", navSofts: "Nuestras apps", desc: "El gestor de portapapeles definitivo", back: "Volver a ArcaWand Soft", presentation: "Presentación", demo: "Demo", faq: "FAQ", privacy: "Política de privacidad", footer: "ArcaWand Soft. Apps premium para usuarios exigentes.", sideTitle: "Páginas del producto", sideText: "Navega por el espacio de producto Ultimate Clipboard Pro.", updated: "Última actualización: 13 de mayo de 2026",
+    demoTitle: "Demo interactiva de Ultimate Clipboard Pro", demoDesc: "Prueba una demo visual de Ultimate Clipboard Pro con launcher flotante, panel lateral, gestor, categorías, versiones y capturas de ejemplo.", demoKicker: "Demo interactiva del producto", demoLead: "Explora una demo realista de la interfaz de Ultimate Clipboard Pro en el navegador. Es solo visual: captura, copia, herramientas, ajustes y flujos de pago están desactivados, pero puedes abrir el launcher, ver capturas, fijar elementos, marcar favoritos y cambiar versiones.",
+    demoBrowse: "Abre el launcher flotante y explora un espacio Pro realista.", demoSafe: "El modo Demo no puede capturar, copiar, abrir ajustes ni ejecutar herramientas.", demoAllowed: "Puedes fijar capturas, marcar favoritos y cambiar versiones de texto o código.",
     faqTitle: "FAQ de Ultimate Clipboard Pro", faqDesc: "Respuestas sobre funciones, privacidad, licencia Pro, capturas, sincronización con Google Drive y uso de la extensión Chrome Ultimate Clipboard Pro.", faqKicker: "Soporte del producto", faqLead: "Todo lo que un usuario exigente debe entender antes de instalar Ultimate Clipboard Pro: qué captura, qué permanece local, qué desbloquea Pro y cómo se protegen los flujos diarios.",
     privacyTitle: "Política de privacidad de Ultimate Clipboard Pro", privacyDesc: "Política de privacidad detallada de Ultimate Clipboard Pro: almacenamiento local, permisos del navegador, sincronización con Google Drive, pagos, analítica y control del usuario.", privacyKicker: "Privacidad del producto", privacyLead: "Ultimate Clipboard Pro está diseñado como una extensión local-first. Esta página explica qué datos se tratan, dónde permanecen, qué servicios opcionales pueden contactarse y cómo el usuario conserva el control.",
     faqItems: [
@@ -135,7 +153,9 @@ const langs = {
     ]
   },
   it: {
-    dir: "it", html: "it", home: "/it/", navSofts: "Le nostre app", desc: "Il gestore degli appunti definitivo", back: "Torna ad ArcaWand Soft", presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", footer: "ArcaWand Soft. App premium per utenti esigenti.", sideTitle: "Pagine prodotto", sideText: "Naviga nello spazio prodotto Ultimate Clipboard Pro.", updated: "Ultimo aggiornamento: 13 maggio 2026",
+    dir: "it", html: "it", home: "/it/", navSofts: "Le nostre app", desc: "Il gestore degli appunti definitivo", back: "Torna ad ArcaWand Soft", presentation: "Presentazione", demo: "Demo", faq: "FAQ", privacy: "Informativa privacy", footer: "ArcaWand Soft. App premium per utenti esigenti.", sideTitle: "Pagine prodotto", sideText: "Naviga nello spazio prodotto Ultimate Clipboard Pro.", updated: "Ultimo aggiornamento: 13 maggio 2026",
+    demoTitle: "Demo interattiva di Ultimate Clipboard Pro", demoDesc: "Prova una demo visiva di Ultimate Clipboard Pro con launcher flottante, pannello laterale, gestore, categorie, versioni e catture di esempio.", demoKicker: "Demo prodotto interattiva", demoLead: "Esplora una demo realistica dell’interfaccia Ultimate Clipboard Pro nel browser. È solo visiva: cattura, copia, strumenti, impostazioni e flussi a pagamento sono disattivati, ma puoi aprire il launcher, sfogliare catture, fissare elementi, aggiungere preferiti e cambiare versione.",
+    demoBrowse: "Apri il launcher flottante ed esplora uno spazio Pro realistico.", demoSafe: "La modalità Demo non può catturare, copiare, aprire impostazioni o eseguire strumenti.", demoAllowed: "Puoi fissare catture, aggiungere preferiti e cambiare versioni di testo o codice.",
     faqTitle: "FAQ di Ultimate Clipboard Pro", faqDesc: "Risposte su funzioni, privacy, licenza Pro, acquisizioni, sincronizzazione Google Drive e uso dell’estensione Chrome Ultimate Clipboard Pro.", faqKicker: "Supporto prodotto", faqLead: "Tutto ciò che un utente esigente deve sapere prima di installare Ultimate Clipboard Pro: cosa cattura, cosa resta locale, cosa sblocca Pro e come protegge i flussi quotidiani.",
     privacyTitle: "Informativa privacy di Ultimate Clipboard Pro", privacyDesc: "Informativa privacy dettagliata per Ultimate Clipboard Pro: archiviazione locale, permessi browser, sincronizzazione Google Drive, pagamenti, analytics e controllo utente.", privacyKicker: "Privacy prodotto", privacyLead: "Ultimate Clipboard Pro è progettata come estensione local-first. Questa pagina spiega quali dati vengono trattati, dove restano, quali servizi opzionali possono essere contattati e come l’utente mantiene il controllo.",
     faqItems: [
@@ -166,7 +186,9 @@ const langs = {
     ]
   },
   de: {
-    dir: "de", html: "de", home: "/de/", navSofts: "Unsere Apps", desc: "Der ultimative Zwischenablage-Manager", back: "Zurück zu ArcaWand Soft", presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", footer: "ArcaWand Soft. Premium-Apps für anspruchsvolle Nutzer.", sideTitle: "Produktseiten", sideText: "Navigieren Sie im Produktbereich von Ultimate Clipboard Pro.", updated: "Zuletzt aktualisiert: 13. Mai 2026",
+    dir: "de", html: "de", home: "/de/", navSofts: "Unsere Apps", desc: "Der ultimative Zwischenablage-Manager", back: "Zurück zu ArcaWand Soft", presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", footer: "ArcaWand Soft. Premium-Apps für anspruchsvolle Nutzer.", sideTitle: "Produktseiten", sideText: "Navigieren Sie im Produktbereich von Ultimate Clipboard Pro.", updated: "Zuletzt aktualisiert: 13. Mai 2026",
+    demoTitle: "Interaktive Demo von Ultimate Clipboard Pro", demoDesc: "Testen Sie eine visuelle Demo von Ultimate Clipboard Pro mit Floating Launcher, Seitenfenster, Manager, Kategorien, Versionen und Beispiel-Captures.", demoKicker: "Interaktive Produktdemo", demoLead: "Erkunden Sie eine realistische Browser-Demo der Ultimate Clipboard Pro Oberfläche. Sie ist rein visuell: Erfassen, Kopieren, Tools, Einstellungen und Bezahlabläufe sind deaktiviert, aber Sie können den Launcher öffnen, Captures durchsuchen, Elemente anheften, favorisieren und Versionen wechseln.",
+    demoBrowse: "Öffnen Sie den Floating Launcher und erkunden Sie einen realistischen Pro-Arbeitsbereich.", demoSafe: "Der Demo-Modus kann nicht erfassen, kopieren, Einstellungen öffnen oder Tools ausführen.", demoAllowed: "Sie können Captures anheften, favorisieren und Text- oder Code-Versionen wechseln.",
     faqTitle: "FAQ zu Ultimate Clipboard Pro", faqDesc: "Antworten zu Funktionen, Datenschutz, Pro-Lizenz, Captures, Google-Drive-Synchronisierung und Nutzung der Chrome-Erweiterung Ultimate Clipboard Pro.", faqKicker: "Produktsupport", faqLead: "Alles, was anspruchsvolle Nutzer vor der Installation von Ultimate Clipboard Pro wissen sollten: was erfasst wird, was lokal bleibt, was Pro freischaltet und wie tägliche Workflows geschützt werden.",
     privacyTitle: "Datenschutz für Ultimate Clipboard Pro", privacyDesc: "Detaillierte Datenschutzhinweise für Ultimate Clipboard Pro: lokaler Speicher, Browser-Berechtigungen, Google-Drive-Sync, Zahlungen, Analytics und Nutzerkontrolle.", privacyKicker: "Produktdatenschutz", privacyLead: "Ultimate Clipboard Pro ist als local-first Browser-Erweiterung konzipiert. Diese Seite erklärt, welche Daten verarbeitet werden, wo sie bleiben, welche optionalen Dienste kontaktiert werden können und wie Nutzer die Kontrolle behalten.",
     faqItems: [
@@ -488,6 +510,7 @@ function jsonLd(data) {
 }
 function structuredData(lang, page, title, desc, canonical) {
   const l = langs[lang];
+  const pageLabel = page === "faq" ? l.faq : page === "terms" ? l.terms : page === "demo" ? l.demo : l.privacy;
   const graph = [
     {
       "@context": "https://schema.org",
@@ -508,7 +531,7 @@ function structuredData(lang, page, title, desc, canonical) {
         {
           "@type": "ListItem",
           position: 3,
-          name: page === "faq" ? l.faq : page === "terms" ? l.terms : l.privacy,
+          name: pageLabel,
           item: canonical
         }
       ]
@@ -577,13 +600,14 @@ function structuredData(lang, page, title, desc, canonical) {
 }
 function relFromProductPage(page) {
   return page === "presentation"
-    ? { presentation: "./", faq: "faq/", privacy: "privacy/", terms: "terms/" }
-    : { presentation: "../", faq: "../faq/", privacy: "../privacy/", terms: "../terms/" };
+    ? { presentation: "./", demo: "demo/", faq: "faq/", privacy: "privacy/", terms: "terms/" }
+    : { presentation: "../", demo: "../demo/", faq: "../faq/", privacy: "../privacy/", terms: "../terms/" };
 }
 function homeHrefs(depth) {
   const prefix = depth === 0 ? "" : "../".repeat(depth);
   return {
     presentation: `${prefix}ultimate-clipboard-pro/`,
+    demo: `${prefix}ultimate-clipboard-pro/demo/`,
     faq: `${prefix}ultimate-clipboard-pro/faq/`,
     privacy: `${prefix}ultimate-clipboard-pro/privacy/`,
     terms: `${prefix}ultimate-clipboard-pro/terms/`
@@ -597,17 +621,19 @@ function languageMenu(current) {
 }
 function productNav(lang, active, rel) {
   const l = langs[lang];
-  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
+  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.demo}" data-ucp-nav="demo"${active === "demo" ? ' aria-current="page"' : ""}>${esc(l.demo)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
 }
 function staticProductPage(lang, page) {
   const l = langs[lang];
   const rel = relFromProductPage(page);
-  const title = page === "faq" ? l.faqTitle : page === "terms" ? l.termsTitle : l.privacyTitle;
-  const desc = page === "faq" ? l.faqDesc : page === "terms" ? l.termsDesc : l.privacyDesc;
-  const kicker = page === "faq" ? l.faqKicker : page === "terms" ? l.termsKicker : l.privacyKicker;
-  const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : l.privacyLead;
+  const title = page === "faq" ? l.faqTitle : page === "terms" ? l.termsTitle : page === "demo" ? l.demoTitle : l.privacyTitle;
+  const desc = page === "faq" ? l.faqDesc : page === "terms" ? l.termsDesc : page === "demo" ? l.demoDesc : l.privacyDesc;
+  const kicker = page === "faq" ? l.faqKicker : page === "terms" ? l.termsKicker : page === "demo" ? l.demoKicker : l.privacyKicker;
+  const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : page === "demo" ? l.demoLead : l.privacyLead;
   const canonical = absProduct(lang, page);
-  const main = page === "faq"
+  const main = page === "demo"
+    ? `<section class="ucp-demo-intro"><article><h2>${esc(l.demoTitle)}</h2><p>${esc(l.demoLead)}</p><ul><li>${esc(l.demoBrowse || "Open the floating launcher and browse a realistic Pro workspace.")}</li><li>${esc(l.demoSafe || "Demo mode cannot capture, copy, open settings or run tools.")}</li><li>${esc(l.demoAllowed || "You can pin captures, mark favorites and switch text or code versions.")}</li></ul></article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
+    : page === "faq"
     ? `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`
     : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${(page === "terms" ? l.termsSections : l.privacySections).map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
   return `<!doctype html>
@@ -636,18 +662,20 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css">
+${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
+${page === "demo" ? '<script defer src="/assets/ucp-demo.js"></script>' : ""}
 </head>
-<body class="ucp-static-page">
+<body class="ucp-static-page${page === "demo" ? " ucp-demo-page" : ""}">
 <a class="arcawand-root-return" href="${l.home}" aria-label="${esc(l.back)}">&larr; ArcaWand Soft</a>
 <div class="ucp-product-mark"><img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="48" height="48" decoding="async"><span class="ucp-product-title">Ultimate Clipboard Pro</span></div>
 ${languageMenu(lang)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
 <section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${esc(title)}</h1><p>${esc(lead)}</p></section>
-<section class="ucp-page-grid"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(l.terms)}</a></nav></aside></section>
+<section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(l.terms)}</a></nav></aside></section>
 </main>
 <footer class="ucp-static-footer"><span>${esc(l.footer)}</span><span><a href="mailto:contact@arcawand-soft.com">contact@arcawand-soft.com</a></span></footer>
 </body>
@@ -657,7 +685,7 @@ ${productNav(lang, page, rel)}
 function navDrop(lang, depth) {
   const l = langs[lang];
   const href = homeHrefs(depth);
-  return `<div class="nav-drop"><button class="nav-drop-button" type="button" data-i18n="navSofts">${esc(l.navSofts)}</button><div class="nav-drop-menu nav-apps-menu"><div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${href.presentation}"><strong data-i18n="navUcpTitle">Ultimate Clipboard Pro</strong><span data-i18n="navUcpDesc">${esc(l.desc)}</span></a><div class="nav-app-links"><a href="${href.presentation}">${esc(l.presentation)}</a><a href="${href.faq}">${esc(l.faq)}</a><a href="${href.privacy}">${esc(l.privacy)}</a><a href="${href.terms}">${esc(l.terms)}</a></div></div></div></div>`;
+  return `<div class="nav-drop"><button class="nav-drop-button" type="button" data-i18n="navSofts">${esc(l.navSofts)}</button><div class="nav-drop-menu nav-apps-menu"><div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${href.presentation}"><strong data-i18n="navUcpTitle">Ultimate Clipboard Pro</strong><span data-i18n="navUcpDesc">${esc(l.desc)}</span></a><div class="nav-app-links"><a href="${href.presentation}">${esc(l.presentation)}</a><a href="${href.demo}">${esc(l.demo)}</a><a href="${href.faq}">${esc(l.faq)}</a><a href="${href.privacy}">${esc(l.privacy)}</a><a href="${href.terms}">${esc(l.terms)}</a></div></div></div></div>`;
 }
 function patchSiteNav(file, lang, depth) {
   let content = fs.readFileSync(file, "utf8");
@@ -702,7 +730,7 @@ function patchSiteJs() {
 function writeProductPages() {
   for (const lang of Object.keys(langs)) {
     patchProductIndex(lang);
-    for (const page of ["faq", "privacy", "terms"]) {
+    for (const page of ["demo", "faq", "privacy", "terms"]) {
       const dir = path.join(root, productBase(lang), page);
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, "index.html"), staticProductPage(lang, page), "utf8");
@@ -712,7 +740,7 @@ function writeProductPages() {
 function patchSitemap() {
   const file = path.join(root, "sitemap.xml");
   let content = fs.readFileSync(file, "utf8");
-  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "faq"), absProduct(lang, "privacy"), absProduct(lang, "terms")]);
+  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "demo"), absProduct(lang, "faq"), absProduct(lang, "privacy"), absProduct(lang, "terms")]);
   const additions = urls.filter((url) => !content.includes(`<loc>${url}</loc>`)).map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>`).join("\n");
   if (additions) content = content.replace("</urlset>", `${additions}\n</urlset>`);
   fs.writeFileSync(file, content, "utf8");
