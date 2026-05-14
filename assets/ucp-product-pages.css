@@ -178,6 +178,7 @@ body.ucp-static-page img { max-width: 100%; display: block; }
   transform: translateX(-50%);
   display: flex;
   align-items: center;
+  align-content: center;
   gap: .35rem;
   padding: .35rem;
   border-radius: 999px;
@@ -194,6 +195,7 @@ body.ucp-static-page img { max-width: 100%; display: block; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   min-height: 2.15rem;
   padding: 0 .9rem;
   border-radius: 999px;
@@ -403,10 +405,12 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
     top: 4.2rem;
     width: min(100% - 1.5rem, 34rem);
     justify-content: flex-start;
+    align-items: center;
+    align-content: center;
     overflow-x: auto;
     overflow-y: hidden;
     max-width: calc(100vw - 1.5rem);
-    padding: .35rem .35rem .62rem;
+    padding: .42rem .45rem;
     scroll-padding-inline: .35rem;
     scrollbar-gutter: stable;
     scrollbar-width: thin;
@@ -423,6 +427,7 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
   }
   .ucp-product-nav a {
     flex: 0 0 auto;
+    align-self: center;
     padding-inline: .75rem;
   }
   body.ucp-product-scrolled .ucp-product-nav {

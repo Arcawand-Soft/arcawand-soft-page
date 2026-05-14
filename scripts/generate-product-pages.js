@@ -760,7 +760,7 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta name="twitter:image" content="https://arcawand-soft.com/assets/ultimate-keyboard-pro-preview-social-networks.png">
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
-<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-mobile-menu-layer">
+<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-menu-fix">
 ${page === "demo" ? '<link rel="stylesheet" href="/assets/ucp-demo.css?v=20260514-demo-reminder">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
@@ -804,9 +804,10 @@ function patchProductIndex(lang) {
   const file = path.join(root, productBase(lang), "index.html");
   let content = fs.readFileSync(file, "utf8");
   if (!content.includes("/assets/ucp-product-pages.css")) {
-    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-mobile-menu-layer">');
+    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-menu-fix">');
   }
-  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-mobile-menu-layer">');
+  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260514-product-menu-fix">');
+  content = content.replace(/\.arcawand-product-language-menu \{ position: fixed; right: 1rem; top: 1rem; z-index: 70; \}/g, ".arcawand-product-language-menu { position: fixed; right: 1rem; top: 1rem; z-index: 120; }");
   if (!content.includes("/assets/ucp-product-pages.js")) {
     content = content.replace('<script defer src="/assets/analytics.js"></script>', `<script defer src="/assets/analytics.js"></script>\n<script defer src="${productPagesScript}"></script>`);
   }
