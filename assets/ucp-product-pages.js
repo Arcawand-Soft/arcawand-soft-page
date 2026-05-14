@@ -76,6 +76,11 @@
     if (panel && (!panel.getAttribute("aria-label") || panel.getAttribute("aria-label") === "Language")) {
       panel.setAttribute("aria-label", languageLabel);
     }
+    const hasLegacyInlineLanguageMenu = Array.from(document.scripts).some((script) =>
+      script.textContent.includes("const routeMap=") &&
+      script.textContent.includes("arcawand-product-language-menu")
+    );
+    if (hasLegacyInlineLanguageMenu) return;
     const close = () => {
       menu.classList.remove("is-open");
       button?.setAttribute("aria-expanded", "false");

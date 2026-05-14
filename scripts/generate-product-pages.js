@@ -685,6 +685,7 @@ function patchProductIndex(lang) {
   content = content.replace(/<nav class="ucp-product-nav"[\s\S]*?<\/nav>\s*/g, "");
   content = content.replace(/(<div id="root"><\/div>)/, `${productNav(lang, "presentation", relFromProductPage("presentation"))}\n  $1`);
   content = patchLanguageButtonLabel(content, lang);
+  content = content.replace(/<script>\(\(\)=>\{const routeMap=[\s\S]*?\}\)\(\);<\/script>\s*/g, "");
   fs.writeFileSync(file, content, "utf8");
 }
 function patchSiteJs() {
