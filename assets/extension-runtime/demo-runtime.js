@@ -19,7 +19,10 @@
       design: "Design",
       web: "Web images",
       blockedTitle: "Demo mode",
-      blocked: "This is the real Ultimate Clipboard Pro interface running in demo mode. This action is disabled on the website demo. Please install the extension.",
+      blocked: "This is a visual demo of the extension. Please install the extension to access all features.",
+      desktopOnlyTitle: "Demo available on PC only",
+      desktopOnly: "Demo mode is available on PC only. Please open this page on a computer to try the visual demo.",
+      closeLabel: "Close demo message",
       imagePrefix: "Demo image"
     },
     fr: {
@@ -35,7 +38,10 @@
       design: "Design",
       web: "Images web",
       blockedTitle: "Mode démo",
-      blocked: "Ceci est la vraie interface Ultimate Clipboard Pro exécutée en mode démo. Cette action est désactivée sur la démo du site. Merci d'installer l'extension.",
+      blocked: "Ceci est une démo visuelle de l'extension. Merci d'installer l'extension pour accéder à l'intégralité des fonctionnalités.",
+      desktopOnlyTitle: "Démo disponible sur PC uniquement",
+      desktopOnly: "Le mode démo est disponible sur PC uniquement. Ouvrez cette page sur un ordinateur pour essayer la démo visuelle.",
+      closeLabel: "Fermer le message de démonstration",
       imagePrefix: "Image de démo"
     },
     es: {
@@ -51,7 +57,10 @@
       design: "Diseño",
       web: "Imágenes web",
       blockedTitle: "Modo demo",
-      blocked: "Esta es la interfaz real de Ultimate Clipboard Pro ejecutándose en modo demo. Esta acción está desactivada en la demo del sitio. Instala la extensión.",
+      blocked: "Esta es una demo visual de la extensión. Instala la extensión para acceder a todas las funciones.",
+      desktopOnlyTitle: "Demo disponible solo en PC",
+      desktopOnly: "El modo demo está disponible solo en PC. Abre esta página en un ordenador para probar la demo visual.",
+      closeLabel: "Cerrar el mensaje de demostración",
       imagePrefix: "Imagen de demo"
     },
     it: {
@@ -67,7 +76,10 @@
       design: "Design",
       web: "Immagini web",
       blockedTitle: "Modalità demo",
-      blocked: "Questa è la vera interfaccia di Ultimate Clipboard Pro eseguita in modalità demo. Questa azione è disattivata nella demo del sito. Installa l'estensione.",
+      blocked: "Questa è una demo visiva dell'estensione. Installa l'estensione per accedere a tutte le funzionalità.",
+      desktopOnlyTitle: "Demo disponibile solo su PC",
+      desktopOnly: "La modalità demo è disponibile solo su PC. Apri questa pagina su un computer per provare la demo visiva.",
+      closeLabel: "Chiudi il messaggio demo",
       imagePrefix: "Immagine demo"
     },
     de: {
@@ -83,7 +95,10 @@
       design: "Design",
       web: "Webbilder",
       blockedTitle: "Demo-Modus",
-      blocked: "Dies ist die echte Ultimate Clipboard Pro Oberfläche im Demo-Modus. Diese Aktion ist in der Website-Demo deaktiviert. Bitte installieren Sie die Erweiterung.",
+      blocked: "Dies ist eine visuelle Demo der Erweiterung. Bitte installieren Sie die Erweiterung, um auf alle Funktionen zuzugreifen.",
+      desktopOnlyTitle: "Demo nur auf PC verfügbar",
+      desktopOnly: "Der Demo-Modus ist nur auf PC verfügbar. Öffnen Sie diese Seite auf einem Computer, um die visuelle Demo zu testen.",
+      closeLabel: "Demo-Hinweis schließen",
       imagePrefix: "Demo-Bild"
     }
   };
@@ -582,14 +597,16 @@
   }
 
   async function loadSharedScripts() {
-    const scripts = [
-      "shared/constants.js",
-      "shared/utils.js",
+    await loadScript(`${runtimeBase}shared/constants.js`);
+    await loadScript(`${runtimeBase}shared/utils.js`);
+    await Promise.all([
       "shared/locales/en.js",
       "shared/locales/fr.js",
       "shared/locales/de.js",
       "shared/locales/es.js",
-      "shared/locales/it.js",
+      "shared/locales/it.js"
+    ].map((script) => loadScript(`${runtimeBase}${script}`)));
+    const scripts = [
       "shared/i18n.js",
       "shared/dodoConfig.js",
       "shared/featureGate.js",

@@ -7,6 +7,52 @@
   const runtimeBase = "/assets/extension-runtime/";
   let managerShell = null;
   let blockedDialog = null;
+  let fastLauncher = null;
+  const desktopQuery = window.matchMedia("(min-width: 1100px) and (hover: hover) and (pointer: fine)");
+  const localCopyByLang = {
+    en: {
+      blockedTitle: "Demo mode",
+      blocked: "This is a visual demo of the extension. Please install the extension to access all features.",
+      desktopOnlyTitle: "Demo available on PC only",
+      desktopOnly: "Demo mode is available on PC only. Please open this page on a computer to try the visual demo.",
+      closeLabel: "Close demo message"
+    },
+    fr: {
+      blockedTitle: "Mode d\u00e9mo",
+      blocked: "Ceci est une d\u00e9mo visuelle de l'extension. Merci d'installer l'extension pour acc\u00e9der \u00e0 l'int\u00e9gralit\u00e9 des fonctionnalit\u00e9s.",
+      desktopOnlyTitle: "D\u00e9mo disponible sur PC uniquement",
+      desktopOnly: "Le mode d\u00e9mo est disponible sur PC uniquement. Ouvrez cette page sur un ordinateur pour essayer la d\u00e9mo visuelle.",
+      closeLabel: "Fermer le message de d\u00e9monstration"
+    },
+    es: {
+      blockedTitle: "Modo demo",
+      blocked: "Esta es una demo visual de la extensi\u00f3n. Instala la extensi\u00f3n para acceder a todas las funciones.",
+      desktopOnlyTitle: "Demo disponible solo en PC",
+      desktopOnly: "El modo demo est\u00e1 disponible solo en PC. Abre esta p\u00e1gina en un ordenador para probar la demo visual.",
+      closeLabel: "Cerrar el mensaje de demostraci\u00f3n"
+    },
+    it: {
+      blockedTitle: "Modalit\u00e0 demo",
+      blocked: "Questa \u00e8 una demo visiva dell'estensione. Installa l'estensione per accedere a tutte le funzionalit\u00e0.",
+      desktopOnlyTitle: "Demo disponibile solo su PC",
+      desktopOnly: "La modalit\u00e0 demo \u00e8 disponibile solo su PC. Apri questa pagina su un computer per provare la demo visiva.",
+      closeLabel: "Chiudi il messaggio demo"
+    },
+    de: {
+      blockedTitle: "Demo-Modus",
+      blocked: "Dies ist eine visuelle Demo der Erweiterung. Bitte installieren Sie die Erweiterung, um auf alle Funktionen zuzugreifen.",
+      desktopOnlyTitle: "Demo nur auf PC verf\u00fcgbar",
+      desktopOnly: "Der Demo-Modus ist nur auf PC verf\u00fcgbar. \u00d6ffnen Sie diese Seite auf einem Computer, um die visuelle Demo zu testen.",
+      closeLabel: "Demo-Hinweis schlie\u00dfen"
+    }
+  };
+
+  function resolvePageLanguage() {
+    const attrLang = (root.dataset.ucpDemoLang || document.documentElement.lang || "").slice(0, 2).toLowerCase();
+    if (localCopyByLang[attrLang]) return attrLang;
+    const match = window.location.pathname.match(/^\/(fr|es|it|de)\//);
+    return match?.[1] || "en";
+  }
 
   function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -19,13 +65,14 @@
     });
   }
 
-  function showBlocked() {
+  function currentCopy() {
     const runtime = window.UCP_DEMO_RUNTIME;
-    const lang = runtime?.resolveLanguage?.() || "en";
-    const copy = runtime?.copyByLang?.[lang] || runtime?.copyByLang?.en || {
-      blockedTitle: "Demo mode",
-      blocked: "This action is disabled in the website demo."
-    };
+    const lang = runtime?.resolveLanguage?.() || resolvePageLanguage();
+    return runtime?.copyByLang?.[lang] || runtime?.copyByLang?.en || localCopyByLang[lang] || localCopyByLang.en;
+  }
+
+  function showBlocked(customCopy = null) {
+    const copy = customCopy || currentCopy();
     if (!blockedDialog) {
       blockedDialog = document.createElement("section");
       blockedDialog.className = "ucp-real-demo-dialog";
@@ -46,18 +93,54 @@
       const close = document.createElement("button");
       close.className = "ucp-real-demo-dialog__close";
       close.type = "button";
-      close.setAttribute("aria-label", "Close");
-      close.textContent = "×";
+      close.setAttribute("aria-label", copy.closeLabel || "Close demo message");
+      close.textContent = "\u00d7";
       close.addEventListener("click", () => blockedDialog.classList.remove("is-visible"));
 
       panel.append(close, title, text);
       blockedDialog.append(panel);
       document.body.append(blockedDialog);
     }
+    blockedDialog.querySelector(".ucp-real-demo-dialog__close")?.setAttribute("aria-label", copy.closeLabel || "Close demo message");
     blockedDialog.querySelector('[data-role="title"]').textContent = copy.blockedTitle;
     blockedDialog.querySelector('[data-role="text"]').textContent = copy.blocked;
     blockedDialog.classList.add("is-visible");
     window.setTimeout(() => blockedDialog?.classList.remove("is-visible"), 3200);
+  }
+
+  function renderDesktopOnlyMessage() {
+    const copy = currentCopy();
+    root.replaceChildren();
+    const message = document.createElement("section");
+    message.className = "ucp-demo-desktop-only";
+    const title = document.createElement("h2");
+    title.textContent = copy.desktopOnlyTitle || "Desktop demo only";
+    const text = document.createElement("p");
+    text.textContent = copy.desktopOnly || "Demo mode is available on desktop only.";
+    message.append(title, text);
+    root.appendChild(message);
+  }
+
+  function createFastLauncher() {
+    if (fastLauncher || !desktopQuery.matches) return;
+    fastLauncher = document.createElement("div");
+    fastLauncher.className = "ucp-demo-fast-launcher";
+    fastLauncher.setAttribute("aria-hidden", "true");
+    ["icon128.png", "tootls.png", "manager.png"].forEach((icon) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      const image = document.createElement("img");
+      image.src = `${runtimeBase}assets/icons/${icon}`;
+      image.alt = "";
+      button.appendChild(image);
+      fastLauncher.appendChild(button);
+    });
+    document.body.appendChild(fastLauncher);
+  }
+
+  function removeFastLauncher() {
+    fastLauncher?.remove();
+    fastLauncher = null;
   }
 
   function closeManager() {
@@ -71,6 +154,9 @@
 
   function openManager(message = {}) {
     const lang = window.UCP_DEMO_RUNTIME?.resolveLanguage?.() || "en";
+    const floatingPanelRoot = document.querySelector("ultimate-clipboard-pro-panel")?.shadowRoot;
+    floatingPanelRoot?.querySelector("[data-action='close-panel']")?.click();
+    floatingPanelRoot?.querySelector(".mcp-panel")?.classList.add("is-minimized");
     if (!managerShell) {
       managerShell = document.createElement("section");
       managerShell.className = "ucp-real-demo-manager-shell";
@@ -98,7 +184,13 @@
     if (event.data?.type === "UCP_DEMO_BLOCKED") showBlocked();
   });
 
-  await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-real-runtime`);
+  createFastLauncher();
+  if (!desktopQuery.matches) {
+    renderDesktopOnlyMessage();
+    removeFastLauncher();
+    return;
+  }
+  await loadScript(`${runtimeBase}demo-runtime.js?v=20260514-demo-fixes`);
   const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
   const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
     openManager,
@@ -110,7 +202,8 @@
   window.__UCP_DEMO_BRIDGE__ = bridge;
 
   await window.UCP_DEMO_RUNTIME.loadSharedScripts();
-  await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-real-runtime`);
+  await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-demo-fixes`);
+  removeFastLauncher();
 
   root.dataset.ucpDemoRuntime = "real-extension";
 })();

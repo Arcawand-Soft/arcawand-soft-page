@@ -3808,6 +3808,8 @@
     }
 
     if (action === "open-sidepanel") {
+      shadowRoot.querySelector(".mcp-panel")?.classList.add("is-minimized");
+      updateFloatingBrandProBadge();
       runSafeAsync(() => markFloatingEntryPointUsed("managerOpenedOnce"));
       chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_MANAGER, mediaType: activeFloatingTab }).catch(() => {});
       triggerMicroAnimation(actionTarget);
@@ -3815,6 +3817,8 @@
     }
 
     if (action === "open-manager-tab") {
+      shadowRoot.querySelector(".mcp-panel")?.classList.add("is-minimized");
+      updateFloatingBrandProBadge();
       runSafeAsync(() => markFloatingEntryPointUsed("managerOpenedOnce"));
       const mediaType = actionTarget.dataset.mediaType || activeFloatingTab;
       chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_MANAGER, mediaType }).catch(() => {});

@@ -28,6 +28,12 @@
   line-height: 1.72;
 }
 
+.ucp-demo-intro .ucp-demo-instruction {
+  margin: 0 0 1rem;
+  color: #fff;
+  font-weight: 750;
+}
+
 .ucp-demo-intro ul {
   display: grid;
   gap: .7rem;
@@ -38,6 +44,60 @@
 .ucp-demo-root {
   position: relative;
   min-height: 11rem;
+}
+
+.ucp-demo-fast-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: 94px;
+  z-index: 2147483000;
+  display: grid;
+  gap: 8px;
+  width: 64px;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(38, 38, 46, .92);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, .32);
+}
+
+.ucp-demo-fast-launcher button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 14px;
+  background: #7c3aed;
+  cursor: wait;
+}
+
+.ucp-demo-fast-launcher img {
+  width: 31px;
+  height: 31px;
+  object-fit: contain;
+}
+
+.ucp-demo-desktop-only {
+  margin-top: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 18px;
+  padding: 1.2rem;
+  color: #fff;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(124, 58, 237, .22), transparent 18rem),
+    rgba(14, 14, 18, .9);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, .28);
+}
+
+.ucp-demo-desktop-only h2 {
+  margin: 0 0 .5rem;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+.ucp-demo-desktop-only p {
+  margin: 0;
+  color: rgba(229, 231, 235, .78);
+  line-height: 1.6;
 }
 
 .ucp-real-demo-manager-shell {
@@ -69,19 +129,19 @@
 
 .ucp-real-demo-dialog {
   position: fixed;
-  right: 1.2rem;
+  left: 50%;
   bottom: 1.2rem;
   z-index: 2147483647;
   width: min(24rem, calc(100vw - 2rem));
   opacity: 0;
-  transform: translateY(.75rem);
+  transform: translate(-50%, .75rem);
   pointer-events: none;
   transition: opacity .18s ease, transform .18s ease;
 }
 
 .ucp-real-demo-dialog.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0);
   pointer-events: auto;
 }
 
@@ -134,8 +194,8 @@
   }
 
   .ucp-real-demo-dialog {
-    right: 1rem;
-    left: 1rem;
+    left: 50%;
     width: auto;
+    min-width: min(24rem, calc(100vw - 2rem));
   }
 }
