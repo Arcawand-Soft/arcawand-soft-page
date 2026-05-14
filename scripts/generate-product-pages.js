@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-center";
+const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
 const demoScript = "/assets/ucp-demo.js?v=20260514-demo-instant-launcher";
 const demoStylesheet = "/assets/ucp-demo.css?v=20260514-demo-instant-launcher";
 
@@ -875,7 +875,7 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta name="twitter:image" content="https://arcawand-soft.com/assets/ultimate-keyboard-pro-preview-social-networks.png">
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
-<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-center">
+<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
 ${page === "demo" ? `<link rel="stylesheet" href="${demoStylesheet}">` : ""}
 ${page === "demo" ? '<link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/icon128.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/tootls.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/screen_full_page_png.png">' : ""}
 <script defer src="/assets/analytics.js"></script>
@@ -920,9 +920,9 @@ function patchProductIndex(lang) {
   const file = path.join(root, productBase(lang), "index.html");
   let content = fs.readFileSync(file, "utf8");
   if (!content.includes("/assets/ucp-product-pages.css")) {
-    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-center">');
+    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">');
   }
-  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-center">');
+  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">');
   content = content.replace(/\.arcawand-product-language-menu \{ position: fixed; right: 1rem; top: 1rem; z-index: 70; \}/g, ".arcawand-product-language-menu { position: fixed; right: 1rem; top: 1rem; z-index: 120; }");
   if (!content.includes("/assets/ucp-product-pages.js")) {
     content = content.replace('<script defer src="/assets/analytics.js"></script>', `<script defer src="/assets/analytics.js"></script>\n<script defer src="${productPagesScript}"></script>`);
