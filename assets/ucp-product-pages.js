@@ -1,11 +1,11 @@
 (() => {
   const supportedLangs = ["en", "fr", "es", "it", "de"];
   const labels = {
-    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use" },
-    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU" },
-    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso" },
-    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso" },
-    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen" }
+    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use", contact: "Contact" },
+    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU", contact: "Contact" },
+    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso", contact: "Contacto" },
+    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso", contact: "Contatto" },
+    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen", contact: "Kontakt" }
   };
   const languageButtonLabels = {
     en: "Change language",
@@ -19,31 +19,36 @@
       presentation: "https://arcawand-soft.com/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/ultimate-clipboard-pro/privacy/",
-      terms: "https://arcawand-soft.com/ultimate-clipboard-pro/terms/"
+      terms: "https://arcawand-soft.com/ultimate-clipboard-pro/terms/",
+      contact: "https://arcawand-soft.com/contact/"
     },
     fr: {
       presentation: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/privacy/",
-      terms: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/terms/"
+      terms: "https://arcawand-soft.com/fr/ultimate-clipboard-pro/terms/",
+      contact: "https://arcawand-soft.com/fr/contact/"
     },
     es: {
       presentation: "https://arcawand-soft.com/es/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/es/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/es/ultimate-clipboard-pro/privacy/",
-      terms: "https://arcawand-soft.com/es/ultimate-clipboard-pro/terms/"
+      terms: "https://arcawand-soft.com/es/ultimate-clipboard-pro/terms/",
+      contact: "https://arcawand-soft.com/es/contact/"
     },
     it: {
       presentation: "https://arcawand-soft.com/it/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/it/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/it/ultimate-clipboard-pro/privacy/",
-      terms: "https://arcawand-soft.com/it/ultimate-clipboard-pro/terms/"
+      terms: "https://arcawand-soft.com/it/ultimate-clipboard-pro/terms/",
+      contact: "https://arcawand-soft.com/it/contact/"
     },
     de: {
       presentation: "https://arcawand-soft.com/de/ultimate-clipboard-pro/",
       faq: "https://arcawand-soft.com/de/ultimate-clipboard-pro/faq/",
       privacy: "https://arcawand-soft.com/de/ultimate-clipboard-pro/privacy/",
-      terms: "https://arcawand-soft.com/de/ultimate-clipboard-pro/terms/"
+      terms: "https://arcawand-soft.com/de/ultimate-clipboard-pro/terms/",
+      contact: "https://arcawand-soft.com/de/contact/"
     }
   };
 
@@ -132,11 +137,41 @@
     }, { passive: true });
   }
 
+  function setupProductFooterLinks() {
+    const lang = getLangFromPath();
+    const items = ["presentation", "faq", "privacy", "terms", "contact"];
+    const apply = () => {
+      const footer = document.querySelector("footer");
+      if (!footer) return false;
+      const linkGroup = Array.from(footer.querySelectorAll("div")).find((node) => {
+        const links = Array.from(node.children).filter((child) => child.matches?.("a"));
+        return links.length >= 3 && links.some((link) => link.getAttribute("href") === "#");
+      });
+      if (!linkGroup) return false;
+      linkGroup.replaceChildren(...items.map((key) => {
+        const link = document.createElement("a");
+        link.href = routes[lang]?.[key] || routes.en[key];
+        link.className = "text-sm text-muted-foreground hover:text-foreground transition-all duration-200";
+        link.textContent = labels[lang]?.[key] || labels.en[key];
+        return link;
+      }));
+      return true;
+    };
+
+    if (apply()) return;
+    const observer = new MutationObserver(() => {
+      if (apply()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 8000);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     const lang = getLangFromPath();
     document.documentElement.lang = lang;
     setupLanguageMenu();
     setupProductNav();
     setupProductHeaderScroll();
+    setupProductFooterLinks();
   });
 })();
