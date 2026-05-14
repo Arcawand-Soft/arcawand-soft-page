@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ultimate Clipboard Pro Demo Manager</title>
+    <script src="demo-runtime.js?v=20260514-real-runtime"></script>
+    <script>
+      (function installDemoManagerBridge() {
+        const params = new URLSearchParams(location.search);
+        const lang = params.get("lang") || "en";
+        document.documentElement.lang = lang;
+        const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(lang, {
+          closeManager: () => parent.postMessage({ type: "UCP_DEMO_CLOSE_MANAGER" }, location.origin),
+          showBlocked: () => parent.postMessage({ type: "UCP_DEMO_BLOCKED" }, location.origin),
+          openTools: () => parent.postMessage({ type: "UCP_DEMO_BLOCKED" }, location.origin)
+        });
+        bridge.installChromeMock();
+        window.__UCP_DEMO_BRIDGE__ = bridge;
+      })();
+    </script>
+    <script src="shared/themeBoot.js"></script>
+    <link rel="stylesheet" href="sidepanel/sidepanel.css">
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <span class="topbar-app-icon-wrap">
+            <img class="topbar-app-icon" src="assets/icons/icon128.png" alt="" aria-hidden="true">
+            <span class="brand-pro-badge is-manager-badge" data-role="brand-pro-badge" hidden aria-hidden="true">
+              <img src="assets/icons/pro-icon.png" alt="">
+            </span>
+          </span>
+          <div class="topbar-copy">
+            <h1>Ultimate Clipboard Pro</h1>
+            <p>Advanced clipboard workspace for demanding users.</p>
+          </div>
+        </div>
+        <section class="media-tabs" role="tablist">
+          <button id="textTab" type="button" class="is-active" aria-label="Texts" title="Texts">
+            <img class="tab-icon" src="assets/icons/text_icon.png" alt="" aria-hidden="true">
+            <span class="sr-only media-tab-label">Texts</span>
+          </button>
+          <button id="devTab" type="button" aria-label="Codes" title="Codes">
+            <img class="tab-icon" src="assets/icons/dev.png" alt="" aria-hidden="true">
+            <span class="sr-only media-tab-label">Codes</span>
+          </button>
+          <button id="imageTab" type="button" aria-label="Images" title="Images">
+            <img class="tab-icon" src="assets/icons/images_icon.png" alt="" aria-hidden="true">
+            <span class="sr-only media-tab-label">Images</span>
+          </button>
+        </section>
+        <div class="topbar-actions">
+          <button id="openSourceTimeline" class="icon-button manager-timeline-button" type="button" aria-label="Source history" title="Source history">
+            <img src="assets/icons/historic-timeline.png" alt="" aria-hidden="true">
+          </button>
+          <button id="openTools" class="icon-button manager-tools-button" type="button" aria-label="Tools" title="Tools">
+            <img src="assets/icons/tootls.png" alt="" aria-hidden="true">
+          </button>
+          <button id="openManagerMenu" class="manager-menu-button" type="button" aria-label="Menu" title="Menu" aria-haspopup="menu" aria-expanded="false">
+            <svg class="menu-glyph" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M5 7h14M5 12h14M5 17h14"></path>
+            </svg>
+          </button>
+          <button id="closeManager" class="icon-button close-manager" type="button" aria-label="Close">&times;</button>
+        </div>
+      </header>
+
+      <section class="manager-card">
+        <section class="manager-layout">
+          <aside class="category-pane">
+            <div class="category-pane-head">
+              <strong id="categoryPaneTitle">Categories</strong>
+              <div class="category-pane-tools">
+                <input id="categoryTreeSearch" type="search" aria-label="Search category">
+                <button id="newCategory" class="square-plus-button" type="button">+</button>
+              </div>
+            </div>
+            <nav id="categoryList" class="category-list" aria-label="Categories"></nav>
+          </aside>
+
+          <section class="content-pane">
+            <div class="content-pane-head">
+              <div id="currentViewTitleSlot" class="current-view-title-slot"></div>
+              <section id="imageViewModes" class="view-modes" hidden aria-label="Image display">
+                <button type="button" data-view-mode="small">Small</button>
+                <button type="button" data-view-mode="medium" class="is-active">Medium</button>
+                <button type="button" data-view-mode="large">Large</button>
+              </section>
+              <section id="textViewModes" class="view-modes" hidden aria-label="Text and code display">
+                <button type="button" data-text-view-mode="card" class="is-active">Cards</button>
+                <button type="button" data-text-view-mode="list">List</button>
+              </section>
+              <section class="content-search-row" aria-label="Search">
+                <input id="searchInput" type="search" placeholder="Search a text" aria-label="Search">
+              </section>
+            </div>
+            <section id="statusBanner" class="status-banner" hidden></section>
+            <section id="itemsList" class="items-list" aria-label="Copy history"></section>
+            <button id="openCreateItemFloating" class="view-create-item-button floating-create-item-button" type="button" data-manager-action="create-current-item">+</button>
+            <button id="openMontage" class="advanced-search-button floating-montage-button" type="button">
+              <img class="floating-montage-icon" src="assets/icons/montage-lightmod.png" alt="" aria-hidden="true">
+              <span data-role="montage-button-label">Montage</span>
+            </button>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="shared/constants.js"></script>
+    <script src="shared/utils.js"></script>
+    <script src="shared/locales/en.js"></script>
+    <script src="shared/locales/fr.js"></script>
+    <script src="shared/locales/de.js"></script>
+    <script src="shared/locales/es.js"></script>
+    <script src="shared/locales/it.js"></script>
+    <script src="shared/i18n.js"></script>
+    <script src="shared/dodoConfig.js"></script>
+    <script src="shared/featureGate.js"></script>
+    <script src="shared/search.js"></script>
+    <script src="shared/defaultCategories.js"></script>
+    <script src="shared/defaultImageCategories.js"></script>
+    <script src="shared/defaultDevCategories.js"></script>
+    <script src="shared/codeDetector.js"></script>
+    <script src="shared/tools.js"></script>
+    <script src="shared/classifier.js"></script>
+    <script src="shared/storage.js"></script>
+    <script src="shared/licenseManager.js"></script>
+    <script src="shared/clipboard.js"></script>
+    <script src="sidepanel/sidepanel.js"></script>
+    <script>
+      window.addEventListener("load", () => {
+        const tab = new URLSearchParams(location.search).get("tab");
+        const button = tab === "image" ? document.getElementById("imageTab") : tab === "dev" ? document.getElementById("devTab") : document.getElementById("textTab");
+        window.setTimeout(() => button?.click(), 120);
+      });
+    </script>
+  </body>
+</html>
