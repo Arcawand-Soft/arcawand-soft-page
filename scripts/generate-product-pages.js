@@ -12,7 +12,7 @@ const langs = {
     html: "en",
     home: "/",
     navSofts: "Our apps",
-    desc: "The ultimate clipboard manager",
+    desc: "An advanced clipboard for demanding users",
     back: "Back to ArcaWand Soft",
     presentation: "Presentation",
     demo: "Demo",
@@ -69,7 +69,7 @@ const langs = {
     html: "fr",
     home: "/fr/",
     navSofts: "Nos apps",
-    desc: "Le gestionnaire de presse-papiers ultime",
+    desc: "Un presse-papiers avancé pour les utilisateurs exigeants",
     back: "Retour vers ArcaWand Soft",
     presentation: "Présentation",
     demo: "Démo",
@@ -122,7 +122,7 @@ const langs = {
     ]
   },
   es: {
-    dir: "es", html: "es", home: "/es/", navSofts: "Nuestras apps", desc: "El gestor de portapapeles definitivo", back: "Volver a ArcaWand Soft", presentation: "Presentación", demo: "Demo", faq: "FAQ", privacy: "Política de privacidad", footer: "ArcaWand Soft. Apps premium para usuarios exigentes.", sideTitle: "Páginas del producto", sideText: "Navega por el espacio de producto Ultimate Clipboard Pro.", updated: "Última actualización: 13 de mayo de 2026",
+    dir: "es", html: "es", home: "/es/", navSofts: "Nuestras apps", desc: "Un portapapeles avanzado para usuarios exigentes", back: "Volver a ArcaWand Soft", presentation: "Presentación", demo: "Demo", faq: "FAQ", privacy: "Política de privacidad", footer: "ArcaWand Soft. Apps premium para usuarios exigentes.", sideTitle: "Páginas del producto", sideText: "Navega por el espacio de producto Ultimate Clipboard Pro.", updated: "Última actualización: 13 de mayo de 2026",
     demoTitle: "Demo interactiva de Ultimate Clipboard Pro", demoDesc: "Prueba una demo visual de Ultimate Clipboard Pro con launcher flotante, panel lateral, gestor, categorías, versiones y capturas de ejemplo.", demoKicker: "Demo interactiva del producto", demoLead: "Abre el launcher abajo a la derecha, explora las capturas, usa las funciones, busca y reordena categorías.",
     demoBrowse: "Abre el launcher flotante real y explora un espacio Pro con capturas de demostración.", demoSafe: "La demo del sitio no puede capturar, copiar, abrir ajustes ni ejecutar herramientas.", demoAllowed: "Haz clic en los botones flotantes abajo a la derecha para probar la interfaz de la extensión.",
     faqTitle: "FAQ de Ultimate Clipboard Pro", faqDesc: "Respuestas sobre funciones, privacidad, licencia Pro, capturas, sincronización con Google Drive y uso de la extensión Chrome Ultimate Clipboard Pro.", faqKicker: "Soporte del producto", faqLead: "Todo lo que un usuario exigente debe entender antes de instalar Ultimate Clipboard Pro: qué captura, qué permanece local, qué desbloquea Pro y cómo se protegen los flujos diarios.",
@@ -155,7 +155,7 @@ const langs = {
     ]
   },
   it: {
-    dir: "it", html: "it", home: "/it/", navSofts: "Le nostre app", desc: "Il gestore degli appunti definitivo", back: "Torna ad ArcaWand Soft", presentation: "Presentazione", demo: "Demo", faq: "FAQ", privacy: "Informativa privacy", footer: "ArcaWand Soft. App premium per utenti esigenti.", sideTitle: "Pagine prodotto", sideText: "Naviga nello spazio prodotto Ultimate Clipboard Pro.", updated: "Ultimo aggiornamento: 13 maggio 2026",
+    dir: "it", html: "it", home: "/it/", navSofts: "Le nostre app", desc: "Un portappunti avanzato per utenti esigenti", back: "Torna ad ArcaWand Soft", presentation: "Presentazione", demo: "Demo", faq: "FAQ", privacy: "Informativa privacy", footer: "ArcaWand Soft. App premium per utenti esigenti.", sideTitle: "Pagine prodotto", sideText: "Naviga nello spazio prodotto Ultimate Clipboard Pro.", updated: "Ultimo aggiornamento: 13 maggio 2026",
     demoTitle: "Demo interattiva di Ultimate Clipboard Pro", demoDesc: "Prova una demo visiva di Ultimate Clipboard Pro con launcher flottante, pannello laterale, gestore, categorie, versioni e catture di esempio.", demoKicker: "Demo prodotto interattiva", demoLead: "Apri il launcher in basso a destra, sfoglia le catture, usa le funzioni, cerca e riordina le categorie.",
     demoBrowse: "Apri il vero launcher flottante ed esplora uno spazio Pro con catture demo.", demoSafe: "La demo del sito non può catturare, copiare, aprire impostazioni o eseguire strumenti.", demoAllowed: "Clicca sui pulsanti flottanti in basso a destra per provare l’interfaccia dell’estensione.",
     faqTitle: "FAQ di Ultimate Clipboard Pro", faqDesc: "Risposte su funzioni, privacy, licenza Pro, acquisizioni, sincronizzazione Google Drive e uso dell’estensione Chrome Ultimate Clipboard Pro.", faqKicker: "Supporto prodotto", faqLead: "Tutto ciò che un utente esigente deve sapere prima di installare Ultimate Clipboard Pro: cosa cattura, cosa resta locale, cosa sblocca Pro e come protegge i flussi quotidiani.",
@@ -188,7 +188,7 @@ const langs = {
     ]
   },
   de: {
-    dir: "de", html: "de", home: "/de/", navSofts: "Unsere Apps", desc: "Der ultimative Zwischenablage-Manager", back: "Zurück zu ArcaWand Soft", presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", footer: "ArcaWand Soft. Premium-Apps für anspruchsvolle Nutzer.", sideTitle: "Produktseiten", sideText: "Navigieren Sie im Produktbereich von Ultimate Clipboard Pro.", updated: "Zuletzt aktualisiert: 13. Mai 2026",
+    dir: "de", html: "de", home: "/de/", navSofts: "Unsere Apps", desc: "Eine erweiterte Zwischenablage für anspruchsvolle Nutzer", back: "Zurück zu ArcaWand Soft", presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", footer: "ArcaWand Soft. Premium-Apps für anspruchsvolle Nutzer.", sideTitle: "Produktseiten", sideText: "Navigieren Sie im Produktbereich von Ultimate Clipboard Pro.", updated: "Zuletzt aktualisiert: 13. Mai 2026",
     demoTitle: "Interaktive Demo von Ultimate Clipboard Pro", demoDesc: "Testen Sie eine visuelle Demo von Ultimate Clipboard Pro mit Floating Launcher, Seitenfenster, Manager, Kategorien, Versionen und Beispiel-Captures.", demoKicker: "Interaktive Produktdemo", demoLead: "Oeffnen Sie den Launcher unten rechts, durchsuchen Sie Captures, nutzen Sie Funktionen, suchen Sie und ordnen Sie Kategorien neu.",
     demoBrowse: "Öffnen Sie den echten Floating Launcher und erkunden Sie einen Pro-Arbeitsbereich mit Demo-Captures.", demoSafe: "Die Website-Demo kann nicht erfassen, kopieren, Einstellungen öffnen oder Tools ausführen.", demoAllowed: "Klicken Sie unten rechts auf die schwebenden Buttons, um die Oberfläche der Erweiterung auszuprobieren.",
     faqTitle: "FAQ zu Ultimate Clipboard Pro", faqDesc: "Antworten zu Funktionen, Datenschutz, Pro-Lizenz, Captures, Google-Drive-Synchronisierung und Nutzung der Chrome-Erweiterung Ultimate Clipboard Pro.", faqKicker: "Produktsupport", faqLead: "Alles, was anspruchsvolle Nutzer vor der Installation von Ultimate Clipboard Pro wissen sollten: was erfasst wird, was lokal bleibt, was Pro freischaltet und wie tägliche Workflows geschützt werden.",
