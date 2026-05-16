@@ -46,7 +46,7 @@ img { max-width: 100%; display: block; }
 .nav-drop-item strong { font-size: .94rem; }
 .nav-drop-item span { color: hsl(var(--muted-foreground)); font-size: .82rem; line-height: 1.35; }
 .nav-app-main span { color: rgba(255, 255, 255, .88); }
-.nav-apps-menu { min-width: 310px; }
+.nav-apps-menu { min-width: 440px; }
 .nav-app-card { display: grid; gap: .45rem; }
 .nav-app-links {
   display: grid;
@@ -55,22 +55,24 @@ img { max-width: 100%; display: block; }
   padding: 0 .2rem .2rem;
 }
 .nav-app-links a {
-  min-height: 2.65rem;
+  height: 3.85rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: .38rem .68rem;
+  padding: .42rem .72rem;
   border-radius: .72rem;
   background: #fff;
   color: hsl(263 78% 30%);
-  font-size: clamp(.64rem, .58rem + .25vw, .75rem);
+  font-size: clamp(.58rem, .52rem + .24vw, .74rem);
   font-weight: 900;
   line-height: 1.12;
   text-align: center;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
   hyphens: auto;
+  text-wrap: balance;
 }
 .nav-app-links a:hover { background: hsl(263 88% 94%); color: hsl(263 78% 24%); }
 .language-menu { position: relative; z-index: 5; }
@@ -159,6 +161,7 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
   .language-menu.is-open .language-menu-panel { display: block; transform: none; }
   .nav-drop-menu { position: static; opacity: 1; pointer-events: auto; transform: none; display: none; margin-top: 8px; }
   .nav-drop:hover .nav-drop-menu, .nav-drop:focus-within .nav-drop-menu { display: block; }
+  .nav-apps-menu { min-width: 0; }
   .nav-app-links { grid-template-columns: 1fr; }
   .mobile-toggle { display: inline-flex; width: 42px; height: 42px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--muted)); color: #fff; align-items: center; justify-content: center; }
   .hero, .product-feature { grid-template-columns: 1fr; padding-top: 70px; }
