@@ -163,6 +163,7 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
   .nav-drop:hover .nav-drop-menu, .nav-drop:focus-within .nav-drop-menu { display: block; }
   .nav-apps-menu { min-width: 0; }
   .nav-app-links { grid-template-columns: 1fr; }
+  .nav-app-links a { font-size: .94rem; }
   .mobile-toggle { display: inline-flex; width: 42px; height: 42px; border-radius: 12px; border: 1px solid hsl(var(--border)); background: hsl(var(--muted)); color: #fff; align-items: center; justify-content: center; }
   .hero, .product-feature { grid-template-columns: 1fr; padding-top: 70px; }
   .hero { min-height: calc(100svh - 74px); align-content: start; }

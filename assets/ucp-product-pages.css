@@ -459,6 +459,7 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 @media (max-width: 920px) {
   .nav-apps-menu { min-width: 0; }
   .nav-app-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nav-app-links a { font-size: .94rem; }
 }
 
 @media (max-width: 520px) {
