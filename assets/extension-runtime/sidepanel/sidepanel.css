@@ -14,6 +14,7 @@
   --border: var(--line);
   --shadow-strong: none;
   --manager-scroll-fade-size: 24px;
+  --manager-text-card-height: clamp(254px, 41vh, 374px);
   --menu-button-bg: #3a3a3a;
 }
 
@@ -2156,8 +2157,8 @@ img.category-button-vault {
 }
 
 .items-list.is-text-card-view:not(:has(.image-gallery)) {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
-  grid-auto-rows: var(--manager-text-card-height, 560px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: var(--manager-text-card-height, 374px);
   align-items: start;
   gap: 18px;
 }
@@ -2186,7 +2187,7 @@ img.category-button-vault {
 }
 
 .virtual-list-slice.is-card-view {
-  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -2486,6 +2487,7 @@ img.category-button-vault {
 }
 
 .item-card.is-card-layout {
+  contain-intrinsic-size: 520px var(--manager-text-card-height, 374px);
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   grid-template-areas:
@@ -2495,9 +2497,9 @@ img.category-button-vault {
     "meta meta"
     "actions actions";
   gap: 12px;
-  height: var(--manager-text-card-height, 560px);
+  height: var(--manager-text-card-height, 374px);
   min-height: 0;
-  max-height: var(--manager-text-card-height, 560px);
+  max-height: var(--manager-text-card-height, 374px);
   padding: 16px;
   border-radius: 14px;
   overflow: hidden;
@@ -2514,8 +2516,8 @@ img.category-button-vault {
 }
 
 .virtual-list-slice.is-card-view .item-card {
-  height: var(--virtual-text-item-height, 560px);
-  max-height: var(--virtual-text-item-height, 560px);
+  height: var(--virtual-text-item-height, 374px);
+  max-height: var(--virtual-text-item-height, 374px);
 }
 
 .item-card.is-card-layout .embedded-version-title-field {
@@ -2598,13 +2600,6 @@ img.category-button-vault {
   grid-row: 1;
   align-self: center;
   padding-right: 0;
-}
-
-@media (max-width: 1040px) {
-  .items-list.is-text-card-view:not(:has(.image-gallery)),
-  .virtual-list-slice.is-card-view {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 .item-card.is-bulk-mode {

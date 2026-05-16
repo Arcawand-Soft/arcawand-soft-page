@@ -117,6 +117,8 @@
   let loadStateRerunRequested = false;
   let managerViewStateSaveTimer = 0;
   let managerFastStateSaveTimer = 0;
+  let pendingManagerViewModeSettings = {};
+  let pendingManagerViewModeSettingsUntil = 0;
   let restoredFastState = false;
   let restoredManagerViewState = false;
   let fullStateLoaded = false;
@@ -277,7 +279,7 @@
     const settingsChange = changes[window.MCP.STORAGE_KEYS.SETTINGS];
     if (settingsChange?.newValue && isVisualSettingsOnlyChange(settingsChange.oldValue || {}, settingsChange.newValue || {})) {
       const viewModeChanged = managerViewModeSettingsChanged(settingsChange.oldValue || {}, settingsChange.newValue || {});
-      state.settings = Object.assign({}, state.settings || {}, settingsChange.newValue || {});
+      state.settings = managerSettingsWithPendingViewModes(Object.assign({}, state.settings || {}, settingsChange.newValue || {}));
       applyManagerViewModeSettings(state.settings);
       applyTheme();
       if (viewModeChanged) render();
@@ -324,8 +326,9 @@
     const button = event.target.closest("[data-view-mode]");
     if (!button) return;
     imageViewMode = normalizeManagerImageViewMode(button.dataset.viewMode || "medium");
+    rememberPendingManagerViewModeSetting({ managerImageViewMode: imageViewMode });
     saveManagerViewModeSetting({ managerImageViewMode: imageViewMode });
-    scheduleManagerViewStateSave();
+    persistManagerViewState();
     render();
   });
   elements.textViewModes?.addEventListener("click", (event) => {
@@ -334,12 +337,14 @@
     const nextMode = normalizeManagerTextViewMode(button.dataset.textViewMode || "card");
     if (activeTab === "dev") {
       devViewMode = nextMode;
+      rememberPendingManagerViewModeSetting({ managerDevViewMode: devViewMode });
       saveManagerViewModeSetting({ managerDevViewMode: devViewMode });
     } else {
       textViewMode = nextMode;
+      rememberPendingManagerViewModeSetting({ managerTextViewMode: textViewMode });
       saveManagerViewModeSetting({ managerTextViewMode: textViewMode });
     }
-    scheduleManagerViewStateSave();
+    persistManagerViewState();
     render();
   });
   elements.items?.addEventListener("scroll", () => {
@@ -417,6 +422,7 @@
 
   function applyManagerViewStateSnapshot(saved, options = {}) {
     if (!saved || typeof saved !== "object") return false;
+    saved = managerViewStateSnapshotWithPendingViewModes(saved);
     const savedAt = Math.max(0, Number(saved.savedAt) || 0);
     if (!options.force && savedAt && managerViewStateSavedAt && savedAt <= managerViewStateSavedAt) return false;
     if (options.external && saved.sourceId && saved.sourceId === MANAGER_VIEW_STATE_SOURCE_ID) return false;
@@ -735,7 +741,7 @@
   }
 
   function applyStateData(data = {}) {
-    state.settings = data.settings || {};
+    state.settings = managerSettingsWithPendingViewModes(data.settings || {});
     applyManagerViewModeSettings(state.settings);
     state.items = Array.isArray(data.items) ? data.items : [];
     state.categories = Array.isArray(data.categories) ? data.categories : [];
@@ -774,6 +780,34 @@
     } catch (error) {
       console.warn("[Ultimate Clipboard Pro] Manager view mode save failed", error);
     }
+  }
+
+  function rememberPendingManagerViewModeSetting(updates = {}) {
+    pendingManagerViewModeSettings = Object.assign({}, pendingManagerViewModeSettings, updates || {});
+    pendingManagerViewModeSettingsUntil = Date.now() + 3500;
+    state.settings = Object.assign({}, state.settings || {}, pendingManagerViewModeSettings);
+  }
+
+  function managerSettingsWithPendingViewModes(settings = {}) {
+    if (!pendingManagerViewModeSettingsUntil || Date.now() > pendingManagerViewModeSettingsUntil) {
+      pendingManagerViewModeSettings = {};
+      pendingManagerViewModeSettingsUntil = 0;
+      return settings || {};
+    }
+    return Object.assign({}, settings || {}, pendingManagerViewModeSettings);
+  }
+
+  function managerViewStateSnapshotWithPendingViewModes(snapshot = {}) {
+    if (!pendingManagerViewModeSettingsUntil || Date.now() > pendingManagerViewModeSettingsUntil) {
+      pendingManagerViewModeSettings = {};
+      pendingManagerViewModeSettingsUntil = 0;
+      return snapshot || {};
+    }
+    return Object.assign({}, snapshot || {}, {
+      imageViewMode: pendingManagerViewModeSettings.managerImageViewMode || snapshot.imageViewMode,
+      textViewMode: pendingManagerViewModeSettings.managerTextViewMode || snapshot.textViewMode,
+      devViewMode: pendingManagerViewModeSettings.managerDevViewMode || snapshot.devViewMode
+    });
   }
 
   function buildTreeFromCategories(categories) {
@@ -3773,7 +3807,19 @@
   }
 
   function virtualTextItemHeight(items = [], mediaType = activeTab) {
-    return isTextCardView(mediaType) ? 560 : VIRTUAL_TEXT_ITEM_HEIGHT;
+    if (!isTextCardView(mediaType)) return VIRTUAL_TEXT_ITEM_HEIGHT;
+    const viewportHeight = Math.max(
+      1,
+      virtualItemsState?.container?.clientHeight ||
+        elements.items?.clientHeight ||
+        Math.floor(window.innerHeight * 0.68) ||
+        1
+    );
+    return clampNumber(Math.floor(viewportHeight * 0.41), 254, 374);
+  }
+
+  function clampNumber(value, min, max) {
+    return Math.min(max, Math.max(min, value));
   }
 
   function renderVirtualImageItems(images, gallery) {

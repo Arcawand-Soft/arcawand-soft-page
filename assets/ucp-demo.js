@@ -160,7 +160,7 @@
       const frame = document.createElement("iframe");
       frame.className = "ucp-real-demo-manager-frame";
       frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260516-card-view-compact&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
       managerShell.append(frame);
       document.body.append(managerShell);
       window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
@@ -168,7 +168,7 @@
     }
     const frame = managerShell.querySelector("iframe");
     if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260516-card-view-compact&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
     }
     managerShell.classList.add("is-visible");
   }
