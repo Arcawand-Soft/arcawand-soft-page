@@ -55,17 +55,22 @@ img { max-width: 100%; display: block; }
   padding: 0 .2rem .2rem;
 }
 .nav-app-links a {
-  min-height: 2.05rem;
+  min-height: 2.65rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 .55rem;
+  min-width: 0;
+  padding: .38rem .68rem;
   border-radius: .72rem;
   background: #fff;
   color: hsl(263 78% 30%);
-  font-size: .75rem;
+  font-size: clamp(.64rem, .58rem + .25vw, .75rem);
   font-weight: 900;
+  line-height: 1.12;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 .nav-app-links a:hover { background: hsl(263 88% 94%); color: hsl(263 78% 24%); }
 .language-menu { position: relative; z-index: 5; }

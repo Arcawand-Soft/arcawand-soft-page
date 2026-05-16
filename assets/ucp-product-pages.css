@@ -381,19 +381,24 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
   padding: 0 .2rem .2rem;
 }
 .nav-app-links a {
-  min-height: 2.05rem;
+  min-height: 2.65rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 .55rem;
+  min-width: 0;
+  padding: .38rem .68rem;
   border-radius: .72rem;
-  background: rgba(255, 255, 255, .06);
-  color: hsl(var(--muted-foreground));
-  font-size: .75rem;
+  background: #fff;
+  color: #3f1689;
+  font-size: clamp(.64rem, .58rem + .25vw, .75rem);
   font-weight: 900;
+  line-height: 1.12;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
-.nav-app-links a:hover { background: hsl(var(--primary) / .2); color: #fff; }
+.nav-app-links a:hover { background: #f0e8ff; color: #2f1069; }
 
 .ucp-product-faq-item {
   padding-block: 0;
