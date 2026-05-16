@@ -3,8 +3,8 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260515-rich-demo-dataset";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260514-demo-instant-launcher";
+const demoScript = "/assets/ucp-demo.js?v=20260516-demo-install-cta";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260516-demo-install-cta";
 
 const langs = {
   en: {
@@ -697,6 +697,18 @@ for (const [lang, label] of Object.entries(languageButtonLabels)) {
   langs[lang].languageButtonLabel = label;
 }
 
+const installExtensionLabels = {
+  en: "Install Extension",
+  fr: "Installer l'extension",
+  es: "Instalar extensión",
+  it: "Installa estensione",
+  de: "Extension installieren"
+};
+
+for (const [lang, label] of Object.entries(installExtensionLabels)) {
+  langs[lang].installExtension = label;
+}
+
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 }
@@ -707,6 +719,9 @@ function productHeading(lang, page) {
 function demoFeatureList(lang) {
   const reminder = demoFeatureReminders[lang] || demoFeatureReminders.en;
   return `<div class="ucp-demo-reminder"><h3>${esc(reminder.title)}</h3><ul>${reminder.items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul></div>`;
+}
+function installExtensionButton(lang) {
+  return `<button class="ucp-demo-install-cta" type="button">${esc(langs[lang].installExtension || langs.en.installExtension)}</button>`;
 }
 function langBase(lang) {
   return lang === "en" ? "" : `${langs[lang].dir}/`;
@@ -846,7 +861,7 @@ function staticProductPage(lang, page) {
   const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : page === "demo" ? l.demoLead : l.privacyLead;
   const canonical = absProduct(lang, page);
   const main = page === "demo"
-    ? `<section class="ucp-demo-intro"><article><h2>${productHeading(lang, "demo")}</h2><p class="ucp-demo-instruction">${esc(l.demoLead)}</p>${demoFeatureList(lang)}</article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
+    ? `<section class="ucp-demo-intro"><article>${demoFeatureList(lang)}${installExtensionButton(lang)}</article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
     : page === "faq"
     ? `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`
     : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${(page === "terms" ? l.termsSections : l.privacySections).map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;

@@ -13,6 +13,7 @@
     en: {
       blockedTitle: "Demo mode",
       blocked: "This is a visual demo of the extension. Please install the extension to access all features.",
+      installLabel: "Install Extension",
       desktopOnlyTitle: "Demo available on PC only",
       desktopOnly: "Demo mode is available on PC only. Please open this page on a computer to try the visual demo.",
       closeLabel: "Close demo message"
@@ -20,6 +21,7 @@
     fr: {
       blockedTitle: "Mode d\u00e9mo",
       blocked: "Ceci est une d\u00e9mo visuelle de l'extension. Merci d'installer l'extension pour acc\u00e9der \u00e0 l'int\u00e9gralit\u00e9 des fonctionnalit\u00e9s.",
+      installLabel: "Installer l'extension",
       desktopOnlyTitle: "D\u00e9mo disponible sur PC uniquement",
       desktopOnly: "Le mode d\u00e9mo est disponible sur PC uniquement. Ouvrez cette page sur un ordinateur pour essayer la d\u00e9mo visuelle.",
       closeLabel: "Fermer le message de d\u00e9monstration"
@@ -27,6 +29,7 @@
     es: {
       blockedTitle: "Modo demo",
       blocked: "Esta es una demo visual de la extensi\u00f3n. Instala la extensi\u00f3n para acceder a todas las funciones.",
+      installLabel: "Instalar extensi\u00f3n",
       desktopOnlyTitle: "Demo disponible solo en PC",
       desktopOnly: "El modo demo est\u00e1 disponible solo en PC. Abre esta p\u00e1gina en un ordenador para probar la demo visual.",
       closeLabel: "Cerrar el mensaje de demostraci\u00f3n"
@@ -34,6 +37,7 @@
     it: {
       blockedTitle: "Modalit\u00e0 demo",
       blocked: "Questa \u00e8 una demo visiva dell'estensione. Installa l'estensione per accedere a tutte le funzionalit\u00e0.",
+      installLabel: "Installa estensione",
       desktopOnlyTitle: "Demo disponibile solo su PC",
       desktopOnly: "La modalit\u00e0 demo \u00e8 disponibile solo su PC. Apri questa pagina su un computer per provare la demo visiva.",
       closeLabel: "Chiudi il messaggio demo"
@@ -41,6 +45,7 @@
     de: {
       blockedTitle: "Demo-Modus",
       blocked: "Dies ist eine visuelle Demo der Erweiterung. Bitte installieren Sie die Erweiterung, um auf alle Funktionen zuzugreifen.",
+      installLabel: "Extension installieren",
       desktopOnlyTitle: "Demo nur auf PC verf\u00fcgbar",
       desktopOnly: "Der Demo-Modus ist nur auf PC verf\u00fcgbar. \u00d6ffnen Sie diese Seite auf einem Computer, um die visuelle Demo zu testen.",
       closeLabel: "Demo-Hinweis schlie\u00dfen"
@@ -97,13 +102,23 @@
       close.textContent = "\u00d7";
       close.addEventListener("click", () => blockedDialog.classList.remove("is-visible"));
 
-      panel.append(close, title, text);
+      const install = document.createElement("button");
+      install.className = "ucp-demo-install-cta ucp-real-demo-dialog__install";
+      install.type = "button";
+      install.dataset.ucpDemoInstall = "true";
+      install.addEventListener("click", () => {
+        blockedDialog.classList.remove("is-visible");
+        window.ArcawandInstallExtensionModal?.open?.();
+      });
+
+      panel.append(close, title, text, install);
       blockedDialog.append(panel);
       document.body.append(blockedDialog);
     }
     blockedDialog.querySelector(".ucp-real-demo-dialog__close")?.setAttribute("aria-label", copy.closeLabel || "Close demo message");
     blockedDialog.querySelector('[data-role="title"]').textContent = copy.blockedTitle;
     blockedDialog.querySelector('[data-role="text"]').textContent = copy.blocked;
+    blockedDialog.querySelector('[data-ucp-demo-install="true"]').textContent = copy.installLabel || "Install Extension";
     blockedDialog.classList.add("is-visible");
     window.setTimeout(() => blockedDialog?.classList.remove("is-visible"), 3200);
   }

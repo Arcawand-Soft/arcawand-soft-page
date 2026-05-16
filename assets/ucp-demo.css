@@ -16,28 +16,9 @@
   box-shadow: 0 22px 70px rgba(0, 0, 0, .28);
 }
 
-.ucp-demo-intro h2 {
-  margin: 0 0 .75rem;
-  color: #fff;
-  font-size: clamp(1.65rem, 3vw, 2.35rem);
-  line-height: 1.08;
-  letter-spacing: -.025em;
-}
-
-.ucp-demo-intro h2 .ucp-heading-product {
-  white-space: nowrap;
-}
-
-.ucp-demo-intro p,
 .ucp-demo-intro li {
   color: rgba(226, 232, 240, .82);
   line-height: 1.72;
-}
-
-.ucp-demo-intro .ucp-demo-instruction {
-  margin: 0 0 1rem;
-  color: #fff;
-  font-weight: 750;
 }
 
 .ucp-demo-intro ul {
@@ -83,6 +64,34 @@
   border-radius: 999px;
   background: #8b5cf6;
   box-shadow: 0 0 18px rgba(139, 92, 246, .55);
+}
+
+.ucp-demo-install-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1.35rem;
+  border: 1px solid var(--ucp-accent);
+  border-radius: 999px;
+  background: var(--ucp-accent);
+  color: #05070f;
+  font-weight: 950;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+.ucp-demo-install-cta:hover,
+.ucp-demo-install-cta:focus-visible {
+  background: #fff;
+  border-color: #fff;
+  color: #05070f;
+  transform: translateY(-1px);
+}
+
+.ucp-demo-reminder + .ucp-demo-install-cta {
+  margin-top: 1.2rem;
 }
 
 @media (max-width: 720px) {
@@ -186,6 +195,10 @@
   color: rgba(229, 231, 235, .78);
   line-height: 1.55;
   font-size: .92rem;
+}
+
+.ucp-real-demo-dialog__install {
+  margin-top: .95rem;
 }
 
 .ucp-real-demo-dialog__close {

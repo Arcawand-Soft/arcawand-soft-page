@@ -234,6 +234,11 @@
     }
   };
 
+  window.ArcawandInstallExtensionModal = {
+    open: openModal,
+    close: closeModal
+  };
+
   const isInstallTrigger = (element) => {
     const text = normalize(element.textContent);
     if (!text) return false;
