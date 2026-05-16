@@ -3,7 +3,7 @@ const path = require("path");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260516-demo-install-cta";
+const demoScript = "/assets/ucp-demo.js?v=20260516-demo-install-cta-langfix";
 const demoStylesheet = "/assets/ucp-demo.css?v=20260516-demo-install-cta";
 
 const langs = {

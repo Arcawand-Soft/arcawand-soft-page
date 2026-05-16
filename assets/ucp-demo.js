@@ -73,7 +73,9 @@
   function currentCopy() {
     const runtime = window.UCP_DEMO_RUNTIME;
     const lang = runtime?.resolveLanguage?.() || resolvePageLanguage();
-    return runtime?.copyByLang?.[lang] || runtime?.copyByLang?.en || localCopyByLang[lang] || localCopyByLang.en;
+    const localCopy = localCopyByLang[lang] || localCopyByLang.en;
+    const runtimeCopy = runtime?.copyByLang?.[lang] || runtime?.copyByLang?.en || {};
+    return { ...localCopy, ...runtimeCopy, installLabel: localCopy.installLabel };
   }
 
   function showBlocked(customCopy = null) {
