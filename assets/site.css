@@ -115,7 +115,7 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
 .product-feature-eyebrow { justify-self: start; }
 .product-poster-card { width: 100%; padding: 0; overflow: hidden; border-radius: 28px; border: 1px solid hsl(var(--border) / .72); background: hsl(var(--card) / .32); box-shadow: 0 24px 70px rgba(0,0,0,.22); }
 .product-poster-card picture, .product-poster-card img { width: 100%; display: block; }
-.product-poster-card img { aspect-ratio: 16 / 9; object-fit: cover; }
+.product-poster-card img { height: auto; object-fit: contain; }
 .product-copy { max-width: 900px; margin: 0 auto; text-align: center; }
 .product-copy ul { display: grid; gap: 12px; max-width: 760px; padding: 0; margin: 22px auto 0; list-style: none; text-align: left; }
 .product-copy .hero-actions { justify-content: center; }
