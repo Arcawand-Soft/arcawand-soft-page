@@ -2,7 +2,7 @@
   const IMAGE_DIMENSIONS = new Map([
     ["/assets/ultimate_clipboard_pro_icon_96.webp", [96, 96]],
     ["/assets/Arcawand_Soft_Logo_320.webp", [320, 88]],
-    ["/assets/ultimate_clipboard_pro_main_picture_720.webp", [720, 720]],
+    ["/assets/Ultimate_Clipboard_Pro_poster_1600.webp", [1600, 900]],
     ["/assets/animated_home_video_3_poster_720.webp", [720, 720]],
     ["/assets/products/image-big-panel-rectangular.webp", [1400, 788]],
     ["/assets/products/image-big-panel-rectangular_960.webp", [959, 540]],
