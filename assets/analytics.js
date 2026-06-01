@@ -40,7 +40,7 @@
 
   const getPageType = () => {
     const path = window.location.pathname;
-    if (path.includes("/ultimate-clipboard-pro")) return "product";
+    if (path.includes("/ultimate-clipboard-pro") || path.includes("/figgliz")) return "product";
     if (path.includes("/contact")) return "contact";
     if (path.includes("/privacy")) return "privacy";
     return "home";

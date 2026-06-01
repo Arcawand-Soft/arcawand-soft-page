@@ -2,31 +2,31 @@
   const translations = {
     en: {
       title: "Coming soon",
-      message: "The extension will be available soon. Thank you for your patience.",
+      message: "The extension will be available soon. It is currently in beta testing with volunteer users. Thank you for your patience.",
       close: "Close",
       labels: ["install extension"]
     },
     fr: {
       title: "Bientôt disponible",
-      message: "L'extension sera disponible prochainement. Merci de votre patience.",
+      message: "L'extension sera disponible prochainement. Elle est actuellement en cours de bêta test auprès d'utilisateurs volontaires. Merci de votre patience.",
       close: "Fermer",
       labels: ["installer l'extension"]
     },
     es: {
       title: "Disponible próximamente",
-      message: "La extensión estará disponible próximamente. Gracias por tu paciencia.",
+      message: "La extensión estará disponible próximamente. Actualmente está en beta con usuarios voluntarios. Gracias por tu paciencia.",
       close: "Cerrar",
-      labels: ["instalar extension", "instalar extension"]
+      labels: ["instalar extension", "instalar extensión"]
     },
     it: {
       title: "Disponibile a breve",
-      message: "L'estensione sarà disponibile prossimamente. Grazie per la pazienza.",
+      message: "L'estensione sarà disponibile prossimamente. Al momento è in beta test con utenti volontari. Grazie per la pazienza.",
       close: "Chiudi",
       labels: ["installa estensione"]
     },
     de: {
       title: "Bald verfügbar",
-      message: "Die Erweiterung wird bald verfügbar sein. Vielen Dank für Ihre Geduld.",
+      message: "Die Erweiterung wird bald verfügbar sein. Sie befindet sich derzeit im Betatest mit freiwilligen Nutzern. Vielen Dank für Ihre Geduld.",
       close: "Schließen",
       labels: ["extension installieren", "erweiterung installieren"]
     }
@@ -240,6 +240,7 @@
   };
 
   const isInstallTrigger = (element) => {
+    if (element.matches?.("[data-install-extension-trigger='true']")) return true;
     const text = normalize(element.textContent);
     if (!text) return false;
     return Object.values(translations)

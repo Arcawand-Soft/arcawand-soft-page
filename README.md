@@ -8,6 +8,7 @@ ArcaWand Soft builds premium browser extensions, mobile apps and productivity ap
 
 - `/` - ArcaWand Soft home page.
 - `/ultimate-clipboard-pro/` - Ultimate Clipboard Pro product page, adapted from the standalone product landing page and integrated as a subpage of the main site.
+- `/figgliz/` - Figgliz product page for the private random chat Chrome extension, with localized FAQ, privacy policy and terms pages.
 - `/privacy/` - privacy and local-first data principles.
 - `/contact/` - static contact page.
 
@@ -31,6 +32,23 @@ The route is:
 
 ```text
 https://arcawand-soft.github.io/arcawand-soft-page/ultimate-clipboard-pro/
+```
+
+## Figgliz Product Pages
+
+Figgliz uses the same multilingual product-page system and adds:
+
+- Presentation pages in English, French, Spanish, Italian and German.
+- Product FAQ pages with localized SEO metadata and FAQ structured data.
+- Product-specific privacy policy and terms of use pages.
+- Optimized WebP assets under `/assets/figgliz/`.
+- Pricing cards for Free, Plus, Pro and the Pro Lifetime launch offer.
+- Coming-soon install buttons while the extension remains in volunteer beta testing.
+
+The default route is:
+
+```text
+https://arcawand-soft.github.io/arcawand-soft-page/figgliz/
 ```
 
 ## Local Preview
