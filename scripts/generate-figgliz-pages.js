@@ -242,8 +242,7 @@ const pricingCopy = {
     proSubtitle: "Complete experience",
     lifetimeTitle: "Lifetime access",
     lifetimeSubtitle: "Very limited offer for the first 100 subscribers",
-    currentOffer: "Current offer",
-    freeCta: "Continue with Figgliz Free"
+    currentOffer: "Current offer"
   },
   fr: {
     title: "Figgliz Plus ou Pro",
@@ -255,8 +254,7 @@ const pricingCopy = {
     proSubtitle: "Expérience complète",
     lifetimeTitle: "Accès à vie",
     lifetimeSubtitle: "Offre très limitée aux 100 premiers abonnés",
-    currentOffer: "Offre actuelle",
-    freeCta: "Continuer avec Figgliz Free"
+    currentOffer: "Offre actuelle"
   },
   es: {
     title: "Figgliz Plus o Pro",
@@ -268,8 +266,7 @@ const pricingCopy = {
     proSubtitle: "Experiencia completa",
     lifetimeTitle: "Acceso de por vida",
     lifetimeSubtitle: "Oferta muy limitada para los primeros 100 suscriptores",
-    currentOffer: "Oferta actual",
-    freeCta: "Continuar con Figgliz Free"
+    currentOffer: "Oferta actual"
   },
   it: {
     title: "Figgliz Plus o Pro",
@@ -281,8 +278,7 @@ const pricingCopy = {
     proSubtitle: "Esperienza completa",
     lifetimeTitle: "Accesso a vita",
     lifetimeSubtitle: "Offerta molto limitata ai primi 100 abbonati",
-    currentOffer: "Offerta attuale",
-    freeCta: "Continua con Figgliz Free"
+    currentOffer: "Offerta attuale"
   },
   de: {
     title: "Figgliz Plus oder Pro",
@@ -294,8 +290,7 @@ const pricingCopy = {
     proSubtitle: "Komplette Erfahrung",
     lifetimeTitle: "Lebenslanger Zugriff",
     lifetimeSubtitle: "Sehr limitiertes Angebot für die ersten 100 Abonnenten",
-    currentOffer: "Aktuelles Angebot",
-    freeCta: "Mit Figgliz Free fortfahren"
+    currentOffer: "Aktuelles Angebot"
   }
 };
 
@@ -530,7 +525,7 @@ function pricingCard(lang, key, tier, featured = false) {
   const cta = isFree
     ? ""
     : `<a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a>`;
-  const badge = tier === "plus" || tier === "pro" ? `<span class="figgliz-plan-badge">${tier === "plus" ? "Plus" : "Pro"}</span>` : "";
+  const badge = tier === "plus" || tier === "pro" ? `<img class="figgliz-plan-badge" src="/assets/figgliz/Badge_${tier === "plus" ? "Plus" : "Pro"}.png" alt="${tier === "plus" ? "Plus" : "Pro"}" width="88" height="88" loading="lazy" decoding="async">` : "";
   return `<article class="figgliz-price-card figgliz-price-card-${tier}${featured ? " is-featured" : ""}"><header class="figgliz-plan-card-head"><div>${badge}<h3>${esc(plan.name[lang] || plan.name.en)}</h3><p>${esc(subtitle)}</p></div><p class="figgliz-price"><span>${esc(plan.price)}</span>${plan.suffix ? `<small>${esc(plan.suffix[lang])}</small>` : ""}</p></header>${benefitList(benefits[tier])}${cta}</article>`;
 }
 
@@ -538,13 +533,13 @@ function lifetimeCard(lang) {
   const copy = pricingCopy[lang];
   const l = langs[lang];
   const plan = prices.lifetime;
-  return `<article class="figgliz-lifetime-card"><header class="figgliz-plan-card-head"><div><span class="figgliz-plan-badge">Pro</span><h3>${esc(copy.lifetimeTitle)}</h3><p>${esc(copy.lifetimeSubtitle)}</p></div><p class="figgliz-price"><span>${esc(plan.price)}</span><small>${esc(plan.suffix[lang])}</small></p></header>${benefitList(pricingBenefits[lang].pro)}<a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a></article>`;
+  return `<article class="figgliz-lifetime-card"><header class="figgliz-plan-card-head"><div><img class="figgliz-plan-badge" src="/assets/figgliz/Badge_Pro.png" alt="Pro" width="88" height="88" loading="lazy" decoding="async"><h3>${esc(copy.lifetimeTitle)}</h3><p>${esc(copy.lifetimeSubtitle)}</p></div><p class="figgliz-price"><span>${esc(plan.price)}</span><small>${esc(plan.suffix[lang])}</small></p></header>${benefitList(pricingBenefits[lang].pro)}<a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a></article>`;
 }
 
 function pricing(lang) {
   const l = langs[lang];
   const copy = pricingCopy[lang];
-  return `<section id="plans" class="figgliz-section figgliz-pricing"><div class="figgliz-plan-box" data-plan="monthly"><div class="figgliz-plan-head"><h2>${esc(copy.title)}</h2><p class="figgliz-plan-lead figgliz-plan-lead-monthly">${esc(copy.monthlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-yearly">${esc(copy.yearlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-launch">${esc(copy.launchLead)}</p></div><div class="figgliz-plan-tabs" role="tablist" aria-label="${esc(l.pricingTitle)}"><button type="button" role="tab" aria-selected="true" data-plan-tab="monthly">${esc(l.monthly)}</button><button type="button" role="tab" aria-selected="false" data-plan-tab="yearly">${esc(l.yearly)}</button><button type="button" role="tab" aria-selected="false" data-plan-tab="launch">${esc(l.launch)}</button></div><div class="figgliz-plan-content figgliz-plan-content-monthly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusMonthly", "plus", true)}${pricingCard(lang, "proMonthly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-yearly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusYearly", "plus", true)}${pricingCard(lang, "proYearly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-launch">${lifetimeCard(lang)}</div><button class="figgliz-plan-free-button" type="button" data-install-extension-trigger="true">${esc(copy.freeCta)}</button></div></section>`;
+  return `<section id="plans" class="figgliz-section figgliz-pricing"><div class="figgliz-plan-box" data-plan="monthly"><div class="figgliz-plan-head"><h2>${esc(copy.title)}</h2><p class="figgliz-plan-lead figgliz-plan-lead-monthly">${esc(copy.monthlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-yearly">${esc(copy.yearlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-launch">${esc(copy.launchLead)}</p></div><div class="figgliz-plan-tabs" role="tablist" aria-label="${esc(l.pricingTitle)}"><button type="button" role="tab" aria-selected="true" data-plan-tab="monthly">${esc(l.monthly)}</button><button type="button" role="tab" aria-selected="false" data-plan-tab="yearly">${esc(l.yearly)}</button><button type="button" role="tab" aria-selected="false" data-plan-tab="launch">${esc(l.launch)}</button></div><div class="figgliz-plan-content figgliz-plan-content-monthly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusMonthly", "plus", true)}${pricingCard(lang, "proMonthly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-yearly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusYearly", "plus", true)}${pricingCard(lang, "proYearly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-launch">${lifetimeCard(lang)}</div></div></section>`;
 }
 
 function presentationPage(lang) {
@@ -656,6 +651,9 @@ function copyAssets() {
   fs.mkdirSync(figglizAssets, { recursive: true });
   for (const file of ["figgliz-head.webp", "icon.webp", "webcam.webp", "games.webp", "chess.webp", "dames.webp", "connect4.webp", "ping.webp", "flappy-duo.webp", "air-hockey.webp"]) {
     fs.copyFileSync(path.join(sourceAssets, file), path.join(figglizAssets, file));
+  }
+  for (const file of ["Badge_Plus.png", "Badge_Pro.png"]) {
+    fs.copyFileSync(path.resolve(root, "..", "figgliz", "extension", "assets", "icons", file), path.join(figglizAssets, file));
   }
 }
 
