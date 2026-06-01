@@ -23,18 +23,16 @@ body.figgliz-static-page {
 }
 
 .figgliz-hero {
-  min-height: 76vh;
+  min-height: 68vh;
   display: grid;
-  grid-template-columns: minmax(0, 1.06fr) minmax(340px, .94fr);
   align-items: center;
-  gap: clamp(1.5rem, 4vw, 4rem);
   padding: 2.6rem 0 4.2rem;
 }
 
 .figgliz-hero h1 {
   margin: 1rem 0 1rem;
-  max-width: 820px;
-  font-size: clamp(3rem, 6.4vw, 6.65rem);
+  max-width: 1120px;
+  font-size: clamp(3.2rem, 7.6vw, 7.85rem);
   line-height: .94;
   letter-spacing: -.055em;
 }
@@ -92,34 +90,9 @@ body.figgliz-static-page {
   font-size: .95rem !important;
 }
 
-.figgliz-hero-media {
-  position: relative;
-  min-height: 360px;
-  display: grid;
-  place-items: center;
-}
-
-.figgliz-hero-media img:first-child {
-  width: min(100%, 640px);
-  height: auto;
-  border-radius: 1.4rem;
-  border: 1px solid rgba(255, 255, 255, .14);
-  background: rgba(255, 255, 255, .04);
-  box-shadow: 0 32px 90px rgba(0, 0, 0, .34);
-}
-
-.figgliz-hero-media img:last-child {
-  position: absolute;
-  right: 4%;
-  bottom: 2%;
-  width: clamp(6rem, 14vw, 10rem);
-  height: auto;
-  border-radius: 2rem;
-  box-shadow: 0 28px 70px rgba(233, 135, 184, .24);
-}
-
 .figgliz-section {
   padding: clamp(3rem, 7vw, 5.6rem) 0;
+  scroll-margin-top: 7.5rem;
 }
 
 .figgliz-section-head {
@@ -218,53 +191,292 @@ body.figgliz-static-page {
   padding: 1rem;
 }
 
-.figgliz-price-tabs {
+.figgliz-plan-box {
+  position: relative;
+  padding: clamp(1.3rem, 3vw, 2rem);
+  border-radius: 1.6rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(107, 130, 255, .18), transparent 24rem),
+    radial-gradient(circle at 82% 0%, rgba(233, 135, 184, .14), transparent 24rem),
+    rgba(8, 14, 25, .9);
+}
+
+.figgliz-plan-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.figgliz-plan-head h2 {
+  margin: 0;
+  font-size: clamp(2.45rem, 5vw, 4.3rem);
+  line-height: 1;
+  letter-spacing: -.045em;
+}
+
+.figgliz-plan-lead {
+  display: none;
+  max-width: 960px;
+  margin: .9rem 0 1.35rem;
+  color: var(--ucp-muted);
+  font-size: clamp(1rem, 1.6vw, 1.22rem);
+  line-height: 1.55;
+  font-weight: 800;
+}
+
+#figgliz-plan-monthly-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
+#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
+#figgliz-plan-monthly-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
+#figgliz-plan-monthly-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
+#figgliz-plan-monthly-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
+#figgliz-plan-yearly-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
+#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
+#figgliz-plan-yearly-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
+#figgliz-plan-yearly-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
+#figgliz-plan-yearly-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
+#figgliz-plan-launch-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
+#figgliz-plan-launch-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
+#figgliz-plan-launch-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
+#figgliz-plan-launch-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
+#figgliz-plan-launch-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch {
+  display: block;
+}
+
+.figgliz-plan-tabs {
+  width: min(650px, 100%);
+  margin: 0 auto 1.55rem;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .35rem;
+  padding: .32rem;
+  border-radius: .9rem;
+  background: rgba(107, 130, 255, .18);
+  border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.figgliz-plan-tabs label {
+  min-height: 2.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .65rem;
+  color: #fff;
+  background: rgba(107, 130, 255, .48);
+  font-size: clamp(.72rem, 1.15vw, .95rem);
+  font-weight: 950;
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#figgliz-plan-monthly-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-en"],
+#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-fr"],
+#figgliz-plan-monthly-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-es"],
+#figgliz-plan-monthly-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-it"],
+#figgliz-plan-monthly-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-de"],
+#figgliz-plan-yearly-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-en"],
+#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-fr"],
+#figgliz-plan-yearly-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-es"],
+#figgliz-plan-yearly-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-it"],
+#figgliz-plan-yearly-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-de"],
+#figgliz-plan-launch-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-en"],
+#figgliz-plan-launch-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-fr"],
+#figgliz-plan-launch-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-es"],
+#figgliz-plan-launch-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-it"],
+#figgliz-plan-launch-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-de"] {
+  background: linear-gradient(90deg, #6b82ff, #e987b8);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .82) inset;
+}
+
+.figgliz-plan-content {
+  display: none;
   gap: 1rem;
 }
 
-.figgliz-price-tabs > article {
+#figgliz-plan-monthly-en:checked ~ .figgliz-plan-content-monthly,
+#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-content-monthly,
+#figgliz-plan-monthly-es:checked ~ .figgliz-plan-content-monthly,
+#figgliz-plan-monthly-it:checked ~ .figgliz-plan-content-monthly,
+#figgliz-plan-monthly-de:checked ~ .figgliz-plan-content-monthly,
+#figgliz-plan-yearly-en:checked ~ .figgliz-plan-content-yearly,
+#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-content-yearly,
+#figgliz-plan-yearly-es:checked ~ .figgliz-plan-content-yearly,
+#figgliz-plan-yearly-it:checked ~ .figgliz-plan-content-yearly,
+#figgliz-plan-yearly-de:checked ~ .figgliz-plan-content-yearly {
   display: grid;
-  gap: .8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.figgliz-price-tabs > article > h3 {
-  margin: 0;
-  font-size: 1.25rem;
+#figgliz-plan-launch-en:checked ~ .figgliz-plan-content-launch,
+#figgliz-plan-launch-fr:checked ~ .figgliz-plan-content-launch,
+#figgliz-plan-launch-es:checked ~ .figgliz-plan-content-launch,
+#figgliz-plan-launch-it:checked ~ .figgliz-plan-content-launch,
+#figgliz-plan-launch-de:checked ~ .figgliz-plan-content-launch {
+  display: grid;
+  justify-items: center;
 }
 
-.figgliz-price-tabs > article > div {
-  display: grid;
-  gap: .7rem;
+.figgliz-price-card,
+.figgliz-lifetime-card {
+  min-height: 25rem;
+  padding: 1.15rem;
 }
 
 .figgliz-price-card {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.figgliz-price-card.is-featured {
-  border-color: rgba(107, 130, 255, .42);
-  background: linear-gradient(145deg, rgba(107, 130, 255, .22), rgba(233, 135, 184, .14)), rgba(14, 18, 34, .8);
+.figgliz-price-card-free {
+  background: rgba(28, 39, 54, .82);
+}
+
+.figgliz-price-card-plus {
+  background: linear-gradient(145deg, rgba(107, 130, 255, .42), rgba(54, 66, 126, .88));
+}
+
+.figgliz-price-card-pro,
+.figgliz-lifetime-card {
+  background: linear-gradient(145deg, rgba(233, 135, 184, .38), rgba(54, 66, 126, .82));
+}
+
+.figgliz-plan-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: .9rem;
+  margin-bottom: 1rem;
+}
+
+.figgliz-plan-card-head h3,
+.figgliz-lifetime-card h3 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.7vw, 2.15rem);
+  line-height: 1.05;
+}
+
+.figgliz-plan-card-head p:not(.figgliz-price),
+.figgliz-lifetime-card p {
+  margin: .25rem 0 0;
+  color: rgba(226, 232, 240, .78);
+  font-weight: 900;
+}
+
+.figgliz-plan-badge {
+  width: 3.8rem;
+  height: 3.8rem;
+  display: inline-grid;
+  place-items: center;
+  margin: 0 0 .5rem;
+  border-radius: 999px;
+  background: #ffe16f;
+  color: #0a0a0f;
+  border: 4px solid #fff;
+  font-weight: 950;
+  font-size: 1.05rem;
 }
 
 .figgliz-price {
   display: flex;
   align-items: baseline;
-  gap: .45rem;
-  margin: .45rem 0 .85rem;
+  justify-content: flex-end;
+  gap: .22rem;
+  margin: 0;
+  color: #ffe16f;
+  white-space: nowrap;
 }
 
-.figgliz-price span {
-  color: #fff;
-  font-size: 2rem;
+.figgliz-price span,
+.figgliz-lifetime-price strong {
+  font-size: clamp(2.15rem, 4vw, 3.45rem);
   font-weight: 950;
   letter-spacing: -.04em;
 }
 
-.figgliz-price small {
-  color: var(--ucp-muted);
+.figgliz-price small,
+.figgliz-lifetime-price span {
+  font-size: .8rem;
+  font-weight: 950;
+}
+
+.figgliz-plan-benefits {
+  display: grid;
+  gap: .78rem;
+  padding: 0;
+  margin: 0 0 1.5rem;
+  list-style: none;
+}
+
+.figgliz-plan-benefits li {
+  position: relative;
+  padding-left: 1.25rem;
+  color: #fff;
   font-weight: 850;
+  line-height: 1.25;
+}
+
+.figgliz-plan-benefits li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .42em;
+  width: .42rem;
+  height: .42rem;
+  border-radius: 50%;
+  background: #ffb69f;
+}
+
+.figgliz-price-card .figgliz-price-button {
+  width: 100%;
+  margin-top: auto;
+  border-radius: .75rem;
+  background: linear-gradient(90deg, #6674ff, #e987b8);
+  color: #fff;
+}
+
+.figgliz-lifetime-card {
+  width: min(680px, 100%);
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.2rem;
+  border-color: rgba(255, 255, 255, .28);
+  padding: clamp(1.2rem, 3vw, 1.9rem);
+}
+
+.figgliz-lifetime-price {
+  color: #ffe16f;
+  text-align: right;
+  align-self: start;
+}
+
+.figgliz-lifetime-price strong,
+.figgliz-lifetime-price span {
+  display: block;
+}
+
+.figgliz-lifetime-card .figgliz-price-button {
+  grid-column: 1 / -1;
+  border-radius: .75rem;
+}
+
+.figgliz-plan-free-button {
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1rem auto 0;
+  padding: 0 1.2rem;
+  border: 0;
+  border-radius: .85rem;
+  background: rgba(255, 255, 255, .1);
+  color: #fff;
+  font-weight: 950;
+  cursor: pointer;
 }
 
 .figgliz-static-hero h1 {
@@ -291,14 +503,29 @@ body.figgliz-static-page {
 
 @media (max-width: 980px) {
   .figgliz-hero {
-    grid-template-columns: 1fr;
     min-height: 0;
   }
 
   .figgliz-card-grid,
-  .figgliz-mini-grid,
-  .figgliz-price-tabs {
+  .figgliz-mini-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #figgliz-plan-monthly-en:checked ~ .figgliz-plan-content-monthly,
+  #figgliz-plan-monthly-fr:checked ~ .figgliz-plan-content-monthly,
+  #figgliz-plan-monthly-es:checked ~ .figgliz-plan-content-monthly,
+  #figgliz-plan-monthly-it:checked ~ .figgliz-plan-content-monthly,
+  #figgliz-plan-monthly-de:checked ~ .figgliz-plan-content-monthly,
+  #figgliz-plan-yearly-en:checked ~ .figgliz-plan-content-yearly,
+  #figgliz-plan-yearly-fr:checked ~ .figgliz-plan-content-yearly,
+  #figgliz-plan-yearly-es:checked ~ .figgliz-plan-content-yearly,
+  #figgliz-plan-yearly-it:checked ~ .figgliz-plan-content-yearly,
+  #figgliz-plan-yearly-de:checked ~ .figgliz-plan-content-yearly {
+    grid-template-columns: 1fr;
+  }
+
+  .figgliz-price-card {
+    min-height: 0;
   }
 
   .figgliz-game-grid {
@@ -307,22 +534,83 @@ body.figgliz-static-page {
 }
 
 @media (max-width: 620px) {
+  .figgliz-main {
+    width: min(100% - 22px, 1180px);
+  }
+
+  .figgliz-hero {
+    padding: 1.8rem 0 3rem;
+  }
+
   .figgliz-hero h1 {
     font-size: clamp(2.5rem, 13vw, 4rem);
   }
 
+  .figgliz-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .figgliz-primary,
+  .figgliz-secondary {
+    width: 100%;
+  }
+
   .figgliz-card-grid,
   .figgliz-mini-grid,
-  .figgliz-price-tabs,
   .figgliz-game-grid {
     grid-template-columns: 1fr;
   }
 
-  .figgliz-hero-media {
-    min-height: 230px;
+  .figgliz-plan-box {
+    padding: 1rem;
+    border-radius: 1.25rem;
   }
 
-  .figgliz-hero-media img:last-child {
-    width: 5.5rem;
+  .figgliz-plan-head h2 {
+    font-size: clamp(2rem, 12vw, 3.15rem);
+  }
+
+  .figgliz-plan-lead {
+    font-size: .98rem;
+  }
+
+  .figgliz-plan-tabs {
+    width: 100%;
+    grid-template-columns: 1fr;
+    gap: .28rem;
+    margin-bottom: 1rem;
+  }
+
+  .figgliz-plan-tabs label {
+    min-height: 2.55rem;
+    font-size: .82rem;
+  }
+
+  .figgliz-plan-card-head,
+  .figgliz-lifetime-card {
+    grid-template-columns: 1fr;
+  }
+
+  .figgliz-plan-card-head {
+    display: grid;
+  }
+
+  .figgliz-price,
+  .figgliz-lifetime-price {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .figgliz-lifetime-card {
+    gap: .9rem;
+  }
+
+  .figgliz-plan-benefits {
+    gap: .65rem;
+  }
+
+  .figgliz-plan-free-button {
+    width: 100%;
   }
 }

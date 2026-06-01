@@ -228,6 +228,102 @@ const prices = {
   lifetime: { name: { en: "Pro Lifetime", fr: "Pro à vie", es: "Pro de por vida", it: "Pro a vita", de: "Pro Lifetime" }, price: "99€", suffix: { en: "one time", fr: "une seule fois", es: "una sola vez", it: "una sola volta", de: "einmalig" }, url: "https://checkout.dodopayments.com/buy/pdt_0NfoqxYzfXACDIlJJFR63?quantity=1" }
 };
 
+const pricingCopy = {
+  en: {
+    title: "Figgliz Plus or Pro",
+    monthlyLead: "Try Plus or Pro monthly to unlock more video comfort, unlimited voice notes, game invitations and webcam background customization, with the freedom to stop whenever you want.",
+    yearlyLead: "Switch to yearly to keep Plus or Pro benefits all year at a better price: video comfort, unlimited voice notes, game invitations, filters and webcam backgrounds.",
+    launchLead: "Grab the launch offer before it disappears: one payment, Pro for life, and every Pro comfort unlocked for good.",
+    freeSubtitle: "Start simply",
+    plusSubtitle: "More control",
+    proSubtitle: "Complete experience",
+    lifetimeTitle: "Lifetime access",
+    lifetimeSubtitle: "Very limited offer for the first 100 subscribers",
+    currentOffer: "Current offer",
+    freeCta: "Continue with Figgliz Free"
+  },
+  fr: {
+    title: "Figgliz Plus ou Pro",
+    monthlyLead: "Essaie Plus ou Pro au mois pour débloquer plus de confort vidéo, les vocaux illimités, les invitations aux jeux et la personnalisation des fonds de webcam, avec la liberté d'arrêter quand tu veux.",
+    yearlyLead: "Passe à l'annuel pour garder les avantages Plus ou Pro toute l'année à meilleur prix : confort vidéo, vocaux illimités, invitations aux jeux, filtres et fonds de webcam.",
+    launchLead: "Profite de l'offre de lancement avant qu'elle disparaisse : un seul paiement, Pro à vie, et tout le confort Pro débloqué pour de bon.",
+    freeSubtitle: "Démarrer simplement",
+    plusSubtitle: "Plus de contrôle",
+    proSubtitle: "Expérience complète",
+    lifetimeTitle: "Accès à vie",
+    lifetimeSubtitle: "Offre très limitée aux 100 premiers abonnés",
+    currentOffer: "Offre actuelle",
+    freeCta: "Continuer avec Figgliz Free"
+  },
+  es: {
+    title: "Figgliz Plus o Pro",
+    monthlyLead: "Prueba Plus o Pro al mes para desbloquear más comodidad de vídeo, notas de voz ilimitadas, invitaciones a juegos y fondos de webcam, con libertad para parar cuando quieras.",
+    yearlyLead: "Pasa al anual para mantener las ventajas Plus o Pro todo el año a mejor precio: vídeo cómodo, voces ilimitadas, juegos, filtros y fondos de webcam.",
+    launchLead: "Aprovecha la oferta de lanzamiento antes de que desaparezca: un solo pago, Pro de por vida y todo el confort Pro desbloqueado para siempre.",
+    freeSubtitle: "Empezar simple",
+    plusSubtitle: "Más control",
+    proSubtitle: "Experiencia completa",
+    lifetimeTitle: "Acceso de por vida",
+    lifetimeSubtitle: "Oferta muy limitada para los primeros 100 suscriptores",
+    currentOffer: "Oferta actual",
+    freeCta: "Continuar con Figgliz Free"
+  },
+  it: {
+    title: "Figgliz Plus o Pro",
+    monthlyLead: "Prova Plus o Pro al mese per sbloccare più comfort video, vocali illimitati, inviti ai giochi e sfondi webcam, con la libertà di fermarti quando vuoi.",
+    yearlyLead: "Passa all'annuale per tenere i vantaggi Plus o Pro tutto l'anno a prezzo migliore: comfort video, vocali illimitati, giochi, filtri e sfondi webcam.",
+    launchLead: "Approfitta dell'offerta di lancio prima che sparisca: un solo pagamento, Pro a vita e tutto il comfort Pro sbloccato per sempre.",
+    freeSubtitle: "Inizia semplicemente",
+    plusSubtitle: "Più controllo",
+    proSubtitle: "Esperienza completa",
+    lifetimeTitle: "Accesso a vita",
+    lifetimeSubtitle: "Offerta molto limitata ai primi 100 abbonati",
+    currentOffer: "Offerta attuale",
+    freeCta: "Continua con Figgliz Free"
+  },
+  de: {
+    title: "Figgliz Plus oder Pro",
+    monthlyLead: "Teste Plus oder Pro monatlich für mehr Videokomfort, unbegrenzte Sprachnachrichten, Spieleinladungen und Webcam-Hintergründe, mit der Freiheit jederzeit aufzuhören.",
+    yearlyLead: "Wechsle zum Jahresplan und behalte Plus- oder Pro-Vorteile günstiger für das ganze Jahr: Videokomfort, unbegrenzte Sprache, Spiele, Filter und Webcam-Hintergründe.",
+    launchLead: "Nutze das Launch-Angebot, bevor es verschwindet: eine Zahlung, Pro lebenslang und alle Pro-Vorteile dauerhaft freigeschaltet.",
+    freeSubtitle: "Einfach starten",
+    plusSubtitle: "Mehr Kontrolle",
+    proSubtitle: "Komplette Erfahrung",
+    lifetimeTitle: "Lebenslanger Zugriff",
+    lifetimeSubtitle: "Sehr limitiertes Angebot für die ersten 100 Abonnenten",
+    currentOffer: "Aktuelles Angebot",
+    freeCta: "Mit Figgliz Free fortfahren"
+  }
+};
+
+const pricingBenefits = {
+  en: {
+    free: ["Unlimited texts", "3 voice notes per day", "3 video requests per day", "15-second wait for Next", "Receive game invitations"],
+    plus: ["Unlimited voice notes", "30 video requests per day", "Webcam backgrounds", "Advanced language filters", "Advanced gender filters", "Send game invitations", "3-second wait for Next", "Designed for regular conversations"],
+    pro: ["Unlimited video requests", "Webcam backgrounds", "Video Pause feature", "Send game invitations", "Instant Next", "Queue priority", "Beta access to new features", "Best experience for frequent use"]
+  },
+  fr: {
+    free: ["Textes illimités", "3 vocaux par jour", "3 demandes vidéo par jour", "15 secondes d'attente pour Next", "Réception d'invitation aux jeux"],
+    plus: ["Vocaux illimités", "30 demandes vidéo par jour", "Fonds de webcam", "Filtres avancés de langue", "Filtres avancés de genre", "Envoi d'invitation aux jeux", "3 secondes d'attente pour Next", "Conçu pour discuter régulièrement"],
+    pro: ["Demandes vidéo illimitées", "Fonds de webcam", "Fonction Pause Vidéo", "Envoi d'invitation aux jeux", "Next instantanés", "Priorité dans la file", "Accès bêta aux nouveautés", "Meilleure expérience pour usage fréquent"]
+  },
+  es: {
+    free: ["Textos ilimitados", "3 notas de voz al día", "3 solicitudes de vídeo al día", "15 segundos de espera para Next", "Recibir invitaciones a juegos"],
+    plus: ["Notas de voz ilimitadas", "30 solicitudes de vídeo al día", "Fondos de webcam", "Filtros avanzados de idioma", "Filtros avanzados de género", "Enviar invitaciones a juegos", "3 segundos de espera para Next", "Pensado para conversar a menudo"],
+    pro: ["Solicitudes de vídeo ilimitadas", "Fondos de webcam", "Función Pausa de vídeo", "Enviar invitaciones a juegos", "Next instantáneo", "Prioridad en la cola", "Acceso beta a novedades", "Mejor experiencia para uso frecuente"]
+  },
+  it: {
+    free: ["Testi illimitati", "3 vocali al giorno", "3 richieste video al giorno", "15 secondi di attesa per Next", "Ricezione di inviti ai giochi"],
+    plus: ["Vocali illimitati", "30 richieste video al giorno", "Sfondi webcam", "Filtri avanzati di lingua", "Filtri avanzati di genere", "Invio di inviti ai giochi", "3 secondi di attesa per Next", "Pensato per conversare regolarmente"],
+    pro: ["Richieste video illimitate", "Sfondi webcam", "Funzione Pausa video", "Invio di inviti ai giochi", "Next istantaneo", "Priorità in coda", "Accesso beta alle novità", "Esperienza migliore per uso frequente"]
+  },
+  de: {
+    free: ["Unbegrenzte Texte", "3 Sprachnachrichten pro Tag", "3 Videoanfragen pro Tag", "15 Sekunden Wartezeit für Next", "Spieleinladungen empfangen"],
+    plus: ["Unbegrenzte Sprachnachrichten", "30 Videoanfragen pro Tag", "Webcam-Hintergründe", "Erweiterte Sprachfilter", "Erweiterte Geschlechtsfilter", "Spieleinladungen senden", "3 Sekunden Wartezeit für Next", "Für regelmäßige Gespräche gedacht"],
+    pro: ["Unbegrenzte Videoanfragen", "Webcam-Hintergründe", "Video-Pause-Funktion", "Spieleinladungen senden", "Sofortiges Next", "Priorität in der Warteschlange", "Beta-Zugriff auf Neuheiten", "Beste Erfahrung für häufige Nutzung"]
+  }
+};
+
 const gameLabels = {
   en: { chess: "Chess", dames: "Checkers", connect4: "Connect 4", ping: "Ping Pong", "flappy-duo": "Flappy Duo", "air-hockey": "Air Hockey" },
   fr: { chess: "Échecs", dames: "Dames", connect4: "Puissance 4", ping: "Ping Pong", "flappy-duo": "Flappy Duo", "air-hockey": "Air Hockey" },
@@ -318,19 +414,35 @@ function structuredData(lang, page, title, desc) {
   return graph.map((entry) => `<script type="application/ld+json">${jsonLd(entry)}</script>`).join("\n");
 }
 
-function pricingCard(lang, key, featured = false) {
+function benefitList(items) {
+  return `<ul class="figgliz-plan-benefits">${items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`;
+}
+
+function pricingCard(lang, key, tier, featured = false) {
   const l = langs[lang];
+  const copy = pricingCopy[lang];
+  const benefits = pricingBenefits[lang];
   const plan = prices[key];
   const isFree = key === "free";
+  const subtitle = tier === "plus" ? copy.plusSubtitle : tier === "pro" ? copy.proSubtitle : copy.freeSubtitle;
   const cta = isFree
-    ? `<button class="figgliz-price-button" type="button" data-install-extension-trigger="true">${esc(l.continueFree)}</button>`
+    ? ""
     : `<a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a>`;
-  return `<article class="figgliz-price-card${featured ? " is-featured" : ""}"><h3>${esc(plan.name[lang] || plan.name.en)}</h3><p class="figgliz-price"><span>${esc(plan.price)}</span>${plan.suffix ? `<small>${esc(plan.suffix[lang])}</small>` : ""}</p>${cta}</article>`;
+  const badge = tier === "plus" || tier === "pro" ? `<span class="figgliz-plan-badge">${tier === "plus" ? "Plus" : "Pro"}</span>` : "";
+  return `<article class="figgliz-price-card figgliz-price-card-${tier}${featured ? " is-featured" : ""}"><header class="figgliz-plan-card-head"><div>${badge}<h3>${esc(plan.name[lang] || plan.name.en)}</h3><p>${esc(subtitle)}</p></div><p class="figgliz-price"><span>${esc(plan.price)}</span>${plan.suffix ? `<small>${esc(plan.suffix[lang])}</small>` : ""}</p></header>${benefitList(benefits[tier])}${cta}</article>`;
+}
+
+function lifetimeCard(lang) {
+  const copy = pricingCopy[lang];
+  const l = langs[lang];
+  const plan = prices.lifetime;
+  return `<article class="figgliz-lifetime-card"><div><span class="figgliz-plan-badge">Pro</span><h3>${esc(copy.lifetimeTitle)}</h3><p>${esc(copy.lifetimeSubtitle)}</p>${benefitList(pricingBenefits[lang].pro)}</div><aside class="figgliz-lifetime-price"><strong>${esc(plan.price)}</strong><span>${esc(plan.suffix[lang])}</span></aside><a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a></article>`;
 }
 
 function pricing(lang) {
   const l = langs[lang];
-  return `<section id="plans" class="figgliz-section figgliz-pricing"><div class="figgliz-section-head"><h2>${esc(l.pricingTitle)}</h2><p>${esc(l.pricingLead)}</p></div><div class="figgliz-price-tabs"><article><h3>${esc(l.monthly)}</h3><div>${pricingCard(lang, "free")}${pricingCard(lang, "plusMonthly")}${pricingCard(lang, "proMonthly", true)}</div></article><article><h3>${esc(l.yearly)}</h3><div>${pricingCard(lang, "free")}${pricingCard(lang, "plusYearly")}${pricingCard(lang, "proYearly", true)}</div></article><article><h3>${esc(l.launch)}</h3><div>${pricingCard(lang, "free")}${pricingCard(lang, "lifetime", true)}</div></article></div></section>`;
+  const copy = pricingCopy[lang];
+  return `<section id="plans" class="figgliz-section figgliz-pricing"><div class="figgliz-plan-box"><input class="figgliz-plan-radio" type="radio" name="figgliz-plan-${lang}" id="figgliz-plan-monthly-${lang}" checked><input class="figgliz-plan-radio" type="radio" name="figgliz-plan-${lang}" id="figgliz-plan-yearly-${lang}"><input class="figgliz-plan-radio" type="radio" name="figgliz-plan-${lang}" id="figgliz-plan-launch-${lang}"><div class="figgliz-plan-head"><h2>${esc(copy.title)}</h2><p class="figgliz-plan-lead figgliz-plan-lead-monthly">${esc(copy.monthlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-yearly">${esc(copy.yearlyLead)}</p><p class="figgliz-plan-lead figgliz-plan-lead-launch">${esc(copy.launchLead)}</p></div><div class="figgliz-plan-tabs" role="tablist" aria-label="${esc(l.pricingTitle)}"><label for="figgliz-plan-monthly-${lang}" role="tab">${esc(l.monthly)}</label><label for="figgliz-plan-yearly-${lang}" role="tab">${esc(l.yearly)}</label><label for="figgliz-plan-launch-${lang}" role="tab">${esc(l.launch)}</label></div><div class="figgliz-plan-content figgliz-plan-content-monthly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusMonthly", "plus", true)}${pricingCard(lang, "proMonthly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-yearly">${pricingCard(lang, "free", "free")}${pricingCard(lang, "plusYearly", "plus", true)}${pricingCard(lang, "proYearly", "pro", true)}</div><div class="figgliz-plan-content figgliz-plan-content-launch">${lifetimeCard(lang)}</div><button class="figgliz-plan-free-button" type="button" data-install-extension-trigger="true">${esc(copy.freeCta)}</button></div></section>`;
 }
 
 function presentationPage(lang) {
@@ -338,7 +450,7 @@ function presentationPage(lang) {
   const features = l.features.map(([title, text]) => `<article class="figgliz-card"><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("");
   const privacy = l.privacyCards.map(([title, text]) => `<article class="figgliz-mini"><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("");
   const games = ["chess", "dames", "connect4", "ping", "flappy-duo", "air-hockey"].map((name) => `<figure class="figgliz-game"><img src="/assets/figgliz/${name}.webp" alt="" width="160" height="160" loading="lazy" decoding="async"><figcaption>${esc(gameLabels[lang][name])}</figcaption></figure>`).join("");
-  return `<section class="figgliz-hero"><div><span class="ucp-static-kicker">${esc(l.heroKicker)}</span><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></div><div class="figgliz-hero-media"><img src="/assets/figgliz/figgliz-head.webp" alt="Figgliz" width="639" height="188" decoding="async" fetchpriority="high"><img src="/assets/figgliz/webcam.webp" alt="" width="160" height="160" loading="eager" decoding="async"></div></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.sectionsTitle)}</h2><p>${esc(l.sectionsLead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.statsTitle)}</h2><p>${esc(l.statsLead)}</p></div><a class="figgliz-stats-link" href="https://figgliz.arcawand-soft.com/" target="_blank" rel="noopener noreferrer">figgliz.arcawand-soft.com</a><div class="figgliz-mini-grid">${privacy}</div></section>${pricing(lang)}`;
+  return `<section class="figgliz-hero"><div><span class="ucp-static-kicker">${esc(l.heroKicker)}</span><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></div></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.sectionsTitle)}</h2><p>${esc(l.sectionsLead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.statsTitle)}</h2><p>${esc(l.statsLead)}</p></div><a class="figgliz-stats-link" href="https://figgliz.arcawand-soft.com/" target="_blank" rel="noopener noreferrer">figgliz.arcawand-soft.com</a><div class="figgliz-mini-grid">${privacy}</div></section>${pricing(lang)}`;
 }
 
 function textPage(lang, page) {
@@ -397,7 +509,6 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta name="twitter:image" content="https://arcawand-soft.com/assets/figgliz/figgliz-head.webp">
 ${structuredData(lang, page, title, desc)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
-<link rel="preload" as="image" href="/assets/figgliz/figgliz-head.webp">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
 <link rel="stylesheet" href="/assets/figgliz-product.css?v=20260601">
 <script defer src="/assets/analytics.js"></script>
