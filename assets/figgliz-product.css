@@ -219,14 +219,6 @@ body.figgliz-static-page {
     rgba(8, 14, 25, .9);
 }
 
-.figgliz-plan-radio {
-  position: fixed;
-  top: 0;
-  left: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
 .figgliz-plan-head h2 {
   margin: 0;
   font-size: clamp(2.45rem, 5vw, 4.3rem);
@@ -244,21 +236,9 @@ body.figgliz-static-page {
   font-weight: 800;
 }
 
-#figgliz-plan-monthly-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
-#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
-#figgliz-plan-monthly-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
-#figgliz-plan-monthly-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
-#figgliz-plan-monthly-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-monthly,
-#figgliz-plan-yearly-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
-#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
-#figgliz-plan-yearly-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
-#figgliz-plan-yearly-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
-#figgliz-plan-yearly-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-yearly,
-#figgliz-plan-launch-en:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
-#figgliz-plan-launch-fr:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
-#figgliz-plan-launch-es:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
-#figgliz-plan-launch-it:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch,
-#figgliz-plan-launch-de:checked ~ .figgliz-plan-head .figgliz-plan-lead-launch {
+.figgliz-plan-box[data-plan="monthly"] .figgliz-plan-lead-monthly,
+.figgliz-plan-box[data-plan="yearly"] .figgliz-plan-lead-yearly,
+.figgliz-plan-box[data-plan="launch"] .figgliz-plan-lead-launch {
   display: block;
 }
 
@@ -274,7 +254,7 @@ body.figgliz-static-page {
   border: 1px solid rgba(255, 255, 255, .1);
 }
 
-.figgliz-plan-tabs label {
+.figgliz-plan-tabs button {
   min-height: 2.45rem;
   display: inline-flex;
   align-items: center;
@@ -282,6 +262,7 @@ body.figgliz-static-page {
   border-radius: .65rem;
   color: #fff;
   background: rgba(107, 130, 255, .48);
+  border: 0;
   font-size: clamp(.72rem, 1.15vw, .95rem);
   font-weight: 950;
   line-height: 1.1;
@@ -290,21 +271,7 @@ body.figgliz-static-page {
   cursor: pointer;
 }
 
-#figgliz-plan-monthly-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-en"],
-#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-fr"],
-#figgliz-plan-monthly-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-es"],
-#figgliz-plan-monthly-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-it"],
-#figgliz-plan-monthly-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-monthly-de"],
-#figgliz-plan-yearly-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-en"],
-#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-fr"],
-#figgliz-plan-yearly-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-es"],
-#figgliz-plan-yearly-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-it"],
-#figgliz-plan-yearly-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-yearly-de"],
-#figgliz-plan-launch-en:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-en"],
-#figgliz-plan-launch-fr:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-fr"],
-#figgliz-plan-launch-es:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-es"],
-#figgliz-plan-launch-it:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-it"],
-#figgliz-plan-launch-de:checked ~ .figgliz-plan-tabs label[for="figgliz-plan-launch-de"] {
+.figgliz-plan-tabs button[aria-selected="true"] {
   background: linear-gradient(90deg, #6b82ff, #e987b8);
   box-shadow: 0 0 0 2px rgba(255, 255, 255, .82) inset;
 }
@@ -314,25 +281,13 @@ body.figgliz-static-page {
   gap: 1.25rem;
 }
 
-#figgliz-plan-monthly-en:checked ~ .figgliz-plan-content-monthly,
-#figgliz-plan-monthly-fr:checked ~ .figgliz-plan-content-monthly,
-#figgliz-plan-monthly-es:checked ~ .figgliz-plan-content-monthly,
-#figgliz-plan-monthly-it:checked ~ .figgliz-plan-content-monthly,
-#figgliz-plan-monthly-de:checked ~ .figgliz-plan-content-monthly,
-#figgliz-plan-yearly-en:checked ~ .figgliz-plan-content-yearly,
-#figgliz-plan-yearly-fr:checked ~ .figgliz-plan-content-yearly,
-#figgliz-plan-yearly-es:checked ~ .figgliz-plan-content-yearly,
-#figgliz-plan-yearly-it:checked ~ .figgliz-plan-content-yearly,
-#figgliz-plan-yearly-de:checked ~ .figgliz-plan-content-yearly {
+.figgliz-plan-box[data-plan="monthly"] .figgliz-plan-content-monthly,
+.figgliz-plan-box[data-plan="yearly"] .figgliz-plan-content-yearly {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-#figgliz-plan-launch-en:checked ~ .figgliz-plan-content-launch,
-#figgliz-plan-launch-fr:checked ~ .figgliz-plan-content-launch,
-#figgliz-plan-launch-es:checked ~ .figgliz-plan-content-launch,
-#figgliz-plan-launch-it:checked ~ .figgliz-plan-content-launch,
-#figgliz-plan-launch-de:checked ~ .figgliz-plan-content-launch {
+.figgliz-plan-box[data-plan="launch"] .figgliz-plan-content-launch {
   display: grid;
   justify-items: center;
 }
@@ -407,15 +362,13 @@ body.figgliz-static-page {
   white-space: nowrap;
 }
 
-.figgliz-price span,
-.figgliz-lifetime-price strong {
+.figgliz-price span {
   font-size: clamp(2.15rem, 4vw, 3.45rem);
   font-weight: 950;
   letter-spacing: -.04em;
 }
 
-.figgliz-price small,
-.figgliz-lifetime-price span {
+.figgliz-price small {
   font-size: .8rem;
   font-weight: 950;
 }
@@ -463,10 +416,6 @@ body.figgliz-static-page {
   gap: 0;
   border-color: rgba(255, 255, 255, .28);
   padding: clamp(1.2rem, 3vw, 1.9rem);
-}
-
-.figgliz-lifetime-price {
-  color: #ffe16f;
 }
 
 .figgliz-lifetime-card .figgliz-price-button {
@@ -536,16 +485,8 @@ body.figgliz-static-page {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  #figgliz-plan-monthly-en:checked ~ .figgliz-plan-content-monthly,
-  #figgliz-plan-monthly-fr:checked ~ .figgliz-plan-content-monthly,
-  #figgliz-plan-monthly-es:checked ~ .figgliz-plan-content-monthly,
-  #figgliz-plan-monthly-it:checked ~ .figgliz-plan-content-monthly,
-  #figgliz-plan-monthly-de:checked ~ .figgliz-plan-content-monthly,
-  #figgliz-plan-yearly-en:checked ~ .figgliz-plan-content-yearly,
-  #figgliz-plan-yearly-fr:checked ~ .figgliz-plan-content-yearly,
-  #figgliz-plan-yearly-es:checked ~ .figgliz-plan-content-yearly,
-  #figgliz-plan-yearly-it:checked ~ .figgliz-plan-content-yearly,
-  #figgliz-plan-yearly-de:checked ~ .figgliz-plan-content-yearly {
+  .figgliz-plan-box[data-plan="monthly"] .figgliz-plan-content-monthly,
+  .figgliz-plan-box[data-plan="yearly"] .figgliz-plan-content-yearly {
     grid-template-columns: 1fr;
   }
 
@@ -617,7 +558,7 @@ body.figgliz-static-page {
     margin-bottom: 1rem;
   }
 
-  .figgliz-plan-tabs label {
+  .figgliz-plan-tabs button {
     min-height: 2.55rem;
     font-size: .82rem;
   }
@@ -631,8 +572,7 @@ body.figgliz-static-page {
     display: grid;
   }
 
-  .figgliz-price,
-  .figgliz-lifetime-price {
+  .figgliz-price {
     justify-content: flex-start;
     text-align: left;
   }

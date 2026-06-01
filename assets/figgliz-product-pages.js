@@ -114,12 +114,39 @@
     }, { passive: true });
   }
 
+  function setupPricingTabs() {
+    document.querySelectorAll(".figgliz-plan-box").forEach((box) => {
+      if (box.dataset.pricingTabsReady === "true") return;
+      box.dataset.pricingTabsReady = "true";
+      const tabs = Array.from(box.querySelectorAll("[data-plan-tab]"));
+      if (!tabs.length) return;
+      const setPlan = (plan) => {
+        const beforeX = window.scrollX;
+        const beforeY = window.scrollY;
+        box.dataset.plan = plan;
+        tabs.forEach((tab) => {
+          tab.setAttribute("aria-selected", String(tab.dataset.planTab === plan));
+        });
+        window.requestAnimationFrame(() => window.scrollTo(beforeX, beforeY));
+      };
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setPlan(tab.dataset.planTab || "monthly");
+        });
+      });
+      setPlan(box.dataset.plan || "monthly");
+    });
+  }
+
   function init() {
     const lang = getLangFromPath();
     document.documentElement.lang = lang;
     setupLanguageMenu();
     setupProductNav();
     setupProductHeaderScroll();
+    setupPricingTabs();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
