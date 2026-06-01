@@ -354,7 +354,7 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 
 .ucp-faq-list { display: grid; gap: .9rem; }
 .ucp-faq-item { padding: 1.2rem 1.35rem; }
-.ucp-faq-item h2 { font-size: 1.05rem; line-height: 1.35; }
+.ucp-faq-item h2 { line-height: 1.18; }
 .ucp-faq-item p { margin: .55rem 0 0; }
 
 .ucp-static-footer {
