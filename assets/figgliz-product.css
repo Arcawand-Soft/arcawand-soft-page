@@ -1,6 +1,9 @@
 body.figgliz-static-page {
   --ucp-primary: #6b82ff;
   --ucp-accent: #e987b8;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 18% 8%, rgba(107, 130, 255, .28), transparent 34rem),
     radial-gradient(circle at 84% 18%, rgba(233, 135, 184, .22), transparent 32rem),
@@ -24,11 +27,13 @@ body.figgliz-static-page {
 
 .figgliz-hero {
   min-height: 0;
-  padding: 3rem 0 4rem;
+  padding: clamp(4.6rem, 8vw, 6.8rem) 0 clamp(4.8rem, 8vw, 7rem);
+  row-gap: 1.1rem;
 }
 
 .figgliz-hero h1 {
-  max-width: min(1280px, calc(100vw - 2rem));
+  max-width: min(1120px, calc(100vw - 2rem));
+  margin: 0 auto .25rem;
   font-size: clamp(2.35rem, 5.5vw, 5.45rem);
   line-height: .98;
   letter-spacing: -.045em;
@@ -47,8 +52,8 @@ body.figgliz-static-page {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: .8rem;
-  margin-top: 1.45rem;
+  gap: 14px;
+  margin-top: 2.05rem;
 }
 
 .figgliz-primary,
@@ -57,46 +62,59 @@ body.figgliz-static-page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 3.1rem;
-  padding: 0 1.15rem;
+  min-height: 46px;
+  padding: 0 20px;
   border-radius: 999px;
-  border: 0;
-  font-weight: 950;
+  border: 1px solid rgba(255, 255, 255, .18);
+  font-weight: 900;
   cursor: pointer;
   text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, color .18s ease;
 }
 
 .figgliz-primary,
 .figgliz-price-button {
   background: #7ddcff;
+  border-color: #7ddcff;
   color: #08111f;
+  box-shadow: 0 20px 44px rgba(125, 220, 255, .22);
 }
 
 .figgliz-primary:hover,
 .figgliz-price-button:hover {
+  transform: translateY(-2px);
   background: #fff;
+  border-color: #fff;
   color: #0a0a0f;
 }
 
 .figgliz-secondary {
-  border: 1px solid rgba(255, 255, 255, .18);
   background: rgba(255, 255, 255, .06);
   color: #fff;
+}
+
+.figgliz-secondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, .28);
+  background: rgba(255, 255, 255, .12);
 }
 
 .figgliz-beta {
   color: rgba(255, 255, 255, .66) !important;
   font-size: .95rem !important;
+  line-height: 1.6 !important;
+  margin-top: .9rem !important;
+  max-width: 720px !important;
 }
 
 .figgliz-section {
-  padding: clamp(3rem, 7vw, 5.6rem) 0;
+  padding: clamp(3.8rem, 7vw, 6.2rem) 0;
   scroll-margin-top: 7.5rem;
 }
 
 .figgliz-section-head {
   max-width: 780px;
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.85rem;
 }
 
 .figgliz-section-head h2 {
@@ -119,7 +137,7 @@ body.figgliz-static-page {
 .figgliz-mini-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: .9rem;
+  gap: 1.15rem;
 }
 
 .figgliz-card,
@@ -133,7 +151,7 @@ body.figgliz-static-page {
 
 .figgliz-card {
   min-height: 14rem;
-  padding: 1.15rem;
+  padding: 1.35rem;
 }
 
 .figgliz-card h3,
@@ -151,17 +169,17 @@ body.figgliz-static-page {
 .figgliz-game-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: .75rem;
+  gap: 1rem;
 }
 
 .figgliz-game {
   margin: 0;
   display: grid;
   justify-items: center;
-  gap: .55rem;
-  padding: .95rem .6rem;
+  gap: .7rem;
+  padding: 1.1rem .75rem;
   border-radius: 1.2rem;
-  background: rgba(255, 255, 255, .055);
+  background: #6b82ff;
   border: 1px solid rgba(255, 255, 255, .11);
   text-align: center;
   font-weight: 900;
@@ -187,7 +205,7 @@ body.figgliz-static-page {
 }
 
 .figgliz-mini {
-  padding: 1rem;
+  padding: 1.2rem;
 }
 
 .figgliz-plan-box {
@@ -291,7 +309,7 @@ body.figgliz-static-page {
 
 .figgliz-plan-content {
   display: none;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 #figgliz-plan-monthly-en:checked ~ .figgliz-plan-content-monthly,
@@ -320,7 +338,7 @@ body.figgliz-static-page {
 .figgliz-price-card,
 .figgliz-lifetime-card {
   min-height: 25rem;
-  padding: 1.15rem;
+  padding: 1.3rem;
 }
 
 .figgliz-price-card {
@@ -537,7 +555,14 @@ body.figgliz-static-page {
     width: min(100% - 22px, 1180px);
   }
 
-  .figgliz-hero { padding: 2rem 0 3rem; }
+  .figgliz-hero {
+    padding: 3.2rem 0 4.2rem;
+  }
+
+  .figgliz-hero h1 {
+    font-size: clamp(1.45rem, 7.2vw, 2.45rem);
+    letter-spacing: -.025em;
+  }
 
   .figgliz-actions {
     align-items: stretch;
