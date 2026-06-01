@@ -1,0 +1,962 @@
+﻿{
+  "en": {
+    "faq": {
+      "title": "FAQ",
+      "lead": "Figgliz is a Chrome extension for anonymous conversations, with optional voice notes, video, webcam backgrounds, games, and a discreet launcher.",
+      "sections": [
+        {
+          "title": "What is Figgliz?",
+          "body": "It opens an anonymous conversation with a compatible person, without a public profile, then lets you add voice, video, webcam backgrounds, or games."
+        },
+        {
+          "title": "Do I need an account?",
+          "body": "No. The extension uses a local anonymous identifier. A license key is needed only for Plus, Pro, or Pro Lifetime."
+        },
+        {
+          "title": "How do I start?",
+          "body": "Choose your settings, become available, and let the extension search using languages, accepted genders, and availability."
+        },
+        {
+          "title": "How do I stop or switch?",
+          "body": "You can become unavailable, use Next, block someone, or close the current video/game session."
+        },
+        {
+          "title": "Can I send files?",
+          "body": "No. The extension is intentionally limited to text, short voice notes, video invitations, and built-in games."
+        },
+        {
+          "title": "Does video start automatically?",
+          "body": "No. Video requires an invitation and explicit acceptance. Each person can decline, mute, pause, or stop it."
+        },
+        {
+          "title": "What are video backgrounds?",
+          "body": "They are blur or background images applied to the webcam. They are reserved for Plus and Pro members."
+        },
+        {
+          "title": "What does video mirror do?",
+          "body": "It flips the image horizontally for comfort. The stream and background follow the mirror state so the result stays consistent."
+        },
+        {
+          "title": "Which games are available?",
+          "body": "The extension includes games such as Ping-Pong, Air Hockey, and Flappy Duo, with chat invitations and modes with or without webcam."
+        },
+        {
+          "title": "Why do I see P2P or TURN?",
+          "body": "The badge shows the technical route: direct browser-to-browser or compatibility relay when the network requires it."
+        },
+        {
+          "title": "What does the launcher do?",
+          "body": "It opens the side panel, keeps a draggable position, collapses into a tab, and shows unread messages when no chat window is active."
+        },
+        {
+          "title": "Why do I get a personal details warning?",
+          "body": "The local detector recognizes likely emails, phones, social accounts, addresses, or sensitive IDs and asks for confirmation before sending."
+        },
+        {
+          "title": "What are the plans?",
+          "body": "Free is for discovery. Plus raises limits and unlocks comfort features. Pro adds the complete experience. Pro Lifetime gives lifetime Pro access through the launch offer."
+        },
+        {
+          "title": "How is my license verified?",
+          "body": "The extension stores the key locally and quickly checks the server for status, exact Dodo Payments product name, validity, and rights."
+        },
+        {
+          "title": "Are my messages sold or used for ads?",
+          "body": "No. Figgliz does not sell conversations or build advertising profiles from them."
+        },
+        {
+          "title": "Are voice or video recorded?",
+          "body": "Not by default. Streams use WebRTC. Elements may be sent only through a report or consent-based interface."
+        },
+        {
+          "title": "What happens when I report?",
+          "body": "The report may include a category, comment, anonymous IDs, technical metadata, and elements useful for moderation."
+        },
+        {
+          "title": "Can I revoke camera and microphone?",
+          "body": "Yes. Settings can request, check, and revoke browser camera and microphone permissions."
+        },
+        {
+          "title": "Why is the VPS used?",
+          "body": "It handles presence, matching, signaling, quotas, license checks, anti-cheat protections, and reports. Games currently stay P2P."
+        },
+        {
+          "title": "How can I contact support?",
+          "body": "Email contact@arcawand-soft.com for support, privacy, safety, or billing."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lead": "Figgliz limits data collection and explains what stays local, what goes through the VPS, and what is used for safety.",
+      "sections": [
+        {
+          "title": "Local data",
+          "body": "The extension may locally store language, theme, launcher state, preferences, anonymous ID, blocks, usage counters, and license state."
+        },
+        {
+          "title": "VPS server data",
+          "body": "The VPS processes presence, queueing, matching, statuses, WebRTC signaling, quotas, action tokens, license verification, reports, and anti-abuse protections."
+        },
+        {
+          "title": "Conversations",
+          "body": "Messages and voice notes use WebRTC DataChannel when possible. The application server is not designed as a conversation history database."
+        },
+        {
+          "title": "Camera and microphone",
+          "body": "Chrome asks for permission before any camera or microphone access. You can stop video, mute, pause camera, or revoke permission."
+        },
+        {
+          "title": "Video backgrounds and segmentation",
+          "body": "Blur and webcam backgrounds are applied locally with bundled resources. They compose your video stream; they are not used to identify your room."
+        },
+        {
+          "title": "Games",
+          "body": "Games exchange technical actions and states between the two users. VPS game hosting is currently disabled to preserve server stability."
+        },
+        {
+          "title": "Licenses and payments",
+          "body": "Dodo Payments handles payment. The extension and server verify the exact product, status, period, and rights needed, without storing full card details."
+        },
+        {
+          "title": "Reports and moderation",
+          "body": "A report may include reason, comment, anonymous IDs, IP hashes, metadata, and elements strictly useful for moderation."
+        },
+        {
+          "title": "No sale",
+          "body": "Figgliz does not sell personal data, messages, voice notes, or videos, and does not use them for targeted advertising."
+        },
+        {
+          "title": "Your controls",
+          "body": "You can become unavailable, edit settings, hide the launcher, block, report, remove the local license, manage your plan, and revoke camera/microphone."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, privacy, safety, or billing: contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "lead": "These terms define respectful, safe, and fair use of Figgliz, including Free, Plus, Pro, and Pro Lifetime plans.",
+      "sections": [
+        {
+          "title": "Acceptance",
+          "body": "By using Figgliz, you accept these terms, onboarding commitments, and rules applicable in your country."
+        },
+        {
+          "title": "Age and capacity",
+          "body": "You must have the required legal age and capacity to use a service that connects you with strangers. Minors must not use it without an appropriate legal framework and supervision."
+        },
+        {
+          "title": "Respect and safety",
+          "body": "Harassment, threats, hate, discrimination, forced nudity, illegal content, exploitation, manipulation, scams, doxxing, dangerous incitement, and bypassing controls are forbidden."
+        },
+        {
+          "title": "Personal contact details",
+          "body": "Avoid sharing phone, email, address, social accounts, documents, bank details, school, workplace, schedule, or anything that identifies you."
+        },
+        {
+          "title": "Video and consent",
+          "body": "Video is optional. Do not record, broadcast, or capture another person's image, voice, or environment without consent and a legal basis."
+        },
+        {
+          "title": "Plans and benefits",
+          "body": "Free, Plus, Pro, Pro Monthly, Pro Yearly, and Pro Lifetime grant different rights. Benefits remain subject to technical availability, fair use, and anti-abuse protections."
+        },
+        {
+          "title": "Lifetime offer",
+          "body": "Pro Lifetime means lifetime access to the Pro plan under the checkout terms. It does not guarantee that every beta or experimental feature will exist forever."
+        },
+        {
+          "title": "License",
+          "body": "A license key is personal. You must not resell, mass-share, falsify, extract, bypass, or use it to deceive server validations."
+        },
+        {
+          "title": "Anti-cheat and VPS",
+          "body": "You must not manipulate the extension, traffic, quotas, action tokens, license calls, or game state to gain an unfair advantage."
+        },
+        {
+          "title": "Reports",
+          "body": "Reports must be made in good faith. Abusive reporting may lead to restrictions."
+        },
+        {
+          "title": "Availability",
+          "body": "The service may be changed, paused, limited, or restarted for maintenance, safety, compliance, technical improvement, or server load."
+        },
+        {
+          "title": "Responsibility",
+          "body": "Each user remains responsible for messages, behavior, video invitations, decisions, and consequences. Figgliz provides controls but does not replace judgment."
+        }
+      ]
+    }
+  },
+  "fr": {
+    "faq": {
+      "title": "FAQ",
+      "lead": "Figgliz est une extension Chrome pour lancer une discussion anonyme, puis ajouter si vous le souhaitez les vocaux, la vidéo, les fonds de webcam, les jeux et le launcher discret.",
+      "sections": [
+        {
+          "title": "À quoi sert Figgliz ?",
+          "body": "À ouvrir une conversation anonyme avec une personne compatible, sans profil public, puis à enrichir l'échange avec vocaux, vidéo, fonds de webcam ou jeux."
+        },
+        {
+          "title": "Dois-je créer un compte ?",
+          "body": "Non. L'extension utilise un identifiant anonyme local. Une clé de licence n'est nécessaire que pour activer Plus, Pro ou Pro Lifetime."
+        },
+        {
+          "title": "Comment démarrer ?",
+          "body": "Choisissez vos réglages, passez disponible, puis laissez l'extension chercher une personne compatible selon les langues, genres acceptés et disponibilités."
+        },
+        {
+          "title": "Comment arrêter ou changer de personne ?",
+          "body": "Vous pouvez passer indisponible, cliquer sur Next, bloquer une personne ou fermer la session vidéo/jeu selon le contexte."
+        },
+        {
+          "title": "Puis-je envoyer des fichiers ?",
+          "body": "Non. L'extension reste volontairement limitée au texte, aux vocaux courts, aux invitations vidéo et aux jeux intégrés."
+        },
+        {
+          "title": "La vidéo démarre-t-elle automatiquement ?",
+          "body": "Non. Elle demande une invitation et une acceptation explicite. Chaque personne peut refuser, couper le micro, couper le son ou arrêter la vidéo."
+        },
+        {
+          "title": "Que sont les fonds de webcam ?",
+          "body": "Ce sont des arrière-plans ou un flou appliqués à la webcam. Ils sont réservés aux membres Plus et Pro."
+        },
+        {
+          "title": "Que fait le miroir vidéo ?",
+          "body": "Il inverse l'image horizontalement pour le confort visuel. Le flux et, si présent, le fond de vidéo suivent cette inversion pour rester cohérents."
+        },
+        {
+          "title": "Quels jeux sont disponibles ?",
+          "body": "L'extension inclut plusieurs jeux comme Ping-Pong, Air Hockey et Flappy Duo, avec invitations dans le chat et modes avec ou sans webcam."
+        },
+        {
+          "title": "Pourquoi un badge P2P ou TURN ?",
+          "body": "Il indique le chemin technique de la session : direct entre navigateurs ou relais de compatibilité TURN quand le réseau l'impose."
+        },
+        {
+          "title": "Que fait le launcher ?",
+          "body": "Il ouvre le side panel, garde une position réglable, peut se replier en languette et affiche un compteur de messages non lus quand aucune fenêtre de discussion n'est active."
+        },
+        {
+          "title": "Pourquoi une alerte coordonnées personnelles apparaît ?",
+          "body": "Le détecteur local reconnaît les emails, téléphones, réseaux sociaux, adresses ou identifiants sensibles probables et demande confirmation avant l'envoi."
+        },
+        {
+          "title": "Quelles sont les offres ?",
+          "body": "Free est l'offre de découverte. Plus augmente les quotas et débloque des conforts. Pro ajoute l'expérience complète. Pro Lifetime donne un accès à vie au plan Pro via l'offre de lancement."
+        },
+        {
+          "title": "Comment la licence est-elle vérifiée ?",
+          "body": "L'extension stocke localement la clé et interroge rapidement le serveur pour vérifier le statut, le nom exact du produit Dodo Payments, la validité et les droits."
+        },
+        {
+          "title": "Mes messages sont-ils vendus ou utilisés pour la publicité ?",
+          "body": "Non. Figgliz ne vend pas les conversations et ne crée pas de profil publicitaire à partir des échanges."
+        },
+        {
+          "title": "Les vocaux ou vidéos sont-ils enregistrés ?",
+          "body": "Non par défaut. Les flux utilisent WebRTC. Des éléments peuvent être transmis seulement dans un signalement ou avec consentement quand l'interface le demande."
+        },
+        {
+          "title": "Que se passe-t-il lors d'un signalement ?",
+          "body": "Le rapport peut inclure une catégorie, un commentaire, des identifiants anonymes, des métadonnées techniques et les éléments utiles à la modération."
+        },
+        {
+          "title": "Puis-je révoquer caméra et micro ?",
+          "body": "Oui. Les réglages permettent de demander, vérifier et révoquer les autorisations caméra et micro accordées au navigateur."
+        },
+        {
+          "title": "Pourquoi le VPS est-il utilisé ?",
+          "body": "Il gère présence, matching, signaling, quotas, licences, protections anti-triche et signalements. Les jeux restent actuellement en P2P."
+        },
+        {
+          "title": "Comment contacter le support ?",
+          "body": "Écrivez à contact@arcawand-soft.com pour support, confidentialité, sécurité ou facturation."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "lead": "Figgliz limite la collecte de données et explique clairement ce qui reste local, ce qui passe par le VPS et ce qui sert à la sécurité.",
+      "sections": [
+        {
+          "title": "Données locales",
+          "body": "L'extension peut stocker localement la langue, le thème, le launcher, les préférences, l'identifiant anonyme, les blocages, les compteurs d'usage et l'état de licence."
+        },
+        {
+          "title": "Données serveur VPS",
+          "body": "Le VPS traite la présence, la file, le matching, les statuts, le signaling WebRTC, les quotas, les jetons d'action, la vérification de licence, les signalements et les protections anti-abus."
+        },
+        {
+          "title": "Conversations",
+          "body": "Les messages et vocaux transitent autant que possible via WebRTC DataChannel. Le serveur applicatif n'est pas conçu comme une base d'historique de conversation."
+        },
+        {
+          "title": "Caméra et micro",
+          "body": "Chrome demande l'autorisation avant tout accès caméra ou micro. Vous pouvez arrêter la vidéo, couper le micro, couper le son, mettre la caméra en pause ou révoquer l'autorisation."
+        },
+        {
+          "title": "Fonds de webcam et segmentation",
+          "body": "Le flou et les fonds de webcam sont appliqués localement dans l'extension avec les ressources intégrées. Ils servent à composer votre flux vidéo, pas à identifier votre environnement."
+        },
+        {
+          "title": "Jeux",
+          "body": "Les jeux échangent des actions et états techniques entre les deux utilisateurs. L'hébergement VPS des parties est désactivé pour préserver la stabilité serveur."
+        },
+        {
+          "title": "Licences et paiements",
+          "body": "Dodo Payments traite le paiement. L'extension et le serveur vérifient le produit exact, le statut, la période et les droits nécessaires, sans stocker les données complètes de carte bancaire."
+        },
+        {
+          "title": "Signalements et modération",
+          "body": "Un signalement peut inclure la raison, le commentaire, des identifiants anonymes, des hashes IP, des métadonnées et les éléments strictement utiles à la modération."
+        },
+        {
+          "title": "Pas de vente",
+          "body": "Figgliz ne vend pas les données personnelles, les messages, les vocaux ou les vidéos et ne les utilise pas pour de la publicité ciblée."
+        },
+        {
+          "title": "Vos contrôles",
+          "body": "Vous pouvez passer indisponible, modifier les réglages, masquer le launcher, bloquer, signaler, supprimer la licence locale, gérer votre offre et révoquer caméra/micro."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, confidentialité, sécurité ou facturation : contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Conditions générales d'utilisation",
+      "lead": "Ces conditions encadrent une utilisation respectueuse, sûre et loyale de Figgliz, y compris les offres Free, Plus, Pro et Pro Lifetime.",
+      "sections": [
+        {
+          "title": "Acceptation",
+          "body": "En utilisant Figgliz, vous acceptez ces conditions, les engagements de bienvenue et les règles applicables dans votre pays."
+        },
+        {
+          "title": "Age et capacité",
+          "body": "Vous devez avoir l'âge légal requis et la capacité d'utiliser un service de discussion avec des inconnus. Les mineurs ne doivent pas utiliser le service sans cadre légal et supervision appropriée."
+        },
+        {
+          "title": "Respect et sécurité",
+          "body": "Sont interdits : harcèlement, menaces, haine, discrimination, nudité imposée, contenu illégal, exploitation, manipulation, arnaque, doxxing, incitation dangereuse et contournement des contrôles."
+        },
+        {
+          "title": "Coordonnées personnelles",
+          "body": "Évitez de partager téléphone, email, adresse, réseaux sociaux, documents, informations bancaires, école, travail, planning ou tout élément permettant de vous identifier."
+        },
+        {
+          "title": "Vidéo et consentement",
+          "body": "La vidéo est optionnelle. N'enregistrez, ne diffusez et ne capturez pas l'image, la voix ou l'environnement d'une personne sans consentement et base légale."
+        },
+        {
+          "title": "Offres et avantages",
+          "body": "Free, Plus, Pro, Pro Monthly, Pro Yearly et Pro Lifetime donnent des droits différents. Les avantages restent soumis à la disponibilité technique, à l'usage raisonnable et aux protections anti-abus."
+        },
+        {
+          "title": "Offre Lifetime",
+          "body": "Pro Lifetime correspond à un accès à vie au plan Pro selon les conditions affichées lors de l'achat. Elle ne garantit pas l'existence perpétuelle d'une fonctionnalité bêta ou expérimentalement testée."
+        },
+        {
+          "title": "Licence",
+          "body": "La clé de licence est personnelle. Il est interdit de la revendre, partager massivement, falsifier, extraire, contourner ou utiliser pour tromper les validations serveur."
+        },
+        {
+          "title": "Anti-triche et VPS",
+          "body": "Il est interdit de manipuler l'extension, le trafic, les quotas, les jetons d'action, les appels de licence ou l'état des jeux pour obtenir un avantage indu."
+        },
+        {
+          "title": "Signalements",
+          "body": "Les signalements doivent être faits de bonne foi. Les abus de signalement peuvent entraîner des restrictions."
+        },
+        {
+          "title": "Disponibilité",
+          "body": "Le service peut être modifié, interrompu, limité ou redémarré pour maintenance, sécurité, conformité, amélioration technique ou charge serveur."
+        },
+        {
+          "title": "Responsabilité",
+          "body": "Chaque utilisateur reste responsable de ses propos, comportements, invitations vidéo, décisions et conséquences. Figgliz fournit des outils de contrôle mais ne remplace pas le discernement."
+        }
+      ]
+    }
+  },
+  "es": {
+    "faq": {
+      "title": "FAQ",
+      "lead": "Figgliz es una extension de Chrome para conversaciones anonimas con texto, voz, video, fondos de webcam, juegos y un launcher discreto.",
+      "sections": [
+        {
+          "title": "Que es Figgliz?",
+          "body": "Una extension para hablar anonimamente con alguien compatible y añadir voz, video, fondos o juegos."
+        },
+        {
+          "title": "Necesito cuenta?",
+          "body": "No. Usa un identificador anonimo local. La licencia solo sirve para Plus, Pro o Pro Lifetime."
+        },
+        {
+          "title": "Como empiezo?",
+          "body": "Configura preferencias, ponte disponible y deja que la extension busque segun idioma, genero aceptado y disponibilidad."
+        },
+        {
+          "title": "Como paro o cambio?",
+          "body": "Puedes pasar a no disponible, usar Next, bloquear o cerrar la sesion de video/juego."
+        },
+        {
+          "title": "Puedo enviar archivos?",
+          "body": "No. Solo texto, notas de voz cortas, invitaciones de video y juegos integrados."
+        },
+        {
+          "title": "El video empieza solo?",
+          "body": "No. Requiere invitacion y aceptacion explicita."
+        },
+        {
+          "title": "Que son los fondos de video?",
+          "body": "Desenfoque o imagenes aplicadas a la webcam, reservadas a Plus y Pro."
+        },
+        {
+          "title": "Que hace el espejo?",
+          "body": "Invierte la imagen y el fondo para que el resultado sea coherente."
+        },
+        {
+          "title": "Que juegos hay?",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo y otros juegos con invitaciones en el chat."
+        },
+        {
+          "title": "Que significa P2P, TURN o VPS?",
+          "body": "Indica si la conexion es directa, por relay o alojada en servidor para juegos elegibles."
+        },
+        {
+          "title": "Que hace el launcher?",
+          "body": "Abre el panel lateral, se arrastra, se pliega y muestra mensajes no leidos."
+        },
+        {
+          "title": "Por que aparece alerta de datos personales?",
+          "body": "Detecta localmente emails, telefonos, redes, direcciones o IDs sensibles antes de enviar."
+        },
+        {
+          "title": "Que planes existen?",
+          "body": "Free, Plus, Pro mensual/anual y Pro Lifetime de lanzamiento."
+        },
+        {
+          "title": "Como se verifica la licencia?",
+          "body": "La extension guarda la clave localmente y el servidor comprueba estado, producto Dodo Payments y derechos."
+        },
+        {
+          "title": "Se venden mis mensajes?",
+          "body": "No. No se venden conversaciones ni se crean perfiles publicitarios."
+        },
+        {
+          "title": "Se graban voz o video?",
+          "body": "No por defecto. Solo pueden enviarse elementos con reporte o consentimiento."
+        },
+        {
+          "title": "Que pasa al reportar?",
+          "body": "Se envian categoria, comentario, IDs anonimos, metadatos y elementos utiles para moderacion."
+        },
+        {
+          "title": "Puedo revocar camara y micro?",
+          "body": "Si, desde ajustes."
+        },
+        {
+          "title": "Para que sirve el VPS?",
+          "body": "Gestiona presencia, matching, signaling, cuotas, licencias, anti-trampa, reportes y juegos elegibles."
+        },
+        {
+          "title": "Como contactar?",
+          "body": "Escribe a contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Politica de privacidad",
+      "lead": "Figgliz limita los datos recogidos y explica que queda local, que pasa por el VPS y que se usa para seguridad.",
+      "sections": [
+        {
+          "title": "Datos locales",
+          "body": "Se pueden guardar idioma, tema, launcher, preferencias, ID anonimo, bloqueos, contadores y licencia."
+        },
+        {
+          "title": "Datos VPS",
+          "body": "El VPS trata presencia, cola, matching, signaling, cuotas, tokens, licencias, reportes y anti-abuso."
+        },
+        {
+          "title": "Conversaciones",
+          "body": "Mensajes y voz usan WebRTC DataChannel si es posible; el servidor no es un historial de chats."
+        },
+        {
+          "title": "Camara y microfono",
+          "body": "Chrome pide permiso. Puedes detener video, silenciar, pausar o revocar permisos."
+        },
+        {
+          "title": "Fondos de video",
+          "body": "El desenfoque y fondos se aplican localmente y componen el flujo de video."
+        },
+        {
+          "title": "Juegos",
+          "body": "Los juegos intercambian acciones y estados; en modo VPS el servidor puede sincronizar y limitar trampas."
+        },
+        {
+          "title": "Licencias y pagos",
+          "body": "Dodo Payments procesa pagos; se verifica producto, estado, periodo y derechos sin guardar tarjeta completa."
+        },
+        {
+          "title": "Reportes",
+          "body": "Un reporte puede incluir razon, comentario, IDs anonimos, hashes IP y metadatos utiles."
+        },
+        {
+          "title": "No venta",
+          "body": "No vendemos datos, mensajes, voz ni video."
+        },
+        {
+          "title": "Controles",
+          "body": "Puedes cambiar ajustes, ocultar launcher, bloquear, reportar, gestionar licencia y revocar permisos."
+        },
+        {
+          "title": "Contact",
+          "body": "Soporte, privacidad, seguridad o facturacion: contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Condiciones de uso",
+      "lead": "Estas condiciones regulan un uso respetuoso, seguro y leal de Figgliz, incluidas las ofertas Free, Plus, Pro y Pro Lifetime.",
+      "sections": [
+        {
+          "title": "Aceptacion",
+          "body": "Al usar Figgliz aceptas estas condiciones y las leyes aplicables."
+        },
+        {
+          "title": "Edad",
+          "body": "Debes tener edad y capacidad legal para hablar con desconocidos en linea."
+        },
+        {
+          "title": "Respeto",
+          "body": "Se prohiben acoso, amenazas, odio, discriminacion, desnudez impuesta, contenido ilegal, fraude y doxxing."
+        },
+        {
+          "title": "Datos personales",
+          "body": "Evita compartir telefono, email, direccion, redes, documentos, banco, escuela, trabajo o agenda."
+        },
+        {
+          "title": "Video y consentimiento",
+          "body": "No grabes ni difundas imagen, voz o entorno de otra persona sin consentimiento y base legal."
+        },
+        {
+          "title": "Planes",
+          "body": "Free, Plus, Pro mensual/anual y Pro Lifetime tienen derechos distintos sujetos a disponibilidad y uso razonable."
+        },
+        {
+          "title": "Lifetime",
+          "body": "Pro Lifetime da acceso de por vida al plan Pro segun el checkout, sin garantizar cada beta para siempre."
+        },
+        {
+          "title": "Licencia",
+          "body": "La clave es personal y no debe revenderse, compartirse masivamente, falsificarse ni eludir validaciones."
+        },
+        {
+          "title": "Anti-trampa",
+          "body": "No manipules extension, trafico, cuotas, tokens, licencia o estado de juegos."
+        },
+        {
+          "title": "Reportes",
+          "body": "Deben hacerse de buena fe."
+        },
+        {
+          "title": "Disponibilidad",
+          "body": "El servicio puede cambiar, pausarse o limitarse por mantenimiento, seguridad o carga."
+        },
+        {
+          "title": "Responsabilidad",
+          "body": "Cada usuario responde por sus mensajes, decisiones e invitaciones video."
+        }
+      ]
+    }
+  },
+  "it": {
+    "faq": {
+      "title": "FAQ",
+      "lead": "Figgliz e un'estensione Chrome per conversazioni anonime con testo, vocali, video, sfondi webcam, giochi e launcher discreto.",
+      "sections": [
+        {
+          "title": "Cos'e Figgliz?",
+          "body": "Un'estensione per parlare in modo anonimo con una persona compatibile e aggiungere voce, video, sfondi o giochi."
+        },
+        {
+          "title": "Serve un account?",
+          "body": "No, usa un ID anonimo locale. La licenza serve solo per Plus, Pro o Pro Lifetime."
+        },
+        {
+          "title": "Come inizio?",
+          "body": "Configura le preferenze, diventa disponibile e attendi il matching."
+        },
+        {
+          "title": "Come fermo o cambio?",
+          "body": "Puoi diventare non disponibile, usare Next, bloccare o chiudere video/gioco."
+        },
+        {
+          "title": "Posso inviare file?",
+          "body": "No, solo testo, vocali brevi, inviti video e giochi integrati."
+        },
+        {
+          "title": "Il video parte da solo?",
+          "body": "No, richiede invito e accettazione esplicita."
+        },
+        {
+          "title": "Cosa sono gli sfondi video?",
+          "body": "Sfocatura o immagini applicate alla webcam, riservate a Plus e Pro."
+        },
+        {
+          "title": "Cosa fa lo specchio?",
+          "body": "Inverte immagine e sfondo in modo coerente."
+        },
+        {
+          "title": "Quali giochi ci sono?",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo e altri."
+        },
+        {
+          "title": "Cosa significa P2P, TURN o VPS?",
+          "body": "Percorso diretto, relay di compatibilita o stato ospitato sul server."
+        },
+        {
+          "title": "Cosa fa il launcher?",
+          "body": "Apre il pannello, si trascina, si ripiega e mostra non letti."
+        },
+        {
+          "title": "Perche l'avviso dati personali?",
+          "body": "Rileva localmente email, telefoni, social, indirizzi o ID sensibili."
+        },
+        {
+          "title": "Quali piani esistono?",
+          "body": "Free, Plus, Pro mensile/annuale e Pro Lifetime."
+        },
+        {
+          "title": "Come viene verificata la licenza?",
+          "body": "La chiave resta locale e il server verifica stato, prodotto Dodo Payments e diritti."
+        },
+        {
+          "title": "I messaggi sono venduti?",
+          "body": "No."
+        },
+        {
+          "title": "Voce o video sono registrati?",
+          "body": "Non di default."
+        },
+        {
+          "title": "Cosa succede con un report?",
+          "body": "Invia categoria, nota, ID anonimi, metadati ed elementi utili."
+        },
+        {
+          "title": "Posso revocare camera e microfono?",
+          "body": "Si, dalle impostazioni."
+        },
+        {
+          "title": "Perche il VPS?",
+          "body": "Per presenza, matching, signaling, quote, licenze, anti-cheat, report e giochi."
+        },
+        {
+          "title": "Contatti?",
+          "body": "contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Informativa sulla privacy",
+      "lead": "Figgliz limita i dati raccolti e spiega cosa resta locale, cosa passa dal VPS e cosa serve alla sicurezza.",
+      "sections": [
+        {
+          "title": "Dati locali",
+          "body": "Lingua, tema, launcher, preferenze, ID anonimo, blocchi, contatori e licenza possono restare locali."
+        },
+        {
+          "title": "Dati VPS",
+          "body": "Il VPS gestisce presenza, coda, matching, signaling, quote, token, licenze, report e anti-abuso."
+        },
+        {
+          "title": "Conversazioni",
+          "body": "Messaggi e vocali usano WebRTC DataChannel quando possibile."
+        },
+        {
+          "title": "Camera e microfono",
+          "body": "Chrome chiede permesso; puoi fermare, silenziare, pausare o revocare."
+        },
+        {
+          "title": "Sfondi video",
+          "body": "Sfocatura e sfondi sono applicati localmente."
+        },
+        {
+          "title": "Giochi",
+          "body": "I giochi scambiano azioni e stati; il VPS puo sincronizzare e ridurre cheat."
+        },
+        {
+          "title": "Licenze e pagamenti",
+          "body": "Dodo Payments gestisce i pagamenti; si verificano prodotto, stato, periodo e diritti."
+        },
+        {
+          "title": "Report",
+          "body": "Un report puo includere motivo, nota, ID anonimi, hash IP e metadati."
+        },
+        {
+          "title": "Nessuna vendita",
+          "body": "Non vendiamo dati, messaggi, voce o video."
+        },
+        {
+          "title": "Controlli",
+          "body": "Puoi modificare impostazioni, nascondere launcher, bloccare, segnalare e revocare permessi."
+        },
+        {
+          "title": "Contact",
+          "body": "Supporto, privacy, sicurezza o fatturazione: contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Condizioni d'uso",
+      "lead": "Queste condizioni regolano l'uso rispettoso, sicuro e corretto di Figgliz, incluse le offerte Free, Plus, Pro e Pro Lifetime.",
+      "sections": [
+        {
+          "title": "Accettazione",
+          "body": "Usando il servizio accetti condizioni e leggi applicabili."
+        },
+        {
+          "title": "Eta",
+          "body": "Devi avere eta e capacita legale per parlare con sconosciuti online."
+        },
+        {
+          "title": "Rispetto",
+          "body": "Vietati molestie, minacce, odio, discriminazione, nudita imposta, contenuti illegali, truffe e doxxing."
+        },
+        {
+          "title": "Dati personali",
+          "body": "Evita telefono, email, indirizzo, social, documenti, banca, scuola, lavoro o agenda."
+        },
+        {
+          "title": "Video e consenso",
+          "body": "Non registrare o diffondere immagine, voce o ambiente altrui senza consenso e base legale."
+        },
+        {
+          "title": "Piani",
+          "body": "Free, Plus, Pro e Pro Lifetime hanno diritti diversi soggetti a disponibilita e fair use."
+        },
+        {
+          "title": "Lifetime",
+          "body": "Pro Lifetime da accesso a vita al piano Pro secondo il checkout, non a ogni beta per sempre."
+        },
+        {
+          "title": "Licenza",
+          "body": "La chiave e personale e non va rivenduta, condivisa massivamente o falsificata."
+        },
+        {
+          "title": "Anti-cheat",
+          "body": "Non manipolare estensione, traffico, quote, token, licenze o giochi."
+        },
+        {
+          "title": "Report",
+          "body": "Devono essere in buona fede."
+        },
+        {
+          "title": "Disponibilita",
+          "body": "Il servizio puo cambiare o fermarsi per manutenzione, sicurezza o carico."
+        },
+        {
+          "title": "Responsabilita",
+          "body": "Ogni utente risponde di messaggi, decisioni e inviti video."
+        }
+      ]
+    }
+  },
+  "de": {
+    "faq": {
+      "title": "FAQ",
+      "lead": "Figgliz ist eine Chrome-Erweiterung fur anonyme Gesprache mit Text, Sprachnachrichten, Video, Webcam-Hintergrunden, Spielen und diskretem Launcher.",
+      "sections": [
+        {
+          "title": "Was ist Figgliz?",
+          "body": "Eine Erweiterung fur anonyme Gesprache mit passender Person, optional mit Sprache, Video, Hintergrunden und Spielen."
+        },
+        {
+          "title": "Brauche ich ein Konto?",
+          "body": "Nein. Eine lokale anonyme ID reicht; Lizenz nur fur Plus, Pro oder Pro Lifetime."
+        },
+        {
+          "title": "Wie starte ich?",
+          "body": "Einstellungen wahlen, verfugbar werden, Matching abwarten."
+        },
+        {
+          "title": "Wie stoppe oder wechsle ich?",
+          "body": "Nicht verfugbar, Next, Blockieren oder Video/Spiel schliessen."
+        },
+        {
+          "title": "Kann ich Dateien senden?",
+          "body": "Nein, nur Text, kurze Sprache, Videoeinladungen und Spiele."
+        },
+        {
+          "title": "Startet Video automatisch?",
+          "body": "Nein, nur mit Einladung und Annahme."
+        },
+        {
+          "title": "Was sind Video-Hintergrunde?",
+          "body": "Blur oder Bilder fur die Webcam, reserviert fur Plus und Pro."
+        },
+        {
+          "title": "Was macht Spiegeln?",
+          "body": "Bild und Hintergrund werden horizontal gespiegelt."
+        },
+        {
+          "title": "Welche Spiele gibt es?",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo und weitere."
+        },
+        {
+          "title": "Was bedeutet P2P, TURN oder VPS?",
+          "body": "Direktverbindung, Relay oder Serverzustand fur geeignete Spiele."
+        },
+        {
+          "title": "Was macht der Launcher?",
+          "body": "Offnet Sidepanel, ist verschiebbar, klappt ein und zeigt Ungelesenes."
+        },
+        {
+          "title": "Warum die Kontaktdaten-Warnung?",
+          "body": "Sie erkennt lokal Email, Telefon, Socials, Adressen oder sensible IDs."
+        },
+        {
+          "title": "Welche Plane gibt es?",
+          "body": "Free, Plus, Pro monatlich/jahrlich und Pro Lifetime."
+        },
+        {
+          "title": "Wie wird die Lizenz gepruft?",
+          "body": "Schlussel lokal, Server pruft Status, Dodo-Produkt und Rechte."
+        },
+        {
+          "title": "Werden Nachrichten verkauft?",
+          "body": "Nein."
+        },
+        {
+          "title": "Werden Sprache oder Video aufgezeichnet?",
+          "body": "Standardmassig nicht."
+        },
+        {
+          "title": "Was passiert bei Meldung?",
+          "body": "Kategorie, Kommentar, anonyme IDs, Metadaten und relevante Elemente."
+        },
+        {
+          "title": "Kann ich Kamera/Mikro widerrufen?",
+          "body": "Ja, in den Einstellungen."
+        },
+        {
+          "title": "Wozu der VPS?",
+          "body": "Presence, Matching, Signaling, Quoten, Lizenzen, Anti-Cheat, Meldungen und Spiele."
+        },
+        {
+          "title": "Kontakt?",
+          "body": "contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Datenschutzerklarung",
+      "lead": "Figgliz begrenzt Datenerfassung und erklart, was lokal bleibt, was uber den VPS lauft und was der Sicherheit dient.",
+      "sections": [
+        {
+          "title": "Lokale Daten",
+          "body": "Sprache, Theme, Launcher, Einstellungen, anonyme ID, Blockaden, Zahler und Lizenz konnen lokal gespeichert werden."
+        },
+        {
+          "title": "VPS-Daten",
+          "body": "Der VPS verarbeitet Presence, Warteschlange, Matching, Signaling, Quoten, Token, Lizenzen, Meldungen und Anti-Missbrauch."
+        },
+        {
+          "title": "Gesprache",
+          "body": "Nachrichten und Sprache nutzen moglichst WebRTC DataChannel."
+        },
+        {
+          "title": "Kamera und Mikrofon",
+          "body": "Chrome fragt nach Erlaubnis; du kannst stoppen, stummschalten, pausieren oder widerrufen."
+        },
+        {
+          "title": "Video-Hintergrunde",
+          "body": "Blur und Hintergrunde werden lokal angewendet."
+        },
+        {
+          "title": "Spiele",
+          "body": "Spiele tauschen Aktionen und Zustande aus; VPS kann synchronisieren und Cheats reduzieren."
+        },
+        {
+          "title": "Lizenzen und Zahlungen",
+          "body": "Dodo Payments verarbeitet Zahlungen; Produkt, Status, Zeitraum und Rechte werden gepruft."
+        },
+        {
+          "title": "Meldungen",
+          "body": "Eine Meldung kann Grund, Kommentar, anonyme IDs, IP-Hashes und Metadaten enthalten."
+        },
+        {
+          "title": "Kein Verkauf",
+          "body": "Wir verkaufen keine Daten, Nachrichten, Sprache oder Videos."
+        },
+        {
+          "title": "Kontrolle",
+          "body": "Einstellungen, Launcher, Blockieren, Melden, Lizenz und Berechtigungen bleiben steuerbar."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, Datenschutz, Sicherheit oder Abrechnung: contact@arcawand-soft.com."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Nutzungsbedingungen",
+      "lead": "Diese Bedingungen regeln die respektvolle, sichere und faire Nutzung von Figgliz, inklusive Free, Plus, Pro und Pro Lifetime.",
+      "sections": [
+        {
+          "title": "Annahme",
+          "body": "Mit Nutzung akzeptierst du Bedingungen und geltendes Recht."
+        },
+        {
+          "title": "Alter",
+          "body": "Du brauchst rechtliches Alter und Fahigkeit fur Onlinekontakte mit Fremden."
+        },
+        {
+          "title": "Respekt",
+          "body": "Verboten sind Belästigung, Drohungen, Hass, Diskriminierung, illegale Inhalte, Betrug und Doxxing."
+        },
+        {
+          "title": "Personliche Daten",
+          "body": "Teile keine Telefonnummer, Email, Adresse, Socials, Dokumente, Bankdaten, Schule, Arbeit oder Termine."
+        },
+        {
+          "title": "Video und Einwilligung",
+          "body": "Nichts ohne Einwilligung und Rechtsgrundlage aufnehmen oder verbreiten."
+        },
+        {
+          "title": "Plane",
+          "body": "Free, Plus, Pro und Pro Lifetime haben unterschiedliche Rechte, vorbehaltlich Verfugbarkeit und Fair Use."
+        },
+        {
+          "title": "Lifetime",
+          "body": "Pro Lifetime gibt lebenslangen Zugang zu Pro laut Checkout, nicht zu jeder Beta fur immer."
+        },
+        {
+          "title": "Lizenz",
+          "body": "Der Schlussel ist personlich und darf nicht verkauft, massenhaft geteilt oder gefalscht werden."
+        },
+        {
+          "title": "Anti-Cheat",
+          "body": "Keine Manipulation von Erweiterung, Traffic, Quoten, Token, Lizenz oder Spielen."
+        },
+        {
+          "title": "Meldungen",
+          "body": "Nur gutglaubige Meldungen."
+        },
+        {
+          "title": "Verfugbarkeit",
+          "body": "Der Dienst kann sich andern oder pausieren."
+        },
+        {
+          "title": "Verantwortung",
+          "body": "Nutzer verantworten Nachrichten, Verhalten und Videoeinladungen."
+        }
+      ]
+    }
+  }
+}

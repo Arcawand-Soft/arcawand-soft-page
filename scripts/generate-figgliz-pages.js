@@ -4,6 +4,7 @@ const path = require("path");
 const root = path.resolve(__dirname, "..");
 const sourceAssets = path.resolve(root, "..", "figgliz", "server", "public", "stats", "assets", "images");
 const figglizAssets = path.join(root, "assets", "figgliz");
+const extensionLegalContent = require("./figgliz-extension-legal-content.json");
 
 const langs = {
   en: {
@@ -498,17 +499,34 @@ function structuredData(lang, page, title, desc) {
     }
   ];
   if (page === "faq") {
+    const faq = legalPageContent(lang, "faq");
     graph.push({
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: l.faqItems.map(([question, answer]) => ({
+      mainEntity: faq.sections.map((section) => ({
         "@type": "Question",
-        name: question,
-        acceptedAnswer: { "@type": "Answer", text: answer }
+        name: section.title,
+        acceptedAnswer: { "@type": "Answer", text: sectionText(section) }
       }))
     });
   }
   return graph.map((entry) => `<script type="application/ld+json">${jsonLd(entry)}</script>`).join("\n");
+}
+
+function legalPageContent(lang, page) {
+  return extensionLegalContent[lang]?.[page] || extensionLegalContent.en[page];
+}
+
+function sectionText(section) {
+  return [section.body, ...(Array.isArray(section.items) ? section.items : [])].filter(Boolean).join(" ");
+}
+
+function renderLegalSection(section) {
+  const body = section.body ? `<p>${esc(section.body)}</p>` : "";
+  const items = Array.isArray(section.items) && section.items.length
+    ? `<ul>${section.items.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>`
+    : "";
+  return `<h2>${esc(section.title)}</h2>${body}${items}`;
 }
 
 function benefitList(items) {
@@ -550,14 +568,13 @@ function presentationPage(lang) {
 }
 
 function textPage(lang, page) {
-  const l = langs[lang];
-  const sections = page === "privacy" ? l.privacySections : l.termsSections;
-  return `<article class="ucp-page-content figgliz-text-content">${sections.map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
+  const content = legalPageContent(lang, page);
+  return `<article class="ucp-page-content figgliz-text-content">${content.sections.map(renderLegalSection).join("\n")}</article>`;
 }
 
 function faqPage(lang) {
-  const l = langs[lang];
-  return `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`;
+  const content = legalPageContent(lang, "faq");
+  return `<div class="ucp-faq-list">${content.sections.map((section) => `<article class="ucp-faq-item"><h2>${esc(section.title)}</h2><p>${esc(sectionText(section))}</p></article>`).join("\n")}</div>`;
 }
 
 function statsPage(lang) {
@@ -598,9 +615,11 @@ function render(lang, page) {
   const desc = page === "stats" ? (statsCopy[lang] || statsCopy.en).lead : l.pageDesc[page];
   const canonical = absProduct(lang, page);
   const main = page === "presentation" ? presentationPage(lang) : page === "faq" ? faqPage(lang) : page === "stats" ? statsPage(lang) : textPage(lang, page);
-  const staticTitle = page === "presentation" ? "" : page === "stats" ? (statsCopy[lang] || statsCopy.en).heading : l.pageTitles[page].replace(" Figgliz", "").replace("Figgliz ", "");
+  const legalContent = page === "faq" || page === "privacy" || page === "terms" ? legalPageContent(lang, page) : null;
+  const staticTitle = page === "presentation" ? "" : page === "stats" ? (statsCopy[lang] || statsCopy.en).heading : legalContent.title;
   const staticKicker = page === "faq" ? l.faq : page === "stats" ? (statsNavLabels[lang] || statsNavLabels.en) : page === "privacy" ? l.privacy : l.terms;
-  const heading = page === "presentation" ? "" : `<section class="ucp-static-hero figgliz-static-hero"><span class="ucp-static-kicker">${esc(staticKicker)}</span><h1><span class="ucp-heading-line ucp-heading-main">${esc(staticTitle)}</span><span class="ucp-heading-line ucp-heading-product">Figgliz</span></h1><p>${esc(desc)}</p></section>`;
+  const headingLead = legalContent?.lead || desc;
+  const heading = page === "presentation" ? "" : `<section class="ucp-static-hero figgliz-static-hero"><span class="ucp-static-kicker">${esc(staticKicker)}</span><h1><span class="ucp-heading-line ucp-heading-main">${esc(staticTitle)}</span><span class="ucp-heading-line ucp-heading-product">Figgliz</span></h1><p>${esc(headingLead)}</p></section>`;
   return `<!doctype html>
 <html lang="${l.html}">
 <head>
