@@ -436,7 +436,7 @@ function lifetimeCard(lang) {
   const copy = pricingCopy[lang];
   const l = langs[lang];
   const plan = prices.lifetime;
-  return `<article class="figgliz-lifetime-card"><div><span class="figgliz-plan-badge">Pro</span><h3>${esc(copy.lifetimeTitle)}</h3><p>${esc(copy.lifetimeSubtitle)}</p>${benefitList(pricingBenefits[lang].pro)}</div><aside class="figgliz-lifetime-price"><strong>${esc(plan.price)}</strong><span>${esc(plan.suffix[lang])}</span></aside><a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a></article>`;
+  return `<article class="figgliz-lifetime-card"><header class="figgliz-plan-card-head"><div><span class="figgliz-plan-badge">Pro</span><h3>${esc(copy.lifetimeTitle)}</h3><p>${esc(copy.lifetimeSubtitle)}</p></div><p class="figgliz-price figgliz-lifetime-price"><span>${esc(plan.price)}</span><small>${esc(plan.suffix[lang])}</small></p></header>${benefitList(pricingBenefits[lang].pro)}<a class="figgliz-price-button" href="${plan.url}" target="_blank" rel="noopener noreferrer">${esc(l.chooseOffer)}</a></article>`;
 }
 
 function pricing(lang) {
