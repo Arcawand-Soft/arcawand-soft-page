@@ -332,7 +332,7 @@ body.figgliz-static-page {
 }
 
 .figgliz-plan-card-head p:not(.figgliz-price),
-.figgliz-lifetime-card p {
+.figgliz-lifetime-card p:not(.figgliz-price) {
   margin: .25rem 0 0;
   color: rgba(226, 232, 240, .78);
   font-weight: 900;
