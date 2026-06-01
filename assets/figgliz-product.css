@@ -497,7 +497,19 @@ body.figgliz-static-page {
 }
 
 .figgliz-static-hero h1 {
-  font-size: clamp(2.2rem, 5.4vw, 5.1rem);
+  max-width: min(1120px, calc(100vw - 2rem));
+  font-size: clamp(2.15rem, 4.9vw, 4.8rem);
+}
+
+.figgliz-static-hero .ucp-heading-main {
+  max-width: min(100%, 1040px);
+  white-space: normal;
+  overflow-wrap: normal;
+  text-wrap: balance;
+}
+
+.figgliz-static-hero .ucp-heading-product {
+  white-space: nowrap;
 }
 
 .figgliz-text-content h2:first-child {
@@ -562,6 +574,15 @@ body.figgliz-static-page {
   .figgliz-hero h1 {
     font-size: clamp(1.45rem, 7.2vw, 2.45rem);
     letter-spacing: -.025em;
+  }
+
+  .figgliz-static-hero h1 {
+    font-size: clamp(1.45rem, 7.2vw, 2.45rem);
+  }
+
+  .figgliz-static-hero .ucp-heading-main,
+  .figgliz-static-hero p {
+    max-width: min(100%, 330px);
   }
 
   .figgliz-actions {
