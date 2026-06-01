@@ -14,6 +14,7 @@ const langs = {
     back: "Back to ArcaWand Soft",
     presentation: "Presentation",
     faq: "FAQ",
+    stats: "Statistics",
     privacy: "Privacy policy",
     terms: "Terms of use",
     contact: "Contact",
@@ -53,12 +54,14 @@ const langs = {
     continueFree: "Continue with Free",
     pageTitles: {
       faq: "Figgliz FAQ",
+      stats: "Figgliz Live Statistics",
       privacy: "Figgliz Privacy Policy",
       terms: "Figgliz Terms of Use"
     },
     pageDesc: {
       presentation: "Figgliz is a Chrome extension for private random conversations, voice notes, optional webcam sessions and games, with safety controls and no public profile.",
       faq: "Answers about Figgliz, random matching, privacy, safety, voice, webcam sessions, games, plans and beta availability.",
+      stats: "Live anonymous Figgliz statistics for discussions, webcam sessions and games played by the community.",
       privacy: "Detailed privacy policy for Figgliz, covering random conversations, webcam consent, anonymous stats, paid plans, licensing and user controls.",
       terms: "Terms of use for Figgliz, including beta availability, acceptable use, safety, paid plans, licensing and limitations."
     },
@@ -335,7 +338,131 @@ const gameLabels = {
 const flags = { en: "english", fr: "french", es: "spanish", it: "italian", de: "german" };
 const languageNames = { en: "English", fr: "Français", es: "Español", it: "Italiano", de: "Deutsch" };
 const languageButtonLabels = { en: "Change language", fr: "Changer de langue", es: "Cambiar idioma", it: "Cambia lingua", de: "Sprache wechseln" };
-const pageSlugs = { presentation: "", faq: "faq/", privacy: "privacy/", terms: "terms/" };
+const statsNavLabels = {
+  en: "Statistics",
+  fr: "Statistiques",
+  es: "Estad\u00edsticas",
+  it: "Statistiche",
+  de: "Statistiken"
+};
+const statsCopy = {
+  en: {
+    title: "Figgliz live statistics",
+    heading: "Live statistics",
+    lead: "Follow Figgliz anonymous public activity: discussions started, webcam sessions accepted and games played by the community.",
+    eyebrow: "Anonymous counters",
+    statusLoading: "Refreshing public counters...",
+    statusReady: "Live counters refreshed from Figgliz.",
+    statusError: "Statistics are temporarily unavailable.",
+    updated: "Last update",
+    source: "Public JSON feed",
+    totalsTitle: "Community activity",
+    gamesTitle: "Games accepted by players",
+    discussions: "Discussions started",
+    videoSessions: "Webcam sessions",
+    gamesPlayed: "Games played",
+    chess: "Chess",
+    checkers: "Checkers",
+    connect4: "Connect 4",
+    pingpong: "Ping Pong",
+    doublesnake: "Flappy Duo",
+    airhockey: "Air Hockey",
+    privacyNote: "Only anonymous aggregate counters are displayed here. Message content, identities and conversations are never published."
+  },
+  fr: {
+    title: "Statistiques Figgliz en direct",
+    heading: "Statistiques en direct",
+    lead: "Suivez l'activit\u00e9 publique et anonyme de Figgliz : discussions lanc\u00e9es, sessions webcam accept\u00e9es et parties jou\u00e9es par la communaut\u00e9.",
+    eyebrow: "Compteurs anonymes",
+    statusLoading: "Actualisation des compteurs publics...",
+    statusReady: "Compteurs mis \u00e0 jour depuis Figgliz.",
+    statusError: "Les statistiques sont temporairement indisponibles.",
+    updated: "Derni\u00e8re mise \u00e0 jour",
+    source: "Flux JSON public",
+    totalsTitle: "Activit\u00e9 de la communaut\u00e9",
+    gamesTitle: "Parties accept\u00e9es par les joueurs",
+    discussions: "Discussions lanc\u00e9es",
+    videoSessions: "Sessions webcam",
+    gamesPlayed: "Parties jou\u00e9es",
+    chess: "\u00c9checs",
+    checkers: "Dames",
+    connect4: "Puissance 4",
+    pingpong: "Ping Pong",
+    doublesnake: "Flappy Duo",
+    airhockey: "Air Hockey",
+    privacyNote: "Seuls des compteurs anonymes agr\u00e9g\u00e9s sont affich\u00e9s ici. Les messages, identit\u00e9s et conversations ne sont jamais publi\u00e9s."
+  },
+  es: {
+    title: "Estad\u00edsticas en directo de Figgliz",
+    heading: "Estad\u00edsticas en directo",
+    lead: "Sigue la actividad p\u00fablica y an\u00f3nima de Figgliz: conversaciones iniciadas, sesiones de webcam aceptadas y partidas jugadas por la comunidad.",
+    eyebrow: "Contadores an\u00f3nimos",
+    statusLoading: "Actualizando contadores p\u00fablicos...",
+    statusReady: "Contadores actualizados desde Figgliz.",
+    statusError: "Las estad\u00edsticas no est\u00e1n disponibles temporalmente.",
+    updated: "\u00daltima actualizaci\u00f3n",
+    source: "Feed JSON p\u00fablico",
+    totalsTitle: "Actividad de la comunidad",
+    gamesTitle: "Partidas aceptadas por jugadores",
+    discussions: "Conversaciones iniciadas",
+    videoSessions: "Sesiones de webcam",
+    gamesPlayed: "Partidas jugadas",
+    chess: "Ajedrez",
+    checkers: "Damas",
+    connect4: "Conecta 4",
+    pingpong: "Ping Pong",
+    doublesnake: "Flappy Duo",
+    airhockey: "Air Hockey",
+    privacyNote: "Aqu\u00ed solo se muestran contadores agregados an\u00f3nimos. Los mensajes, identidades y conversaciones nunca se publican."
+  },
+  it: {
+    title: "Statistiche live Figgliz",
+    heading: "Statistiche live",
+    lead: "Segui l'attivit\u00e0 pubblica e anonima di Figgliz: conversazioni avviate, sessioni webcam accettate e partite giocate dalla community.",
+    eyebrow: "Contatori anonimi",
+    statusLoading: "Aggiornamento dei contatori pubblici...",
+    statusReady: "Contatori aggiornati da Figgliz.",
+    statusError: "Le statistiche sono temporaneamente non disponibili.",
+    updated: "Ultimo aggiornamento",
+    source: "Feed JSON pubblico",
+    totalsTitle: "Attivit\u00e0 della community",
+    gamesTitle: "Partite accettate dai giocatori",
+    discussions: "Conversazioni avviate",
+    videoSessions: "Sessioni webcam",
+    gamesPlayed: "Partite giocate",
+    chess: "Scacchi",
+    checkers: "Dama",
+    connect4: "Forza 4",
+    pingpong: "Ping Pong",
+    doublesnake: "Flappy Duo",
+    airhockey: "Air Hockey",
+    privacyNote: "Qui sono mostrati solo contatori aggregati anonimi. Messaggi, identit\u00e0 e conversazioni non vengono mai pubblicati."
+  },
+  de: {
+    title: "Figgliz Live-Statistiken",
+    heading: "Live-Statistiken",
+    lead: "Verfolge die anonyme \u00f6ffentliche Aktivit\u00e4t von Figgliz: gestartete Gespr\u00e4che, angenommene Webcam-Sitzungen und gespielte Partien.",
+    eyebrow: "Anonyme Z\u00e4hler",
+    statusLoading: "\u00d6ffentliche Z\u00e4hler werden aktualisiert...",
+    statusReady: "Z\u00e4hler von Figgliz aktualisiert.",
+    statusError: "Statistiken sind vor\u00fcbergehend nicht verf\u00fcgbar.",
+    updated: "Letzte Aktualisierung",
+    source: "\u00d6ffentlicher JSON-Feed",
+    totalsTitle: "Community-Aktivit\u00e4t",
+    gamesTitle: "Von Spielern angenommene Partien",
+    discussions: "Gestartete Gespr\u00e4che",
+    videoSessions: "Webcam-Sitzungen",
+    gamesPlayed: "Gespielte Partien",
+    chess: "Schach",
+    checkers: "Dame",
+    connect4: "Vier gewinnt",
+    pingpong: "Ping Pong",
+    doublesnake: "Flappy Duo",
+    airhockey: "Air Hockey",
+    privacyNote: "Hier werden nur anonyme aggregierte Z\u00e4hler angezeigt. Nachrichten, Identit\u00e4ten und Gespr\u00e4che werden niemals ver\u00f6ffentlicht."
+  }
+};
+const pageSlugs = { presentation: "", faq: "faq/", stats: "stats/", privacy: "privacy/", terms: "terms/" };
 
 function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
@@ -355,8 +482,8 @@ function absProduct(lang, page = "presentation") {
 
 function relFromProductPage(page) {
   return page === "presentation"
-    ? { presentation: "./", faq: "faq/", privacy: "privacy/", terms: "terms/" }
-    : { presentation: "../", faq: "../faq/", privacy: "../privacy/", terms: "../terms/" };
+    ? { presentation: "./", faq: "faq/", stats: "stats/", privacy: "privacy/", terms: "terms/" }
+    : { presentation: "../", faq: "../faq/", stats: "../stats/", privacy: "../privacy/", terms: "../terms/" };
 }
 
 function languageMenu(current) {
@@ -366,7 +493,7 @@ function languageMenu(current) {
 
 function productNav(lang, active, rel) {
   const l = langs[lang];
-  return `<nav class="ucp-product-nav figgliz-product-nav" aria-label="Figgliz"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
+  return `<nav class="ucp-product-nav figgliz-product-nav" aria-label="Figgliz"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.stats}" data-ucp-nav="stats"${active === "stats" ? ' aria-current="page"' : ""}>${esc(statsNavLabels[lang] || statsNavLabels.en)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
 }
 
 function jsonLd(data) {
@@ -448,9 +575,8 @@ function pricing(lang) {
 function presentationPage(lang) {
   const l = langs[lang];
   const features = l.features.map(([title, text]) => `<article class="figgliz-card"><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("");
-  const privacy = l.privacyCards.map(([title, text]) => `<article class="figgliz-mini"><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("");
   const games = ["chess", "dames", "connect4", "ping", "flappy-duo", "air-hockey"].map((name) => `<figure class="figgliz-game"><img src="/assets/figgliz/${name}.webp" alt="" width="160" height="160" loading="lazy" decoding="async"><figcaption>${esc(gameLabels[lang][name])}</figcaption></figure>`).join("");
-  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.sectionsTitle)}</h2><p>${esc(l.sectionsLead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.statsTitle)}</h2><p>${esc(l.statsLead)}</p></div><a class="figgliz-stats-link" href="https://figgliz.arcawand-soft.com/" target="_blank" rel="noopener noreferrer">figgliz.arcawand-soft.com</a><div class="figgliz-mini-grid">${privacy}</div></section>${pricing(lang)}`;
+  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.sectionsTitle)}</h2><p>${esc(l.sectionsLead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section>${pricing(lang)}`;
 }
 
 function textPage(lang, page) {
@@ -464,6 +590,24 @@ function faqPage(lang) {
   return `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`;
 }
 
+function statsPage(lang) {
+  const copy = statsCopy[lang] || statsCopy.en;
+  const totalCards = [
+    ["discussions", copy.discussions, "icon.webp"],
+    ["videoSessions", copy.videoSessions, "webcam.webp"],
+    ["gamesPlayed", copy.gamesPlayed, "games.webp"]
+  ].map(([key, label, image]) => `<article class="figgliz-stat-card figgliz-stat-card-total"><img src="/assets/figgliz/${image}" alt="" width="86" height="86" loading="lazy" decoding="async"><div><p>${esc(label)}</p><strong data-figgliz-stat="${key}">--</strong></div></article>`).join("");
+  const gameCards = [
+    ["chess", copy.chess, "chess.webp"],
+    ["checkers", copy.checkers, "dames.webp"],
+    ["connect4", copy.connect4, "connect4.webp"],
+    ["pingpong", copy.pingpong, "ping.webp"],
+    ["doublesnake", copy.doublesnake, "flappy-duo.webp"],
+    ["airhockey", copy.airhockey, "air-hockey.webp"]
+  ].map(([key, label, image]) => `<article class="figgliz-stat-card figgliz-stat-card-game"><img src="/assets/figgliz/${image}" alt="" width="96" height="96" loading="lazy" decoding="async"><p>${esc(label)}</p><strong data-figgliz-stat="${key}">--</strong></article>`).join("");
+  return `<section class="figgliz-section figgliz-stats-page" data-figgliz-stats data-stats-endpoint="https://figgliz.arcawand-soft.com/stats.json" data-lang="${lang}"><div class="figgliz-stats-hero"><div><span class="ucp-static-kicker">${esc(copy.eyebrow)}</span><h2>${esc(copy.heading)}</h2><p>${esc(copy.lead)}</p></div><a class="figgliz-stats-source" href="https://figgliz.arcawand-soft.com/?lang=${lang}" target="_blank" rel="noopener noreferrer">${esc(copy.source)}</a></div><div class="figgliz-stats-status" data-figgliz-stat-status>${esc(copy.statusLoading)}</div><div class="figgliz-stats-grid figgliz-stats-totals" aria-label="${esc(copy.totalsTitle)}">${totalCards}</div><div class="figgliz-stats-heading"><h2>${esc(copy.gamesTitle)}</h2><p>${esc(copy.privacyNote)}</p></div><div class="figgliz-stats-grid figgliz-stats-games">${gameCards}</div><p class="figgliz-stats-updated"><span>${esc(copy.updated)} : </span><time data-figgliz-stat-updated>--</time></p></section>`;
+}
+
 function pageTitle(lang, page) {
   const l = langs[lang];
   const presentationTitles = {
@@ -473,6 +617,7 @@ function pageTitle(lang, page) {
     it: "Figgliz - Conversazioni casuali private per Chrome",
     de: "Figgliz - Private Zufallsgespräche für Chrome"
   };
+  if (page === "stats") return (statsCopy[lang] || statsCopy.en).title;
   return page === "presentation" ? presentationTitles[lang] : l.pageTitles[page];
 }
 
@@ -480,10 +625,12 @@ function render(lang, page) {
   const l = langs[lang];
   const rel = relFromProductPage(page);
   const title = pageTitle(lang, page);
-  const desc = l.pageDesc[page];
+  const desc = page === "stats" ? (statsCopy[lang] || statsCopy.en).lead : l.pageDesc[page];
   const canonical = absProduct(lang, page);
-  const main = page === "presentation" ? presentationPage(lang) : page === "faq" ? faqPage(lang) : textPage(lang, page);
-  const heading = page === "presentation" ? "" : `<section class="ucp-static-hero figgliz-static-hero"><span class="ucp-static-kicker">${esc(page === "faq" ? l.faq : page === "privacy" ? l.privacy : l.terms)}</span><h1><span class="ucp-heading-line ucp-heading-main">${esc(l.pageTitles[page].replace(" Figgliz", "").replace("Figgliz ", ""))}</span><span class="ucp-heading-line ucp-heading-product">Figgliz</span></h1><p>${esc(desc)}</p></section>`;
+  const main = page === "presentation" ? presentationPage(lang) : page === "faq" ? faqPage(lang) : page === "stats" ? statsPage(lang) : textPage(lang, page);
+  const staticTitle = page === "presentation" ? "" : page === "stats" ? (statsCopy[lang] || statsCopy.en).heading : l.pageTitles[page].replace(" Figgliz", "").replace("Figgliz ", "");
+  const staticKicker = page === "faq" ? l.faq : page === "stats" ? (statsNavLabels[lang] || statsNavLabels.en) : page === "privacy" ? l.privacy : l.terms;
+  const heading = page === "presentation" ? "" : `<section class="ucp-static-hero figgliz-static-hero"><span class="ucp-static-kicker">${esc(staticKicker)}</span><h1><span class="ucp-heading-line ucp-heading-main">${esc(staticTitle)}</span><span class="ucp-heading-line ucp-heading-product">Figgliz</span></h1><p>${esc(desc)}</p></section>`;
   return `<!doctype html>
 <html lang="${l.html}">
 <head>
@@ -560,6 +707,7 @@ function navDrop(lang, depth) {
   const fig = {
     presentation: `${prefix}figgliz/`,
     faq: `${prefix}figgliz/faq/`,
+    stats: `${prefix}figgliz/stats/`,
     privacy: `${prefix}figgliz/privacy/`,
     terms: `${prefix}figgliz/terms/`
   };
@@ -570,7 +718,7 @@ function navDrop(lang, depth) {
     it: { ucpDesc: "Un portappunti avanzato per utenti esigenti", demo: "Demo", terms: "Termini d'uso" },
     de: { ucpDesc: "Eine erweiterte Zwischenablage für anspruchsvolle Nutzer", demo: "Demo", terms: "Nutzungsbedingungen" }
   }[lang];
-  const app = (title, desc, hrefs, includeDemo) => `<div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${hrefs.presentation}"><strong>${esc(title)}</strong><span>${esc(desc)}</span></a><div class="nav-app-links ${includeDemo ? "" : "nav-app-links-four"}"><a href="${hrefs.presentation}">${esc(l.presentation)}</a>${includeDemo ? `<a href="${hrefs.demo}">${esc(labels.demo)}</a>` : ""}<a href="${hrefs.faq}">${esc(l.faq)}</a><a href="${hrefs.privacy}">${esc(l.privacy)}</a><a href="${hrefs.terms}">${esc(includeDemo ? labels.terms : l.terms)}</a></div></div>`;
+  const app = (title, desc, hrefs, includeDemo) => `<div class="nav-app-card"><a class="nav-drop-item nav-app-main" href="${hrefs.presentation}"><strong>${esc(title)}</strong><span>${esc(desc)}</span></a><div class="nav-app-links ${includeDemo ? "" : "nav-app-links-four"}"><a href="${hrefs.presentation}">${esc(l.presentation)}</a>${includeDemo ? `<a href="${hrefs.demo}">${esc(labels.demo)}</a>` : ""}<a href="${hrefs.faq}">${esc(l.faq)}</a>${hrefs.stats ? `<a href="${hrefs.stats}">${esc(statsNavLabels[lang] || statsNavLabels.en)}</a>` : ""}<a href="${hrefs.privacy}">${esc(l.privacy)}</a><a href="${hrefs.terms}">${esc(includeDemo ? labels.terms : l.terms)}</a></div></div>`;
   return `<div class="nav-drop"><button class="nav-drop-button" type="button" data-i18n="navSofts">${esc(l.navSofts)}</button><div class="nav-drop-menu nav-apps-menu nav-apps-menu-wide">${app("Ultimate Clipboard Pro", labels.ucpDesc, ucpLinks, true)}${app("Figgliz", l.productDesc, fig, false)}</div></div>`;
 }
 

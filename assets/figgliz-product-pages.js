@@ -1,11 +1,11 @@
 (() => {
   const supportedLangs = ["en", "fr", "es", "it", "de"];
   const labels = {
-    en: { presentation: "Presentation", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use" },
-    fr: { presentation: "Présentation", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU" },
-    es: { presentation: "Presentación", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso" },
-    it: { presentation: "Presentazione", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d'uso" },
-    de: { presentation: "Präsentation", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen" }
+    en: { presentation: "Presentation", faq: "FAQ", stats: "Statistics", privacy: "Privacy policy", terms: "Terms of use" },
+    fr: { presentation: "Pr\u00e9sentation", faq: "FAQ", stats: "Statistiques", privacy: "Politique de confidentialité", terms: "CGU" },
+    es: { presentation: "Presentaci\u00f3n", faq: "FAQ", stats: "Estad\u00edsticas", privacy: "Política de privacidad", terms: "Términos de uso" },
+    it: { presentation: "Presentazione", faq: "FAQ", stats: "Statistiche", privacy: "Informativa privacy", terms: "Termini d'uso" },
+    de: { presentation: "Pr\u00e4sentation", faq: "FAQ", stats: "Statistiken", privacy: "Datenschutz", terms: "Nutzungsbedingungen" }
   };
   const languageButtonLabels = {
     en: "Change language",
@@ -15,11 +15,11 @@
     de: "Sprache wechseln"
   };
   const routes = {
-    en: { presentation: "https://arcawand-soft.com/figgliz/", faq: "https://arcawand-soft.com/figgliz/faq/", privacy: "https://arcawand-soft.com/figgliz/privacy/", terms: "https://arcawand-soft.com/figgliz/terms/" },
-    fr: { presentation: "https://arcawand-soft.com/fr/figgliz/", faq: "https://arcawand-soft.com/fr/figgliz/faq/", privacy: "https://arcawand-soft.com/fr/figgliz/privacy/", terms: "https://arcawand-soft.com/fr/figgliz/terms/" },
-    es: { presentation: "https://arcawand-soft.com/es/figgliz/", faq: "https://arcawand-soft.com/es/figgliz/faq/", privacy: "https://arcawand-soft.com/es/figgliz/privacy/", terms: "https://arcawand-soft.com/es/figgliz/terms/" },
-    it: { presentation: "https://arcawand-soft.com/it/figgliz/", faq: "https://arcawand-soft.com/it/figgliz/faq/", privacy: "https://arcawand-soft.com/it/figgliz/privacy/", terms: "https://arcawand-soft.com/it/figgliz/terms/" },
-    de: { presentation: "https://arcawand-soft.com/de/figgliz/", faq: "https://arcawand-soft.com/de/figgliz/faq/", privacy: "https://arcawand-soft.com/de/figgliz/privacy/", terms: "https://arcawand-soft.com/de/figgliz/terms/" }
+    en: { presentation: "https://arcawand-soft.com/figgliz/", faq: "https://arcawand-soft.com/figgliz/faq/", stats: "https://arcawand-soft.com/figgliz/stats/", privacy: "https://arcawand-soft.com/figgliz/privacy/", terms: "https://arcawand-soft.com/figgliz/terms/" },
+    fr: { presentation: "https://arcawand-soft.com/fr/figgliz/", faq: "https://arcawand-soft.com/fr/figgliz/faq/", stats: "https://arcawand-soft.com/fr/figgliz/stats/", privacy: "https://arcawand-soft.com/fr/figgliz/privacy/", terms: "https://arcawand-soft.com/fr/figgliz/terms/" },
+    es: { presentation: "https://arcawand-soft.com/es/figgliz/", faq: "https://arcawand-soft.com/es/figgliz/faq/", stats: "https://arcawand-soft.com/es/figgliz/stats/", privacy: "https://arcawand-soft.com/es/figgliz/privacy/", terms: "https://arcawand-soft.com/es/figgliz/terms/" },
+    it: { presentation: "https://arcawand-soft.com/it/figgliz/", faq: "https://arcawand-soft.com/it/figgliz/faq/", stats: "https://arcawand-soft.com/it/figgliz/stats/", privacy: "https://arcawand-soft.com/it/figgliz/privacy/", terms: "https://arcawand-soft.com/it/figgliz/terms/" },
+    de: { presentation: "https://arcawand-soft.com/de/figgliz/", faq: "https://arcawand-soft.com/de/figgliz/faq/", stats: "https://arcawand-soft.com/de/figgliz/stats/", privacy: "https://arcawand-soft.com/de/figgliz/privacy/", terms: "https://arcawand-soft.com/de/figgliz/terms/" }
   };
 
   function getLangFromPath() {
@@ -30,6 +30,7 @@
   function getProductPage() {
     const path = window.location.pathname;
     if (path.includes("/faq")) return "faq";
+    if (path.includes("/stats")) return "stats";
     if (path.includes("/privacy")) return "privacy";
     if (path.includes("/terms")) return "terms";
     return "presentation";
@@ -140,6 +141,71 @@
     });
   }
 
+  const statsMessages = {
+    en: { ready: "Live counters refreshed from Figgliz.", error: "Statistics are temporarily unavailable." },
+    fr: { ready: "Compteurs mis \u00e0 jour depuis Figgliz.", error: "Les statistiques sont temporairement indisponibles." },
+    es: { ready: "Contadores actualizados desde Figgliz.", error: "Las estad\u00edsticas no est\u00e1n disponibles temporalmente." },
+    it: { ready: "Contatori aggiornati da Figgliz.", error: "Le statistiche sono temporaneamente non disponibili." },
+    de: { ready: "Z\u00e4hler von Figgliz aktualisiert.", error: "Statistiken sind vor\u00fcbergehend nicht verf\u00fcgbar." }
+  };
+
+  function setupStatsPage() {
+    const root = document.querySelector("[data-figgliz-stats]");
+    if (!root || root.dataset.statsReady === "true") return;
+    root.dataset.statsReady = "true";
+    const lang = getLangFromPath();
+    const messages = statsMessages[lang] || statsMessages.en;
+    const endpoint = root.dataset.statsEndpoint || "https://figgliz.arcawand-soft.com/stats.json";
+    const status = root.querySelector("[data-figgliz-stat-status]");
+    const updated = root.querySelector("[data-figgliz-stat-updated]");
+    const format = new Intl.NumberFormat(lang);
+    const formatDate = new Intl.DateTimeFormat(lang, { dateStyle: "medium", timeStyle: "short" });
+    const setValue = (key, value) => {
+      const node = root.querySelector('[data-figgliz-stat="' + key + '"]');
+      if (!node) return;
+      const next = Number.isFinite(Number(value)) ? format.format(Math.max(0, Number(value))) : "--";
+      if (node.textContent === next) return;
+      node.textContent = next;
+      node.animate?.([
+        { transform: "translateY(5px)", opacity: 0.52 },
+        { transform: "translateY(0)", opacity: 1 }
+      ], { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)" });
+    };
+    const render = (payload = {}) => {
+      const totals = payload.totals || {};
+      const games = payload.games || {};
+      setValue("discussions", totals.discussions);
+      setValue("videoSessions", totals.videoSessions);
+      setValue("gamesPlayed", totals.games);
+      setValue("chess", games.chess);
+      setValue("checkers", games.checkers);
+      setValue("connect4", games.connect4);
+      setValue("pingpong", games.pingpong);
+      setValue("doublesnake", games.doublesnake);
+      setValue("airhockey", games.airhockey);
+      const stamp = payload.updatedAt || payload.startedAt;
+      if (updated && stamp) updated.textContent = formatDate.format(new Date(stamp));
+      if (status) {
+        status.textContent = messages.ready;
+        status.dataset.state = "ready";
+      }
+    };
+    const refresh = async () => {
+      try {
+        const response = await fetch(endpoint, { cache: "no-store" });
+        if (!response.ok) throw new Error("stats unavailable");
+        render(await response.json());
+      } catch (error) {
+        if (status) {
+          status.textContent = messages.error;
+          status.dataset.state = "error";
+        }
+      }
+    };
+    refresh();
+    window.setInterval(refresh, 30000);
+  }
+
   function init() {
     const lang = getLangFromPath();
     document.documentElement.lang = lang;
@@ -147,6 +213,7 @@
     setupProductNav();
     setupProductHeaderScroll();
     setupPricingTabs();
+    setupStatsPage();
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
