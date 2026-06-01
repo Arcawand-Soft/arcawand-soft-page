@@ -141,22 +141,12 @@
     });
   }
 
-  const statsMessages = {
-    en: { ready: "Live counters refreshed from Figgliz.", error: "Statistics are temporarily unavailable." },
-    fr: { ready: "Compteurs mis \u00e0 jour depuis Figgliz.", error: "Les statistiques sont temporairement indisponibles." },
-    es: { ready: "Contadores actualizados desde Figgliz.", error: "Las estad\u00edsticas no est\u00e1n disponibles temporalmente." },
-    it: { ready: "Contatori aggiornati da Figgliz.", error: "Le statistiche sono temporaneamente non disponibili." },
-    de: { ready: "Z\u00e4hler von Figgliz aktualisiert.", error: "Statistiken sind vor\u00fcbergehend nicht verf\u00fcgbar." }
-  };
-
   function setupStatsPage() {
     const root = document.querySelector("[data-figgliz-stats]");
     if (!root || root.dataset.statsReady === "true") return;
     root.dataset.statsReady = "true";
     const lang = getLangFromPath();
-    const messages = statsMessages[lang] || statsMessages.en;
     const endpoint = root.dataset.statsEndpoint || "https://figgliz.arcawand-soft.com/stats.json";
-    const status = root.querySelector("[data-figgliz-stat-status]");
     const updated = root.querySelector("[data-figgliz-stat-updated]");
     const format = new Intl.NumberFormat(lang);
     const formatDate = new Intl.DateTimeFormat(lang, { dateStyle: "medium", timeStyle: "short" });
@@ -185,10 +175,6 @@
       setValue("airhockey", games.airhockey);
       const stamp = payload.updatedAt || payload.startedAt;
       if (updated && stamp) updated.textContent = formatDate.format(new Date(stamp));
-      if (status) {
-        status.textContent = messages.ready;
-        status.dataset.state = "ready";
-      }
     };
     const refresh = async () => {
       try {
@@ -196,10 +182,7 @@
         if (!response.ok) throw new Error("stats unavailable");
         render(await response.json());
       } catch (error) {
-        if (status) {
-          status.textContent = messages.error;
-          status.dataset.state = "error";
-        }
+        root.dataset.statsError = "true";
       }
     };
     refresh();

@@ -465,7 +465,6 @@ body.figgliz-static-page {
   padding-top: clamp(1.4rem, 3vw, 2.4rem);
 }
 
-.figgliz-stats-hero,
 .figgliz-stat-card {
   border: 1px solid rgba(255, 255, 255, .13);
   background:
@@ -475,25 +474,14 @@ body.figgliz-static-page {
   box-shadow: 0 24px 64px rgba(0, 0, 0, .22);
 }
 
-.figgliz-stats-hero {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.4rem;
-  padding: clamp(1.3rem, 3vw, 2rem);
-  border-radius: 1.45rem;
-}
-
-.figgliz-stats-hero h2,
 .figgliz-stats-heading h2 {
   margin: 0 0 .7rem;
   color: #fff;
-  font-size: clamp(2.1rem, 4.6vw, 4.55rem);
-  line-height: 1;
-  letter-spacing: -.045em;
+  font-size: clamp(1.55rem, 2.8vw, 2.55rem);
+  line-height: 1.05;
+  letter-spacing: -.03em;
 }
 
-.figgliz-stats-hero p,
 .figgliz-stats-heading p,
 .figgliz-stats-updated,
 .figgliz-stat-card p {
@@ -501,42 +489,6 @@ body.figgliz-static-page {
   color: var(--ucp-muted);
   font-weight: 750;
   line-height: 1.55;
-}
-
-.figgliz-stats-source {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.9rem;
-  padding: 0 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(233, 135, 184, .34);
-  background: rgba(233, 135, 184, .15);
-  color: #ffd6e9;
-  font-weight: 950;
-  text-decoration: none;
-}
-
-.figgliz-stats-status {
-  width: fit-content;
-  max-width: 100%;
-  margin: 1.1rem 0 1.2rem;
-  padding: .72rem .95rem;
-  border-radius: 999px;
-  border: 1px solid rgba(107, 130, 255, .3);
-  background: rgba(107, 130, 255, .14);
-  color: rgba(237, 241, 255, .86);
-  font-weight: 900;
-}
-
-.figgliz-stats-status[data-state="ready"] {
-  border-color: rgba(70, 215, 167, .34);
-  background: rgba(70, 215, 167, .12);
-}
-
-.figgliz-stats-status[data-state="error"] {
-  border-color: rgba(248, 113, 113, .34);
-  background: rgba(248, 113, 113, .12);
 }
 
 .figgliz-stats-grid {
@@ -568,7 +520,6 @@ body.figgliz-static-page {
 .figgliz-stat-card-game img {
   object-fit: contain;
   border-radius: 1rem;
-  background: linear-gradient(145deg, #6b82ff, #5369ef);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22);
 }
 
@@ -576,6 +527,11 @@ body.figgliz-static-page {
   width: 5.35rem;
   height: 5.35rem;
   padding: .72rem;
+  background: #fff;
+}
+
+.figgliz-stat-card-game img {
+  background: linear-gradient(145deg, #6b82ff, #5369ef);
 }
 
 .figgliz-stat-card strong {
@@ -614,7 +570,7 @@ body.figgliz-static-page {
 }
 
 .figgliz-stat-card-game strong {
-  color: #e987b8;
+  color: #6b82ff;
   font-size: clamp(1.85rem, 3.2vw, 2.65rem);
 }
 
@@ -714,20 +670,12 @@ body.figgliz-static-page {
     grid-template-columns: 1fr;
   }
 
-  .figgliz-stats-hero,
   .figgliz-stat-card-total {
     border-radius: 1.1rem;
   }
 
   .figgliz-stat-card-total {
     min-height: 8.2rem;
-  }
-
-  .figgliz-stats-source,
-  .figgliz-stats-status {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
   }
 
   .figgliz-stats-updated {
