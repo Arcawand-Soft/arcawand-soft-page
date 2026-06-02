@@ -2,13 +2,13 @@
 
 Official static GitHub Pages website for ArcaWand Soft.
 
-ArcaWand Soft builds premium browser extensions, mobile apps and productivity apps for demanding users who want faster, cleaner and more reliable digital workflows.
+ArcaWand Soft builds premium browser extensions, mobile apps and original web products for demanding users who want sharper workflows, safer digital tools and lighter breaks.
 
 ## Pages
 
 - `/` - ArcaWand Soft home page.
 - `/ultimate-clipboard-pro/` - Ultimate Clipboard Pro product page, adapted from the standalone product landing page and integrated as a subpage of the main site.
-- `/figgliz/` - Figgliz product page for the private random chat Chrome extension, with localized FAQ, privacy policy and terms pages.
+- `/figgliz/` - Figgliz product page for the private random chat, webcam and mini-games Chrome extension, with localized FAQ, statistics, privacy policy and terms pages.
 - `/privacy/` - privacy and local-first data principles.
 - `/contact/` - static contact page.
 
@@ -40,10 +40,15 @@ Figgliz uses the same multilingual product-page system and adds:
 
 - Presentation pages in English, French, Spanish, Italian and German.
 - Product FAQ pages with localized SEO metadata and FAQ structured data.
+- Localized statistics pages that mirror the Figgliz live counters from a public JSON feed.
 - Product-specific privacy policy and terms of use pages.
 - Optimized WebP assets under `/assets/figgliz/`.
 - Pricing cards for Free, Plus, Pro and the Pro Lifetime launch offer.
 - Coming-soon install buttons while the extension remains in volunteer beta testing.
+
+## Home Positioning
+
+The home page now presents ArcaWand Soft as a hybrid product studio: serious productivity tools such as Ultimate Clipboard Pro, plus lighter private social experiences such as Figgliz. Featured app blocks should stay localized, responsive and visually consistent across all five languages.
 
 The default route is:
 
