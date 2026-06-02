@@ -5,6 +5,8 @@ const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
 const demoScript = "/assets/ucp-demo.js?v=20260516-card-view-compact";
 const demoStylesheet = "/assets/ucp-demo.css?v=20260516-demo-install-cta";
+const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
+const socialImageAlt = "Ultimate Clipboard Pro browser extension preview";
 
 const langs = {
   en: {
@@ -771,6 +773,13 @@ function structuredData(lang, page, title, desc, canonical) {
       name: title,
       headline: title,
       description: desc,
+      image: socialImage,
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: socialImage,
+        width: 1200,
+        height: 675
+      },
       url: canonical,
       inLanguage: l.html,
       isPartOf: {
@@ -792,7 +801,8 @@ function structuredData(lang, page, title, desc, canonical) {
         "@type": "SoftwareApplication",
         name: "Ultimate Clipboard Pro",
         applicationCategory: "BrowserApplication",
-        operatingSystem: "Chrome"
+        operatingSystem: "Chrome",
+        image: socialImage
       }
     }
   ];
@@ -883,11 +893,17 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="https://arcawand-soft.com/assets/ultimate-keyboard-pro-preview-social-networks.png">
+<meta property="og:image" content="${socialImage}">
+<meta property="og:image:secure_url" content="${socialImage}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="${socialImageAlt}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<meta name="twitter:image" content="https://arcawand-soft.com/assets/ultimate-keyboard-pro-preview-social-networks.png">
+<meta name="twitter:image" content="${socialImage}">
+<meta name="twitter:image:alt" content="${socialImageAlt}">
 ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">

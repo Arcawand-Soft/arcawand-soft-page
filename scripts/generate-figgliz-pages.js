@@ -5,6 +5,8 @@ const root = path.resolve(__dirname, "..");
 const sourceAssets = path.resolve(root, "..", "figgliz", "server", "public", "stats", "assets", "images");
 const figglizAssets = path.join(root, "assets", "figgliz");
 const extensionLegalContent = require("./figgliz-extension-legal-content.json");
+const socialImage = "https://arcawand-soft.com/assets/Figgliz_SEO_Image.png";
+const socialImageAlt = "Figgliz Chrome extension preview";
 
 const langs = {
   en: {
@@ -483,6 +485,7 @@ function structuredData(lang, page, title, desc) {
       operatingSystem: "Chrome",
       description: l.pageDesc.presentation,
       url: absProduct(lang, "presentation"),
+      image: socialImage,
       offers: { "@type": "AggregateOffer", lowPrice: "0", highPrice: "99", priceCurrency: "EUR" },
       publisher: { "@type": "Organization", name: "ArcaWand Soft", url: "https://arcawand-soft.com/" }
     },
@@ -492,10 +495,12 @@ function structuredData(lang, page, title, desc) {
       name: title,
       headline: title,
       description: desc,
+      image: socialImage,
+      primaryImageOfPage: { "@type": "ImageObject", url: socialImage, width: 1200, height: 675 },
       url: canonical,
       inLanguage: l.html,
       isPartOf: { "@type": "WebSite", name: "ArcaWand Soft", url: "https://arcawand-soft.com/" },
-      about: { "@type": "SoftwareApplication", name: "Figgliz", applicationCategory: "BrowserApplication" }
+      about: { "@type": "SoftwareApplication", name: "Figgliz", applicationCategory: "BrowserApplication", image: socialImage }
     }
   ];
   if (page === "faq") {
@@ -638,11 +643,17 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="https://arcawand-soft.com/assets/figgliz/figgliz-head.webp">
+<meta property="og:image" content="${socialImage}">
+<meta property="og:image:secure_url" content="${socialImage}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="${socialImageAlt}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<meta name="twitter:image" content="https://arcawand-soft.com/assets/figgliz/figgliz-head.webp">
+<meta name="twitter:image" content="${socialImage}">
+<meta name="twitter:image:alt" content="${socialImageAlt}">
 ${structuredData(lang, page, title, desc)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
