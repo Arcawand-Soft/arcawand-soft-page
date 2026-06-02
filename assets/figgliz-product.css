@@ -181,6 +181,20 @@ body.figgliz-static-page {
   overflow: hidden;
 }
 
+.figgliz-demo-shot {
+  width: min(1180px, calc(100% - 32px));
+  margin: clamp(2.4rem, 5vw, 4.6rem) auto clamp(2rem, 4.5vw, 4rem);
+}
+
+.figgliz-demo-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: clamp(1.2rem, 2.4vw, 2rem);
+  border: 1px solid rgba(255, 255, 255, .15);
+  box-shadow: 0 30px 86px rgba(0, 0, 0, .34);
+}
+
 .figgliz-game-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
