@@ -127,6 +127,7 @@ h1 { margin: 22px 0 18px; font-size: clamp(3rem, 7vw, 6.9rem); line-height: .89;
 .product-poster-card picture, .product-poster-card img { width: 100%; display: block; }
 .product-poster-card img { height: auto; object-fit: contain; }
 .product-copy { max-width: 900px; margin: 0 auto; text-align: center; }
+.product-copy + .product-poster-card { margin-top: clamp(1.8rem, 4vw, 3rem); }
 .product-copy ul { display: grid; gap: 12px; max-width: 760px; padding: 0; margin: 22px auto 0; list-style: none; text-align: left; }
 .product-copy .hero-actions { justify-content: center; }
 .product-copy li { display: flex; gap: 10px; color: hsl(var(--muted-foreground)); font-weight: 700; line-height: 1.5; }
