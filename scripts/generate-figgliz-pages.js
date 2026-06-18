@@ -300,28 +300,28 @@ const pricingCopy = {
 const pricingBenefits = {
   en: {
     free: ["Unlimited texts", "3 voice notes per day", "3 video requests per day", "15-second wait for Next", "Receive game invitations"],
-    plus: ["Unlimited voice notes", "30 video requests per day", "Webcam backgrounds", "Advanced language filters", "Advanced gender filters", "Send game invitations", "3-second wait for Next", "Designed for regular conversations"],
-    pro: ["Unlimited video requests", "Webcam backgrounds", "Video Pause feature", "Send game invitations", "Instant Next", "Queue priority", "Beta access to new features", "Best experience for frequent use"]
+    plus: ["Unlimited voice notes", "30 video requests per day", "Webcam backgrounds", "Advanced language filters", "Advanced gender filters", "Send game invitations", "3-second wait for Next", "Conversation history", "Designed for regular conversations"],
+    pro: ["Unlimited video requests", "Webcam backgrounds", "Video Pause feature", "Send game invitations", "Instant Next", "Queue priority", "Beta access to new features", "Conversation history", "Best experience for frequent use"]
   },
   fr: {
     free: ["Textes illimités", "3 vocaux par jour", "3 demandes vidéo par jour", "15 secondes d'attente pour Next", "Réception d'invitation aux jeux"],
-    plus: ["Vocaux illimités", "30 demandes vidéo par jour", "Fonds de webcam", "Filtres avancés de langue", "Filtres avancés de genre", "Envoi d'invitation aux jeux", "3 secondes d'attente pour Next", "Conçu pour discuter régulièrement"],
-    pro: ["Demandes vidéo illimitées", "Fonds de webcam", "Fonction Pause Vidéo", "Envoi d'invitation aux jeux", "Next instantanés", "Priorité dans la file", "Accès bêta aux nouveautés", "Meilleure expérience pour usage fréquent"]
+    plus: ["Vocaux illimités", "30 demandes vidéo par jour", "Fonds de webcam", "Filtres avancés de langue", "Filtres avancés de genre", "Envoi d'invitation aux jeux", "3 secondes d'attente pour Next", "Historique de conversation", "Conçu pour discuter régulièrement"],
+    pro: ["Demandes vidéo illimitées", "Fonds de webcam", "Fonction Pause Vidéo", "Envoi d'invitation aux jeux", "Next instantanés", "Priorité dans la file", "Accès bêta aux nouveautés", "Historique de conversation", "Meilleure expérience pour usage fréquent"]
   },
   es: {
     free: ["Textos ilimitados", "3 notas de voz al día", "3 solicitudes de vídeo al día", "15 segundos de espera para Next", "Recibir invitaciones a juegos"],
-    plus: ["Notas de voz ilimitadas", "30 solicitudes de vídeo al día", "Fondos de webcam", "Filtros avanzados de idioma", "Filtros avanzados de género", "Enviar invitaciones a juegos", "3 segundos de espera para Next", "Pensado para conversar a menudo"],
-    pro: ["Solicitudes de vídeo ilimitadas", "Fondos de webcam", "Función Pausa de vídeo", "Enviar invitaciones a juegos", "Next instantáneo", "Prioridad en la cola", "Acceso beta a novedades", "Mejor experiencia para uso frecuente"]
+    plus: ["Notas de voz ilimitadas", "30 solicitudes de vídeo al día", "Fondos de webcam", "Filtros avanzados de idioma", "Filtros avanzados de género", "Enviar invitaciones a juegos", "3 segundos de espera para Next", "Historial de conversación", "Pensado para conversar a menudo"],
+    pro: ["Solicitudes de vídeo ilimitadas", "Fondos de webcam", "Función Pausa de vídeo", "Enviar invitaciones a juegos", "Next instantáneo", "Prioridad en la cola", "Acceso beta a novedades", "Historial de conversación", "Mejor experiencia para uso frecuente"]
   },
   it: {
     free: ["Testi illimitati", "3 vocali al giorno", "3 richieste video al giorno", "15 secondi di attesa per Next", "Ricezione di inviti ai giochi"],
-    plus: ["Vocali illimitati", "30 richieste video al giorno", "Sfondi webcam", "Filtri avanzati di lingua", "Filtri avanzati di genere", "Invio di inviti ai giochi", "3 secondi di attesa per Next", "Pensato per conversare regolarmente"],
-    pro: ["Richieste video illimitate", "Sfondi webcam", "Funzione Pausa video", "Invio di inviti ai giochi", "Next istantaneo", "Priorità in coda", "Accesso beta alle novità", "Esperienza migliore per uso frequente"]
+    plus: ["Vocali illimitati", "30 richieste video al giorno", "Sfondi webcam", "Filtri avanzati di lingua", "Filtri avanzati di genere", "Invio di inviti ai giochi", "3 secondi di attesa per Next", "Cronologia delle conversazioni", "Pensato per conversare regolarmente"],
+    pro: ["Richieste video illimitate", "Sfondi webcam", "Funzione Pausa video", "Invio di inviti ai giochi", "Next istantaneo", "Priorità in coda", "Accesso beta alle novità", "Cronologia delle conversazioni", "Esperienza migliore per uso frequente"]
   },
   de: {
     free: ["Unbegrenzte Texte", "3 Sprachnachrichten pro Tag", "3 Videoanfragen pro Tag", "15 Sekunden Wartezeit für Next", "Spieleinladungen empfangen"],
-    plus: ["Unbegrenzte Sprachnachrichten", "30 Videoanfragen pro Tag", "Webcam-Hintergründe", "Erweiterte Sprachfilter", "Erweiterte Geschlechtsfilter", "Spieleinladungen senden", "3 Sekunden Wartezeit für Next", "Für regelmäßige Gespräche gedacht"],
-    pro: ["Unbegrenzte Videoanfragen", "Webcam-Hintergründe", "Video-Pause-Funktion", "Spieleinladungen senden", "Sofortiges Next", "Priorität in der Warteschlange", "Beta-Zugriff auf Neuheiten", "Beste Erfahrung für häufige Nutzung"]
+    plus: ["Unbegrenzte Sprachnachrichten", "30 Videoanfragen pro Tag", "Webcam-Hintergründe", "Erweiterte Sprachfilter", "Erweiterte Geschlechtsfilter", "Spieleinladungen senden", "3 Sekunden Wartezeit für Next", "Gesprächsverlauf", "Für regelmäßige Gespräche gedacht"],
+    pro: ["Unbegrenzte Videoanfragen", "Webcam-Hintergründe", "Video-Pause-Funktion", "Spieleinladungen senden", "Sofortiges Next", "Priorität in der Warteschlange", "Beta-Zugriff auf Neuheiten", "Gesprächsverlauf", "Beste Erfahrung für häufige Nutzung"]
   }
 };
 

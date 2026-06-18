@@ -44,6 +44,8 @@ Figgliz uses the same multilingual product-page system and adds:
 - Product-specific privacy policy and terms of use pages.
 - Optimized WebP assets under `/assets/figgliz/`.
 - Pricing cards for Free, Plus, Pro and the Pro Lifetime launch offer.
+- Plus and Pro offer cards include conversation history as a localized benefit across monthly, yearly and launch-offer views.
+- FAQ, privacy policy and terms content should stay synchronized with the latest Figgliz extension legal/about content before publishing.
 - Coming-soon install buttons while the extension remains in volunteer beta testing.
 
 ## Home Positioning

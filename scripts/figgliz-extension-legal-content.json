@@ -1,4 +1,4 @@
-﻿{
+{
   "en": {
     "faq": {
       "title": "FAQ",
@@ -15,6 +15,10 @@
         {
           "title": "How do I start?",
           "body": "Choose your settings, become available, and let the extension search using languages, accepted genders, and availability."
+        },
+        {
+          "title": "The extension cannot connect to the server. What could cause this?",
+          "body": "First check your internet connection and make sure normal browsing works in your browser. Some VPNs do not allow P2P connections. Because Figgliz mainly works through P2P, also test the extension with the VPN temporarily disabled."
         },
         {
           "title": "How do I stop or switch?",
@@ -83,6 +87,14 @@
         {
           "title": "How can I contact support?",
           "body": "Email contact@arcawand-soft.com for support, privacy, safety, or billing."
+        },
+        {
+          "title": "Where is conversation history stored?",
+          "body": "It is stored locally in Chrome on the User's device. Figgliz does not keep a server database for replaying conversations: the server handles connection, licenses, quotas, reports, and safety, but does not provide centralized access to your history."
+        },
+        {
+          "title": "What happens if I forget the history password?",
+          "body": "Access is intentionally protected. The secret question may allow local reset, but for safety this deletes the entire local history before a new access is created. Figgliz cannot recover or read this history for you."
         }
       ]
     },
@@ -133,60 +145,166 @@
         {
           "title": "Contact",
           "body": "Support, privacy, safety, or billing: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Local history and user control",
+          "body": "When history is enabled, eligible conversation items are kept locally by the extension on the User's device. The User stays in control: a single conversation or the entire history can be deleted from the dedicated interface."
+        },
+        {
+          "title": "Password and no server access",
+          "body": "History is protected by a local password and secret question. The password is not intended to be sent to the server for remote reading. If it is forgotten or reset, full deletion of the local history is required to prevent unauthorized access."
         }
       ]
     },
     "terms": {
-      "title": "Terms of Use",
-      "lead": "These terms define respectful, safe, and fair use of Figgliz, including Free, Plus, Pro, and Pro Lifetime plans.",
+      "title": "Figgliz Terms of Use",
+      "lead": "Version dated June 8, 2026. These Terms govern access to and use of the Figgliz Chrome extension, published by Arcawand Soft. They form an agreement between Arcawand Soft and each User.",
+      "version": "2026-06-18",
       "sections": [
         {
-          "title": "Acceptance",
-          "body": "By using Figgliz, you accept these terms, onboarding commitments, and rules applicable in your country."
+          "title": "Article 1 - Definitions",
+          "body": "In these Terms, Figgliz means the Chrome extension, its interfaces, chat, webcam, game, moderation, license and related technical services. User means any person who installs, opens, configures or uses Figgliz, whether under Free, Plus, Pro or a launch offer.",
+          "items": [
+            "Arcawand Soft means the service publisher.",
+            "Dodo Payments means the provider that may process payments and paid license management.",
+            "Services include matching, text chat, voice notes, P2P webcam, mini-games, emojis, notifications, settings, reports and safety controls."
+          ]
         },
         {
-          "title": "Age and capacity",
-          "body": "You must have the required legal age and capacity to use a service that connects you with strangers. Minors must not use it without an appropriate legal framework and supervision."
+          "title": "Article 2 - Acceptance",
+          "body": "Installing, opening, becoming available, sending a message, accepting an invitation, using webcam, voice, games or paid features means full acceptance of these Terms. The User must read them before using Figgliz and stop using the service if they do not accept them.",
+          "items": [
+            "The essential commitments shown during onboarding do not replace these complete Terms.",
+            "Arcawand Soft may refuse, limit, suspend or interrupt access in case of breach, safety risk, abuse, fraud, dangerous behavior or a legitimate request from a competent authority."
+          ]
         },
         {
-          "title": "Respect and safety",
-          "body": "Harassment, threats, hate, discrimination, forced nudity, illegal content, exploitation, manipulation, scams, doxxing, dangerous incitement, and bypassing controls are forbidden."
+          "title": "Article 3 - Age, capacity and minors",
+          "body": "Figgliz is intended for adult Users with legal capacity under the laws applicable in their country of residence. Minors must not use Figgliz alone and must never use it where local law, parental authority or child-protection rules prohibit it.",
+          "items": [
+            "Any User stating they are a minor, appearing to be a minor or creating doubt about their age must be reported immediately.",
+            "No adult may seek private, intimate, insistent or unsupervised contact with a minor through Figgliz.",
+            "The User remains responsible for checking local obligations before using an online random connection service."
+          ]
         },
         {
-          "title": "Personal contact details",
-          "body": "Avoid sharing phone, email, address, social accounts, documents, bank details, school, workplace, schedule, or anything that identifies you."
+          "title": "Article 4 - Service description",
+          "body": "Figgliz enables random anonymous exchanges between Users through text, short voice notes, invitation-based webcam sessions, 1v1 mini-games, emojis and moderation tools. The service does not guarantee the identity, availability, sincerity, behavior, location or compatibility of the other User.",
+          "items": [
+            "Matching depends on availability, preferences, quotas, technical limits, network conditions and anti-abuse measures.",
+            "Webcam relies on WebRTC and may be unavailable or degraded depending on browser, network, VPN, firewall, device or Chrome permissions.",
+            "Games and visual effects are entertainment features with no guarantee of result, permanent ranking or continuous availability."
+          ]
         },
         {
-          "title": "Video and consent",
-          "body": "Video is optional. Do not record, broadcast, or capture another person's image, voice, or environment without consent and a legal basis."
+          "title": "Article 5 - Free, Plus, Pro and launch offers",
+          "body": "Figgliz may offer Free access and paid Figgliz Plus, Figgliz Pro, monthly, yearly or launch plans, including Pro Lifetime when displayed. Features, quotas, priorities, cooldowns, limits, prices and benefits are those shown in the extension, premium page or checkout at the time of purchase.",
+          "items": [
+            "Free may include daily limits, including voice notes, webcam requests, Next or advanced options.",
+            "Plus and Pro may unlock comfort, more usage, filters, priority, video customization, webcam backgrounds or beta features.",
+            "Any feature described as unlimited remains subject to fair use, technical availability, abuse prevention and service stability.",
+            "Beta, experimental or launch features may evolve, be suspended, replaced or adjusted for technical, business, legal or safety reasons."
+          ]
         },
         {
-          "title": "Plans and benefits",
-          "body": "Free, Plus, Pro, Pro Monthly, Pro Yearly, and Pro Lifetime grant different rights. Benefits remain subject to technical availability, fair use, and anti-abuse protections."
+          "title": "Article 6 - Payment, Dodo Payments, renewal and license",
+          "body": "Paid plans may be processed by Dodo Payments. Price, tax, currency, term, renewal, cancellation, subscription management, possible refund and payment conditions are shown at checkout and may depend on Dodo Payments rules and applicable law.",
+          "items": [
+            "Monthly and yearly subscriptions may renew automatically until cancelled by the User through the payment portal or indicated flow.",
+            "The license is personal, non-exclusive, non-transferable, non-resellable and limited to normal User use.",
+            "Arcawand Soft may verify license status, product, period, payment state and rights to enable or remove paid features.",
+            "Fraud, mass sharing, resale, falsification, license bypass or attempted undue access may lead to suspension or deactivation."
+          ]
         },
         {
-          "title": "Lifetime offer",
-          "body": "Pro Lifetime means lifetime access to the Pro plan under the checkout terms. It does not guarantee that every beta or experimental feature will exist forever."
+          "title": "Article 7 - Conduct rules",
+          "body": "The User agrees to act respectfully, carefully, honestly and lawfully. Hate speech, threats, harassment, intimidation, discrimination, doxxing, scams, blackmail, manipulation, impersonation, unsolicited sexual content, exploitation, violence incitement, unlawful behavior or harm to others are prohibited.",
+          "items": [
+            "The User must not bypass blocking, reports, quotas, moderation, licenses, matching or safety tools.",
+            "The User must not automate, scrape, disrupt, overload, decompile or modify Figgliz outside permitted uses.",
+            "The User must leave, block or report any dangerous, intrusive, insistent or non-compliant interaction."
+          ]
         },
         {
-          "title": "License",
-          "body": "A license key is personal. You must not resell, mass-share, falsify, extract, bypass, or use it to deceive server validations."
+          "title": "Article 8 - Personal safety and offline meetings",
+          "body": "Figgliz does not recommend physical meetings with unknown people. If a User chooses, under their sole responsibility, to meet someone offline, strict precautions are required: public place, informing a trusted person, independent transport, no isolation, no financial sharing, no pressure and immediate ability to leave.",
+          "items": [
+            "Never go alone to a private place with someone met through the extension.",
+            "Tell a trusted person the time, place and known identity information where lawful.",
+            "Never send money, documents, codes, sensitive photos, banking data, address, workplace, school or personal schedule.",
+            "Stop any exchange involving pressure, secrecy, threats, insistence or inconsistencies."
+          ]
         },
         {
-          "title": "Anti-cheat and VPS",
-          "body": "You must not manipulate the extension, traffic, quotas, action tokens, license calls, or game state to gain an unfair advantage."
+          "title": "Article 9 - Personal data, confidentiality and content",
+          "body": "The User should avoid sharing their own contact details and must never collect, publish, sell, exploit or distribute another User's details. Messages, voice, images, environment, screenshots, preferences or metadata must not be used against someone or published without lawful basis and appropriate consent.",
+          "items": [
+            "Recording, capturing, rebroadcasting or publishing another User's voice, image, webcam, environment or messages without valid authorization is prohibited.",
+            "Reports may include information useful for safety, abuse review, blocking, quotas or moderation.",
+            "Figgliz is not designed as chat storage and must not be used to keep evidence without complying with applicable law."
+          ]
         },
         {
-          "title": "Reports",
-          "body": "Reports must be made in good faith. Abusive reporting may lead to restrictions."
+          "title": "Article 10 - Webcam, audio, P2P and technical limits",
+          "body": "Webcam and audio sessions are optional, invitation or acceptance based, and depend on browser, permissions, devices, network, VPN, firewalls and WebRTC capabilities. The User understands that peer-to-peer mode can fail or degrade and that Figgliz may display unavailability messages without guaranteeing immediate resolution.",
+          "items": [
+            "The User remains responsible for what they show, stream or say on camera.",
+            "Webcam backgrounds, filters, blur, effects, settings or optimizations are provided on a best-efforts basis and may vary by device.",
+            "Arcawand Soft does not guarantee continuity, latency, quality, compatibility or absence of interruption of an audio/video session."
+          ]
         },
         {
-          "title": "Availability",
-          "body": "The service may be changed, paused, limited, or restarted for maintenance, safety, compliance, technical improvement, or server load."
+          "title": "Article 11 - Moderation, reports and protection measures",
+          "body": "Arcawand Soft may use automatic or manual abuse-prevention tools: quotas, blocks, reports, contact-detail detection, license checks, feature limits, technical logs, tokens, server checks and proportionate safety measures.",
+          "items": [
+            "Abusive, false or weaponized reports may themselves breach these Terms.",
+            "Protection measures may be applied without notice where there is a risk to Users, service, infrastructure or legal compliance.",
+            "Arcawand Soft may cooperate with competent authorities where legally required."
+          ]
         },
         {
-          "title": "Responsibility",
-          "body": "Each user remains responsible for messages, behavior, video invitations, decisions, and consequences. Figgliz provides controls but does not replace judgment."
+          "title": "Article 12 - Liability and warranties",
+          "body": "Figgliz is provided as is, to the extent permitted by law. Arcawand Soft does not guarantee uninterrupted operation, absence of errors, compatibility with all sites, devices, browsers, VPNs or networks, or that exchanges will be useful, pleasant, safe or consistent with each User's expectations.",
+          "items": [
+            "The User is solely responsible for their messages, choices, invitations, acceptances, refusals, meetings, sharing and behavior.",
+            "Arcawand Soft cannot guarantee another User's identity or intentions.",
+            "Nothing limits mandatory rights that the User has under applicable law."
+          ]
+        },
+        {
+          "title": "Article 13 - Changes, suspension and end of service",
+          "body": "Arcawand Soft may evolve Figgliz, add, remove, limit, rename or modify features, offers, prices, quotas, games, effects, pages, rules or technologies to improve safety, quality, stability, compliance and service viability.",
+          "items": [
+            "The User may stop using the extension, uninstall it or manage their plan through available means.",
+            "Some local data may remain in Chrome until removed by the User or browser.",
+            "These Terms may be updated. Continued use after an update means acceptance where permitted by law."
+          ]
+        },
+        {
+          "title": "Article 14 - Contact",
+          "body": "For questions about Figgliz, these Terms, a license, privacy, safety or a report, the User may contact Arcawand Soft at contact@arcawand-soft.com.",
+          "items": [
+            "Requests should be precise and include only strictly necessary information.",
+            "In an emergency or immediate danger, the User must contact emergency services or competent authorities in their country before any other step."
+          ]
+        },
+        {
+          "title": "Article 17 - Local conversation history",
+          "body": "When the feature is available to the User, conversation history lets the User locally review meaningful exchanges and events, including messages, voice notes, animated emojis, accepted invitations, calls, webcams, games and scores. This history is not stored on Figgliz servers and Arcawand Soft has no direct access to its content. It remains on the User's device, under the User's exclusive control, subject to browser and system limits.",
+          "items": [
+            "The User may delete one conversation or the entire history from the dedicated interface.",
+            "A simple match without any message or accepted invitation is not intended to create an exploitable archive.",
+            "The User remains responsible for the confidentiality of the device, Chrome session and anyone who can access it."
+          ]
+        },
+        {
+          "title": "Article 18 - Password, lost access and security deletion",
+          "body": "Access to local history is protected by a password chosen by the User. Figgliz does not store that password in plain text and does not provide a server mechanism allowing Arcawand Soft to read, extract or restore the history without it. If the password is forgotten, reset is requested, or the secret question cannot be verified, the User accepts that recovering access requires permanent deletion of the relevant local history. This deletion protects privacy and cannot be reversed by Arcawand Soft.",
+          "items": [
+            "The User must choose a strong enough password and keep the secret answer confidential.",
+            "Uninstalling the browser, deleting extension data, system cleanup or device reset may delete local history.",
+            "Arcawand Soft cannot guarantee preservation of local history deleted by the User, browser, system or a third-party tool."
+          ]
         }
       ]
     }
@@ -207,6 +325,10 @@
         {
           "title": "Comment démarrer ?",
           "body": "Choisissez vos réglages, passez disponible, puis laissez l'extension chercher une personne compatible selon les langues, genres acceptés et disponibilités."
+        },
+        {
+          "title": "L'extension n'arrive pas à se connecter au serveur. À quoi cela est dû ?",
+          "body": "Vérifie d'abord ta connexion internet et que la navigation fonctionne normalement dans ton navigateur. Certains VPN n'autorisent pas les connexions P2P. Comme Figgliz fonctionne principalement en P2P, teste aussi l'extension en désactivant temporairement le VPN."
         },
         {
           "title": "Comment arrêter ou changer de personne ?",
@@ -275,6 +397,14 @@
         {
           "title": "Comment contacter le support ?",
           "body": "Écrivez à contact@arcawand-soft.com pour support, confidentialité, sécurité ou facturation."
+        },
+        {
+          "title": "Où est stocké l'historique des conversations ?",
+          "body": "Il est stocké localement dans Chrome sur l'appareil de l'Utilisateur. Figgliz ne conserve pas une base serveur permettant de relire les conversations : le serveur traite la connexion, les licences, les quotas, les signalements et la sécurité, mais ne fournit pas un accès centralisé à votre historique."
+        },
+        {
+          "title": "Que se passe-t-il si j'oublie le mot de passe de l'historique ?",
+          "body": "L'accès est volontairement protégé. La question secrète peut permettre une réinitialisation locale, mais par sécurité cette opération supprime l'intégralité de l'historique local avant de recréer un accès. Figgliz ne peut pas récupérer ni lire cet historique à votre place."
         }
       ]
     },
@@ -325,60 +455,166 @@
         {
           "title": "Contact",
           "body": "Support, confidentialité, sécurité ou facturation : contact@arcawand-soft.com."
+        },
+        {
+          "title": "Historique local et contrôle utilisateur",
+          "body": "Quand l'historique est activé, les éléments de conversation admissibles sont conservés localement par l'extension, sur l'appareil de l'Utilisateur. L'Utilisateur garde le contrôle : il peut supprimer une conversation précise ou effacer tout l'historique depuis l'interface dédiée."
+        },
+        {
+          "title": "Mot de passe et absence d'accès serveur",
+          "body": "L'historique est protégé par un mot de passe local et une question secrète. Le mot de passe n'a pas vocation à être transmis au serveur pour permettre une lecture distante. En cas d'oubli ou de réinitialisation, la suppression intégrale de l'historique local est imposée pour éviter un accès non autorisé."
         }
       ]
     },
     "terms": {
-      "title": "Conditions générales d'utilisation",
-      "lead": "Ces conditions encadrent une utilisation respectueuse, sûre et loyale de Figgliz, y compris les offres Free, Plus, Pro et Pro Lifetime.",
+      "title": "Conditions generales d'utilisation de Figgliz",
+      "lead": "Version du 8 juin 2026. Ces conditions encadrent l'acces et l'utilisation de l'extension Chrome Figgliz, editee par Arcawand Soft. Elles constituent un accord entre Arcawand Soft et chaque Utilisateur.",
+      "version": "2026-06-18",
       "sections": [
         {
-          "title": "Acceptation",
-          "body": "En utilisant Figgliz, vous acceptez ces conditions, les engagements de bienvenue et les règles applicables dans votre pays."
+          "title": "Article 1 - Definitions",
+          "body": "Dans les presentes conditions, Figgliz designe l'extension Chrome, ses interfaces, ses modules de discussion, de webcam, de jeux, de moderation, de licence et les services techniques associes. L'Utilisateur designe toute personne qui installe, ouvre, configure ou utilise Figgliz, qu'elle dispose d'un acces Free, Plus, Pro ou d'une offre de lancement.",
+          "items": [
+            "Arcawand Soft designe l'editeur du service.",
+            "Dodo Payments designe le prestataire susceptible de traiter les paiements et la gestion des licences payantes.",
+            "Les Services incluent notamment le matching, le chat texte, les vocaux, la webcam P2P, les mini-jeux, les emojis, les notifications, les reglages, les signalements et les controles de securite."
+          ]
         },
         {
-          "title": "Age et capacité",
-          "body": "Vous devez avoir l'âge légal requis et la capacité d'utiliser un service de discussion avec des inconnus. Les mineurs ne doivent pas utiliser le service sans cadre légal et supervision appropriée."
+          "title": "Article 2 - Acceptation et opposabilite",
+          "body": "L'installation, l'ouverture, la creation d'une disponibilite, l'envoi d'un message, l'acceptation d'une invitation, l'utilisation d'une webcam, d'un vocal, d'un jeu ou d'une fonctionnalite payante valent acceptation pleine et entiere des presentes conditions. L'Utilisateur doit les lire avant d'utiliser Figgliz et cesser toute utilisation s'il ne les accepte pas.",
+          "items": [
+            "L'Utilisateur reconnait que les engagements essentiels presentes dans le Welcome ne remplacent pas les presentes conditions completes.",
+            "Arcawand Soft peut refuser, limiter, suspendre ou interrompre l'acces en cas de violation, risque de securite, abus, fraude, comportement dangereux ou demande legitime d'une autorite competente."
+          ]
         },
         {
-          "title": "Respect et sécurité",
-          "body": "Sont interdits : harcèlement, menaces, haine, discrimination, nudité imposée, contenu illégal, exploitation, manipulation, arnaque, doxxing, incitation dangereuse et contournement des contrôles."
+          "title": "Article 3 - Age, capacite et mineurs",
+          "body": "Figgliz est destine aux Utilisateurs majeurs et juridiquement capables selon la legislation applicable dans leur pays de residence. Les mineurs ne doivent pas utiliser Figgliz seuls et ne doivent jamais l'utiliser lorsque la loi locale, l'autorite parentale ou les regles de protection des mineurs l'interdisent.",
+          "items": [
+            "Tout Utilisateur qui declare etre mineur, semble mineur ou adopte un comportement laissant douter de son age doit etre signale immediatement.",
+            "Aucun adulte ne doit chercher a entrer en relation privee, intime, insistante ou non encadree avec un mineur via Figgliz.",
+            "L'Utilisateur demeure responsable de verifier ses obligations legales locales avant d'utiliser un service de rencontre aleatoire en ligne."
+          ]
         },
         {
-          "title": "Coordonnées personnelles",
-          "body": "Évitez de partager téléphone, email, adresse, réseaux sociaux, documents, informations bancaires, école, travail, planning ou tout élément permettant de vous identifier."
+          "title": "Article 4 - Description du service",
+          "body": "Figgliz permet des echanges aleatoires et anonymes entre Utilisateurs au moyen de textes, vocaux courts, sessions webcam sur invitation, mini-jeux 1v1, emojis et outils de moderation. Le service ne garantit ni l'identite, ni la disponibilite, ni la sincerite, ni le comportement, ni la localisation, ni la compatibilite de l'autre Utilisateur.",
+          "items": [
+            "Le matching depend des disponibilites, preferences, quotas, limites techniques, connexions reseau et mesures anti-abus.",
+            "La webcam repose sur WebRTC et peut etre indisponible ou degradee selon le navigateur, le reseau, le VPN, le pare-feu, l'appareil ou les permissions Chrome.",
+            "Les jeux et effets visuels restent des fonctionnalites de divertissement, sans garantie de resultat, de classement permanent ou de disponibilite continue."
+          ]
         },
         {
-          "title": "Vidéo et consentement",
-          "body": "La vidéo est optionnelle. N'enregistrez, ne diffusez et ne capturez pas l'image, la voix ou l'environnement d'une personne sans consentement et base légale."
+          "title": "Article 5 - Comptes, acces Free, Plus, Pro et offre de lancement",
+          "body": "Figgliz peut proposer un acces Free et des offres payantes Figgliz Plus, Figgliz Pro, annuelles, mensuelles ou de lancement, dont une offre Pro Lifetime lorsqu'elle est affichee. Les fonctionnalites, quotas, priorites, cooldowns, limites, prix et avantages applicables sont ceux presentes dans l'extension, dans la page premium ou au checkout au moment de la souscription.",
+          "items": [
+            "Free peut inclure des limitations quotidiennes, notamment sur les vocaux, les demandes webcam, Next ou certaines options avancees.",
+            "Plus et Pro peuvent debloquer davantage de confort, d'usages, de filtres, de priorite, de personnalisation video, de fonds de webcam ou de fonctionnalites beta.",
+            "Une fonctionnalite dite illimitee reste soumise a un usage raisonnable, a la disponibilite technique, a la prevention des abus et a la stabilite du service.",
+            "Les offres beta, experimentales ou de lancement peuvent evoluer, etre suspendues, remplacees ou ajustees pour des raisons techniques, commerciales, legales ou de securite."
+          ]
         },
         {
-          "title": "Offres et avantages",
-          "body": "Free, Plus, Pro, Pro Monthly, Pro Yearly et Pro Lifetime donnent des droits différents. Les avantages restent soumis à la disponibilité technique, à l'usage raisonnable et aux protections anti-abus."
+          "title": "Article 6 - Paiement, Dodo Payments, renouvellement et licence",
+          "body": "Les paiements des offres payantes peuvent etre traites par Dodo Payments. Les informations de prix, taxes, devise, periode, renouvellement, annulation, gestion de l'abonnement, remboursement eventuel et conditions de paiement sont affichees au moment du checkout et peuvent dependre des regles de Dodo Payments et de la loi applicable.",
+          "items": [
+            "Les abonnements mensuels et annuels peuvent etre renouveles tacitement jusqu'a annulation par l'Utilisateur selon les modalites disponibles dans le portail de paiement ou le parcours indique.",
+            "La licence est personnelle, non exclusive, non cessible, non revendable et limitee a l'usage normal de l'Utilisateur.",
+            "Arcawand Soft peut verifier le statut d'une licence, son produit, sa periode, son etat de paiement et ses droits afin d'activer ou retirer les fonctionnalites payantes.",
+            "Toute fraude, partage massif, revente, falsification, contournement de licence ou tentative d'acces indu peut entrainer la suspension ou la desactivation de l'acces."
+          ]
         },
         {
-          "title": "Offre Lifetime",
-          "body": "Pro Lifetime correspond à un accès à vie au plan Pro selon les conditions affichées lors de l'achat. Elle ne garantit pas l'existence perpétuelle d'une fonctionnalité bêta ou expérimentalement testée."
+          "title": "Article 7 - Regles de comportement",
+          "body": "L'Utilisateur s'engage a adopter une conduite respectueuse, prudente, loyale et licite. Sont interdits les propos haineux, menaces, harcelement, intimidation, discrimination, doxxing, arnaque, chantage, manipulation, usurpation, contenu sexuel non sollicite, exploitation, incitation a la violence, illegalite ou toute conduite portant atteinte a autrui.",
+          "items": [
+            "L'Utilisateur ne doit pas contourner les outils de blocage, signalement, quota, moderation, licence, matching ou securite.",
+            "L'Utilisateur ne doit pas automatiser, scraper, perturber, surcharger, decompiler ou modifier Figgliz hors des usages permis.",
+            "L'Utilisateur doit quitter, bloquer ou signaler toute interaction dangereuse, intrusive, insistante ou contraire aux presentes conditions."
+          ]
         },
         {
-          "title": "Licence",
-          "body": "La clé de licence est personnelle. Il est interdit de la revendre, partager massivement, falsifier, extraire, contourner ou utiliser pour tromper les validations serveur."
+          "title": "Article 8 - Securite personnelle et rencontres hors ligne",
+          "body": "Figgliz ne recommande pas les rencontres physiques avec des personnes inconnues. Si un Utilisateur decide, sous sa seule responsabilite, de rencontrer quelqu'un hors ligne, il doit prendre des precautions strictes : lieu public, information d'un proche, trajet autonome, aucun isolement, aucun partage financier, aucune pression et possibilite de depart immediate.",
+          "items": [
+            "Ne jamais se rendre seul dans un lieu prive avec une personne rencontree via l'extension.",
+            "Prevenir un proche, partager l'heure, le lieu et l'identite connue de la personne lorsque la loi le permet.",
+            "Ne jamais envoyer d'argent, document, code, photo sensible, information bancaire, adresse, lieu de travail, etablissement scolaire ou planning personnel.",
+            "Interrompre tout echange en cas de pression, demande de secret, menace, insistance ou incoherence."
+          ]
         },
         {
-          "title": "Anti-triche et VPS",
-          "body": "Il est interdit de manipuler l'extension, le trafic, les quotas, les jetons d'action, les appels de licence ou l'état des jeux pour obtenir un avantage indu."
+          "title": "Article 9 - Donnees personnelles, confidentialite et contenus",
+          "body": "L'Utilisateur doit eviter de partager ses propres coordonnees et ne doit jamais collecter, publier, vendre, exploiter ou diffuser celles d'un autre Utilisateur. Les messages, vocaux, images, voix, environnements, captures, pseudos, preferences ou metadata ne doivent pas etre utilises contre une personne ni publies sans base legale et consentement approprie.",
+          "items": [
+            "Il est interdit d'enregistrer, capturer, rediffuser ou publier la voix, l'image, la webcam, le contexte ou les messages d'un autre Utilisateur sans autorisation valable.",
+            "Les signalements peuvent inclure des informations utiles a la securite, aux abus, aux blocages, aux quotas ou a la moderation.",
+            "Figgliz n'est pas concu comme un espace de stockage de conversation et ne doit pas etre utilise pour conserver des preuves sans respecter la loi applicable."
+          ]
         },
         {
-          "title": "Signalements",
-          "body": "Les signalements doivent être faits de bonne foi. Les abus de signalement peuvent entraîner des restrictions."
+          "title": "Article 10 - Webcam, audio, P2P et limites techniques",
+          "body": "Les sessions webcam et audio sont optionnelles, lancees sur invitation ou acceptation, et dependent du navigateur, des permissions, des appareils, du reseau, des VPN, pare-feu et capacites WebRTC. L'Utilisateur comprend que le mode peer-to-peer peut echouer ou etre degrade et que Figgliz peut afficher des messages d'indisponibilite sans garantir la resolution immediate.",
+          "items": [
+            "L'Utilisateur reste responsable de ce qu'il montre, diffuse ou dit devant la camera.",
+            "Les fonds de webcam, filtres, flous, effets, reglages ou optimisations sont fournis au mieux et peuvent varier selon l'appareil.",
+            "Arcawand Soft ne garantit pas la continuite, la latence, la qualite, la compatibilite ou l'absence d'interruption d'une session audio/video."
+          ]
         },
         {
-          "title": "Disponibilité",
-          "body": "Le service peut être modifié, interrompu, limité ou redémarré pour maintenance, sécurité, conformité, amélioration technique ou charge serveur."
+          "title": "Article 11 - Moderation, signalements et mesures de protection",
+          "body": "Arcawand Soft peut mettre en place des outils automatiques ou manuels de prevention des abus : quotas, blocages, signalements, detection de coordonnees, verifications de licence, limitation de fonctions, journaux techniques, tokens, controles serveur et mesures de securite proportionnees.",
+          "items": [
+            "Un signalement abusif, mensonger ou instrumentalise peut lui-meme constituer une violation.",
+            "Les mesures de protection peuvent etre appliquees sans preavis lorsqu'un risque existe pour les Utilisateurs, le service, l'infrastructure ou la conformite legale.",
+            "Arcawand Soft peut cooperer avec des autorites competentes lorsque la loi l'exige."
+          ]
         },
         {
-          "title": "Responsabilité",
-          "body": "Chaque utilisateur reste responsable de ses propos, comportements, invitations vidéo, décisions et conséquences. Figgliz fournit des outils de contrôle mais ne remplace pas le discernement."
+          "title": "Article 12 - Responsabilite et garanties",
+          "body": "Figgliz est fourni en l'etat, dans la limite autorisee par la loi. Arcawand Soft ne garantit pas que le service sera ininterrompu, exempt d'erreur, compatible avec tous les sites, appareils, navigateurs, VPN ou reseaux, ni que les echanges seront utiles, agreables, securises ou conformes aux attentes de chaque Utilisateur.",
+          "items": [
+            "L'Utilisateur est seul responsable de ses propos, choix, invitations, acceptations, refus, rencontres, partages et comportements.",
+            "Arcawand Soft ne peut pas garantir l'identite ou les intentions d'un autre Utilisateur.",
+            "Aucune disposition ne limite les droits imperatifs dont l'Utilisateur beneficie en vertu de la loi applicable."
+          ]
+        },
+        {
+          "title": "Article 13 - Evolution, suspension et fin du service",
+          "body": "Arcawand Soft peut faire evoluer Figgliz, ajouter, retirer, limiter, renommer ou modifier des fonctionnalites, offres, tarifs, quotas, jeux, effets, pages, regles ou technologies afin d'ameliorer la securite, la qualite, la stabilite, la conformite et la viabilite du service.",
+          "items": [
+            "L'Utilisateur peut cesser d'utiliser l'extension, la desinstaller ou gerer son offre via les moyens disponibles.",
+            "Certaines donnees locales peuvent rester dans Chrome jusqu'a suppression par l'Utilisateur ou par le navigateur.",
+            "Les presentes conditions peuvent etre mises a jour. La poursuite de l'utilisation apres mise a jour vaut acceptation lorsque la loi le permet."
+          ]
+        },
+        {
+          "title": "Article 14 - Contact",
+          "body": "Pour toute question relative a Figgliz, aux conditions, a une licence, a une demande de confidentialite, a une securite ou a un signalement, l'Utilisateur peut contacter Arcawand Soft a l'adresse contact@arcawand-soft.com.",
+          "items": [
+            "Les demandes doivent etre precises et inclure uniquement les informations strictement necessaires.",
+            "En cas d'urgence ou de danger immediat, l'Utilisateur doit contacter les services d'urgence ou autorites competentes de son pays avant tout autre demarche."
+          ]
+        },
+        {
+          "title": "Article 17 - Historique local des conversations",
+          "body": "Lorsque la fonctionnalite est disponible pour l'Utilisateur, l'historique des conversations permet de consulter localement certains echanges et evenements significatifs, notamment messages, vocaux, emojis animes, invitations acceptees, appels, webcams, jeux et scores. Cet historique n'est pas stocke sur les serveurs Figgliz et Arcawand Soft ne dispose pas d'un acces direct a son contenu. Il reste sur l'appareil de l'Utilisateur, sous son controle exclusif, sous reserve des limites techniques du navigateur et du systeme.",
+          "items": [
+            "L'Utilisateur peut supprimer une conversation ou supprimer tout son historique depuis l'interface prevue.",
+            "Une simple mise en relation sans message ni invitation acceptee n'a pas vocation a creer une archive exploitable.",
+            "L'Utilisateur reste responsable de la confidentialite de son appareil, de sa session Chrome et des personnes pouvant y acceder."
+          ]
+        },
+        {
+          "title": "Article 18 - Mot de passe, perte d'acces et suppression de securite",
+          "body": "L'acces a l'historique local est protege par un mot de passe defini par l'Utilisateur. Figgliz ne stocke pas ce mot de passe en clair et ne fournit pas de mecanisme serveur permettant a Arcawand Soft de lire, extraire ou restaurer l'historique sans ce mot de passe. En cas d'oubli, de reinitialisation ou d'impossibilite de verification par la question secrete, l'Utilisateur accepte que la recuperation de l'acces implique la suppression definitive de l'historique local concerne. Cette suppression protege la vie privee et ne peut pas etre annulee par Arcawand Soft.",
+          "items": [
+            "L'Utilisateur doit choisir un mot de passe suffisamment robuste et conserver sa reponse secrete de maniere confidentielle.",
+            "La desinstallation du navigateur, la suppression des donnees d'extension, certains nettoyages systeme ou la reinitialisation de l'appareil peuvent supprimer l'historique local.",
+            "Arcawand Soft ne peut pas garantir la conservation d'un historique local supprime par l'Utilisateur, le navigateur, le systeme ou un outil tiers."
+          ]
         }
       ]
     }
@@ -399,6 +635,10 @@
         {
           "title": "Como empiezo?",
           "body": "Configura preferencias, ponte disponible y deja que la extension busque segun idioma, genero aceptado y disponibilidad."
+        },
+        {
+          "title": "La extensión no consigue conectarse al servidor. ¿A qué se debe?",
+          "body": "Primero comprueba tu conexión a internet y que la navegación funcione normalmente en el navegador. Algunos VPN no permiten conexiones P2P. Como Figgliz funciona principalmente en P2P, prueba también la extensión desactivando temporalmente el VPN."
         },
         {
           "title": "Como paro o cambio?",
@@ -467,6 +707,14 @@
         {
           "title": "Como contactar?",
           "body": "Escribe a contact@arcawand-soft.com."
+        },
+        {
+          "title": "¿Dónde se guarda el historial de conversaciones?",
+          "body": "Se guarda localmente en Chrome, en el dispositivo del Usuario. Figgliz no mantiene una base de datos servidor para volver a leer conversaciones: el servidor gestiona conexión, licencias, cuotas, reportes y seguridad, pero no da accèso centralizado a tu historial."
+        },
+        {
+          "title": "¿Qué pasa si olvido la contraseña del historial?",
+          "body": "El accèso está protegido deliberadamente. La pregunta secreta puede permitir un restáblecimiento local, pero por seguridad eso elimina todo el historial local antes de crear un nuevo accèso. Figgliz no puede recuperar ni leer ese historial por ti."
         }
       ]
     },
@@ -517,60 +765,109 @@
         {
           "title": "Contact",
           "body": "Soporte, privacidad, seguridad o facturacion: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Historial local y control del usuario",
+          "body": "Cuando el historial está activado, los elementos admisibles de conversación se conservan localmente por la extensión en el dispositivo del Usuario. El Usuario conserva el control: puede borrar una conversación concreta o todo el historial desde la interfaz dedicada."
+        },
+        {
+          "title": "Contraseña y ausencia de accèso servidor",
+          "body": "El historial se protege con una contraseña local y una pregunta secreta. La contraseña no está destinada a enviarse al servidor para una lectura remota. En caso de olvido o restáblecimiento, se exige la eliminación completa del historial local para evitar accèsos no autorizados."
         }
       ]
     },
     "terms": {
-      "title": "Condiciones de uso",
-      "lead": "Estas condiciones regulan un uso respetuoso, seguro y leal de Figgliz, incluidas las ofertas Free, Plus, Pro y Pro Lifetime.",
+      "title": "Condiciones generales de uso de Figgliz",
+      "lead": "Version del 8 de junio de 2026. Estas condiciones regulan el acceso y uso de la extension Chrome Figgliz, publicada por Arcawand Soft. Forman un acuerdo entre Arcawand Soft y cada Usuario.",
+      "version": "2026-06-18",
       "sections": [
         {
-          "title": "Aceptacion",
-          "body": "Al usar Figgliz aceptas estas condiciones y las leyes aplicables."
+          "title": "Article 1 - Definiciones",
+          "body": "En estas condiciones, Figgliz designa la extension Chrome, sus interfaces, chat, webcam, juegos, moderacion, licencias y servicios tecnicos asociados. Usuario designa a toda persona que instala, abre, configura o utiliza Figgliz, ya sea con acceso Free, Plus, Pro o una oferta de lanzamiento.",
+          "items": []
         },
         {
-          "title": "Edad",
-          "body": "Debes tener edad y capacidad legal para hablar con desconocidos en linea."
+          "title": "Article 2 - Aceptacion",
+          "body": "Instalar, abrir, ponerse disponible, enviar un mensaje, aceptar una invitacion o usar webcam, vocales, juegos o funciones de pago implica la aceptacion completa de estas condiciones. El Usuario debe dejar de usar Figgliz si no las acepta.",
+          "items": []
         },
         {
-          "title": "Respeto",
-          "body": "Se prohiben acoso, amenazas, odio, discriminacion, desnudez impuesta, contenido ilegal, fraude y doxxing."
+          "title": "Article 3 - Edad, capacidad y menores",
+          "body": "Figgliz esta destinado a Usuarios mayores de edad y con capacidad juridica segun la ley aplicable. Los menores no deben usar Figgliz solos ni cuando la ley local, la autoridad parental o las normas de proteccion lo prohiban.",
+          "items": []
         },
         {
-          "title": "Datos personales",
-          "body": "Evita compartir telefono, email, direccion, redes, documentos, banco, escuela, trabajo o agenda."
+          "title": "Article 4 - Descripcion del servicio",
+          "body": "Figgliz permite intercambios anonimos aleatorios mediante texto, vocales, webcam por invitacion, minijuegos, emojis y herramientas de moderacion. El servicio no garantiza identidad, comportamiento, ubicacion ni compatibilidad de la otra persona.",
+          "items": []
         },
         {
-          "title": "Video y consentimiento",
-          "body": "No grabes ni difundas imagen, voz o entorno de otra persona sin consentimiento y base legal."
+          "title": "Article 5 - Acceso Free, Plus, Pro y ofertas de lanzamiento",
+          "body": "Figgliz puede ofrecer Free, Plus, Pro, planes mensuales, anuales u ofertas de lanzamiento, incluido Pro Lifetime si aparece. Funciones, cuotas, precios, prioridades y ventajas son los mostrados en la extension o en el checkout.",
+          "items": []
         },
         {
-          "title": "Planes",
-          "body": "Free, Plus, Pro mensual/anual y Pro Lifetime tienen derechos distintos sujetos a disponibilidad y uso razonable."
+          "title": "Article 6 - Pago, Dodo Payments, renovacion y licencia",
+          "body": "Los pagos pueden ser procesados por Dodo Payments. Las suscripciones mensuales y anuales pueden renovarse tacitamente hasta cancelacion. La licencia es personal, no transferible y puede verificarse para activar o retirar derechos.",
+          "items": []
         },
         {
-          "title": "Lifetime",
-          "body": "Pro Lifetime da acceso de por vida al plan Pro segun el checkout, sin garantizar cada beta para siempre."
+          "title": "Article 7 - Reglas de conducta",
+          "body": "El Usuario debe actuar con respeto, prudencia y legalidad. Quedan prohibidos acoso, amenazas, odio, discriminacion, doxxing, fraude, chantaje, contenido sexual no solicitado, suplantacion y cualquier dano a terceros.",
+          "items": []
         },
         {
-          "title": "Licencia",
-          "body": "La clave es personal y no debe revenderse, compartirse masivamente, falsificarse ni eludir validaciones."
+          "title": "Article 8 - Seguridad personal y encuentros fuera de linea",
+          "body": "Figgliz no recomienda encuentros fisicos con desconocidos. Si el Usuario decide reunirse fuera de linea, debe hacerlo bajo su exclusiva responsabilidad, en lugar publico, avisando a una persona de confianza y sin aislarse.",
+          "items": []
         },
         {
-          "title": "Anti-trampa",
-          "body": "No manipules extension, trafico, cuotas, tokens, licencia o estado de juegos."
+          "title": "Article 9 - Datos personales, confidencialidad y contenidos",
+          "body": "El Usuario no debe compartir datos personales sensibles ni recopilar, publicar o explotar los de otra persona. Grabar, capturar o difundir imagen, voz, entorno o mensajes ajenos exige base legal y consentimiento adecuado.",
+          "items": []
         },
         {
-          "title": "Reportes",
-          "body": "Deben hacerse de buena fe."
+          "title": "Article 10 - Webcam, audio, P2P y limites tecnicos",
+          "body": "La webcam y el audio dependen del navegador, permisos, dispositivo, red, VPN, firewall y capacidades WebRTC. El modo P2P puede fallar o degradarse sin que Figgliz garantice una resolucion inmediata.",
+          "items": []
         },
         {
-          "title": "Disponibilidad",
-          "body": "El servicio puede cambiar, pausarse o limitarse por mantenimiento, seguridad o carga."
+          "title": "Article 11 - Moderacion y medidas de proteccion",
+          "body": "Arcawand Soft puede aplicar cuotas, bloqueos, reportes, deteccion de contactos, controles de licencia, registros tecnicos y medidas proporcionadas para proteger a Usuarios, servicio e infraestructura.",
+          "items": []
         },
         {
-          "title": "Responsabilidad",
-          "body": "Cada usuario responde por sus mensajes, decisiones e invitaciones video."
+          "title": "Article 12 - Responsabilidad y garantias",
+          "body": "Figgliz se proporciona tal cual dentro de los limites legales. Arcawand Soft no garantiza funcionamiento continuo, ausencia de errores, compatibilidad total ni que los intercambios cumplan las expectativas del Usuario.",
+          "items": []
+        },
+        {
+          "title": "Article 13 - Evolucion y suspension",
+          "body": "Arcawand Soft puede modificar, limitar, retirar, renombrar o suspender funciones, ofertas, precios, cuotas, juegos, efectos o tecnologias para mejorar seguridad, calidad, estabilidad y conformidad.",
+          "items": []
+        },
+        {
+          "title": "Article 14 - Contacto",
+          "body": "Para preguntas sobre Figgliz, licencia, privacidad, seguridad o reportes, el Usuario puede contactar con Arcawand Soft en contact@arcawand-soft.com. En caso de peligro inmediato debe contactar primero a las autoridades competentes.",
+          "items": []
+        },
+        {
+          "title": "Articulo 17 - Historial local de conversaciones",
+          "body": "Cuando la funcion esta disponible para el Usuario, el historial de conversaciones permite consultar localmente intercambios y eventos significativos, incluidos mensajes, audios, emojis animados, invitaciones aceptadas, llamadas, webcam, juegos y puntuaciones. Este historial no se almacena en los servidores de Figgliz y Arcawand Soft no tiene acceso directo a su contenido. Permanece en el dispositivo del Usuario, bajo su control exclusivo, sujeto a los limites tecnicos del navegador y del sistema.",
+          "items": [
+            "El Usuario puede eliminar una conversacion o todo el historial desde la interfaz dedicada.",
+            "Una simple puesta en contacto sin mensaje ni invitacion aceptada no pretende crear un archivo explotable.",
+            "El Usuario sigue siendo responsable de la confidencialidad de su dispositivo, su sesion Chrome y las personas que puedan acceder."
+          ]
+        },
+        {
+          "title": "Articulo 18 - Contrasena, perdida de acceso y eliminacion de seguridad",
+          "body": "El acceso al historial local esta protegido por una contrasena definida por el Usuario. Figgliz no almacena esa contrasena en claro y no ofrece un mecanismo servidor que permita a Arcawand Soft leer, extraer o restaurar el historial sin ella. Si se olvida la contrasena, se solicita un restablecimiento o no se puede verificar la pregunta secreta, el Usuario acepta que recuperar el acceso requiere la eliminacion definitiva del historial local afectado. Esta eliminacion protege la privacidad y Arcawand Soft no puede revertirla.",
+          "items": [
+            "El Usuario debe elegir una contrasena suficientemente robusta y conservar en secreto la respuesta secreta.",
+            "La desinstalacion del navegador, la eliminacion de datos de la extension, una limpieza del sistema o el restablecimiento del dispositivo pueden eliminar el historial local.",
+            "Arcawand Soft no puede garantizar la conservacion de un historial local eliminado por el Usuario, el navegador, el sistema o una herramienta de terceros."
+          ]
         }
       ]
     }
@@ -591,6 +888,10 @@
         {
           "title": "Come inizio?",
           "body": "Configura le preferenze, diventa disponibile e attendi il matching."
+        },
+        {
+          "title": "L'estensione non riesce a connettersi al server. Da cosa dipende?",
+          "body": "Controlla prima la connessione internet e che la navigazione funzioni normalmente nel browser. Alcuni VPN non consentono connessioni P2P. Poiché Figgliz funziona soprattutto in P2P, prova anche l'estensione disattivando temporaneamente il VPN."
         },
         {
           "title": "Come fermo o cambio?",
@@ -642,7 +943,7 @@
         },
         {
           "title": "Voce o video sono registrati?",
-          "body": "Non di default."
+          "body": "Non in modo predefinito."
         },
         {
           "title": "Cosa succede con un report?",
@@ -659,6 +960,14 @@
         {
           "title": "Contatti?",
           "body": "contact@arcawand-soft.com."
+        },
+        {
+          "title": "Dove viene salvata la cronologia delle conversazioni?",
+          "body": "Viene salvata localmente in Chrome sul dispositivo dell'Utente. Figgliz non conserva un database server per rileggere le conversazioni: il server gestisce connessione, licenze, quote, segnalazioni e sicurezza, ma non offre accesso centralizzato alla cronologia."
+        },
+        {
+          "title": "Cosa succede se dimentico la password della cronologia?",
+          "body": "L'accesso è protetto intenzionalmente. La domanda segreta può consentire un ripristino locale, ma per sicurezza questo elimina tutta la cronologia locale prima di creare un nuovo accesso. Figgliz non può recuperarla né leggerla al posto tuo."
         }
       ]
     },
@@ -709,60 +1018,109 @@
         {
           "title": "Contact",
           "body": "Supporto, privacy, sicurezza o fatturazione: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Cronologia locale e controllo dell'utente",
+          "body": "Quando la cronologia è attiva, gli elementi ammissibili della conversazione sono conservati localmente dall'estensione sul dispositivo dell'Utente. L'Utente mantiene il controllo: può eliminare una conversazione specifica o l'intera cronologia dall'interfaccia dedicata."
+        },
+        {
+          "title": "Password e nessun accesso server",
+          "body": "La cronologia è protetta da password locale e domanda segreta. La password non è destinata a essere inviata al server per lettura remota. In caso di dimenticanza o ripristino, l'eliminazione completa della cronologia locale è necessaria per evitare accessi non autorizzati."
         }
       ]
     },
     "terms": {
-      "title": "Condizioni d'uso",
-      "lead": "Queste condizioni regolano l'uso rispettoso, sicuro e corretto di Figgliz, incluse le offerte Free, Plus, Pro e Pro Lifetime.",
+      "title": "Condizioni generali d'uso di Figgliz",
+      "lead": "Versione dell'8 giugno 2026. Queste condizioni regolano l'accesso e l'uso dell'estensione Chrome Figgliz, pubblicata da Arcawand Soft, e costituiscono un accordo con ogni Utente.",
+      "version": "2026-06-18",
       "sections": [
         {
-          "title": "Accettazione",
-          "body": "Usando il servizio accetti condizioni e leggi applicabili."
+          "title": "Article 1 - Definizioni",
+          "body": "In queste condizioni, Figgliz indica l'estensione Chrome, le interfacce, chat, webcam, giochi, moderazione, licenze e servizi tecnici collegati. Utente indica chi installa, apre, configura o usa Figgliz, con Free, Plus, Pro o offerta di lancio.",
+          "items": []
         },
         {
-          "title": "Eta",
-          "body": "Devi avere eta e capacita legale per parlare con sconosciuti online."
+          "title": "Article 2 - Accettazione",
+          "body": "Installare, aprire, rendersi disponibile, inviare messaggi, accettare inviti o usare webcam, vocali, giochi o funzioni a pagamento comporta l'accettazione completa delle condizioni. Chi non le accetta deve smettere di usare Figgliz.",
+          "items": []
         },
         {
-          "title": "Rispetto",
-          "body": "Vietati molestie, minacce, odio, discriminazione, nudita imposta, contenuti illegali, truffe e doxxing."
+          "title": "Article 3 - Eta, capacita e minori",
+          "body": "Figgliz e destinato a Utenti maggiorenni e capaci secondo la legge applicabile. I minori non devono usare Figgliz da soli ne quando legge locale, autorita parentale o norme di protezione lo vietano.",
+          "items": []
         },
         {
-          "title": "Dati personali",
-          "body": "Evita telefono, email, indirizzo, social, documenti, banca, scuola, lavoro o agenda."
+          "title": "Article 4 - Descrizione del servizio",
+          "body": "Figgliz consente scambi anonimi casuali tramite testo, vocali, webcam su invito, minigiochi, emoji e strumenti di moderazione. Il servizio non garantisce identita, comportamento, posizione o compatibilita dell'altra persona.",
+          "items": []
         },
         {
-          "title": "Video e consenso",
-          "body": "Non registrare o diffondere immagine, voce o ambiente altrui senza consenso e base legale."
+          "title": "Article 5 - Accesso Free, Plus, Pro e offerte di lancio",
+          "body": "Figgliz puo offrire Free, Plus, Pro, piani mensili, annuali e offerte di lancio, incluso Pro Lifetime se mostrato. Funzioni, quote, prezzi, priorita e vantaggi sono quelli visualizzati nell'estensione o al checkout.",
+          "items": []
         },
         {
-          "title": "Piani",
-          "body": "Free, Plus, Pro e Pro Lifetime hanno diritti diversi soggetti a disponibilita e fair use."
+          "title": "Article 6 - Pagamento, Dodo Payments, rinnovo e licenza",
+          "body": "I pagamenti possono essere gestiti da Dodo Payments. Gli abbonamenti mensili e annuali possono rinnovarsi tacitamente fino alla cancellazione. La licenza e personale, non cedibile e verificabile.",
+          "items": []
         },
         {
-          "title": "Lifetime",
-          "body": "Pro Lifetime da accesso a vita al piano Pro secondo il checkout, non a ogni beta per sempre."
+          "title": "Article 7 - Regole di comportamento",
+          "body": "L'Utente deve agire con rispetto, prudenza e legalita. Sono vietati molestie, minacce, odio, discriminazione, doxxing, frodi, ricatti, contenuti sessuali non richiesti, impersonificazione e danni a terzi.",
+          "items": []
         },
         {
-          "title": "Licenza",
-          "body": "La chiave e personale e non va rivenduta, condivisa massivamente o falsificata."
+          "title": "Article 8 - Sicurezza personale e incontri offline",
+          "body": "Figgliz non raccomanda incontri fisici con sconosciuti. Se l'Utente decide di incontrare qualcuno offline, lo fa sotto la propria responsabilita, in luogo pubblico, avvisando una persona fidata e senza isolarsi.",
+          "items": []
         },
         {
-          "title": "Anti-cheat",
-          "body": "Non manipolare estensione, traffico, quote, token, licenze o giochi."
+          "title": "Article 9 - Dati personali, riservatezza e contenuti",
+          "body": "L'Utente non deve condividere dati sensibili ne raccogliere, pubblicare o sfruttare quelli altrui. Registrare o diffondere immagine, voce, ambiente o messaggi richiede base legale e consenso adeguato.",
+          "items": []
         },
         {
-          "title": "Report",
-          "body": "Devono essere in buona fede."
+          "title": "Article 10 - Webcam, audio, P2P e limiti tecnici",
+          "body": "Webcam e audio dipendono da browser, permessi, dispositivo, rete, VPN, firewall e WebRTC. Il P2P puo fallire o degradarsi senza garanzia di risoluzione immediata.",
+          "items": []
         },
         {
-          "title": "Disponibilita",
-          "body": "Il servizio puo cambiare o fermarsi per manutenzione, sicurezza o carico."
+          "title": "Article 11 - Moderazione e protezione",
+          "body": "Arcawand Soft puo applicare quote, blocchi, segnalazioni, rilevamento contatti, controlli licenza, log tecnici e misure proporzionate per proteggere Utenti, servizio e infrastruttura.",
+          "items": []
         },
         {
-          "title": "Responsabilita",
-          "body": "Ogni utente risponde di messaggi, decisioni e inviti video."
+          "title": "Article 12 - Responsabilita e garanzie",
+          "body": "Figgliz e fornito cosi com'e nei limiti di legge. Arcawand Soft non garantisce continuita, assenza di errori, piena compatibilita o scambi conformi alle aspettative dell'Utente.",
+          "items": []
+        },
+        {
+          "title": "Article 13 - Evoluzione e sospensione",
+          "body": "Arcawand Soft puo modificare, limitare, rimuovere, rinominare o sospendere funzioni, offerte, prezzi, quote, giochi, effetti o tecnologie per sicurezza, qualita, stabilita e conformita.",
+          "items": []
+        },
+        {
+          "title": "Article 14 - Contatto",
+          "body": "Per domande su Figgliz, licenza, privacy, sicurezza o segnalazioni, l'Utente puo scrivere a contact@arcawand-soft.com. In caso di pericolo immediato deve contattare prima le autorita competenti.",
+          "items": []
+        },
+        {
+          "title": "Articolo 17 - Cronologia locale delle conversazioni",
+          "body": "Quando la funzione e disponibile per l'Utente, la cronologia delle conversazioni consente di consultare localmente scambi ed eventi significativi, inclusi messaggi, vocali, emoji animate, inviti accettati, chiamate, webcam, giochi e punteggi. Questa cronologia non e memorizzata sui server Figgliz e Arcawand Soft non ha accesso diretto al suo contenuto. Rimane sul dispositivo dell'Utente, sotto il suo controllo esclusivo, nei limiti tecnici del browser e del sistema.",
+          "items": [
+            "L'Utente puo eliminare una conversazione o l'intera cronologia dall'interfaccia dedicata.",
+            "Un semplice abbinamento senza messaggio ne invito accettato non e destinato a creare un archivio utilizzabile.",
+            "L'Utente resta responsabile della riservatezza del dispositivo, della sessione Chrome e delle persone che possono accedervi."
+          ]
+        },
+        {
+          "title": "Articolo 18 - Password, perdita di accesso ed eliminazione di sicurezza",
+          "body": "L'accesso alla cronologia locale e protetto da una password definita dall'Utente. Figgliz non memorizza tale password in chiaro e non fornisce un meccanismo server che consenta ad Arcawand Soft di leggere, estrarre o ripristinare la cronologia senza di essa. Se la password viene dimenticata, viene richiesto un ripristino o non e possibile verificare la domanda segreta, l'Utente accetta che il recupero dell'accesso richieda l'eliminazione definitiva della cronologia locale interessata. Questa eliminazione tutela la privacy e non puo essere annullata da Arcawand Soft.",
+          "items": [
+            "L'Utente deve scegliere una password sufficientemente robusta e mantenere riservata la risposta segreta.",
+            "La disinstallazione del browser, l'eliminazione dei dati dell'estensione, una pulizia di sistema o il reset del dispositivo possono eliminare la cronologia locale.",
+            "Arcawand Soft non puo garantire la conservazione di una cronologia locale eliminata dall'Utente, dal browser, dal sistema o da uno strumento di terze parti."
+          ]
         }
       ]
     }
@@ -783,6 +1141,10 @@
         {
           "title": "Wie starte ich?",
           "body": "Einstellungen wahlen, verfugbar werden, Matching abwarten."
+        },
+        {
+          "title": "Die Erweiterung kann keine Verbindung zum Server herstellen. Woran liegt das?",
+          "body": "Prüfe zuerst deine Internetverbindung und ob normales Surfen im Browser funktioniert. Manche VPNs erlauben keine P2P-Verbindungen. Da Figgliz hauptsächlich über P2P funktioniert, teste die Erweiterung auch mit vorübergehend deaktiviertem VPN."
         },
         {
           "title": "Wie stoppe oder wechsle ich?",
@@ -851,6 +1213,14 @@
         {
           "title": "Kontakt?",
           "body": "contact@arcawand-soft.com."
+        },
+        {
+          "title": "Wo wird der Gesprächsverlauf gespeichert?",
+          "body": "Er wird lokal in Chrome auf dem Gerät des Nutzers gespeichert. Figgliz führt keine Serverdatenbank zum erneuten Lesen von Gesprächen: Der Server verarbeitet Verbindung, Lizenzen, Kontingente, Meldungen und Sicherheit, bietet aber keinen zentralen Zugriff auf den Verlauf."
+        },
+        {
+          "title": "Was passiert, wenn ich das Verlaufspasswort vergesse?",
+          "body": "Der Zugriff ist bewusst geschützt. Die geheime Frage kann ein lokales Zurücksetzen ermöglichen, löscht aus Sicherheitsgründen aber den gesamten lokalen Verlauf, bevor ein neuer Zugriff erstellt wird. Figgliz kann diesen Verlauf nicht für dich wiederherstellen oder lesen."
         }
       ]
     },
@@ -901,60 +1271,109 @@
         {
           "title": "Contact",
           "body": "Support, Datenschutz, Sicherheit oder Abrechnung: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Lokaler Verlauf und Nutzerkontrolle",
+          "body": "Wenn der Verlauf aktiviert ist, speichert die Erweiterung zulässige Gesprächselemente lokal auf dem Gerät des Nutzers. Der Nutzer behält die Kontrolle: einzelne Gespräche oder der gesamte Verlauf können über die eigene Oberfläche gelöscht werden."
+        },
+        {
+          "title": "Passwort und kein Serverzugriff",
+          "body": "Der Verlauf ist durch ein lokales Passwort und eine geheime Frage geschützt. Das Passwort ist nicht dafür vorgesehen, zur Fernlesung an den Server gesendet zu werden. Bei Vergessen oder Zurücksetzen ist die vollständige Löschung des lokalen Verlaufs erforderlich, um unbefugten Zugriff zu verhindern."
         }
       ]
     },
     "terms": {
-      "title": "Nutzungsbedingungen",
-      "lead": "Diese Bedingungen regeln die respektvolle, sichere und faire Nutzung von Figgliz, inklusive Free, Plus, Pro und Pro Lifetime.",
+      "title": "Allgemeine Nutzungsbedingungen von Figgliz",
+      "lead": "Version vom 8. Juni 2026. Diese Bedingungen regeln den Zugriff auf und die Nutzung der Chrome-Erweiterung Figgliz von Arcawand Soft und bilden eine Vereinbarung mit jedem Nutzer.",
+      "version": "2026-06-18",
       "sections": [
         {
-          "title": "Annahme",
-          "body": "Mit Nutzung akzeptierst du Bedingungen und geltendes Recht."
+          "title": "Article 1 - Definitionen",
+          "body": "In diesen Bedingungen bezeichnet Figgliz die Chrome-Erweiterung, ihre Oberflaechen, Chat-, Webcam-, Spiel-, Moderations-, Lizenz- und Technikdienste. Nutzer ist jede Person, die Figgliz mit Free, Plus, Pro oder einem Einfuehrungsangebot installiert, oeffnet, konfiguriert oder nutzt.",
+          "items": []
         },
         {
-          "title": "Alter",
-          "body": "Du brauchst rechtliches Alter und Fahigkeit fur Onlinekontakte mit Fremden."
+          "title": "Article 2 - Annahme",
+          "body": "Installation, Oeffnen, Verfuegbarkeit, Nachrichten, Einladungen, Webcam, Sprache, Spiele oder bezahlte Funktionen bedeuten die vollstaendige Annahme dieser Bedingungen. Wer sie nicht akzeptiert, muss Figgliz nicht weiter nutzen.",
+          "items": []
         },
         {
-          "title": "Respekt",
-          "body": "Verboten sind Belästigung, Drohungen, Hass, Diskriminierung, illegale Inhalte, Betrug und Doxxing."
+          "title": "Article 3 - Alter, Geschaeftsfaehigkeit und Minderjaehrige",
+          "body": "Figgliz richtet sich an volljaehrige und geschaeftsfaehige Nutzer nach anwendbarem Recht. Minderjaehrige duerfen Figgliz nicht allein und nicht entgegen lokalen Gesetzen, elterlicher Aufsicht oder Schutzregeln nutzen.",
+          "items": []
         },
         {
-          "title": "Personliche Daten",
-          "body": "Teile keine Telefonnummer, Email, Adresse, Socials, Dokumente, Bankdaten, Schule, Arbeit oder Termine."
+          "title": "Article 4 - Dienstbeschreibung",
+          "body": "Figgliz ermoeglicht zufaellige anonyme Kontakte per Text, Sprachnachrichten, Webcam auf Einladung, Minispiele, Emojis und Moderationswerkzeuge. Identitaet, Verhalten, Standort oder Kompatibilitaet der anderen Person werden nicht garantiert.",
+          "items": []
         },
         {
-          "title": "Video und Einwilligung",
-          "body": "Nichts ohne Einwilligung und Rechtsgrundlage aufnehmen oder verbreiten."
+          "title": "Article 5 - Free, Plus, Pro und Einfuehrungsangebote",
+          "body": "Figgliz kann Free, Plus, Pro, Monats-, Jahres- oder Einfuehrungsangebote einschliesslich Pro Lifetime anbieten. Funktionen, Quoten, Preise, Prioritaeten und Vorteile entsprechen der Anzeige in Erweiterung oder Checkout.",
+          "items": []
         },
         {
-          "title": "Plane",
-          "body": "Free, Plus, Pro und Pro Lifetime haben unterschiedliche Rechte, vorbehaltlich Verfugbarkeit und Fair Use."
+          "title": "Article 6 - Zahlung, Dodo Payments, Verlaengerung und Lizenz",
+          "body": "Zahlungen koennen ueber Dodo Payments laufen. Monats- und Jahresabos koennen sich bis zur Kuendigung automatisch verlaengern. Die Lizenz ist persoenlich, nicht uebertragbar und kann geprueft werden.",
+          "items": []
         },
         {
-          "title": "Lifetime",
-          "body": "Pro Lifetime gibt lebenslangen Zugang zu Pro laut Checkout, nicht zu jeder Beta fur immer."
+          "title": "Article 7 - Verhaltensregeln",
+          "body": "Der Nutzer muss respektvoll, vorsichtig und rechtmaessig handeln. Verboten sind Belaestigung, Drohungen, Hass, Diskriminierung, Doxxing, Betrug, Erpressung, unerwuenschte sexuelle Inhalte, Identitaetstaeuschung und Schaeden.",
+          "items": []
         },
         {
-          "title": "Lizenz",
-          "body": "Der Schlussel ist personlich und darf nicht verkauft, massenhaft geteilt oder gefalscht werden."
+          "title": "Article 8 - Persoenliche Sicherheit und Offline-Treffen",
+          "body": "Figgliz empfiehlt keine physischen Treffen mit Unbekannten. Wer sich offline trifft, handelt eigenverantwortlich, sollte einen oeffentlichen Ort waehlen, Vertrauenspersonen informieren und Isolation vermeiden.",
+          "items": []
         },
         {
-          "title": "Anti-Cheat",
-          "body": "Keine Manipulation von Erweiterung, Traffic, Quoten, Token, Lizenz oder Spielen."
+          "title": "Article 9 - Personenbezogene Daten, Vertraulichkeit und Inhalte",
+          "body": "Der Nutzer darf keine sensiblen Daten teilen und keine Daten anderer sammeln, veroeffentlichen oder ausnutzen. Aufnahmen oder Verbreitung von Bild, Stimme, Umgebung oder Nachrichten erfordern Rechtsgrundlage und Einwilligung.",
+          "items": []
         },
         {
-          "title": "Meldungen",
-          "body": "Nur gutglaubige Meldungen."
+          "title": "Article 10 - Webcam, Audio, P2P und technische Grenzen",
+          "body": "Webcam und Audio haengen von Browser, Berechtigungen, Geraet, Netzwerk, VPN, Firewall und WebRTC ab. P2P kann fehlschlagen oder schlechter werden, ohne dass Figgliz sofortige Behebung garantiert.",
+          "items": []
         },
         {
-          "title": "Verfugbarkeit",
-          "body": "Der Dienst kann sich andern oder pausieren."
+          "title": "Article 11 - Moderation und Schutzmassnahmen",
+          "body": "Arcawand Soft kann Quoten, Sperren, Meldungen, Kontakterkennung, Lizenzpruefungen, technische Logs und angemessene Schutzmassnahmen einsetzen, um Nutzer, Dienst und Infrastruktur zu schuetzen.",
+          "items": []
         },
         {
-          "title": "Verantwortung",
-          "body": "Nutzer verantworten Nachrichten, Verhalten und Videoeinladungen."
+          "title": "Article 12 - Haftung und Gewaehrleistung",
+          "body": "Figgliz wird im rechtlich zulaessigen Umfang wie bereitgestellt angeboten. Arcawand Soft garantiert keine Unterbrechungsfreiheit, Fehlerfreiheit, volle Kompatibilitaet oder erwartungsgemaesse Kontakte.",
+          "items": []
+        },
+        {
+          "title": "Article 13 - Aenderungen und Aussetzung",
+          "body": "Arcawand Soft kann Funktionen, Angebote, Preise, Quoten, Spiele, Effekte oder Technologien aendern, beschraenken, entfernen, umbenennen oder aussetzen, um Sicherheit, Qualitaet, Stabilitaet und Compliance zu verbessern.",
+          "items": []
+        },
+        {
+          "title": "Article 14 - Kontakt",
+          "body": "Fragen zu Figgliz, Lizenzen, Datenschutz, Sicherheit oder Meldungen koennen an contact@arcawand-soft.com gesendet werden. Bei unmittelbarer Gefahr sind zuerst die zustaendigen Behoerden zu kontaktieren.",
+          "items": []
+        },
+        {
+          "title": "Artikel 17 - Lokaler Gespraechsverlauf",
+          "body": "Wenn die Funktion fuer den Nutzer verfuegbar ist, ermoeglicht der Gespraechsverlauf die lokale Einsicht in wesentliche Austausche und Ereignisse, darunter Nachrichten, Sprachnachrichten, animierte Emojis, angenommene Einladungen, Anrufe, Webcam, Spiele und Endstaende. Dieser Verlauf wird nicht auf Figgliz-Servern gespeichert und Arcawand Soft hat keinen direkten Zugriff auf seinen Inhalt. Er bleibt auf dem Geraet des Nutzers, unter dessen ausschliesslicher Kontrolle und innerhalb der technischen Grenzen von Browser und System.",
+          "items": [
+            "Der Nutzer kann eine Unterhaltung oder den gesamten Verlauf ueber die vorgesehene Oberflaeche loeschen.",
+            "Eine einfache Verbindung ohne Nachricht und ohne angenommene Einladung soll kein verwertbares Archiv erzeugen.",
+            "Der Nutzer bleibt fuer die Vertraulichkeit seines Geraets, seiner Chrome-Sitzung und aller Personen verantwortlich, die darauf zugreifen koennen."
+          ]
+        },
+        {
+          "title": "Artikel 18 - Passwort, Zugriffsverlust und Sicherheitsloeschung",
+          "body": "Der Zugriff auf den lokalen Verlauf ist durch ein vom Nutzer festgelegtes Passwort geschuetzt. Figgliz speichert dieses Passwort nicht im Klartext und stellt keinen Servermechanismus bereit, mit dem Arcawand Soft den Verlauf ohne Passwort lesen, extrahieren oder wiederherstellen kann. Wenn das Passwort vergessen wird, ein Zuruecksetzen verlangt wird oder die Sicherheitsfrage nicht geprueft werden kann, akzeptiert der Nutzer, dass die Wiederherstellung des Zugriffs die endgueltige Loeschung des betroffenen lokalen Verlaufs erfordert. Diese Loeschung dient dem Schutz der Privatsphaere und kann von Arcawand Soft nicht rueckgaengig gemacht werden.",
+          "items": [
+            "Der Nutzer muss ein ausreichend starkes Passwort waehlen und seine geheime Antwort vertraulich halten.",
+            "Die Deinstallation des Browsers, das Loeschen von Erweiterungsdaten, Systembereinigungen oder das Zuruecksetzen des Geraets koennen den lokalen Verlauf loeschen.",
+            "Arcawand Soft kann die Erhaltung eines lokalen Verlaufs nicht garantieren, wenn er durch Nutzer, Browser, System oder ein Drittanbieter-Tool geloescht wurde."
+          ]
         }
       ]
     }
