@@ -298,30 +298,130 @@ const pricingCopy = {
 };
 
 const pricingBenefits = {
-  en: {
-    free: ["Unlimited texts", "3 voice notes per day", "3 video requests per day", "15-second wait for Next", "Receive game invitations"],
-    plus: ["Unlimited voice notes", "30 video requests per day", "Webcam backgrounds", "Advanced language filters", "Advanced gender filters", "Send game invitations", "3-second wait for Next", "Conversation history", "Designed for regular conversations"],
-    pro: ["Unlimited video requests", "Webcam backgrounds", "Video Pause feature", "Send game invitations", "Instant Next", "Queue priority", "Beta access to new features", "Conversation history", "Best experience for frequent use"]
+  "en": {
+    "free": [
+      "Unlimited text",
+      "3 voice notes per day",
+      "1 video or audio call per day",
+      "15-second Next cooldown"
+    ],
+    "plus": [
+      "Unlimited voice notes",
+      "30 video invitations per day",
+      "2 gifted call credits per day",
+      "Unlimited calls",
+      "Advanced language/gender filters",
+      "3-second Next cooldown"
+    ],
+    "pro": [
+      "Unlimited video invitations",
+      "Unlimited calls",
+      "5 gifted call credits per day",
+      "Video Pause",
+      "Instant Next",
+      "Priority queue",
+      "Beta access"
+    ]
   },
-  fr: {
-    free: ["Textes illimités", "3 vocaux par jour", "3 demandes vidéo par jour", "15 secondes d'attente pour Next", "Réception d'invitation aux jeux"],
-    plus: ["Vocaux illimités", "30 demandes vidéo par jour", "Fonds de webcam", "Filtres avancés de langue", "Filtres avancés de genre", "Envoi d'invitation aux jeux", "3 secondes d'attente pour Next", "Historique de conversation", "Conçu pour discuter régulièrement"],
-    pro: ["Demandes vidéo illimitées", "Fonds de webcam", "Fonction Pause Vidéo", "Envoi d'invitation aux jeux", "Next instantanés", "Priorité dans la file", "Accès bêta aux nouveautés", "Historique de conversation", "Meilleure expérience pour usage fréquent"]
+  "fr": {
+    "free": [
+      "Textes illimités",
+      "3 vocaux par jour",
+      "1 appel vidéo ou audio par jour",
+      "15 secondes d'attente pour Next"
+    ],
+    "plus": [
+      "Vocaux illimités",
+      "30 demandes vidéo par jour",
+      "2 crédits d'appel offerts par jour",
+      "Appels illimités",
+      "Filtres avancés langue/genre",
+      "3 secondes d'attente pour Next"
+    ],
+    "pro": [
+      "Demandes vidéo illimitées",
+      "Appels illimités",
+      "5 crédits d'appel offerts par jour",
+      "Fonction Pause Vidéo",
+      "Next instantanés",
+      "Priorité dans la file",
+      "Accès bêta"
+    ]
   },
-  es: {
-    free: ["Textos ilimitados", "3 notas de voz al día", "3 solicitudes de vídeo al día", "15 segundos de espera para Next", "Recibir invitaciones a juegos"],
-    plus: ["Notas de voz ilimitadas", "30 solicitudes de vídeo al día", "Fondos de webcam", "Filtros avanzados de idioma", "Filtros avanzados de género", "Enviar invitaciones a juegos", "3 segundos de espera para Next", "Historial de conversación", "Pensado para conversar a menudo"],
-    pro: ["Solicitudes de vídeo ilimitadas", "Fondos de webcam", "Función Pausa de vídeo", "Enviar invitaciones a juegos", "Next instantáneo", "Prioridad en la cola", "Acceso beta a novedades", "Historial de conversación", "Mejor experiencia para uso frecuente"]
+  "es": {
+    "free": [
+      "Chats de texto ilimitados",
+      "3 notas de voz al día",
+      "1 llamada de vídeo o audio al día",
+      "15 segundos de espera para Next"
+    ],
+    "plus": [
+      "Notas de voz ilimitadas",
+      "30 solicitudes de vídeo al día",
+      "2 créditos de llamada regalados al día",
+      "Llamadas ilimitadas",
+      "Filtros avanzados de idioma/género",
+      "3 segundos de espera para Next"
+    ],
+    "pro": [
+      "Solicitudes de vídeo ilimitadas",
+      "Llamadas ilimitadas",
+      "5 créditos de llamada regalados al día",
+      "Pausa de Vídeo",
+      "Next instantáneo",
+      "Prioridad en la cola",
+      "Acceso beta"
+    ]
   },
-  it: {
-    free: ["Testi illimitati", "3 vocali al giorno", "3 richieste video al giorno", "15 secondi di attesa per Next", "Ricezione di inviti ai giochi"],
-    plus: ["Vocali illimitati", "30 richieste video al giorno", "Sfondi webcam", "Filtri avanzati di lingua", "Filtri avanzati di genere", "Invio di inviti ai giochi", "3 secondi di attesa per Next", "Cronologia delle conversazioni", "Pensato per conversare regolarmente"],
-    pro: ["Richieste video illimitate", "Sfondi webcam", "Funzione Pausa video", "Invio di inviti ai giochi", "Next istantaneo", "Priorità in coda", "Accesso beta alle novità", "Cronologia delle conversazioni", "Esperienza migliore per uso frequente"]
+  "it": {
+    "free": [
+      "Chat testuali illimitate",
+      "3 vocali al giorno",
+      "1 chiamata video o audio al giorno",
+      "15 secondi di attesa per Next"
+    ],
+    "plus": [
+      "Vocali illimitati",
+      "30 richieste video al giorno",
+      "2 crediti chiamata regalabili al giorno",
+      "Chiamate illimitate",
+      "Filtri avanzati lingua/genere",
+      "3 secondi di attesa per Next"
+    ],
+    "pro": [
+      "Richieste video illimitate",
+      "Chiamate illimitate",
+      "5 crediti chiamata regalabili al giorno",
+      "Funzione Pausa Video",
+      "Next istantaneo",
+      "Priorità in coda",
+      "Accesso beta"
+    ]
   },
-  de: {
-    free: ["Unbegrenzte Texte", "3 Sprachnachrichten pro Tag", "3 Videoanfragen pro Tag", "15 Sekunden Wartezeit für Next", "Spieleinladungen empfangen"],
-    plus: ["Unbegrenzte Sprachnachrichten", "30 Videoanfragen pro Tag", "Webcam-Hintergründe", "Erweiterte Sprachfilter", "Erweiterte Geschlechtsfilter", "Spieleinladungen senden", "3 Sekunden Wartezeit für Next", "Gesprächsverlauf", "Für regelmäßige Gespräche gedacht"],
-    pro: ["Unbegrenzte Videoanfragen", "Webcam-Hintergründe", "Video-Pause-Funktion", "Spieleinladungen senden", "Sofortiges Next", "Priorität in der Warteschlange", "Beta-Zugriff auf Neuheiten", "Gesprächsverlauf", "Beste Erfahrung für häufige Nutzung"]
+  "de": {
+    "free": [
+      "Unbegrenzte Textchats",
+      "3 Sprachnachrichten pro Tag",
+      "1 Video- oder Audioanruf pro Tag",
+      "15 Sekunden Wartezeit für Next"
+    ],
+    "plus": [
+      "Unbegrenzte Sprachnachrichten",
+      "30 Videoanfragen pro Tag",
+      "2 verschenkbare Anrufguthaben pro Tag",
+      "Unbegrenzte Anrufe",
+      "Erweiterte Sprach-/Gender-Filter",
+      "3 Sekunden Wartezeit für Next"
+    ],
+    "pro": [
+      "Unbegrenzte Videoanfragen",
+      "Unbegrenzte Anrufe",
+      "5 verschenkbare Anrufguthaben pro Tag",
+      "Video-Pause",
+      "Sofortiges Next",
+      "Priorität in der Warteschlange",
+      "Beta-Zugang"
+    ]
   }
 };
 
@@ -567,9 +667,11 @@ function pricing(lang) {
 
 function presentationPage(lang) {
   const l = langs[lang];
-  const features = l.features.map(([title, text]) => `<article class="figgliz-card"><h3>${esc(title)}</h3><p>${esc(text)}</p></article>`).join("");
+  const about = legalPageContent(lang, "about");
+  const aboutSections = about.sections.filter((section) => !/^contact$/i.test(section.title));
+  const features = aboutSections.map((section) => `<article class="figgliz-card"><h3>${esc(section.title)}</h3><p>${esc(sectionText(section))}</p></article>`).join("");
   const games = ["chess", "dames", "connect4", "ping", "flappy-duo", "air-hockey"].map((name) => `<figure class="figgliz-game"><img src="/assets/figgliz/${name}.webp" alt="" width="160" height="160" loading="lazy" decoding="async"><figcaption>${esc(gameLabels[lang][name])}</figcaption></figure>`).join("");
-  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(l.sectionsTitle)}</h2><p>${esc(l.sectionsLead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo.png" alt="Figgliz chess game with webcam conversations" width="1672" height="941" loading="lazy" decoding="async"></figure>${pricing(lang)}`;
+  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(about.title)}</h2><p>${esc(about.lead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo.png" alt="Figgliz chess game with webcam conversations" width="1672" height="941" loading="lazy" decoding="async"></figure>${pricing(lang)}`;
 }
 
 function textPage(lang, page) {

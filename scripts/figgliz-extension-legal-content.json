@@ -1,5 +1,55 @@
 {
   "en": {
+    "about": {
+      "title": "About Figgliz",
+      "lead": "Figgliz is a Chrome extension for anonymous conversations, with optional voice notes, video, webcam backgrounds, games, and a discreet launcher.",
+      "sections": [
+        {
+          "title": "Fast anonymous chat",
+          "body": "Become available, get matched with someone compatible, and keep essential controls close: Next, block, report, voice notes, video, and availability."
+        },
+        {
+          "title": "Text, voice, and video",
+          "body": "Text remains the core experience. Voice notes and video start only from explicit actions, with visible controls to accept, decline, mute, or stop."
+        },
+        {
+          "title": "More playful webcam",
+          "body": "In fullscreen video, Plus and Pro members can use blur and video backgrounds, with mirror, camera pause, draggable previews, and clean controls."
+        },
+        {
+          "title": "Games and video",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo, and other games can be played with or without webcam. Game sessions currently stay P2P to preserve server stability."
+        },
+        {
+          "title": "Discreet launcher",
+          "body": "The floating shortcut opens the side panel, shows unread messages, can collapse into a tab, and can be disabled in settings."
+        },
+        {
+          "title": "Plans",
+          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus adds comfort and 2 gifted call credits per day. Pro unlocks the full experience with 5 gifted call credits per day, and the Pro Lifetime launch offer may gift 10 credits per day."
+        },
+        {
+          "title": "Built-in safety",
+          "body": "The personal contact detector warns before sensitive details are sent. Reports, blocks, quotas, action tokens, and license checks reduce abuse."
+        },
+        {
+          "title": "Arcawand Soft",
+          "body": "Figgliz is developed by Arcawand Soft to make anonymous chatting more alive, controlled, and comfortable than a classic anonymous chat."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, privacy, safety, or billing: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Conversation history",
+          "body": "Plus and Pro members can open a local history of meaningful conversations, including messages, voice notes, animated emojis, and accepted events such as calls, webcams, or games. This is not a server archive: it stays on the User's device, is protected by a password, and can be deleted conversation by conversation or entirely."
+        },
+        {
+          "title": "Free calls and gifted credits",
+          "body": "Free includes 1 accepted call per day, video or audio, whether incoming or outgoing. Plus members can gift 2 call credits per day to a Free peer who has used the daily call. Monthly or yearly Pro members can gift 5 per day, and the Pro Lifetime launch offer can gift 10 per day."
+        }
+      ]
+    },
     "faq": {
       "title": "FAQ",
       "lead": "Figgliz is a Chrome extension for anonymous conversations, with optional voice notes, video, webcam backgrounds, games, and a discreet launcher.",
@@ -58,7 +108,7 @@
         },
         {
           "title": "What are the plans?",
-          "body": "Free is for discovery. Plus raises limits and unlocks comfort features. Pro adds the complete experience. Pro Lifetime gives lifetime Pro access through the launch offer."
+          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus raises limits, adds 2 gifted call credits per day and unlocks comfort features. Pro adds the complete experience with 5 gifted credits per day. Pro Lifetime gives lifetime Pro access through the launch offer and may gift 10 credits per day."
         },
         {
           "title": "How is my license verified?",
@@ -95,6 +145,14 @@
         {
           "title": "What happens if I forget the history password?",
           "body": "Access is intentionally protected. The secret question may allow local reset, but for safety this deletes the entire local history before a new access is created. Figgliz cannot recover or read this history for you."
+        },
+        {
+          "title": "How does the daily free call work?",
+          "body": "On Free, audio and video share the same quota: 1 accepted call per day in the User's time zone. Declined, cancelled or unanswered calls do not consume the quota. If an audio call is accepted and video is accepted later, this may count as two separate uses."
+        },
+        {
+          "title": "What does gifting a call credit mean?",
+          "body": "When a Free peer has already used the daily call, a Plus or Pro member may choose to gift a credit. The credit is consumed only if the peer actually accepts the audio or video call. If they decline, do not answer or the call is cancelled, the credit is not spent."
         }
       ]
     },
@@ -153,13 +211,17 @@
         {
           "title": "Password and no server access",
           "body": "History is protected by a local password and secret question. The password is not intended to be sent to the server for remote reading. If it is forgotten or reset, full deletion of the local history is required to prevent unauthorized access."
+        },
+        {
+          "title": "Quota and credit verification",
+          "body": "To enforce Free limits, gifted credits and Plus/Pro rights, Figgliz may verify on the server the license status, local installation ID, IP address or hash, time zone needed for daily counters, action tokens and acceptance events. These checks prevent cheating and do not mean server-side storage of conversation content."
         }
       ]
     },
     "terms": {
       "title": "Figgliz Terms of Use",
-      "lead": "Version dated June 8, 2026. These Terms govern access to and use of the Figgliz Chrome extension, published by Arcawand Soft. They form an agreement between Arcawand Soft and each User.",
-      "version": "2026-06-18",
+      "lead": "Version dated June 19, 2026. These Terms govern access to and use of the Figgliz Chrome extension, published by Arcawand Soft. They form an agreement between Arcawand Soft and each User.",
+      "version": "2026-06-19",
       "sections": [
         {
           "title": "Article 1 - Definitions",
@@ -200,8 +262,8 @@
           "title": "Article 5 - Free, Plus, Pro and launch offers",
           "body": "Figgliz may offer Free access and paid Figgliz Plus, Figgliz Pro, monthly, yearly or launch plans, including Pro Lifetime when displayed. Features, quotas, priorities, cooldowns, limits, prices and benefits are those shown in the extension, premium page or checkout at the time of purchase.",
           "items": [
-            "Free may include daily limits, including voice notes, webcam requests, Next or advanced options.",
-            "Plus and Pro may unlock comfort, more usage, filters, priority, video customization, webcam backgrounds or beta features.",
+            "Free may include daily limits, including voice notes, the daily accepted audio or video call, Next or advanced options.",
+            "Plus and Pro may unlock comfort, more usage, filters, priority, video customization, webcam backgrounds, gifted call credits or beta features.",
             "Any feature described as unlimited remains subject to fair use, technical availability, abuse prevention and service stability.",
             "Beta, experimental or launch features may evolve, be suspended, replaced or adjusted for technical, business, legal or safety reasons."
           ]
@@ -289,7 +351,7 @@
           ]
         },
         {
-          "title": "Article 17 - Local conversation history",
+          "title": "Article 15 - Local conversation history",
           "body": "When the feature is available to the User, conversation history lets the User locally review meaningful exchanges and events, including messages, voice notes, animated emojis, accepted invitations, calls, webcams, games and scores. This history is not stored on Figgliz servers and Arcawand Soft has no direct access to its content. It remains on the User's device, under the User's exclusive control, subject to browser and system limits.",
           "items": [
             "The User may delete one conversation or the entire history from the dedicated interface.",
@@ -298,18 +360,79 @@
           ]
         },
         {
-          "title": "Article 18 - Password, lost access and security deletion",
+          "title": "Article 16 - Password, lost access and security deletion",
           "body": "Access to local history is protected by a password chosen by the User. Figgliz does not store that password in plain text and does not provide a server mechanism allowing Arcawand Soft to read, extract or restore the history without it. If the password is forgotten, reset is requested, or the secret question cannot be verified, the User accepts that recovering access requires permanent deletion of the relevant local history. This deletion protects privacy and cannot be reversed by Arcawand Soft.",
           "items": [
             "The User must choose a strong enough password and keep the secret answer confidential.",
             "Uninstalling the browser, deleting extension data, system cleanup or device reset may delete local history.",
             "Arcawand Soft cannot guarantee preservation of local history deleted by the User, browser, system or a third-party tool."
           ]
+        },
+        {
+          "title": "Article 17 - Free calls, gifted credits and Pro Lifetime",
+          "body": "Audio and video calls are subject to the quotas, rights and checks shown in the extension. Free includes 1 accepted audio or video call per day, incoming or outgoing, based on the User's time zone. Declined, cancelled or unanswered calls do not consume that quota.",
+          "items": [
+            "Plus members may gift 2 call credits per day to Free Users who have used their quota.",
+            "Monthly or yearly Pro members may gift 5 call credits per day.",
+            "The Pro Lifetime launch offer may gift 10 call credits per day when active and displayed.",
+            "A gifted credit is consumed only if the audio or video call is actually accepted.",
+            "Arcawand Soft may verify server-side the license, installation ID, IP address or hash, time zone, action tokens and acceptance events to prevent bypass, fraud or abusive use."
+          ]
         }
       ]
     }
   },
   "fr": {
+    "about": {
+      "title": "À propos de Figgliz",
+      "lead": "Figgliz est une extension Chrome pour lancer une discussion anonyme, puis ajouter si vous le souhaitez les vocaux, la vidéo, les fonds de webcam, les jeux et le launcher discret.",
+      "sections": [
+        {
+          "title": "Une discussion rapide",
+          "body": "Passez disponible, l'extension cherche une personne compatible, puis vous gardez les commandes essentielles sous la main : Next, bloquer, signaler, vocaux, vidéo et indisponibilité."
+        },
+        {
+          "title": "Texte, vocaux et vidéo",
+          "body": "Le texte reste le cœur de l'expérience. Les vocaux et la vidéo se lancent seulement depuis des actions explicites, avec des contrôles visibles pour accepter, refuser, couper ou arrêter."
+        },
+        {
+          "title": "Webcam plus fun",
+          "body": "En vidéo plein écran, les membres Plus et Pro peuvent utiliser le flou et les fonds de webcam, avec miroir, pause caméra, miniatures déplaçables et contrôles propres."
+        },
+        {
+          "title": "Jeux et vidéo",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo et les autres jeux peuvent être joués seuls ou avec webcam. Les parties restent actuellement en P2P afin de préserver la stabilité serveur."
+        },
+        {
+          "title": "Launcher discret",
+          "body": "Le raccourci flottant en bas à droite ouvre le side panel, affiche les messages non lus et peut être masqué en languette ou désactivé dans les paramètres."
+        },
+        {
+          "title": "Offres",
+          "body": "Free permet de découvrir l'extension avec 1 appel vidéo ou audio accepté par jour. Plus apporte plus de confort et 2 crédits d'appel à offrir par jour. Pro débloque l'expérience complète avec 5 crédits d'appel à offrir par jour, et l'offre de lancement Pro Lifetime peut offrir 10 crédits par jour."
+        },
+        {
+          "title": "Sécurité intégrée",
+          "body": "Le détecteur de coordonnées personnelles vous avertit avant l'envoi d'informations sensibles. Les signalements, blocages, quotas, jetons d'action et validations de licence limitent les abus."
+        },
+        {
+          "title": "Arcawand Soft",
+          "body": "Figgliz est développé par Arcawand Soft avec l'objectif de proposer une expérience anonyme, vivante et mieux contrôlée qu'un chat aléatoire classique."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, confidentialité, sécurité ou facturation : contact@arcawand-soft.com."
+        },
+        {
+          "title": "Historique des conversations",
+          "body": "Les membres Plus et Pro peuvent consulter un historique local des conversations importantes, avec les messages, vocaux, emojis animés et événements acceptés comme appels, webcams ou jeux. Cet historique n'est pas une archive serveur : il reste sur l'appareil de l'Utilisateur, se protège par mot de passe et peut être supprimé conversation par conversation ou en totalité."
+        },
+        {
+          "title": "Appels Free et crédits offerts",
+          "body": "L'offre Free inclut 1 appel accepté par jour, vidéo ou audio, que l'appel soit entrant ou sortant. Les membres Plus peuvent offrir 2 crédits d'appel par jour à un correspondant Free qui a épuisé son appel du jour. Les membres Pro mensuels ou annuels peuvent en offrir 5 par jour, et l'offre de lancement Pro Lifetime peut en offrir 10 par jour."
+        }
+      ]
+    },
     "faq": {
       "title": "FAQ",
       "lead": "Figgliz est une extension Chrome pour lancer une discussion anonyme, puis ajouter si vous le souhaitez les vocaux, la vidéo, les fonds de webcam, les jeux et le launcher discret.",
@@ -368,7 +491,7 @@
         },
         {
           "title": "Quelles sont les offres ?",
-          "body": "Free est l'offre de découverte. Plus augmente les quotas et débloque des conforts. Pro ajoute l'expérience complète. Pro Lifetime donne un accès à vie au plan Pro via l'offre de lancement."
+          "body": "Free est l'offre de découverte avec 1 appel vidéo ou audio accepté par jour. Plus augmente les quotas, ajoute 2 crédits d'appel à offrir par jour et débloque des conforts. Pro ajoute l'expérience complète avec 5 crédits à offrir par jour. Pro Lifetime donne un accès à vie au plan Pro via l'offre de lancement et peut offrir 10 crédits par jour."
         },
         {
           "title": "Comment la licence est-elle vérifiée ?",
@@ -405,6 +528,14 @@
         {
           "title": "Que se passe-t-il si j'oublie le mot de passe de l'historique ?",
           "body": "L'accès est volontairement protégé. La question secrète peut permettre une réinitialisation locale, mais par sécurité cette opération supprime l'intégralité de l'historique local avant de recréer un accès. Figgliz ne peut pas récupérer ni lire cet historique à votre place."
+        },
+        {
+          "title": "Comment fonctionne l'appel gratuit quotidien ?",
+          "body": "En Free, audio et vidéo partagent le même quota : 1 appel accepté par jour dans le fuseau horaire de l'Utilisateur. Un appel refusé, annulé ou sans réponse ne consomme pas le quota. Si un appel audio est accepté puis qu'une vidéo est acceptée ensuite, cela peut compter comme deux usages distincts."
+        },
+        {
+          "title": "Que signifie offrir un crédit d'appel ?",
+          "body": "Quand un correspondant Free a déjà utilisé son appel du jour, un membre Plus ou Pro peut choisir de lui offrir un crédit. Le crédit n'est consommé que si le correspondant accepte réellement l'appel audio ou vidéo. S'il refuse, ne répond pas ou si l'appel est annulé, le crédit n'est pas débité."
         }
       ]
     },
@@ -463,13 +594,17 @@
         {
           "title": "Mot de passe et absence d'accès serveur",
           "body": "L'historique est protégé par un mot de passe local et une question secrète. Le mot de passe n'a pas vocation à être transmis au serveur pour permettre une lecture distante. En cas d'oubli ou de réinitialisation, la suppression intégrale de l'historique local est imposée pour éviter un accès non autorisé."
+        },
+        {
+          "title": "Vérification des quotas et crédits",
+          "body": "Pour appliquer les limites Free, les crédits offerts et les droits Plus/Pro, Figgliz peut vérifier côté serveur le statut de licence, un identifiant local d'installation, l'adresse IP ou son empreinte, le fuseau horaire utile au compteur journalier, les jetons d'action et les événements d'acceptation. Ces contrôles servent à éviter la triche et n'impliquent pas le stockage serveur du contenu des conversations."
         }
       ]
     },
     "terms": {
       "title": "Conditions generales d'utilisation de Figgliz",
-      "lead": "Version du 8 juin 2026. Ces conditions encadrent l'acces et l'utilisation de l'extension Chrome Figgliz, editee par Arcawand Soft. Elles constituent un accord entre Arcawand Soft et chaque Utilisateur.",
-      "version": "2026-06-18",
+      "lead": "Version du 19 juin 2026. Ces conditions encadrent l'acces et l'utilisation de l'extension Chrome Figgliz, editee par Arcawand Soft. Elles constituent un accord entre Arcawand Soft et chaque Utilisateur.",
+      "version": "2026-06-19",
       "sections": [
         {
           "title": "Article 1 - Definitions",
@@ -510,8 +645,8 @@
           "title": "Article 5 - Comptes, acces Free, Plus, Pro et offre de lancement",
           "body": "Figgliz peut proposer un acces Free et des offres payantes Figgliz Plus, Figgliz Pro, annuelles, mensuelles ou de lancement, dont une offre Pro Lifetime lorsqu'elle est affichee. Les fonctionnalites, quotas, priorites, cooldowns, limites, prix et avantages applicables sont ceux presentes dans l'extension, dans la page premium ou au checkout au moment de la souscription.",
           "items": [
-            "Free peut inclure des limitations quotidiennes, notamment sur les vocaux, les demandes webcam, Next ou certaines options avancees.",
-            "Plus et Pro peuvent debloquer davantage de confort, d'usages, de filtres, de priorite, de personnalisation video, de fonds de webcam ou de fonctionnalites beta.",
+            "Free peut inclure des limitations quotidiennes, notamment sur les vocaux, l'appel audio ou video accepte quotidien, Next ou certaines options avancees.",
+            "Plus et Pro peuvent debloquer davantage de confort, d'usages, de filtres, de priorite, de personnalisation video, de fonds de webcam, de credits d'appel offerts ou de fonctionnalites beta.",
             "Une fonctionnalite dite illimitee reste soumise a un usage raisonnable, a la disponibilite technique, a la prevention des abus et a la stabilite du service.",
             "Les offres beta, experimentales ou de lancement peuvent evoluer, etre suspendues, remplacees ou ajustees pour des raisons techniques, commerciales, legales ou de securite."
           ]
@@ -599,7 +734,7 @@
           ]
         },
         {
-          "title": "Article 17 - Historique local des conversations",
+          "title": "Article 15 - Historique local des conversations",
           "body": "Lorsque la fonctionnalite est disponible pour l'Utilisateur, l'historique des conversations permet de consulter localement certains echanges et evenements significatifs, notamment messages, vocaux, emojis animes, invitations acceptees, appels, webcams, jeux et scores. Cet historique n'est pas stocke sur les serveurs Figgliz et Arcawand Soft ne dispose pas d'un acces direct a son contenu. Il reste sur l'appareil de l'Utilisateur, sous son controle exclusif, sous reserve des limites techniques du navigateur et du systeme.",
           "items": [
             "L'Utilisateur peut supprimer une conversation ou supprimer tout son historique depuis l'interface prevue.",
@@ -608,18 +743,79 @@
           ]
         },
         {
-          "title": "Article 18 - Mot de passe, perte d'acces et suppression de securite",
+          "title": "Article 16 - Mot de passe, perte d'acces et suppression de securite",
           "body": "L'acces a l'historique local est protege par un mot de passe defini par l'Utilisateur. Figgliz ne stocke pas ce mot de passe en clair et ne fournit pas de mecanisme serveur permettant a Arcawand Soft de lire, extraire ou restaurer l'historique sans ce mot de passe. En cas d'oubli, de reinitialisation ou d'impossibilite de verification par la question secrete, l'Utilisateur accepte que la recuperation de l'acces implique la suppression definitive de l'historique local concerne. Cette suppression protege la vie privee et ne peut pas etre annulee par Arcawand Soft.",
           "items": [
             "L'Utilisateur doit choisir un mot de passe suffisamment robuste et conserver sa reponse secrete de maniere confidentielle.",
             "La desinstallation du navigateur, la suppression des donnees d'extension, certains nettoyages systeme ou la reinitialisation de l'appareil peuvent supprimer l'historique local.",
             "Arcawand Soft ne peut pas garantir la conservation d'un historique local supprime par l'Utilisateur, le navigateur, le systeme ou un outil tiers."
           ]
+        },
+        {
+          "title": "Article 17 - Appels Free, crédits offerts et Pro Lifetime",
+          "body": "Les appels audio et vidéo sont soumis aux quotas, droits et contrôles affichés dans l'extension. L'offre Free inclut 1 appel audio ou vidéo accepté par jour, entrant ou sortant, selon le fuseau horaire de l'Utilisateur. Les appels refusés, annulés ou sans réponse ne consomment pas ce quota.",
+          "items": [
+            "Les membres Plus peuvent offrir 2 crédits d'appel par jour à des Utilisateurs Free ayant épuisé leur quota.",
+            "Les membres Pro mensuels ou annuels peuvent offrir 5 crédits d'appel par jour.",
+            "L'offre de lancement Pro Lifetime peut offrir 10 crédits d'appel par jour lorsqu'elle est active et affichée.",
+            "Un crédit offert n'est consommé que si l'appel audio ou vidéo est effectivement accepté.",
+            "Arcawand Soft peut vérifier côté serveur la licence, l'identifiant d'installation, l'adresse IP ou son empreinte, le fuseau horaire, les jetons d'action et les événements d'acceptation afin d'empêcher les contournements, la fraude ou les usages abusifs."
+          ]
         }
       ]
     }
   },
   "es": {
+    "about": {
+      "title": "Acerca de Figgliz",
+      "lead": "Figgliz es una extensi?n de Chrome para conversaciones an?nimas, con notas de voz opcionales, v?deo, fondos de webcam, juegos y un launcher discreto.",
+      "sections": [
+        {
+          "title": "Chat an?nimo r?pido",
+          "body": "Ponte disponible, encuentra a una persona compatible y mant?n cerca los controles esenciales: Next, bloquear, reportar, voz, v?deo y disponibilidad."
+        },
+        {
+          "title": "Texto, voz y v?deo",
+          "body": "El texto sigue siendo la experiencia principal. La voz y el v?deo solo comienzan mediante acciones expl?citas."
+        },
+        {
+          "title": "Webcam m?s divertida",
+          "body": "En v?deo a pantalla completa, Plus y Pro pueden usar desenfoque, fondos, espejo, pausa de c?mara y miniaturas movibles."
+        },
+        {
+          "title": "Juegos y v?deo",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo y otros juegos pueden jugarse con o sin webcam; los juegos Plus/Pro compatibles pueden usar el VPS."
+        },
+        {
+          "title": "Launcher discreto",
+          "body": "El acceso flotante abre el panel lateral, muestra no leidos, se pliega en pestana y puede desactivarse."
+        },
+        {
+          "title": "Planes",
+          "body": "Free sirve para descubrir. Plus aporta comodidad. Pro desbloquea todo. Pro Lifetime ofrece acceso Pro de por vida en oferta limitada."
+        },
+        {
+          "title": "Seguridad integrada",
+          "body": "El detector de datos personales avisa antes de enviar informacion sensible. Reportes, bloqueos, cuotas y validaciones reducen abusos."
+        },
+        {
+          "title": "Arcawand Soft",
+          "body": "Figgliz esta desarrollado por Arcawand Soft para un chat anonimo mas vivo y controlado."
+        },
+        {
+          "title": "Contact",
+          "body": "Soporte, privacidad, seguridad o facturacion: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Historial de conversaciones",
+          "body": "Los miembros Plus y Pro pueden consultar un historial local de conversaciones importantes, con mensajes, audios, emojis animados y eventos aceptados como llamadas, webcam o juegos. No es un archivo del servidor: permanece en el dispositivo del Usuario, protegido por contraseña, y puede borrarse por conversación o por completo."
+        },
+        {
+          "title": "Llamadas Free y creditos regalados",
+          "body": "Free incluye 1 llamada aceptada al dia, de video o audio, entrante o saliente. Plus puede regalar 2 creditos de llamada al dia a una persona Free que ya uso su llamada diaria. Pro mensual o anual puede regalar 5 al dia, y Pro Lifetime de lanzamiento puede regalar 10 al dia."
+        }
+      ]
+    },
     "faq": {
       "title": "FAQ",
       "lead": "Figgliz es una extension de Chrome para conversaciones anonimas con texto, voz, video, fondos de webcam, juegos y un launcher discreto.",
@@ -710,11 +906,19 @@
         },
         {
           "title": "¿Dónde se guarda el historial de conversaciones?",
-          "body": "Se guarda localmente en Chrome, en el dispositivo del Usuario. Figgliz no mantiene una base de datos servidor para volver a leer conversaciones: el servidor gestiona conexión, licencias, cuotas, reportes y seguridad, pero no da accèso centralizado a tu historial."
+          "body": "Se guarda localmente en Chrome, en el dispositivo del Usuario. Figgliz no mantiene una base de datos servidor para volver a leer conversaciones: el servidor gestiona conexión, licencias, cuotas, reportes y seguridad, pero no da acceso centralizado a tu historial."
         },
         {
           "title": "¿Qué pasa si olvido la contraseña del historial?",
-          "body": "El accèso está protegido deliberadamente. La pregunta secreta puede permitir un restáblecimiento local, pero por seguridad eso elimina todo el historial local antes de crear un nuevo accèso. Figgliz no puede recuperar ni leer ese historial por ti."
+          "body": "El acceso está protegido deliberadamente. La pregunta secreta puede permitir un restablecimiento local, pero por seguridad eso elimina todo el historial local antes de crear un nuevo acceso. Figgliz no puede recuperar ni leer ese historial por ti."
+        },
+        {
+          "title": "Como funciona la llamada gratuita diaria?",
+          "body": "En Free, audio y video comparten el mismo cupo: 1 llamada aceptada al dia en el huso horario del Usuario. Una llamada rechazada, cancelada o sin respuestá no consume el cupo. Si se acepta audio y luego se acepta video, puede contar como dos usos distintos."
+        },
+        {
+          "title": "Que significa regalar un credito de llamada?",
+          "body": "Cuando una persona Free ya uso su llamada del dia, un miembro Plus o Pro puede regalarle un credito. Solo se consume si la llamada de audio o video se acepta realmente."
         }
       ]
     },
@@ -771,15 +975,19 @@
           "body": "Cuando el historial está activado, los elementos admisibles de conversación se conservan localmente por la extensión en el dispositivo del Usuario. El Usuario conserva el control: puede borrar una conversación concreta o todo el historial desde la interfaz dedicada."
         },
         {
-          "title": "Contraseña y ausencia de accèso servidor",
-          "body": "El historial se protege con una contraseña local y una pregunta secreta. La contraseña no está destinada a enviarse al servidor para una lectura remota. En caso de olvido o restáblecimiento, se exige la eliminación completa del historial local para evitar accèsos no autorizados."
+          "title": "Contraseña y ausencia de acceso servidor",
+          "body": "El historial se protege con una contraseña local y una pregunta secreta. La contraseña no está destinada a enviarse al servidor para una lectura remota. En caso de olvido o restablecimiento, se exige la eliminación completa del historial local para evitar accesos no autorizados."
+        },
+        {
+          "title": "Verificacion de cupos y creditos",
+          "body": "Para aplicar limites Free, creditos regalados y derechos Plus/Pro, Figgliz puede verificar en el servidor licencia, identificador local de instalacion, IP o hash, huso horario, tokens de accion y aceptaciones. Esto evita trampas sin almacenar el contenido de las conversaciones en el servidor."
         }
       ]
     },
     "terms": {
       "title": "Condiciones generales de uso de Figgliz",
       "lead": "Version del 8 de junio de 2026. Estas condiciones regulan el acceso y uso de la extension Chrome Figgliz, publicada por Arcawand Soft. Forman un acuerdo entre Arcawand Soft y cada Usuario.",
-      "version": "2026-06-18",
+      "version": "2026-06-19",
       "sections": [
         {
           "title": "Article 1 - Definiciones",
@@ -852,7 +1060,7 @@
           "items": []
         },
         {
-          "title": "Articulo 17 - Historial local de conversaciones",
+          "title": "Articulo 15 - Historial local de conversaciones",
           "body": "Cuando la funcion esta disponible para el Usuario, el historial de conversaciones permite consultar localmente intercambios y eventos significativos, incluidos mensajes, audios, emojis animados, invitaciones aceptadas, llamadas, webcam, juegos y puntuaciones. Este historial no se almacena en los servidores de Figgliz y Arcawand Soft no tiene acceso directo a su contenido. Permanece en el dispositivo del Usuario, bajo su control exclusivo, sujeto a los limites tecnicos del navegador y del sistema.",
           "items": [
             "El Usuario puede eliminar una conversacion o todo el historial desde la interfaz dedicada.",
@@ -861,18 +1069,79 @@
           ]
         },
         {
-          "title": "Articulo 18 - Contrasena, perdida de acceso y eliminacion de seguridad",
+          "title": "Articulo 16 - Contrasena, perdida de acceso y eliminacion de seguridad",
           "body": "El acceso al historial local esta protegido por una contrasena definida por el Usuario. Figgliz no almacena esa contrasena en claro y no ofrece un mecanismo servidor que permita a Arcawand Soft leer, extraer o restaurar el historial sin ella. Si se olvida la contrasena, se solicita un restablecimiento o no se puede verificar la pregunta secreta, el Usuario acepta que recuperar el acceso requiere la eliminacion definitiva del historial local afectado. Esta eliminacion protege la privacidad y Arcawand Soft no puede revertirla.",
           "items": [
             "El Usuario debe elegir una contrasena suficientemente robusta y conservar en secreto la respuesta secreta.",
             "La desinstalacion del navegador, la eliminacion de datos de la extension, una limpieza del sistema o el restablecimiento del dispositivo pueden eliminar el historial local.",
             "Arcawand Soft no puede garantizar la conservacion de un historial local eliminado por el Usuario, el navegador, el sistema o una herramienta de terceros."
           ]
+        },
+        {
+          "title": "Articulo 17 - Llamadas Free, creditos regalados y Pro Lifetime",
+          "body": "Las llamadas de audio y video estan sujetas a los cupos, derechos y controles mostrados en la extension. Free incluye 1 llamada de audio o video aceptada al dia, entrante o saliente, segun el huso horario del Usuario. Las llamadas rechazadas, canceladas o sin respuesta no consumen ese cupo.",
+          "items": [
+            "Plus puede regalar 2 creditos de llamada al dia a Usuarios Free que agotaron su cupo.",
+            "Pro mensual o anual puede regalar 5 creditos al dia.",
+            "Pro Lifetime de lanzamiento puede regalar 10 creditos al dia cuando este activo y mostrado.",
+            "Un credito regalado solo se consume si la llamada de audio o video se acepta realmente.",
+            "Arcawand Soft puede verificar en servidor licencia, ID de instalacion, IP o hash, huso horario, tokens y aceptaciones para evitar fraude o abuso."
+          ]
         }
       ]
     }
   },
   "it": {
+    "about": {
+      "title": "Informazioni su Figgliz",
+      "lead": "Figgliz ? un?estensione Chrome per conversazioni anonime, con note vocali opzionali, video, sfondi webcam, giochi e un launcher discreto.",
+      "sections": [
+        {
+          "title": "Chat anonima rapida",
+          "body": "Diventa disponibile, trova una persona compatibile e usa Next, blocco, segnalazione, vocali, video e stato."
+        },
+        {
+          "title": "Testo, voce e video",
+          "body": "Il testo resta centrale. Voce e video partono solo con azioni esplicite e controlli visibili."
+        },
+        {
+          "title": "Webcam pi? divertente",
+          "body": "In video a schermo intero, Plus e Pro possono usare sfocatura, sfondi, specchio, pausa camera e miniature spostabili."
+        },
+        {
+          "title": "Giochi e video",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo e altri giochi possono essere usati con o senza webcam; alcune partite Plus/Pro usano il VPS."
+        },
+        {
+          "title": "Launcher discreto",
+          "body": "Il pulsante flottante apre il pannello, mostra non letti, si ripiega in linguetta e puo essere disattivato."
+        },
+        {
+          "title": "Piani",
+          "body": "Free fa scoprire l'estensione. Plus aggiunge comfort. Pro sblocca tutto. Pro Lifetime offre accesso Pro a vita in lancio limitato."
+        },
+        {
+          "title": "Sicurezza",
+          "body": "Rilevatore di contatti personali, report, blocchi, quote, token e controlli licenza riducono abusi."
+        },
+        {
+          "title": "Arcawand Soft",
+          "body": "Figgliz e sviluppato da Arcawand Soft per chat anonime piu vive e controllate."
+        },
+        {
+          "title": "Contact",
+          "body": "Supporto, privacy, sicurezza o fatturazione: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Cronologia delle conversazioni",
+          "body": "I membri Plus e Pro possono consultare una cronologia locale delle conversazioni importanti, con messaggi, vocali, emoji animate ed eventi accettati come chiamate, webcam o giochi. Non è un archivio server: restá sul dispositivo dell'Utente, è protetta da password e può essere eliminata per singola conversazione o interamente."
+        },
+        {
+          "title": "Chiamate Free e crediti regalati",
+          "body": "Free include 1 chiamata accettata al giorno, video o audio, in entrata o in uscita. Plus può regalare 2 crediti chiamata al giorno a un utente Free che ha esaurito la chiamata quotidiana. Pro mensile o annuale può regalarne 5, mentre Pro Lifetime di lancio può regalarne 10."
+        }
+      ]
+    },
     "faq": {
       "title": "FAQ",
       "lead": "Figgliz e un'estensione Chrome per conversazioni anonime con testo, vocali, video, sfondi webcam, giochi e launcher discreto.",
@@ -968,6 +1237,14 @@
         {
           "title": "Cosa succede se dimentico la password della cronologia?",
           "body": "L'accesso è protetto intenzionalmente. La domanda segreta può consentire un ripristino locale, ma per sicurezza questo elimina tutta la cronologia locale prima di creare un nuovo accesso. Figgliz non può recuperarla né leggerla al posto tuo."
+        },
+        {
+          "title": "Come funziona la chiamata gratuita giornaliera?",
+          "body": "In Free audio e video condividono la stessa quota: 1 chiamata accettata al giorno nel fuso orario dell'Utente. Chiamate rifiutate, annullate o senza risposta non consumano la quota."
+        },
+        {
+          "title": "Cosa significa regalare un credito chiamata?",
+          "body": "Se un utente Free ha già usato la chiamata del giorno, un membro Plus o Pro può offrirgli un credito. Il credito si consuma solo se la chiamata audio o video viene accettata."
         }
       ]
     },
@@ -1026,13 +1303,17 @@
         {
           "title": "Password e nessun accesso server",
           "body": "La cronologia è protetta da password locale e domanda segreta. La password non è destinata a essere inviata al server per lettura remota. In caso di dimenticanza o ripristino, l'eliminazione completa della cronologia locale è necessaria per evitare accessi non autorizzati."
+        },
+        {
+          "title": "Verifica di quote e crediti",
+          "body": "Per applicare limiti Free, crediti regalati e diritti Plus/Pro, Figgliz può verificare lato server licenza, ID locale di installazione, IP o hash, fuso orario, token di azione e accettazioni. Questi controlli non archiviano il contenuto delle conversazioni sul server."
         }
       ]
     },
     "terms": {
       "title": "Condizioni generali d'uso di Figgliz",
       "lead": "Versione dell'8 giugno 2026. Queste condizioni regolano l'accesso e l'uso dell'estensione Chrome Figgliz, pubblicata da Arcawand Soft, e costituiscono un accordo con ogni Utente.",
-      "version": "2026-06-18",
+      "version": "2026-06-19",
       "sections": [
         {
           "title": "Article 1 - Definizioni",
@@ -1105,7 +1386,7 @@
           "items": []
         },
         {
-          "title": "Articolo 17 - Cronologia locale delle conversazioni",
+          "title": "Articolo 15 - Cronologia locale delle conversazioni",
           "body": "Quando la funzione e disponibile per l'Utente, la cronologia delle conversazioni consente di consultare localmente scambi ed eventi significativi, inclusi messaggi, vocali, emoji animate, inviti accettati, chiamate, webcam, giochi e punteggi. Questa cronologia non e memorizzata sui server Figgliz e Arcawand Soft non ha accesso diretto al suo contenuto. Rimane sul dispositivo dell'Utente, sotto il suo controllo esclusivo, nei limiti tecnici del browser e del sistema.",
           "items": [
             "L'Utente puo eliminare una conversazione o l'intera cronologia dall'interfaccia dedicata.",
@@ -1114,18 +1395,79 @@
           ]
         },
         {
-          "title": "Articolo 18 - Password, perdita di accesso ed eliminazione di sicurezza",
+          "title": "Articolo 16 - Password, perdita di accesso ed eliminazione di sicurezza",
           "body": "L'accesso alla cronologia locale e protetto da una password definita dall'Utente. Figgliz non memorizza tale password in chiaro e non fornisce un meccanismo server che consenta ad Arcawand Soft di leggere, estrarre o ripristinare la cronologia senza di essa. Se la password viene dimenticata, viene richiesto un ripristino o non e possibile verificare la domanda segreta, l'Utente accetta che il recupero dell'accesso richieda l'eliminazione definitiva della cronologia locale interessata. Questa eliminazione tutela la privacy e non puo essere annullata da Arcawand Soft.",
           "items": [
             "L'Utente deve scegliere una password sufficientemente robusta e mantenere riservata la risposta segreta.",
             "La disinstallazione del browser, l'eliminazione dei dati dell'estensione, una pulizia di sistema o il reset del dispositivo possono eliminare la cronologia locale.",
             "Arcawand Soft non puo garantire la conservazione di una cronologia locale eliminata dall'Utente, dal browser, dal sistema o da uno strumento di terze parti."
           ]
+        },
+        {
+          "title": "Articolo 17 - Chiamate Free, crediti regalati e Pro Lifetime",
+          "body": "Le chiamate audio e video sono soggette alle quote, ai diritti e ai controlli mostrati nell'estensione. Free include 1 chiamata audio o video accettata al giorno, in entrata o in uscita, secondo il fuso orario dell'Utente. Chiamate rifiutate, annullate o senza risposta non consumano la quota.",
+          "items": [
+            "Plus puo regalare 2 crediti chiamata al giorno agli Utenti Free che hanno esaurito la quota.",
+            "Pro mensile o annuale puo regalarne 5 al giorno.",
+            "Pro Lifetime di lancio puo regalarne 10 al giorno quando attivo e mostrato.",
+            "Un credito regalato si consuma solo se la chiamata audio o video viene accettata.",
+            "Arcawand Soft puo verificare lato server licenza, ID installazione, IP o hash, fuso orario, token e accettazioni per evitare aggiramenti, frodi o abusi."
+          ]
         }
       ]
     }
   },
   "de": {
+    "about": {
+      "title": "?ber Figgliz",
+      "lead": "Figgliz ist eine Chrome-Erweiterung f?r anonyme Gespr?che mit Text, Sprachnachrichten, Video, Webcam-Hintergr?nden, Spielen und diskretem Launcher.",
+      "sections": [
+        {
+          "title": "Schneller anonymer Chat",
+          "body": "Verf?gbar werden, eine passende Person finden und Next, Blockieren, Melden, Sprache, Video und Status nutzen."
+        },
+        {
+          "title": "Text, Sprache und Video",
+          "body": "Text bleibt zentral. Sprache und Video starten nur durch ausdruckliche Aktionen."
+        },
+        {
+          "title": "Mehr Webcam-Spa?",
+          "body": "Plus und Pro nutzen im Vollbild Blur, Hintergr?nde, Spiegel, Kamerapause und verschiebbare Miniaturen."
+        },
+        {
+          "title": "Spiele und Video",
+          "body": "Ping-Pong, Air Hockey, Flappy Duo und andere Spiele laufen mit oder ohne Webcam; geeignete Plus/Pro-Spiele k?nnen den VPS nutzen."
+        },
+        {
+          "title": "Diskreter Launcher",
+          "body": "Der Floating-Button ?ffnet das Sidepanel, zeigt ungelesene Nachrichten, klappt als Lasche ein und ist abschaltbar."
+        },
+        {
+          "title": "Pl?ne",
+          "body": "Free zum Kennenlernen, Plus f?r Komfort, Pro f?r alles, Pro Lifetime als begrenztes Startangebot."
+        },
+        {
+          "title": "Sicherheit",
+          "body": "Kontaktdetektor, Meldungen, Blockaden, Quoten, Token und Lizenzchecks reduzieren Missbrauch."
+        },
+        {
+          "title": "Arcawand Soft",
+          "body": "Figgliz wird von Arcawand Soft entwickelt."
+        },
+        {
+          "title": "Contact",
+          "body": "Support, Datenschutz, Sicherheit oder Abrechnung: contact@arcawand-soft.com."
+        },
+        {
+          "title": "Gesprächsverlauf",
+          "body": "Plus- und Pro-Mitglieder können einen lokalen Verlauf wichtiger Gespräche öffnen, einschließlich Nachrichten, Sprachnachrichten, animierter Emojis und akzeptierter Ereignisse wie Anrufe, Webcam oder Spiele. Dies ist kein Serverarchiv: Es bleibt auf dem Gerät des Nutzers, ist passwortgeschützt und kann einzeln oder vollständig gelöscht werden."
+        },
+        {
+          "title": "Free-Anrufe und verschenkbare Guthaben",
+          "body": "Free enth?lt 1 angenommenen Audio- oder Videoanruf pro Tag, eingehend oder ausgehend. Plus kann 2 Anrufguthaben pro Tag an einen Free-Kontakt verschenken. Pro monatlich oder j?hrlich kann 5 pro Tag verschenken, Pro Lifetime als Startangebot 10 pro Tag."
+        }
+      ]
+    },
     "faq": {
       "title": "FAQ",
       "lead": "Figgliz ist eine Chrome-Erweiterung fur anonyme Gesprache mit Text, Sprachnachrichten, Video, Webcam-Hintergrunden, Spielen und diskretem Launcher.",
@@ -1221,6 +1563,14 @@
         {
           "title": "Was passiert, wenn ich das Verlaufspasswort vergesse?",
           "body": "Der Zugriff ist bewusst geschützt. Die geheime Frage kann ein lokales Zurücksetzen ermöglichen, löscht aus Sicherheitsgründen aber den gesamten lokalen Verlauf, bevor ein neuer Zugriff erstellt wird. Figgliz kann diesen Verlauf nicht für dich wiederherstellen oder lesen."
+        },
+        {
+          "title": "Wie funktioniert der taegliche Free-Anruf?",
+          "body": "Bei Free teilen Audio und Video dasselbe Kontingent: 1 angenommener Anruf pro Tag in der Zeitzone des Nutzers. Abgelehnte, abgebrochene oder unbeantwortete Anrufe zaehlen nicht."
+        },
+        {
+          "title": "Was bedeutet ein geschenkter Anruf-Credit?",
+          "body": "Hat ein Free-Kontakt seinen Tagesanruf verbraucht, kann Plus oder Pro einen Credit schenken. Er wird nur verbraucht, wenn der Audio- oder Videoanruf wirklich angenommen wird."
         }
       ]
     },
@@ -1279,13 +1629,17 @@
         {
           "title": "Passwort und kein Serverzugriff",
           "body": "Der Verlauf ist durch ein lokales Passwort und eine geheime Frage geschützt. Das Passwort ist nicht dafür vorgesehen, zur Fernlesung an den Server gesendet zu werden. Bei Vergessen oder Zurücksetzen ist die vollständige Löschung des lokalen Verlaufs erforderlich, um unbefugten Zugriff zu verhindern."
+        },
+        {
+          "title": "Pruefung von Kontingenten und Credits",
+          "body": "Zur Durchsetzung von Free-Limits, geschenkten Credits und Plus/Pro-Rechten kann Figgliz serverseitig Lizenzstatus, lokale Installations-ID, IP oder Hash, Zeitzone, Aktionstokens und Annahmeereignisse pruefen. Inhalte der Gespraeche werden dadurch nicht serverseitig gespeichert."
         }
       ]
     },
     "terms": {
       "title": "Allgemeine Nutzungsbedingungen von Figgliz",
       "lead": "Version vom 8. Juni 2026. Diese Bedingungen regeln den Zugriff auf und die Nutzung der Chrome-Erweiterung Figgliz von Arcawand Soft und bilden eine Vereinbarung mit jedem Nutzer.",
-      "version": "2026-06-18",
+      "version": "2026-06-19",
       "sections": [
         {
           "title": "Article 1 - Definitionen",
@@ -1358,7 +1712,7 @@
           "items": []
         },
         {
-          "title": "Artikel 17 - Lokaler Gespraechsverlauf",
+          "title": "Artikel 15 - Lokaler Gespraechsverlauf",
           "body": "Wenn die Funktion fuer den Nutzer verfuegbar ist, ermoeglicht der Gespraechsverlauf die lokale Einsicht in wesentliche Austausche und Ereignisse, darunter Nachrichten, Sprachnachrichten, animierte Emojis, angenommene Einladungen, Anrufe, Webcam, Spiele und Endstaende. Dieser Verlauf wird nicht auf Figgliz-Servern gespeichert und Arcawand Soft hat keinen direkten Zugriff auf seinen Inhalt. Er bleibt auf dem Geraet des Nutzers, unter dessen ausschliesslicher Kontrolle und innerhalb der technischen Grenzen von Browser und System.",
           "items": [
             "Der Nutzer kann eine Unterhaltung oder den gesamten Verlauf ueber die vorgesehene Oberflaeche loeschen.",
@@ -1367,12 +1721,23 @@
           ]
         },
         {
-          "title": "Artikel 18 - Passwort, Zugriffsverlust und Sicherheitsloeschung",
+          "title": "Artikel 16 - Passwort, Zugriffsverlust und Sicherheitsloeschung",
           "body": "Der Zugriff auf den lokalen Verlauf ist durch ein vom Nutzer festgelegtes Passwort geschuetzt. Figgliz speichert dieses Passwort nicht im Klartext und stellt keinen Servermechanismus bereit, mit dem Arcawand Soft den Verlauf ohne Passwort lesen, extrahieren oder wiederherstellen kann. Wenn das Passwort vergessen wird, ein Zuruecksetzen verlangt wird oder die Sicherheitsfrage nicht geprueft werden kann, akzeptiert der Nutzer, dass die Wiederherstellung des Zugriffs die endgueltige Loeschung des betroffenen lokalen Verlaufs erfordert. Diese Loeschung dient dem Schutz der Privatsphaere und kann von Arcawand Soft nicht rueckgaengig gemacht werden.",
           "items": [
             "Der Nutzer muss ein ausreichend starkes Passwort waehlen und seine geheime Antwort vertraulich halten.",
             "Die Deinstallation des Browsers, das Loeschen von Erweiterungsdaten, Systembereinigungen oder das Zuruecksetzen des Geraets koennen den lokalen Verlauf loeschen.",
             "Arcawand Soft kann die Erhaltung eines lokalen Verlaufs nicht garantieren, wenn er durch Nutzer, Browser, System oder ein Drittanbieter-Tool geloescht wurde."
+          ]
+        },
+        {
+          "title": "Artikel 17 - Free-Anrufe, geschenkte Credits und Pro Lifetime",
+          "body": "Audio- und Videoanrufe unterliegen den in der Erweiterung angezeigten Kontingenten, Rechten und Pruefungen. Free umfasst 1 angenommenen Audio- oder Videoanruf pro Tag, eingehend oder ausgehend, nach Zeitzone des Nutzers. Abgelehnte, abgebrochene oder unbeantwortete Anrufe verbrauchen dieses Kontingent nicht.",
+          "items": [
+            "Plus kann 2 Anruf-Credits pro Tag an Free-Nutzer schenken, die ihr Kontingent verbraucht haben.",
+            "Pro monatlich oder jaehrlich kann 5 Credits pro Tag schenken.",
+            "Pro Lifetime als Startangebot kann 10 Credits pro Tag schenken, wenn es aktiv und angezeigt ist.",
+            "Ein geschenkter Credit wird nur verbraucht, wenn der Audio- oder Videoanruf tatsaechlich angenommen wird.",
+            "Arcawand Soft kann serverseitig Lizenz, Installations-ID, IP oder Hash, Zeitzone, Aktionstokens und Annahmen pruefen, um Umgehung, Betrug oder Missbrauch zu verhindern."
           ]
         }
       ]
