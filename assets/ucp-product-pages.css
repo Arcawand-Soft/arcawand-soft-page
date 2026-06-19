@@ -107,11 +107,23 @@ body.ucp-static-page img { max-width: 100%; display: block; }
 
 .arcawand-product-language-menu .language-menu-button img,
 .arcawand-product-language-menu .language-menu-option img {
+  display: none;
+}
+
+.arcawand-product-language-menu .language-code-badge {
   width: 1.85rem;
   height: 1.85rem;
   border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, .2), 0 8px 18px rgba(0, 0, 0, .24);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 1.85rem;
+  background: #fff;
+  color: #31405f;
+  font-size: .72rem;
+  font-weight: 950;
+  line-height: 1;
+  box-shadow: 0 0 0 1px rgba(124, 103, 255, .24), 0 8px 18px rgba(0, 0, 0, .18);
 }
 
 .arcawand-product-language-menu .language-menu-chevron {
@@ -132,6 +144,9 @@ body.ucp-static-page img { max-width: 100%; display: block; }
   top: calc(100% + .65rem);
   right: 0;
   width: 14.2rem;
+  max-height: min(72vh, 38rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: .5rem;
   border-radius: 1.1rem;
   border: 1px solid rgba(255, 255, 255, .14);

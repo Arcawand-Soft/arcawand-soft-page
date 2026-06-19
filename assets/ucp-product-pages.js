@@ -1,5 +1,5 @@
 (() => {
-  const supportedLangs = ["en", "fr", "es", "it", "de"];
+  const supportedLangs = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
   const labels = {
     en: { presentation: "Presentation", demo: "Demo", faq: "FAQ", privacy: "Privacy policy", terms: "Terms of use", contact: "Contact" },
     fr: { presentation: "Présentation", demo: "Démo", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU", contact: "Contact" },
@@ -119,7 +119,7 @@
         localStorage.setItem("arcawand-lang", next);
         localStorage.setItem("ucp-lang", next);
       } catch (error) {}
-      window.location.href = routes[next]?.[page] || routes.en.presentation;
+      window.location.href = option.dataset.targetUrl || routes[next]?.[page] || routes.en.presentation;
     });
 
     document.addEventListener("pointerdown", (event) => {

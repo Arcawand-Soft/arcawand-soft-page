@@ -433,7 +433,7 @@ const gameLabels = {
   de: { chess: "Schach", dames: "Dame", connect4: "Vier gewinnt", ping: "Ping Pong", "flappy-duo": "Flappy Duo", "air-hockey": "Air Hockey" }
 };
 
-const flags = { en: "english", fr: "french", es: "spanish", it: "italian", de: "german" };
+const languageCodes = { en: "GB", fr: "FR", es: "ES", it: "IT", de: "DE" };
 const languageNames = { en: "English", fr: "Français", es: "Español", it: "Italiano", de: "Deutsch" };
 const languageButtonLabels = { en: "Change language", fr: "Changer de langue", es: "Cambiar idioma", it: "Cambia lingua", de: "Sprache wechseln" };
 const statsNavLabels = {
@@ -580,8 +580,8 @@ function relFromProductPage(page) {
 }
 
 function languageMenu(current) {
-  const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><img src="/assets/flags/${flags[code]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${languageNames[code]}</span></button>`).join("");
-  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(languageButtonLabels[current])}" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/${flags[current]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${languageNames[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(languageButtonLabels[current])}">${options}</div></div>`;
+  const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><span class="language-code-badge">${languageCodes[code]}</span><span>${languageNames[code]}</span></button>`).join("");
+  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(languageButtonLabels[current])}" aria-haspopup="listbox" aria-expanded="false"><span class="language-code-badge">${languageCodes[current] || current.toUpperCase()}</span><span>${languageNames[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(languageButtonLabels[current])}">${options}</div></div>`;
 }
 
 function productNav(lang, active, rel) {

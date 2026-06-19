@@ -853,10 +853,10 @@ function homeHrefs(depth) {
   };
 }
 function languageMenu(current) {
-  const flag = { en: "english", fr: "french", es: "spanish", it: "italian", de: "german" };
+  const codeLabels = { en: "GB", fr: "FR", es: "ES", it: "IT", de: "DE" };
   const name = { en: "English", fr: "Français", es: "Español", it: "Italiano", de: "Deutsch" };
-  const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><img src="/assets/flags/${flag[code]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${name[code]}</span></button>`).join("");
-  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(langs[current].languageButtonLabel)}" aria-haspopup="listbox" aria-expanded="false"><img src="/assets/flags/${flag[current]}.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>${name[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(langs[current].languageButtonLabel)}">${options}</div></div>`;
+  const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><span class="language-code-badge">${codeLabels[code]}</span><span>${name[code]}</span></button>`).join("");
+  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(langs[current].languageButtonLabel)}" aria-haspopup="listbox" aria-expanded="false"><span class="language-code-badge">${codeLabels[current] || current.toUpperCase()}</span><span>${name[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(langs[current].languageButtonLabel)}">${options}</div></div>`;
 }
 function productNav(lang, active, rel) {
   const l = langs[lang];

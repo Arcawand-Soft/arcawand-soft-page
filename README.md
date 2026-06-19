@@ -14,15 +14,30 @@ ArcaWand Soft builds premium browser extensions, mobile apps and original web pr
 
 ## Languages
 
-The site includes a language selector with translations for:
+The site uses real static URLs for every supported language. Do not use `?lang=` URLs for public pages, because every language must remain independently crawlable and canonical for Google.
 
-- English
-- French
-- Spanish
-- Italian
-- German
+Supported language routes:
 
-The selected language is saved in `localStorage` so visitors keep the same language while navigating across pages.
+- `/` English
+- `/fr/` French
+- `/es/` Spanish
+- `/it/` Italian
+- `/de/` German
+- `/ro/` Romanian
+- `/pt/` Portuguese
+- `/ar/` Arabic
+- `/zh/` Chinese
+- `/ja/` Japanese
+- `/ru/` Russian
+- `/nl/` Dutch
+- `/pl/` Polish
+- `/tr/` Turkish
+- `/ko/` Korean
+- `/hi/` Hindi
+
+The language selector uses short code badges only, in this order: `GB`, `FR`, `ES`, `IT`, `DE`, `RO`, `PT`, `SA`, `CN`, `JP`, `RU`, `NL`, `PL`, `TR`, `KR`, `IN`. Browser language detection redirects first-time visitors to the matching static route, while manual language choice is saved in `localStorage`.
+
+Every generated page must include a self-referencing canonical URL, alternates for all supported languages, an `x-default` alternate, localized SEO title/description metadata, Open Graph/Twitter image tags, and sitemap coverage.
 
 ## Ultimate Clipboard Pro Page
 
@@ -38,7 +53,7 @@ https://arcawand-soft.github.io/arcawand-soft-page/ultimate-clipboard-pro/
 
 Figgliz uses the same multilingual product-page system and adds:
 
-- Presentation pages in English, French, Spanish, Italian and German.
+- Presentation pages in all supported site languages.
 - Product FAQ pages with localized SEO metadata and FAQ structured data.
 - Localized statistics pages that mirror the Figgliz live counters and Flappy Duo record from the public realtime stats feed.
 - Product-specific privacy policy and terms of use pages.
@@ -50,7 +65,7 @@ Figgliz uses the same multilingual product-page system and adds:
 
 ## Home Positioning
 
-The home page now presents ArcaWand Soft as a hybrid product studio: serious productivity tools such as Ultimate Clipboard Pro, plus lighter private social experiences such as Figgliz. Featured app blocks should stay localized, responsive and visually consistent across all five languages.
+The home page now presents ArcaWand Soft as a hybrid product studio: serious productivity tools such as Ultimate Clipboard Pro, plus lighter private social experiences such as Figgliz. Featured app blocks should stay localized, responsive and visually consistent across every supported language.
 
 The default route is:
 
