@@ -39,6 +39,14 @@ The language selector uses short code badges only, in this order: `GB`, `FR`, `E
 
 Every generated page must include a self-referencing canonical URL, alternates for all supported languages, an `x-default` alternate, localized SEO title/description metadata, Open Graph/Twitter image tags, and sitemap coverage.
 
+New language pages must be full structural clones of the complete source pages, not shortened summaries. Use:
+
+```bash
+node scripts/clone-full-language-pages.js
+```
+
+The legacy `scripts/expand-all-languages.js` entry point intentionally delegates to the full clone script so future regenerations keep the same sections, media, scripts, product bundles, navigation and footer behavior as the original pages.
+
 ## Ultimate Clipboard Pro Page
 
 The Ultimate Clipboard Pro page keeps the existing premium product presentation, carousel, FAQ, install calls to action and Pro messaging, but the standalone product header has been hidden so the page works as a product route inside the ArcaWand Soft website.
