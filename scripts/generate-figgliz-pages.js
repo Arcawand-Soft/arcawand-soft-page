@@ -460,6 +460,10 @@ const statsCopy = {
     pingpong: "Ping Pong",
     doublesnake: "Flappy Duo",
     airhockey: "Air Hockey",
+    recordEyebrow: "Live record",
+    recordTitle: "Flappy Duo record",
+    recordDistance: "Best distance",
+    recordNickname: "Player",
     privacyNote: "Only anonymous aggregate counters are displayed here. Message content, identities and conversations are never published."
   },
   fr: {
@@ -478,6 +482,10 @@ const statsCopy = {
     pingpong: "Ping Pong",
     doublesnake: "Flappy Duo",
     airhockey: "Air Hockey",
+    recordEyebrow: "Record en direct",
+    recordTitle: "Record Flappy Duo",
+    recordDistance: "Meilleure distance",
+    recordNickname: "Pseudo",
     privacyNote: "Seuls des compteurs anonymes agr\u00e9g\u00e9s sont affich\u00e9s ici. Les messages, identit\u00e9s et conversations ne sont jamais publi\u00e9s."
   },
   es: {
@@ -496,6 +504,10 @@ const statsCopy = {
     pingpong: "Ping Pong",
     doublesnake: "Flappy Duo",
     airhockey: "Air Hockey",
+    recordEyebrow: "R\u00e9cord en directo",
+    recordTitle: "R\u00e9cord de Flappy Duo",
+    recordDistance: "Mejor distancia",
+    recordNickname: "Alias",
     privacyNote: "Aqu\u00ed solo se muestran contadores agregados an\u00f3nimos. Los mensajes, identidades y conversaciones nunca se publican."
   },
   it: {
@@ -514,6 +526,10 @@ const statsCopy = {
     pingpong: "Ping Pong",
     doublesnake: "Flappy Duo",
     airhockey: "Air Hockey",
+    recordEyebrow: "Record live",
+    recordTitle: "Record Flappy Duo",
+    recordDistance: "Migliore distanza",
+    recordNickname: "Nickname",
     privacyNote: "Qui sono mostrati solo contatori aggregati anonimi. Messaggi, identit\u00e0 e conversazioni non vengono mai pubblicati."
   },
   de: {
@@ -532,6 +548,10 @@ const statsCopy = {
     pingpong: "Ping Pong",
     doublesnake: "Flappy Duo",
     airhockey: "Air Hockey",
+    recordEyebrow: "Live-Rekord",
+    recordTitle: "Flappy Duo Rekord",
+    recordDistance: "Beste Distanz",
+    recordNickname: "Name",
     privacyNote: "Hier werden nur anonyme aggregierte Z\u00e4hler angezeigt. Nachrichten, Identit\u00e4ten und Gespr\u00e4che werden niemals ver\u00f6ffentlicht."
   }
 };
@@ -699,7 +719,8 @@ function statsPage(lang) {
     ["doublesnake", copy.doublesnake, "flappy-duo.webp"],
     ["airhockey", copy.airhockey, "air-hockey.webp"]
   ].map(([key, label, image]) => `<article class="figgliz-stat-card figgliz-stat-card-game"><img src="/assets/figgliz/${image}" alt="" width="96" height="96" loading="lazy" decoding="async"><p>${esc(label)}</p><strong data-figgliz-stat="${key}">--</strong></article>`).join("");
-  return `<section class="figgliz-section figgliz-stats-page" data-figgliz-stats data-stats-endpoint="https://figgliz.arcawand-soft.com/stats.json" data-lang="${lang}"><div class="figgliz-stats-grid figgliz-stats-totals" aria-label="${esc(copy.totalsTitle)}">${totalCards}</div><div class="figgliz-stats-heading"><h2>${esc(copy.gamesTitle)}</h2><p>${esc(copy.privacyNote)}</p></div><div class="figgliz-stats-grid figgliz-stats-games">${gameCards}</div><p class="figgliz-stats-updated"><span>${esc(copy.updated)} : </span><time data-figgliz-stat-updated>--</time></p></section>`;
+  const recordCard = `<article class="figgliz-stat-record-card" data-figgliz-flappy-record><div class="figgliz-stat-record-visual" aria-hidden="true"><img src="/assets/figgliz/flappy-record-trophy.png" alt="" width="120" height="120" loading="lazy" decoding="async"></div><div class="figgliz-stat-record-copy"><p>${esc(copy.recordEyebrow)}</p><h2>${esc(copy.recordTitle)}</h2><dl><div><dt>${esc(copy.recordDistance)}</dt><dd data-figgliz-record-distance>--</dd></div><div><dt>${esc(copy.recordNickname)}</dt><dd data-figgliz-record-nickname>--</dd></div></dl></div></article>`;
+  return `<section class="figgliz-section figgliz-stats-page" data-figgliz-stats data-stats-endpoint="https://figgliz.arcawand-soft.com/stats.json" data-lang="${lang}"><div class="figgliz-stats-grid figgliz-stats-totals" aria-label="${esc(copy.totalsTitle)}">${totalCards}</div><div class="figgliz-stats-heading"><h2>${esc(copy.gamesTitle)}</h2><p>${esc(copy.privacyNote)}</p></div><div class="figgliz-stats-grid figgliz-stats-games">${gameCards}</div>${recordCard}<p class="figgliz-stats-updated"><span>${esc(copy.updated)} : </span><time data-figgliz-stat-updated>--</time></p></section>`;
 }
 
 function pageTitle(lang, page) {
@@ -759,9 +780,9 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
-<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260601">
+<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260619-stats">
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/figgliz-product-pages.js?v=20260601"></script>
+<script defer src="/assets/figgliz-product-pages.js?v=20260619-stats"></script>
 <script defer src="/assets/install-extension-modal.js?v=20260601-beta"></script>
 </head>
 <body class="ucp-static-page figgliz-static-page">
@@ -781,7 +802,7 @@ ${main}
 
 function copyAssets() {
   fs.mkdirSync(figglizAssets, { recursive: true });
-  for (const file of ["figgliz-head.webp", "icon.webp", "webcam.webp", "games.webp", "chess.webp", "dames.webp", "connect4.webp", "ping.webp", "flappy-duo.webp", "air-hockey.webp"]) {
+  for (const file of ["figgliz-head.webp", "icon.webp", "webcam.webp", "games.webp", "chess.webp", "dames.webp", "connect4.webp", "ping.webp", "flappy-duo.webp", "flappy-record-trophy.png", "air-hockey.webp"]) {
     fs.copyFileSync(path.join(sourceAssets, file), path.join(figglizAssets, file));
   }
   for (const file of ["Badge_Plus.png", "Badge_Pro.png"]) {

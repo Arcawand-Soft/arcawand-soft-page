@@ -164,6 +164,7 @@
     const render = (payload = {}) => {
       const totals = payload.totals || {};
       const games = payload.games || {};
+      const flappyRecord = payload.records?.flappyDuo || payload.flappyDuoRecord || {};
       setValue("discussions", totals.discussions);
       setValue("videoSessions", totals.videoSessions);
       setValue("gamesPlayed", totals.games);
@@ -173,8 +174,25 @@
       setValue("pingpong", games.pingpong);
       setValue("doublesnake", games.doublesnake);
       setValue("airhockey", games.airhockey);
+      setRecord(flappyRecord);
       const stamp = payload.updatedAt || payload.startedAt;
       if (updated && stamp) updated.textContent = formatDate.format(new Date(stamp));
+    };
+    const setText = (selector, value) => {
+      const node = root.querySelector(selector);
+      if (!node) return;
+      const next = String(value || "--");
+      if (node.textContent === next) return;
+      node.textContent = next;
+      node.animate?.([
+        { transform: "translateY(5px)", opacity: 0.52 },
+        { transform: "translateY(0)", opacity: 1 }
+      ], { duration: 260, easing: "cubic-bezier(.2,.8,.2,1)" });
+    };
+    const setRecord = (record = {}) => {
+      const distance = Math.max(0, Math.floor(Number(record.distance || 0)));
+      setText("[data-figgliz-record-distance]", distance ? format.format(distance) + " m" : "--");
+      setText("[data-figgliz-record-nickname]", normalizeRecordNickname(record.nickname));
     };
     const refresh = async () => {
       try {
@@ -186,7 +204,38 @@
       }
     };
     refresh();
-    window.setInterval(refresh, 30000);
+    if (!connectStatsEvents(endpoint, render)) window.setInterval(refresh, 30000);
+  }
+
+  function connectStatsEvents(endpoint, render) {
+    if (!("EventSource" in window)) return false;
+    try {
+      const eventsUrl = new URL(endpoint, window.location.href);
+      eventsUrl.pathname = eventsUrl.pathname.replace(/\/stats\.json$/, "/stats/events");
+      const events = new EventSource(eventsUrl.href);
+      events.addEventListener("stats", (event) => {
+        try {
+          render(JSON.parse(event.data));
+        } catch (error) {}
+      });
+      events.addEventListener("error", () => {
+        events.close();
+        window.setInterval(async () => {
+          try {
+            const response = await fetch(endpoint, { cache: "no-store" });
+            if (response.ok) render(await response.json());
+          } catch (error) {}
+        }, 30000);
+      }, { once: true });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function normalizeRecordNickname(value) {
+    const clean = String(value || "").replace(/\s+/g, " ").trim().slice(0, 15);
+    return clean || "--";
   }
 
   function init() {

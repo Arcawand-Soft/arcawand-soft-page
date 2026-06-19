@@ -40,7 +40,7 @@ Figgliz uses the same multilingual product-page system and adds:
 
 - Presentation pages in English, French, Spanish, Italian and German.
 - Product FAQ pages with localized SEO metadata and FAQ structured data.
-- Localized statistics pages that mirror the Figgliz live counters from a public JSON feed.
+- Localized statistics pages that mirror the Figgliz live counters and Flappy Duo record from the public realtime stats feed.
 - Product-specific privacy policy and terms of use pages.
 - Optimized WebP assets under `/assets/figgliz/`.
 - Pricing cards for Free, Plus, Pro and the Pro Lifetime launch offer.
