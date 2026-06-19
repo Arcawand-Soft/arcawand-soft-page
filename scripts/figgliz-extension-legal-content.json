@@ -26,7 +26,7 @@
         },
         {
           "title": "Plans",
-          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus adds comfort and 2 gifted call credits per day. Pro unlocks the full experience with 5 gifted call credits per day, and the Pro Lifetime launch offer may gift 10 credits per day."
+          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus adds comfort and 2 call credits to gift per day. Pro unlocks the full experience with 5 call credits to gift per day, and the Pro Lifetime launch offer may gift 10 credits per day."
         },
         {
           "title": "Built-in safety",
@@ -108,7 +108,7 @@
         },
         {
           "title": "What are the plans?",
-          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus raises limits, adds 2 gifted call credits per day and unlocks comfort features. Pro adds the complete experience with 5 gifted credits per day. Pro Lifetime gives lifetime Pro access through the launch offer and may gift 10 credits per day."
+          "body": "Free is for discovery with 1 accepted video or audio call per day. Plus raises limits, adds 2 call credits to gift per day and unlocks comfort features. Pro adds the complete experience with 5 call credits to gift per day. Pro Lifetime gives lifetime Pro access through the launch offer and may gift 10 credits per day."
         },
         {
           "title": "How is my license verified?",
@@ -811,7 +811,7 @@
           "body": "Los miembros Plus y Pro pueden consultar un historial local de conversaciones importantes, con mensajes, audios, emojis animados y eventos aceptados como llamadas, webcam o juegos. No es un archivo del servidor: permanece en el dispositivo del Usuario, protegido por contraseña, y puede borrarse por conversación o por completo."
         },
         {
-          "title": "Llamadas Free y creditos regalados",
+          "title": "Llamadas Free y cr?ditos para regalar",
           "body": "Free incluye 1 llamada aceptada al dia, de video o audio, entrante o saliente. Plus puede regalar 2 creditos de llamada al dia a una persona Free que ya uso su llamada diaria. Pro mensual o anual puede regalar 5 al dia, y Pro Lifetime de lanzamiento puede regalar 10 al dia."
         }
       ]
@@ -980,7 +980,7 @@
         },
         {
           "title": "Verificacion de cupos y creditos",
-          "body": "Para aplicar limites Free, creditos regalados y derechos Plus/Pro, Figgliz puede verificar en el servidor licencia, identificador local de instalacion, IP o hash, huso horario, tokens de accion y aceptaciones. Esto evita trampas sin almacenar el contenido de las conversaciones en el servidor."
+          "body": "Para aplicar limites Free, cr?ditos para regalar y derechos Plus/Pro, Figgliz puede verificar en el servidor licencia, identificador local de instalacion, IP o hash, huso horario, tokens de accion y aceptaciones. Esto evita trampas sin almacenar el contenido de las conversaciones en el servidor."
         }
       ]
     },
@@ -1078,7 +1078,7 @@
           ]
         },
         {
-          "title": "Articulo 17 - Llamadas Free, creditos regalados y Pro Lifetime",
+          "title": "Articulo 17 - Llamadas Free, cr?ditos para regalar y Pro Lifetime",
           "body": "Las llamadas de audio y video estan sujetas a los cupos, derechos y controles mostrados en la extension. Free incluye 1 llamada de audio o video aceptada al dia, entrante o saliente, segun el huso horario del Usuario. Las llamadas rechazadas, canceladas o sin respuesta no consumen ese cupo.",
           "items": [
             "Plus puede regalar 2 creditos de llamada al dia a Usuarios Free que agotaron su cupo.",
@@ -1463,7 +1463,7 @@
           "body": "Plus- und Pro-Mitglieder können einen lokalen Verlauf wichtiger Gespräche öffnen, einschließlich Nachrichten, Sprachnachrichten, animierter Emojis und akzeptierter Ereignisse wie Anrufe, Webcam oder Spiele. Dies ist kein Serverarchiv: Es bleibt auf dem Gerät des Nutzers, ist passwortgeschützt und kann einzeln oder vollständig gelöscht werden."
         },
         {
-          "title": "Free-Anrufe und verschenkbare Guthaben",
+          "title": "Free-Anrufe und Guthaben zum Verschenken",
           "body": "Free enth?lt 1 angenommenen Audio- oder Videoanruf pro Tag, eingehend oder ausgehend. Plus kann 2 Anrufguthaben pro Tag an einen Free-Kontakt verschenken. Pro monatlich oder j?hrlich kann 5 pro Tag verschenken, Pro Lifetime als Startangebot 10 pro Tag."
         }
       ]

@@ -308,7 +308,7 @@ const pricingBenefits = {
     "plus": [
       "Unlimited voice notes",
       "30 video invitations per day",
-      "2 gifted call credits per day",
+      "2 call credits to gift per day",
       "Unlimited calls",
       "Advanced language/gender filters",
       "3-second Next cooldown"
@@ -316,7 +316,7 @@ const pricingBenefits = {
     "pro": [
       "Unlimited video invitations",
       "Unlimited calls",
-      "5 gifted call credits per day",
+      "5 call credits to gift per day",
       "Video Pause",
       "Instant Next",
       "Priority queue",
@@ -333,7 +333,7 @@ const pricingBenefits = {
     "plus": [
       "Vocaux illimités",
       "30 demandes vidéo par jour",
-      "2 crédits d'appel offerts par jour",
+      "2 crédits d'appel à offrir par jour",
       "Appels illimités",
       "Filtres avancés langue/genre",
       "3 secondes d'attente pour Next"
@@ -341,7 +341,7 @@ const pricingBenefits = {
     "pro": [
       "Demandes vidéo illimitées",
       "Appels illimités",
-      "5 crédits d'appel offerts par jour",
+      "5 crédits d'appel à offrir par jour",
       "Fonction Pause Vidéo",
       "Next instantanés",
       "Priorité dans la file",
@@ -358,7 +358,7 @@ const pricingBenefits = {
     "plus": [
       "Notas de voz ilimitadas",
       "30 solicitudes de vídeo al día",
-      "2 créditos de llamada regalados al día",
+      "2 créditos de llamada para regalar al día",
       "Llamadas ilimitadas",
       "Filtros avanzados de idioma/género",
       "3 segundos de espera para Next"
@@ -366,7 +366,7 @@ const pricingBenefits = {
     "pro": [
       "Solicitudes de vídeo ilimitadas",
       "Llamadas ilimitadas",
-      "5 créditos de llamada regalados al día",
+      "5 créditos de llamada para regalar al día",
       "Pausa de Vídeo",
       "Next instantáneo",
       "Prioridad en la cola",
@@ -383,7 +383,7 @@ const pricingBenefits = {
     "plus": [
       "Vocali illimitati",
       "30 richieste video al giorno",
-      "2 crediti chiamata regalabili al giorno",
+      "2 crediti chiamata da regalare al giorno",
       "Chiamate illimitate",
       "Filtri avanzati lingua/genere",
       "3 secondi di attesa per Next"
@@ -391,7 +391,7 @@ const pricingBenefits = {
     "pro": [
       "Richieste video illimitate",
       "Chiamate illimitate",
-      "5 crediti chiamata regalabili al giorno",
+      "5 crediti chiamata da regalare al giorno",
       "Funzione Pausa Video",
       "Next istantaneo",
       "Priorità in coda",
@@ -408,7 +408,7 @@ const pricingBenefits = {
     "plus": [
       "Unbegrenzte Sprachnachrichten",
       "30 Videoanfragen pro Tag",
-      "2 verschenkbare Anrufguthaben pro Tag",
+      "2 Anrufguthaben zum Verschenken pro Tag",
       "Unbegrenzte Anrufe",
       "Erweiterte Sprach-/Gender-Filter",
       "3 Sekunden Wartezeit für Next"
@@ -416,7 +416,7 @@ const pricingBenefits = {
     "pro": [
       "Unbegrenzte Videoanfragen",
       "Unbegrenzte Anrufe",
-      "5 verschenkbare Anrufguthaben pro Tag",
+      "5 Anrufguthaben zum Verschenken pro Tag",
       "Video-Pause",
       "Sofortiges Next",
       "Priorität in der Warteschlange",
