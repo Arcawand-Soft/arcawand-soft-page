@@ -207,6 +207,12 @@ function rewriteRelativeAssets(content, depth) {
     .replace(/(["'(=])(?:\.\.\/)*figgliz\/assets\//g, `$1${prefix}figgliz/assets/`);
 }
 
+function patchUcpBundleAssets(content) {
+  return content
+    .replace(/(["'(=])(?:\.\/|\.\.\/\.\.\/)?assets\/index-/g, "$1../../ultimate-clipboard-pro/assets/index-")
+    .replace(/(["'(=])(?:\.\.\/)*ultimate-clipboard-pro\/assets\/index-/g, "$1../../ultimate-clipboard-pro/assets/index-");
+}
+
 function replaceTitleAndMeta(content, code, pageKey) {
   const [title, desc] = pack(code)[pageKey];
   const canonical = localizedUrl(code, pageKey);
@@ -250,12 +256,12 @@ function replaceLanguageMenu(content, code, pageKey) {
   return `${content.slice(0, start)}${menu}${content.slice(end)}`;
 }
 
-function patchLanguageState(content, code) {
+function patchLanguageState(content, code, pageKey) {
   const language = languageByCode(code);
   content = content.replace(/<html lang="[^"]+"(?: dir="rtl")?>/, `<html lang="${language.html}"${language.rtl ? ' dir="rtl"' : ""}>`);
   content = content.replace(/window\.__ARCAWAND_LANG__="[^"]+"/g, `window.__ARCAWAND_LANG__="${code}"`);
-  content = content.replace(/localStorage\.setItem\("arcawand-lang","[^"]+"\)/g, `localStorage.setItem("arcawand-lang","${code}")`);
-  content = content.replace(/localStorage\.setItem\("ucp-lang","[^"]+"\)/g, `localStorage.setItem("ucp-lang","${code}")`);
+  content = content.replace(/localStorage\.setItem\("arcawand-lang","[^"]+"\)/g, `localStorage.setItem("arcawand-lang","${pageKey === "ucp" && !baseLanguages.has(code) ? "en" : code}")`);
+  content = content.replace(/localStorage\.setItem\("ucp-lang","[^"]+"\)/g, `localStorage.setItem("ucp-lang","en")`);
   return content;
 }
 
@@ -288,7 +294,10 @@ function clonePage(code, pageKey) {
   const depth = depthForPage(code, pageKey);
   let content = readSource(pageKey);
   content = rewriteRelativeAssets(content, depth);
-  content = patchLanguageState(content, code);
+  if (pageKey === "ucp") {
+    content = patchUcpBundleAssets(content);
+  }
+  content = patchLanguageState(content, code, pageKey);
   content = replaceTitleAndMeta(content, code, pageKey);
   content = replaceCanonicalAndAlternates(content, code, pageKey);
   content = replaceLanguageMenu(content, code, pageKey);
@@ -311,7 +320,7 @@ function patchExistingPage(code, pageKey) {
   let content = fs.readFileSync(file, "utf8");
   content = replaceCanonicalAndAlternates(content, code, pageKey);
   content = replaceLanguageMenu(content, code, pageKey);
-  content = patchLanguageState(content, code);
+  content = patchLanguageState(content, code, pageKey);
   content = normalizeTextFile(content);
   fs.writeFileSync(file, content, "utf8");
 }
