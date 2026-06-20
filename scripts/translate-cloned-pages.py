@@ -175,7 +175,16 @@ def translate_file(path, target, cache):
         trailing = original[len(original.rstrip()):]
         node.replace_with(NavigableString(f"{leading}{translations[stripped]}{trailing}"))
 
-    path.write_text(f"{str(soup).rstrip()}\n", encoding="utf-8")
+    path.write_text(serialize_html(soup), encoding="utf-8")
+
+
+def serialize_html(soup):
+    html = str(soup).lstrip()
+    html = re.sub(r"^(?:html|HTML)\s*", "", html, count=1)
+    html = re.sub(r"^<!DOCTYPE html>", "<!doctype html>", html, count=1, flags=re.IGNORECASE)
+    if not html.lower().startswith("<!doctype html>"):
+        html = f"<!doctype html>\n{html}"
+    return f"{html.rstrip()}\n"
 
 
 def main():
