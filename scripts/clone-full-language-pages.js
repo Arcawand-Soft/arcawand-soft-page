@@ -293,6 +293,12 @@ function clonePage(code, pageKey) {
   content = replaceCanonicalAndAlternates(content, code, pageKey);
   content = replaceLanguageMenu(content, code, pageKey);
   content = patchJsonLd(content, code, pageKey);
+  if (pageKey === "ucp") {
+    content = content.replace(
+      /<\/body>/,
+      '<script defer src="/assets/ucp-runtime-locales.js?v=20260620-full-i18n"></script>\n</body>'
+    );
+  }
   content = normalizeTextFile(content);
   const file = outputFile(code, pageKey);
   fs.mkdirSync(path.dirname(file), { recursive: true });
