@@ -516,7 +516,18 @@ body.ucp-product-scrolled .ucp-product-nav:focus-within {
 @media (max-width: 760px) {
   .arcawand-root-return { left: .75rem; top: .75rem; }
   .arcawand-product-language-menu { right: .75rem; top: .75rem; }
-  .arcawand-product-language-menu .language-menu-button span:not(.language-menu-chevron) { display: none; }
+  .arcawand-product-language-menu .language-menu-button {
+    gap: .42rem;
+    min-height: 2.55rem;
+    padding: .32rem .58rem .32rem .36rem;
+  }
+  .arcawand-product-language-menu .language-menu-button > span:not(.language-code-badge):not(.language-menu-chevron) { display: none; }
+  .arcawand-product-language-menu .language-code-badge {
+    width: 1.72rem;
+    height: 1.72rem;
+    flex-basis: 1.72rem;
+    font-size: .68rem;
+  }
   .ucp-product-mark { top: .72rem; }
   .ucp-product-mark img { width: 2.5rem; height: 2.5rem; }
   .ucp-product-title { display: none; }
