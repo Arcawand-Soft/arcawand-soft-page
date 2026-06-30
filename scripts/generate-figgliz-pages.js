@@ -780,9 +780,9 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
-<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260619-stats">
+<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260701-pricing">
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/figgliz-product-pages.js?v=20260619-stats"></script>
+<script defer src="/assets/figgliz-product-pages.js?v=20260701-pricing"></script>
 <script defer src="/assets/install-extension-modal.js?v=20260601-beta"></script>
 </head>
 <body class="ucp-static-page figgliz-static-page">

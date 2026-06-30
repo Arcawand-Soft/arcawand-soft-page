@@ -18,6 +18,7 @@ Maintain all supported languages whenever user-facing content changes:
 - Spanish: `/es/`.
 - Italian: `/it/`.
 - German: `/de/`.
+- Figgliz also has full static language routes for `/ro/`, `/pt/`, `/ar/`, `/zh/`, `/ja/`, `/ru/`, `/nl/`, `/pl/`, `/tr/`, `/ko/`, and `/hi/`. When touching Figgliz product copy, pricing copy, plan benefits, legal/product navigation, or runtime UI labels, keep these routes synchronized too.
 
 This applies to navigation, footer links, buttons, modals, language menus, ARIA labels, tooltips, SEO tags, Open Graph tags, JSON-LD, FAQ, privacy policy, terms, contact text, and product copy.
 
@@ -26,6 +27,10 @@ This applies to navigation, footer links, buttons, modals, language menus, ARIA 
 - Product static pages are generated from shared source logic. When changing product subpages, shared product navigation, footer content, FAQ, privacy, or terms content, update the generator/source first, then regenerate the localized pages.
 - If `scripts/generate-product-pages.js` changes, run it before finishing.
 - Do not manually patch one language page and forget the others.
+- Figgliz pricing is a special runtime block: the static pages contain fallback markup, but `/assets/figgliz-product-pages.js` rebuilds `.figgliz-plan-box` in the browser. Keep the runtime component, `/assets/figgliz-product.css`, `scripts/generate-figgliz-pages.js`, and all Figgliz page cache-busting query strings synchronized.
+- Figgliz live prices come from `https://api.arcawand-soft.com/billing/checkout-prices` on the Figgliz VPS, with browser-side cache under `figglizCheckoutPriceCache:v1`. Do not hardcode localized dynamic prices into static HTML except as fallback copy.
+- Currency flags for the Figgliz pricing selector live under `/assets/flags/currency/` and are named by lowercase ISO currency code. When the Figgliz extension or VPS adds/removes currencies, update this folder and the `supportedCurrencies`/`priorityCurrencies` lists in `/assets/figgliz-product-pages.js`.
+- The VPS currency allow-list is in the Figgliz repository, `server/src/billing.js`. If the website needs newly supported checkout currencies, update and redeploy that backend file as well.
 
 ## SEO Checklist
 

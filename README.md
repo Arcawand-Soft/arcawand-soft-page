@@ -67,7 +67,10 @@ Figgliz uses the same multilingual product-page system and adds:
 - Product-specific privacy policy and terms of use pages.
 - Optimized WebP assets under `/assets/figgliz/`.
 - Pricing cards for Free, Plus, Pro and the Pro Lifetime launch offer.
-- Free, Plus and Pro offer cards should stay synchronized with the latest Figgliz extension plan benefits before publishing.
+- The public pricing block is rendered at runtime by `/assets/figgliz-product-pages.js` and styled by `/assets/figgliz-product.css`. Static HTML keeps a fallback, but the live source of truth for localized prices is the Figgliz VPS endpoint `https://api.arcawand-soft.com/billing/checkout-prices`.
+- Pricing uses a local browser cache (`figglizCheckoutPriceCache:v1`) with a fresh window and stale fallback so repeated page opens do not hammer the VPS. Checkout creation goes through `https://api.arcawand-soft.com/billing/checkout-session`, with Dodo checkout URLs as a fallback.
+- The currency selector supports the same Dodo currency set as the Figgliz extension. Flags live in `/assets/flags/currency/`, named with lowercase ISO currency codes such as `usd.png`, `eur.png`, and `jpy.png`.
+- Free, Plus, Pro and Lifetime offer cards should stay synchronized with the latest Figgliz extension plan benefits, currency list, price endpoint, and checkout product IDs before publishing.
 - FAQ, privacy policy and terms content should stay synchronized with the latest Figgliz extension legal/about content before publishing.
 - Coming-soon install buttons while the extension remains in volunteer beta testing.
 
