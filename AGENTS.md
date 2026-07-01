@@ -104,6 +104,16 @@ Use a separate social preview image for Ultimate Clipboard Pro pages when availa
 - Verify sitemap and SEO metadata after adding pages.
 - Do not stage, commit, revert, or delete unrelated dirty files.
 
+## Local Tooling And Deployment Pitfalls
+
+- This Windows environment may run an older Windows PowerShell where `Set-Content -Encoding UTF8NoBOM` is not supported. If you need UTF-8 without BOM for bulk replacements, use .NET explicitly:
+  `[System.IO.File]::WriteAllText((Resolve-Path -LiteralPath $file), $text, (New-Object System.Text.UTF8Encoding($false)))`.
+- PowerShell may display UTF-8 as mojibake even when the file bytes are correct. Before "fixing" accents, verify with `[System.IO.File]::ReadAllText(path, [System.Text.Encoding]::UTF8)` or inspect the actual diff.
+- `gh` may not be installed on this machine. To verify GitHub Pages after pushing, use HTTP checks against the public URL instead of assuming `gh run list` is available. Example: `Invoke-WebRequest -UseBasicParsing https://arcawand-soft.com/fr/figgliz/ -Headers @{ "Cache-Control" = "no-cache" }` and check for the new cache-busting token.
+- After changing shared static assets such as `/assets/figgliz-product-pages.js` or `/assets/figgliz-product.css`, bump the query string on every generated Figgliz page. Otherwise GitHub Pages may be updated while browsers keep serving stale JS/CSS.
+- `scripts/generate-figgliz-pages.js` currently emits the canonical Figgliz fallback markup for the core generated pages, while 16 language routes also exist as static clones. If you update cache-busting or runtime assets, scan all language folders with `rg`, not only the generator output.
+- Do not stage unrelated untracked marketing assets just because they appear in `git status`. During the pricing work, several unrelated images and cache files were present; stage only files tied to the requested patch.
+
 ## Git Safety
 
 - The worktree may contain unrelated user changes. Do not revert them.
