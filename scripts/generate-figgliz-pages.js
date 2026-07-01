@@ -7,6 +7,24 @@ const figglizAssets = path.join(root, "assets", "figgliz");
 const extensionLegalContent = require("./figgliz-extension-legal-content.json");
 const socialImage = "https://arcawand-soft.com/assets/Figgliz_SEO_Image.png";
 const socialImageAlt = "Figgliz Chrome extension preview";
+const figglizChessDemoAlt = {
+  en: "Figgliz chess game with webcam, chat, and real-time game controls",
+  fr: "Partie d'échecs Figgliz avec webcam, discussion et contrôles de jeu en temps réel",
+  es: "Partida de ajedrez Figgliz con webcam, chat y controles de juego en tiempo real",
+  it: "Partita di scacchi Figgliz con webcam, chat e controlli di gioco in tempo reale",
+  de: "Figgliz-Schachpartie mit Webcam, Chat und Spielsteuerung in Echtzeit",
+  ro: "Partidă de șah Figgliz cu webcam, chat și comenzi de joc în timp real",
+  pt: "Partida de xadrez Figgliz com webcam, chat e controles de jogo em tempo real",
+  ar: "لعبة شطرنج Figgliz مع كاميرا ويب ودردشة وعناصر تحكم فورية في اللعب",
+  zh: "Figgliz 国际象棋对局，包含网络摄像头、聊天和实时游戏控制",
+  ja: "Webカメラ、チャット、リアルタイム操作付きのFigglizチェス対局",
+  ru: "Шахматная партия Figgliz с веб-камерой, чатом и управлением игрой в реальном времени",
+  nl: "Figgliz-schaakpartij met webcam, chat en realtime spelbediening",
+  pl: "Partia szachów Figgliz z kamerą internetową, czatem i sterowaniem grą w czasie rzeczywistym",
+  tr: "Web kamerası, sohbet ve gerçek zamanlı oyun kontrolleriyle Figgliz satranç maçı",
+  ko: "웹캠, 채팅, 실시간 게임 컨트롤이 있는 Figgliz 체스 대국",
+  hi: "वेबकैम, चैट और रीयल-टाइम गेम कंट्रोल के साथ Figgliz शतरंज गेम"
+};
 
 const langs = {
   en: {
@@ -691,7 +709,7 @@ function presentationPage(lang) {
   const aboutSections = about.sections.filter((section) => !/^contact$/i.test(section.title));
   const features = aboutSections.map((section) => `<article class="figgliz-card"><h3>${esc(section.title)}</h3><p>${esc(sectionText(section))}</p></article>`).join("");
   const games = ["chess", "dames", "connect4", "ping", "flappy-duo", "air-hockey"].map((name) => `<figure class="figgliz-game"><img src="/assets/figgliz/${name}.webp" alt="" width="160" height="160" loading="lazy" decoding="async"><figcaption>${esc(gameLabels[lang][name])}</figcaption></figure>`).join("");
-  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(about.title)}</h2><p>${esc(about.lead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo.png" alt="Figgliz chess game with webcam conversations" width="1672" height="941" loading="lazy" decoding="async"></figure>${pricing(lang)}`;
+  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(about.title)}</h2><p>${esc(about.lead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo_2.png" alt="${esc(figglizChessDemoAlt[lang] || figglizChessDemoAlt.en)}" width="1672" height="941" loading="lazy" decoding="async"></figure>${pricing(lang)}`;
 }
 
 function textPage(lang, page) {
