@@ -4,7 +4,7 @@ const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-ratio-fix";
+const version = "20260807-landing-language-showcase";
 const installModal = fs.readFileSync(path.join(root, "assets", "install-extension-modal.js"), "utf8");
 const landingCss = fs.readFileSync(path.join(root, "assets", "ucp-landing.css"), "utf8");
 
@@ -39,6 +39,8 @@ for (const language of LANGUAGES) {
   assert.ok(!/dodo|checkout|id="(?:pro|pricing)"/i.test(html), `${label}: no pricing or checkout block`);
   assert.ok(html.includes("ucp-capture-panel-text") && html.includes("ucp-capture-panel-code") && html.includes("ucp-capture-panel-image"), `${label}: three capture workspaces`);
   assert.ok(html.includes("ucp-drive-section") && html.includes("ucp-faq-section"), `${label}: Drive and FAQ sections`);
+  assert.ok(html.includes("ucp-language-showcase"), `${label}: early language showcase`);
+  assert.strictEqual((html.match(/class="ucp-language-chip"/g) || []).length, LANGUAGES.length, `${label}: every supported language is listed`);
   assert.ok(!html.includes("__ARC_"), `${label}: no translation extraction marker`);
   if (label !== "en") assert.ok(!html.includes("What should I try first after installing?"), `${label}: localized closing call to action`);
   assert.ok(!/[\uFFFD]/.test(html), `${label}: no replacement character`);

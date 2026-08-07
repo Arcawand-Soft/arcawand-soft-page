@@ -4,8 +4,46 @@ const { LANGUAGES, languageMenu, localizedUrl } = require("./language-config");
 const locales = require("./ucp-landing-locales.json");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-ratio-fix";
+const version = "20260807-landing-language-showcase";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
+
+const languageShowcaseTranslations = {
+  en: { eyebrow: "Available worldwide", label: "interface languages", description: "Use Ultimate Clipboard Pro in the language that fits your workflow." },
+  fr: { eyebrow: "Pensé pour tous les utilisateurs", label: "langues d’interface", description: "Utilisez Ultimate Clipboard Pro dans la langue qui correspond à votre façon de travailler." },
+  es: { eyebrow: "Diseñado para todos", label: "idiomas de interfaz", description: "Usa Ultimate Clipboard Pro en el idioma que mejor se adapte a tu forma de trabajar." },
+  it: { eyebrow: "Pensato per tutti", label: "lingue dell’interfaccia", description: "Usa Ultimate Clipboard Pro nella lingua più adatta al tuo modo di lavorare." },
+  de: { eyebrow: "Für internationale Workflows", label: "Oberflächensprachen", description: "Nutze Ultimate Clipboard Pro in der Sprache, die zu deinem Arbeitsablauf passt." },
+  ro: { eyebrow: "Creat pentru utilizatori din întreaga lume", label: "limbi pentru interfață", description: "Folosește Ultimate Clipboard Pro în limba potrivită modului tău de lucru." },
+  pt: { eyebrow: "Criado para utilizadores de todo o mundo", label: "idiomas de interface", description: "Use o Ultimate Clipboard Pro no idioma que melhor se adapta ao seu trabalho." },
+  ar: { eyebrow: "مصمم للجميع", label: "لغة للواجهة", description: "استخدم Ultimate Clipboard Pro باللغة التي تناسب طريقة عملك." },
+  zh: { eyebrow: "面向全球用户", label: "种界面语言", description: "使用最适合您工作方式的语言操作 Ultimate Clipboard Pro。" },
+  ja: { eyebrow: "世界中のユーザーへ", label: "のインターフェース言語", description: "作業スタイルに合った言語で Ultimate Clipboard Pro を利用できます。" },
+  ru: { eyebrow: "Для пользователей по всему миру", label: "языков интерфейса", description: "Используйте Ultimate Clipboard Pro на языке, который подходит вашему рабочему процессу." },
+  nl: { eyebrow: "Gemaakt voor iedereen", label: "interfacetalen", description: "Gebruik Ultimate Clipboard Pro in de taal die bij jouw manier van werken past." },
+  pl: { eyebrow: "Dla użytkowników na całym świecie", label: "języków interfejsu", description: "Korzystaj z Ultimate Clipboard Pro w języku dopasowanym do Twojego sposobu pracy." },
+  tr: { eyebrow: "Dünya çapındaki kullanıcılar için", label: "arayüz dili", description: "Ultimate Clipboard Pro’yu çalışma şeklinize uygun dilde kullanın." },
+  ko: { eyebrow: "전 세계 사용자를 위해", label: "개 인터페이스 언어", description: "작업 방식에 맞는 언어로 Ultimate Clipboard Pro를 사용하세요." },
+  hi: { eyebrow: "दुनिया भर के उपयोगकर्ताओं के लिए", label: "इंटरफ़ेस भाषाएँ", description: "Ultimate Clipboard Pro को अपनी कार्यशैली के अनुकूल भाषा में उपयोग करें।" }
+};
+
+const languageFlagImages = {
+  en: "/assets/flags/english.webp",
+  fr: "/assets/flags/french.webp",
+  es: "/assets/flags/spanish.webp",
+  it: "/assets/flags/italian.webp",
+  de: "/assets/flags/german.webp",
+  ro: "/assets/flags/currency/ron.png",
+  pt: "/assets/flags/portuguese.svg",
+  ar: "/assets/flags/currency/sar.png",
+  zh: "/assets/flags/currency/cny.png",
+  ja: "/assets/flags/currency/jpy.png",
+  ru: "/assets/flags/russian.svg",
+  nl: "/assets/flags/dutch.svg",
+  pl: "/assets/flags/currency/pln.png",
+  tr: "/assets/flags/currency/try.png",
+  ko: "/assets/flags/currency/krw.png",
+  hi: "/assets/flags/currency/inr.png"
+};
 
 const navigationTranslations = {
   ro: { Presentation: "Prezentare", Demo: "Demonstrație", FAQ: "Întrebări frecvente", "Privacy policy": "Politica de confidențialitate", "Terms of use": "Termeni de utilizare" },
@@ -176,6 +214,8 @@ function renderCapturePanel(kind, title, description, image, width, height, icon
 function renderPage(language) {
   const copy = locales[language.code];
   if (!copy) throw new Error(`Missing landing locale: ${language.code}`);
+  const languageShowcase = languageShowcaseTranslations[language.code];
+  if (!languageShowcase) throw new Error(`Missing language showcase locale: ${language.code}`);
   const t = (source) => navigationTranslations[language.code]?.[source] || closingTranslations[language.code]?.[source] || copy.translations[source] || source;
   const metadata = metadataTranslations[language.code] || { title: copy.title, description: copy.description };
   const canonical = localizedUrl(language.code, "ucp");
@@ -292,6 +332,17 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
     <p><strong>20</strong><span>${escapeHtml(t("Transform, analyze, and enhance your clipboard content with professional-grade tools"))}</span></p>
     <p><strong>50+</strong><span>${escapeHtml(t("Code capture with syntax highlighting"))}</span></p>
     <p><strong>${copy.drive.maximumDevices}</strong><span>${escapeHtml(copy.drive.lead)}</span></p>
+  </section>
+
+  <section class="ucp-language-showcase" aria-labelledby="ucp-language-showcase-title" data-reveal>
+    <div class="ucp-language-showcase-copy">
+      <p class="ucp-eyebrow"><span></span>${escapeHtml(languageShowcase.eyebrow)}</p>
+      <h2 id="ucp-language-showcase-title"><strong>${LANGUAGES.length}</strong><span>${escapeHtml(languageShowcase.label)}</span></h2>
+      <p>${escapeHtml(languageShowcase.description)}</p>
+    </div>
+    <ul class="ucp-language-grid" aria-label="${escapeHtml(languageShowcase.label)}">
+      ${LANGUAGES.map((item) => `<li class="ucp-language-chip" dir="ltr"><img class="ucp-language-flag" src="${languageFlagImages[item.code]}" alt="" width="32" height="22" loading="lazy" decoding="async"><span class="ucp-language-name" lang="${escapeHtml(item.html)}" dir="auto">${escapeHtml(item.name)}</span><small>${escapeHtml(item.code.toUpperCase())}</small></li>`).join("\n      ")}
+    </ul>
   </section>
 
   <section class="ucp-section ucp-capture-section">
