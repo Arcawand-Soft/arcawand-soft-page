@@ -1949,8 +1949,9 @@
     container.setAttribute("aria-label", "Ultimate Clipboard Pro");
     container.innerHTML = [
       "<header class=\"mcp-header\">",
-      "<button class=\"mcp-launcher-collapse\" data-action=\"collapse-launcher\" aria-label=\"Hide launcher\">&rsaquo;</button>",
+      `<button class="mcp-launcher-collapse" data-action="collapse-launcher" aria-label="Hide launcher"><svg class="launcher-collapse-arrow-icon" viewBox="0 0 24 12" aria-hidden="true"><path d="M4 8L12 3L20 8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>`,
       `<button class="mcp-brand" data-action="toggle" aria-label="Ultimate Clipboard Pro"><img src="${chrome.runtime.getURL("assets/icons/icon128.png")}" alt="Ultimate Clipboard Pro"><span class="brand-pro-badge" data-role="brand-pro-badge" hidden aria-hidden="true"><img src="${chrome.runtime.getURL("assets/icons/pro-icon.png")}" alt=""></span></button>`,
+      `<button class="mcp-launcher-manager" data-action="open-sidepanel" aria-label="Manager"><svg class="manager-arrow-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M10 7H17V14" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>`,
       `<button class="mcp-launcher-tools" data-action="open-launcher-tools" aria-label="Tools"><img src="${chrome.runtime.getURL("assets/icons/tootls.png")}" alt="" aria-hidden="true"></button>`,
       `<button class="mcp-fullpage-shot" data-action="capture-full-page" aria-label="Full page screenshot"><img src="${chrome.runtime.getURL("assets/icons/screen_full_page_png.png")}" alt=""><span class="mcp-fullpage-pro-badge" aria-hidden="true"><img src="${chrome.runtime.getURL("assets/icons/pro-icon.png")}" alt=""></span></button>`,
       "<button class=\"mcp-launcher-tab\" data-action=\"expand-launcher\" aria-label=\"Show launcher\">&lsaquo;</button>",

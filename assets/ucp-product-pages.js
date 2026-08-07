@@ -57,6 +57,185 @@
     }
   };
 
+  const driveSyncCopy = {
+    en: {
+      eyebrow: "One workspace, everywhere",
+      title: "Back up once. Keep up to three devices in sync.",
+      lead: "Connect Google Drive to keep your captured texts, code and images current across the computers covered by your license.",
+      hub: "Private Drive backup",
+      realtime: "Real-time synchronization",
+      maximumDevices: 3,
+      deviceLabels: ["Desktop PC", "Work laptop", "MacBook Pro"],
+      captureLabels: ["Texts", "Code", "Images"],
+      note: "Your local workspace remains available. Drive synchronization starts only when you enable it."
+    },
+    fr: {
+      eyebrow: "Un espace de travail, partout",
+      title: "Une sauvegarde. Jusqu’à trois postes synchronisés.",
+      lead: "Connectez Google Drive pour retrouver en continu vos textes, codes et images capturés sur les ordinateurs couverts par votre licence.",
+      hub: "Sauvegarde Drive privée",
+      realtime: "Synchronisation en temps réel",
+      maximumDevices: 3,
+      deviceLabels: ["PC de bureau", "PC portable", "MacBook Pro"],
+      captureLabels: ["Textes", "Codes", "Images"],
+      note: "Votre espace local reste disponible. La synchronisation Drive ne démarre que lorsque vous l’activez."
+    },
+    es: {
+      eyebrow: "Un espacio de trabajo, en todas partes",
+      title: "Una copia de seguridad. Hasta tres equipos sincronizados.",
+      lead: "Conecta Google Drive para mantener al día tus textos, códigos e imágenes capturados en los equipos cubiertos por tu licencia.",
+      hub: "Copia privada en Drive",
+      realtime: "Sincronización en tiempo real",
+      maximumDevices: 3,
+      deviceLabels: ["PC de escritorio", "Portátil de trabajo", "MacBook Pro"],
+      captureLabels: ["Textos", "Códigos", "Imágenes"],
+      note: "Tu espacio local sigue disponible. La sincronización con Drive solo empieza cuando la activas."
+    },
+    it: {
+      eyebrow: "Un solo spazio di lavoro, ovunque",
+      title: "Un backup. Fino a tre computer sincronizzati.",
+      lead: "Collega Google Drive per mantenere aggiornati testi, codici e immagini acquisiti sui computer coperti dalla licenza.",
+      hub: "Backup Drive privato",
+      realtime: "Sincronizzazione in tempo reale",
+      maximumDevices: 3,
+      deviceLabels: ["PC desktop", "Portatile di lavoro", "MacBook Pro"],
+      captureLabels: ["Testi", "Codici", "Immagini"],
+      note: "Lo spazio locale resta disponibile. La sincronizzazione Drive parte solo quando la attivi."
+    },
+    de: {
+      eyebrow: "Ein Arbeitsbereich, überall",
+      title: "Ein Backup. Bis zu drei Geräte synchron.",
+      lead: "Verbinden Sie Google Drive, damit erfasste Texte, Codes und Bilder auf den von Ihrer Lizenz abgedeckten Computern aktuell bleiben.",
+      hub: "Privates Drive-Backup",
+      realtime: "Synchronisierung in Echtzeit",
+      maximumDevices: 3,
+      deviceLabels: ["Desktop-PC", "Arbeits-Laptop", "MacBook Pro"],
+      captureLabels: ["Texte", "Codes", "Bilder"],
+      note: "Ihr lokaler Arbeitsbereich bleibt verfügbar. Die Drive-Synchronisierung startet nur, wenn Sie sie aktivieren."
+    },
+    ro: {
+      eyebrow: "Un singur spațiu de lucru, oriunde",
+      title: "O copie de siguranță. Până la trei dispozitive sincronizate.",
+      lead: "Conectează Google Drive pentru a păstra textele, codurile și imaginile capturate actualizate pe computerele acoperite de licență.",
+      hub: "Backup Drive privat",
+      realtime: "Sincronizare în timp real",
+      maximumDevices: 3,
+      deviceLabels: ["PC desktop", "Laptop de serviciu", "MacBook Pro"],
+      captureLabels: ["Texte", "Coduri", "Imagini"],
+      note: "Spațiul local rămâne disponibil. Sincronizarea Drive pornește numai când o activezi."
+    },
+    pt: {
+      eyebrow: "Um espaço de trabalho, em todo lugar",
+      title: "Um backup. Até três computadores sincronizados.",
+      lead: "Conecte o Google Drive para manter textos, códigos e imagens capturados atualizados nos computadores cobertos pela licença.",
+      hub: "Backup privado no Drive",
+      realtime: "Sincronização em tempo real",
+      maximumDevices: 3,
+      deviceLabels: ["PC desktop", "Notebook de trabalho", "MacBook Pro"],
+      captureLabels: ["Textos", "Códigos", "Imagens"],
+      note: "Seu espaço local continua disponível. A sincronização com o Drive só começa quando você a ativa."
+    },
+    ar: {
+      eyebrow: "مساحة عمل واحدة في كل مكان",
+      title: "نسخة احتياطية واحدة. مزامنة ما يصل إلى ثلاثة أجهزة.",
+      lead: "اربط Google Drive لتبقى النصوص والأكواد والصور الملتقطة محدثة على أجهزة الكمبيوتر التي يغطيها ترخيصك.",
+      hub: "نسخة Drive احتياطية خاصة",
+      realtime: "مزامنة في الوقت الفعلي",
+      maximumDevices: 3,
+      deviceLabels: ["كمبيوتر مكتبي", "حاسوب العمل", "MacBook Pro"],
+      captureLabels: ["نصوص", "أكواد", "صور"],
+      note: "تبقى مساحة العمل المحلية متاحة. تبدأ مزامنة Drive فقط عند تفعيلها."
+    },
+    zh: {
+      eyebrow: "一个工作区，随处可用",
+      title: "一次备份，最多同步三台设备。",
+      lead: "连接 Google Drive，让许可证覆盖的电脑持续同步已捕获的文本、代码和图片。",
+      hub: "私人 Drive 备份",
+      realtime: "实时同步",
+      maximumDevices: 3,
+      deviceLabels: ["台式电脑", "工作笔记本", "MacBook Pro"],
+      captureLabels: ["文本", "代码", "图片"],
+      note: "本地工作区始终可用。只有在您启用后，Drive 同步才会开始。"
+    },
+    ja: {
+      eyebrow: "1つのワークスペースをどこでも",
+      title: "1回のバックアップで最大3台を同期。",
+      lead: "Google Drive を接続すると、ライセンス対象のコンピューター間で保存したテキスト、コード、画像を最新に保てます。",
+      hub: "非公開の Drive バックアップ",
+      realtime: "リアルタイム同期",
+      maximumDevices: 3,
+      deviceLabels: ["デスクトップPC", "仕事用ノートPC", "MacBook Pro"],
+      captureLabels: ["テキスト", "コード", "画像"],
+      note: "ローカルのワークスペースはそのまま使えます。Drive 同期は有効にした場合のみ開始します。"
+    },
+    ru: {
+      eyebrow: "Одно рабочее пространство везде",
+      title: "Одна резервная копия. До трёх устройств синхронно.",
+      lead: "Подключите Google Drive, чтобы тексты, код и изображения оставались актуальными на компьютерах, охваченных лицензией.",
+      hub: "Личная копия в Drive",
+      realtime: "Синхронизация в реальном времени",
+      maximumDevices: 3,
+      deviceLabels: ["Настольный ПК", "Рабочий ноутбук", "MacBook Pro"],
+      captureLabels: ["Тексты", "Код", "Изображения"],
+      note: "Локальное пространство остаётся доступным. Синхронизация Drive запускается только после включения."
+    },
+    nl: {
+      eyebrow: "Eén werkruimte, overal",
+      title: "Eén back-up. Tot drie apparaten gesynchroniseerd.",
+      lead: "Koppel Google Drive om vastgelegde teksten, code en afbeeldingen actueel te houden op de computers binnen je licentie.",
+      hub: "Privéback-up in Drive",
+      realtime: "Realtime synchronisatie",
+      maximumDevices: 3,
+      deviceLabels: ["Desktop-pc", "Werklaptop", "MacBook Pro"],
+      captureLabels: ["Teksten", "Code", "Afbeeldingen"],
+      note: "Je lokale werkruimte blijft beschikbaar. Drive-synchronisatie start alleen wanneer je die inschakelt."
+    },
+    pl: {
+      eyebrow: "Jedna przestrzeń robocza wszędzie",
+      title: "Jedna kopia. Synchronizacja do trzech urządzeń.",
+      lead: "Połącz Google Drive, aby przechwycone teksty, kody i obrazy były aktualne na komputerach objętych licencją.",
+      hub: "Prywatna kopia w Drive",
+      realtime: "Synchronizacja w czasie rzeczywistym",
+      maximumDevices: 3,
+      deviceLabels: ["Komputer stacjonarny", "Laptop służbowy", "MacBook Pro"],
+      captureLabels: ["Teksty", "Kody", "Obrazy"],
+      note: "Lokalna przestrzeń pozostaje dostępna. Synchronizacja Drive rusza dopiero po jej włączeniu."
+    },
+    tr: {
+      eyebrow: "Tek çalışma alanı, her yerde",
+      title: "Tek yedek. Üç cihaza kadar eşitleme.",
+      lead: "Yakalanan metinleri, kodları ve görselleri lisans kapsamındaki bilgisayarlarda güncel tutmak için Google Drive'ı bağlayın.",
+      hub: "Özel Drive yedeği",
+      realtime: "Gerçek zamanlı eşitleme",
+      maximumDevices: 3,
+      deviceLabels: ["Masaüstü PC", "İş dizüstü", "MacBook Pro"],
+      captureLabels: ["Metinler", "Kodlar", "Görseller"],
+      note: "Yerel çalışma alanınız kullanılabilir kalır. Drive eşitleme yalnızca etkinleştirdiğinizde başlar."
+    },
+    ko: {
+      eyebrow: "하나의 작업 공간을 어디서나",
+      title: "한 번 백업하고 최대 세 대를 동기화하세요.",
+      lead: "Google Drive를 연결하면 라이선스가 적용된 컴퓨터에서 캡처한 텍스트, 코드, 이미지를 최신 상태로 유지할 수 있습니다.",
+      hub: "비공개 Drive 백업",
+      realtime: "실시간 동기화",
+      maximumDevices: 3,
+      deviceLabels: ["데스크톱 PC", "업무용 노트북", "MacBook Pro"],
+      captureLabels: ["텍스트", "코드", "이미지"],
+      note: "로컬 작업 공간은 계속 사용할 수 있습니다. Drive 동기화는 사용자가 켠 경우에만 시작됩니다."
+    },
+    hi: {
+      eyebrow: "एक कार्यक्षेत्र, हर जगह",
+      title: "एक बैकअप। अधिकतम तीन डिवाइस सिंक।",
+      lead: "Google Drive कनेक्ट करके लाइसेंस में शामिल कंप्यूटरों पर कैप्चर किए गए टेक्स्ट, कोड और इमेज को अपडेट रखें।",
+      hub: "निजी Drive बैकअप",
+      realtime: "रीयल-टाइम सिंक",
+      maximumDevices: 3,
+      deviceLabels: ["डेस्कटॉप PC", "वर्क लैपटॉप", "MacBook Pro"],
+      captureLabels: ["टेक्स्ट", "कोड", "इमेज"],
+      note: "आपका स्थानीय कार्यक्षेत्र उपलब्ध रहता है। Drive सिंक तभी शुरू होता है जब आप इसे चालू करते हैं।"
+    }
+  };
+
   function getLangFromPath() {
     const first = window.location.pathname.split("/").filter(Boolean)[0];
     return supportedLangs.includes(first) ? first : "en";
@@ -131,6 +310,124 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") close();
     });
+  }
+
+  function createShowcaseElement(tagName, className, text) {
+    const node = document.createElement(tagName);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function buildDriveSyncShowcase(copy, lang) {
+    const section = createShowcaseElement("section", "ucp-drive-sync-showcase");
+    section.dataset.ucpDriveSyncShowcase = "true";
+    section.setAttribute("aria-labelledby", "ucp-drive-sync-title");
+    if (lang === "ar") section.dir = "rtl";
+
+    const shell = createShowcaseElement("div", "ucp-drive-sync-shell");
+    const copyColumn = createShowcaseElement("div", "ucp-drive-sync-copy");
+    copyColumn.append(
+      createShowcaseElement("span", "ucp-drive-sync-eyebrow", copy.eyebrow),
+      createShowcaseElement("h2", "ucp-drive-sync-title", copy.title),
+      createShowcaseElement("p", "ucp-drive-sync-lead", copy.lead)
+    );
+    copyColumn.querySelector("h2").id = "ucp-drive-sync-title";
+
+    const captureTypes = createShowcaseElement("ul", "ucp-drive-sync-types");
+    const typeIcons = ["text_icon.png", "dev.png", "images_icon.png"];
+    copy.captureLabels.forEach((label, index) => {
+      const item = createShowcaseElement("li", "ucp-drive-sync-type");
+      const icon = document.createElement("img");
+      icon.src = `/assets/extension-runtime/assets/icons/${typeIcons[index]}`;
+      icon.alt = "";
+      icon.width = 28;
+      icon.height = 28;
+      icon.loading = "lazy";
+      icon.decoding = "async";
+      item.append(icon, createShowcaseElement("span", "", label));
+      captureTypes.appendChild(item);
+    });
+    copyColumn.append(captureTypes, createShowcaseElement("p", "ucp-drive-sync-note", copy.note));
+
+    const diagram = createShowcaseElement("div", "ucp-drive-sync-diagram");
+    diagram.setAttribute("aria-label", `${copy.hub}. ${copy.maximumDevices} ${copy.realtime}.`);
+    const orbit = createShowcaseElement("div", "ucp-drive-sync-orbit");
+    const hub = createShowcaseElement("div", "ucp-drive-sync-hub");
+    const driveIcon = document.createElement("img");
+    driveIcon.src = "/assets/extension-runtime/assets/icons/drive-logo.png";
+    driveIcon.alt = "Google Drive";
+    driveIcon.width = 72;
+    driveIcon.height = 72;
+    driveIcon.loading = "lazy";
+    driveIcon.decoding = "async";
+    hub.append(
+      driveIcon,
+      createShowcaseElement("strong", "", copy.hub),
+      createShowcaseElement("span", "", copy.realtime)
+    );
+    orbit.appendChild(hub);
+
+    copy.deviceLabels.forEach((label, index) => {
+      const device = createShowcaseElement("div", `ucp-drive-sync-device ucp-drive-sync-device-${index + 1}`);
+      const icon = document.createElement("img");
+      icon.src = "/assets/extension-runtime/assets/icons/computer.png";
+      icon.alt = "";
+      icon.width = 38;
+      icon.height = 38;
+      icon.loading = "lazy";
+      icon.decoding = "async";
+      const state = createShowcaseElement("span", "ucp-drive-sync-state");
+      state.setAttribute("aria-hidden", "true");
+      device.append(icon, createShowcaseElement("strong", "", label), state);
+      orbit.appendChild(device);
+    });
+    diagram.appendChild(orbit);
+    shell.append(copyColumn, diagram);
+    section.appendChild(shell);
+    return section;
+  }
+
+  function setupProductLandingExperience() {
+    if (getProductPage() !== "presentation") return;
+    const lang = getLangFromPath();
+    const copy = driveSyncCopy[lang] || driveSyncCopy.en;
+    const apply = () => {
+      const root = document.getElementById("root");
+      if (!root) return false;
+
+      root.querySelector("#pro")?.remove();
+      root.querySelector("#pricing")?.remove();
+
+      root.querySelectorAll("header button").forEach((button) => {
+        if (/\bpro\b/i.test(button.textContent || "")) button.remove();
+      });
+      root.querySelectorAll("#hero button").forEach((button) => {
+        if (/\bpro\b/i.test(button.textContent || "")) button.remove();
+      });
+
+      const faq = root.querySelector("#faq");
+      const finalSalesSection = faq?.nextElementSibling;
+      if (finalSalesSection?.matches("section") && finalSalesSection.querySelector("button")) {
+        finalSalesSection.remove();
+      }
+
+      if (!root.querySelector("[data-ucp-drive-sync-showcase]")) {
+        const legacyDriveSection = Array.from(root.querySelectorAll("section")).find((section) =>
+          Array.from(section.querySelectorAll("h2, h3")).some((heading) => /Google Drive/i.test(heading.textContent || ""))
+        );
+        if (legacyDriveSection) legacyDriveSection.replaceWith(buildDriveSyncShowcase(copy, lang));
+      }
+
+      return Boolean(root.querySelector("[data-ucp-drive-sync-showcase]"));
+    };
+
+    if (apply()) return;
+    const observer = new MutationObserver(() => {
+      if (apply()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.setTimeout(() => observer.disconnect(), 10000);
   }
 
   const productLandingFaqItems = {
@@ -655,6 +952,7 @@
     setupLanguageMenu();
     setupProductNav();
     setupProductHeaderScroll();
+    setupProductLandingExperience();
     setupProductLandingFaqOverride();
     setupProductFooterLinks();
   }

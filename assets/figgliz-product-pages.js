@@ -729,7 +729,6 @@
     setupLanguageMenu();
     setupProductNav();
     setupProductHeaderScroll();
-    setupPricingTabs();
     setupStatsPage();
   }
 

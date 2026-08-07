@@ -44,7 +44,7 @@
 <meta content="Ultimate Clipboard Pro browser extension preview" name="twitter:image:alt"/>
 <link href="../../assets/Arcawand_Soft_Favicon.png" rel="icon" type="image/png"/>
 <link href="/assets/ucp-email-floating.css" rel="stylesheet"/>
-<link href="/assets/ucp-product-pages.css?v=20260515-heading-flow" rel="stylesheet"/>
+<link href="/assets/ucp-product-pages.css?v=20260807-drive-sync" rel="stylesheet"/>
 <link as="style" crossorigin="" href="../../ultimate-clipboard-pro/assets/index-BcSrau0n.css" onload="this.onload=null;this.rel='stylesheet'" rel="preload"/>
 <noscript><link crossorigin="" href="../../ultimate-clipboard-pro/assets/index-BcSrau0n.css" rel="stylesheet"/></noscript>
 <link as="image" fetchpriority="high" href="../../assets/Ultimate_Clipboard_Pro_poster_1600.webp" rel="preload"/>
@@ -90,8 +90,8 @@
 <script crossorigin="" src="../../ultimate-clipboard-pro/assets/index-BRdfzjER.js" type="module"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Ultimate Clipboard Pro - gerenciador de transferência avançado para Chrome","description":"Capturar, organizar, pesquisar e reutilizar textos, códigos, imagens, screenshots e páginas web em um espaço Chrome local-first.","url":"https://arcawand-soft.com/pt/ultimate-clipboard-pro/","inLanguage":"ponto","publisher":{"@type":"Organization","name":"ArcaWand Soft","url":"https://arcawand-soft.com/"}}</script>
 <script defer="" src="/assets/analytics.js"></script>
-<script defer="" src="/assets/ucp-product-pages.js?v=20260620-languages"></script>
-<script defer="" src="/assets/ucp-launch-pricing.js"></script>
+<script defer="" src="/assets/ucp-product-pages.js?v=20260807-drive-sync"></script>
+
 <script defer="" src="/assets/performance-fixes.js"></script>
 </head>
 <body>
@@ -160,38 +160,7 @@
       window.addEventListener("load", patchProductFooter, { once: true });
     })();
   </script>
-<script>
-    (() => {
-      const checkoutUrl = "https://checkout.dodopayments.com/buy/pdt_0NeBVHHvl7TdkOznAvJOk?quantity=1";
-      const proCtaPatterns = [
-        "get pro",
-        "unlock pro",
-        "pro lifetime",
-        "obtenir pro",
-        "débloquer pro",
-        "obtener pro",
-        "ottieni pro",
-        "pro erhalten",
-        "pro lebenslang",
-        "pro à vie",
-        "pro a vita",
-        "pro de por vida"
-      ];
 
-      function isProCheckoutTarget(element) {
-        if (!element || !element.matches("button, a")) return false;
-        const label = (element.textContent || element.getAttribute("aria-label") || "").trim().toLowerCase();
-        return label && proCtaPatterns.some((pattern) => label.includes(pattern));
-      }
-
-      document.addEventListener("click", (event) => {
-        const target = event.target && event.target.closest ? event.target.closest("button, a") : null;
-        if (!isProCheckoutTarget(target)) return;
-        event.preventDefault();
-        window.open(checkoutUrl, "_blank", "noopener,noreferrer");
-      }, true);
-    })();
-  </script>
 <script>(()=>{const mark=document.querySelector('.ucp-product-mark');if(!mark)return;let ticking=false;const update=()=>{mark.classList.toggle('is-hidden',window.scrollY>36);ticking=false;};update();window.addEventListener('scroll',()=>{if(ticking)return;ticking=true;window.requestAnimationFrame(update);},{passive:true});})();</script>
 <script defer="" src="/assets/install-extension-modal.js"></script>
 <script defer="" src="/assets/ucp-email-floating.js"></script>

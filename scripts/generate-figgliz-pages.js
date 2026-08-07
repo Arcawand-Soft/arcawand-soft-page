@@ -706,10 +706,10 @@ function pricing(lang) {
 function presentationPage(lang) {
   const l = langs[lang];
   const about = legalPageContent(lang, "about");
-  const aboutSections = about.sections.filter((section) => !/^contact$/i.test(section.title));
+  const aboutSections = about.sections.filter((section, index) => index !== 5 && !/^contact$/i.test(section.title));
   const features = aboutSections.map((section) => `<article class="figgliz-card"><h3>${esc(section.title)}</h3><p>${esc(sectionText(section))}</p></article>`).join("");
   const games = ["chess", "dames", "connect4", "ping", "flappy-duo", "air-hockey"].map((name) => `<figure class="figgliz-game"><img src="/assets/figgliz/${name}.webp" alt="" width="160" height="160" loading="lazy" decoding="async"><figcaption>${esc(gameLabels[lang][name])}</figcaption></figure>`).join("");
-  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button><a class="figgliz-secondary" href="#plans">${esc(l.secondaryCta)}</a></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(about.title)}</h2><p>${esc(about.lead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo_2.png" alt="${esc(figglizChessDemoAlt[lang] || figglizChessDemoAlt.en)}" width="1672" height="941" loading="lazy" decoding="async"></figure>${pricing(lang)}`;
+  return `<section class="ucp-static-hero figgliz-hero"><h1>${esc(l.heroTitle)}</h1><p>${esc(l.heroLead)}</p><figure class="figgliz-product-image"><img src="/assets/figgliz_image_produit.png" alt="Figgliz Chrome extension product preview" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high"></figure><div class="figgliz-actions"><button class="figgliz-primary" type="button" data-install-extension-trigger="true">${esc(l.primaryCta)}</button></div><p class="figgliz-beta">${esc(l.betaNote)}</p></section><section class="figgliz-section"><div class="figgliz-section-head"><h2>${esc(about.title)}</h2><p>${esc(about.lead)}</p></div><div class="figgliz-card-grid">${features}</div></section><section class="figgliz-section figgliz-games"><div class="figgliz-section-head"><h2>${esc(l.gamesTitle)}</h2><p>${esc(l.gamesLead)}</p></div><div class="figgliz-game-grid">${games}</div></section><figure class="figgliz-demo-shot"><img src="/assets/figgliz_chess_demo_2.png" alt="${esc(figglizChessDemoAlt[lang] || figglizChessDemoAlt.en)}" width="1672" height="941" loading="lazy" decoding="async"></figure>`;
 }
 
 function textPage(lang, page) {
@@ -798,9 +798,9 @@ ${Object.keys(langs).map((code) => `<link rel="alternate" hreflang="${code}" hre
 ${structuredData(lang, page, title, desc)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
-<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260701-pricing">
+<link rel="stylesheet" href="/assets/figgliz-product.css?v=20260807-product-cleanup">
 <script defer src="/assets/analytics.js"></script>
-<script defer src="/assets/figgliz-product-pages.js?v=20260701-pricing"></script>
+<script defer src="/assets/figgliz-product-pages.js?v=20260807-product-cleanup"></script>
 <script defer src="/assets/install-extension-modal.js?v=20260601-beta"></script>
 </head>
 <body class="ucp-static-page figgliz-static-page">
