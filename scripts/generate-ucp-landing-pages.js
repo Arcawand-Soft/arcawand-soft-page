@@ -4,7 +4,7 @@ const { LANGUAGES, languageMenu, localizedUrl } = require("./language-config");
 const locales = require("./ucp-landing-locales.json");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-language-alignment";
+const version = "20260807-landing-pagespeed";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 
 const languageShowcaseTranslations = {
@@ -198,6 +198,8 @@ function renderNav(language, t) {
 }
 
 function renderCapturePanel(kind, title, description, image, width, height, iconName) {
+  const image480 = image.replace(/\.webp$/, "-480.webp");
+  const image800 = image.replace(/\.webp$/, "-800.webp");
   return `<article class="ucp-capture-panel ucp-capture-panel-${kind}" data-reveal>
     <div class="ucp-capture-copy">
       <span class="ucp-feature-icon">${icon(iconName)}</span>
@@ -206,7 +208,7 @@ function renderCapturePanel(kind, title, description, image, width, height, icon
     </div>
     <figure class="ucp-window-frame">
       <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
-      <img src="${image}" alt="${escapeHtml(title)}" width="${width}" height="${height}" loading="lazy" decoding="async">
+      <img src="${image}" srcset="${image480} 480w, ${image800} 800w, ${image} ${width}w" sizes="(max-width: 680px) 92vw, (max-width: 980px) 88vw, 62vw" alt="${escapeHtml(title)}" width="${width}" height="${height}" loading="lazy" decoding="async">
     </figure>
   </article>`;
 }
@@ -282,7 +284,7 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
 <meta name="twitter:image" content="${socialImage}">
 <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
-<link rel="preload" as="image" href="/assets/products/text-big-panel-rectangular.webp" fetchpriority="high">
+<link rel="preload" as="image" href="/assets/products/text-big-panel-rectangular-800.webp" imagesrcset="/assets/products/text-big-panel-rectangular-480.webp 480w, /assets/products/text-big-panel-rectangular-800.webp 800w, /assets/products/text-big-panel-rectangular.webp 1400w" imagesizes="(max-width: 680px) 92vw, (max-width: 980px) 88vw, 54vw" type="image/webp" fetchpriority="high">
 <link rel="stylesheet" href="/assets/ucp-landing.css?v=${version}">
 <script>window.__ARCAWAND_LANG__=${JSON.stringify(language.code)};</script>
 <script defer src="/assets/analytics.js"></script>
@@ -294,7 +296,7 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
 <header class="ucp-landing-header">
   <a class="ucp-home-link" href="${home}" aria-label="ArcaWand Soft"><span aria-hidden="true">←</span><span>ArcaWand Soft</span></a>
   <a class="ucp-brand" href="${productBase}" aria-label="Ultimate Clipboard Pro">
-    <img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="48" height="48" decoding="async">
+    <img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="48" height="48" fetchpriority="high" decoding="async">
     <span><strong>Ultimate Clipboard Pro</strong><small>${escapeHtml(t("Chrome Extension"))}</small></span>
   </a>
   <button class="ucp-nav-toggle" type="button" aria-label="${escapeHtml(copy.labels.menu)}" aria-expanded="false"><span></span><span></span></button>
@@ -304,7 +306,7 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
 
 <main id="ucp-main">
   <section class="ucp-hero">
-    <div class="ucp-hero-copy" data-reveal>
+    <div class="ucp-hero-copy">
       <p class="ucp-eyebrow"><span></span>${escapeHtml(t("An advanced clipboard for demanding users."))}</p>
       <h1>${escapeHtml(t("Never lose what you copy again"))}</h1>
       <p class="ucp-hero-lead">${escapeHtml(t("Ultimate Clipboard Pro captures everything you copy — text, code, images, screenshots — and organizes it into three dedicated workspaces. Never lose important information again."))}</p>
@@ -316,11 +318,11 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
         <li>${escapeHtml(t("Manifest V3"))}</li><li>${escapeHtml(t("Local-first"))}</li><li>${escapeHtml(t("Text, Code & Images"))}</li>
       </ul>
     </div>
-    <div class="ucp-hero-visual" data-reveal>
+    <div class="ucp-hero-visual">
       <div class="ucp-hero-glow"></div>
       <figure class="ucp-window-frame ucp-window-frame-hero">
         <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
-        <img src="/assets/products/text-big-panel-rectangular.webp" alt="${escapeHtml(t("Text capture"))}" width="1400" height="788" fetchpriority="high" decoding="async">
+        <img src="/assets/products/text-big-panel-rectangular.webp" srcset="/assets/products/text-big-panel-rectangular-480.webp 480w, /assets/products/text-big-panel-rectangular-800.webp 800w, /assets/products/text-big-panel-rectangular.webp 1400w" sizes="(max-width: 680px) 92vw, (max-width: 980px) 88vw, 54vw" alt="${escapeHtml(t("Text capture"))}" width="1400" height="788" fetchpriority="high" decoding="async">
       </figure>
       <div class="ucp-floating-capture ucp-floating-capture-code">${icon("code")}<span>${escapeHtml(t("Code capture"))}</span></div>
       <div class="ucp-floating-capture ucp-floating-capture-image">${icon("image")}<span>${escapeHtml(t("Capture Images & Screenshots"))}</span></div>
@@ -358,7 +360,7 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
     <div class="ucp-section-heading" data-reveal><p class="ucp-eyebrow"><span></span>${escapeHtml(t("Floating Launcher"))}</p><h2>${escapeHtml(t("Advanced Search"))}</h2><p>${escapeHtml(t("Find anything instantly with full-text search across all workspaces. Search by content, source, date, category or semantic meaning."))}</p></div>
     <div class="ucp-flow-grid">
       <div class="ucp-flow-rail" aria-hidden="true"><i></i><i></i><i></i></div>
-      <article class="ucp-flow-card" data-reveal><span class="ucp-flow-number">01</span><div><h3>${escapeHtml(t("Floating Launcher"))}</h3><p>${escapeHtml(t("Access your clipboard history from anywhere with a customizable floating launcher. Pin frequently used items for instant access."))}</p></div><img src="/assets/launcher.webp" alt="${escapeHtml(t("Floating Launcher"))}" width="1400" height="788" loading="lazy" decoding="async"></article>
+      <article class="ucp-flow-card" data-reveal><span class="ucp-flow-number">01</span><div><h3>${escapeHtml(t("Floating Launcher"))}</h3><p>${escapeHtml(t("Keep your capture tools within reach with the floating launcher. Choose which monitor or monitors display it in a multi-screen setup, and temporarily collapse it whenever you need more space."))}</p></div><img src="/assets/launcher.webp" alt="${escapeHtml(t("Floating Launcher"))}" width="1400" height="788" loading="lazy" decoding="async"></article>
       <article class="ucp-flow-card ucp-flow-card-reverse" data-reveal><span class="ucp-flow-number">02</span><div><h3>${escapeHtml(t("Advanced Search"))}</h3><p>${escapeHtml(t("Find anything instantly with full-text search across all workspaces. Search by content, source, date, category or semantic meaning."))}</p></div><img src="/assets/advanced_search.webp" alt="${escapeHtml(t("Advanced Search"))}" width="953" height="500" loading="lazy" decoding="async"></article>
       <article class="ucp-flow-card" data-reveal><span class="ucp-flow-number">03</span><div><h3>${escapeHtml(t("Visual Source Timeline"))}</h3><p>${escapeHtml(t("See where each item came from with visual source indicators. Track your copy history across websites, apps and documents with timestamp precision."))}</p></div><img src="/assets/source_history_2.webp" alt="${escapeHtml(t("Visual Source Timeline"))}" width="1400" height="702" loading="lazy" decoding="async"></article>
     </div>
@@ -378,8 +380,8 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
     <div class="ucp-drive-copy"><p class="ucp-eyebrow"><span></span>${escapeHtml(copy.drive.eyebrow)}</p><h2>${escapeHtml(copy.drive.title)}</h2><p>${escapeHtml(copy.drive.lead)}</p><ul><li>${icon("text")}${escapeHtml(copy.drive.captureLabels[0])}</li><li>${icon("code")}${escapeHtml(copy.drive.captureLabels[1])}</li><li>${icon("image")}${escapeHtml(copy.drive.captureLabels[2])}</li></ul><small>${escapeHtml(copy.drive.note)}</small></div>
     <div class="ucp-drive-map" aria-label="${escapeHtml(copy.drive.title)}">
       <div class="ucp-drive-lines" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="ucp-drive-hub"><img src="/assets/extension-runtime/assets/icons/drive-logo.png" alt="Google Drive" width="64" height="64"><strong>${escapeHtml(copy.drive.hub)}</strong><span>${escapeHtml(copy.drive.realtime)}</span></div>
-      ${copy.drive.deviceLabels.map((device, index) => `<div class="ucp-device ucp-device-${index + 1}"><img src="/assets/extension-runtime/assets/icons/computer.png" alt="" width="42" height="42"><strong>${escapeHtml(device)}</strong><span>${escapeHtml(copy.drive.realtime)}</span></div>`).join("")}
+      <div class="ucp-drive-hub"><img src="/assets/extension-runtime/assets/icons/drive-logo-128.webp" alt="Google Drive" width="64" height="64" loading="lazy" decoding="async"><strong>${escapeHtml(copy.drive.hub)}</strong><span>${escapeHtml(copy.drive.realtime)}</span></div>
+      ${copy.drive.deviceLabels.map((device, index) => `<div class="ucp-device ucp-device-${index + 1}"><img src="/assets/extension-runtime/assets/icons/computer-72.webp" alt="" width="42" height="42" loading="lazy" decoding="async"><strong>${escapeHtml(device)}</strong><span>${escapeHtml(copy.drive.realtime)}</span></div>`).join("")}
     </div>
   </section>
 

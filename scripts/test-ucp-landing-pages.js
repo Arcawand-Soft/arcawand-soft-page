@@ -4,7 +4,7 @@ const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-language-alignment";
+const version = "20260807-landing-pagespeed";
 const installModal = fs.readFileSync(path.join(root, "assets", "install-extension-modal.js"), "utf8");
 const landingCss = fs.readFileSync(path.join(root, "assets", "ucp-landing.css"), "utf8");
 
@@ -12,6 +12,7 @@ assert.ok(!landingCss.includes('"Arial Narrow"'), "Landing typography must not u
 assert.ok(!/text-transform:\s*uppercase/.test(landingCss), "Landing copy must not be forced into all caps");
 assert.match(landingCss, /\.ucp-flow-card img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain;/s, "Flow screenshots must preserve their intrinsic ratio");
 assert.match(landingCss, /\.ucp-language-name\s*\{[^}]*text-align:\s*left;/s, "Every language name, including Arabic, must align left inside its chip");
+assert.ok(!/@keyframes ucp-enter-(?:copy|visual)\s*\{[^}]*opacity:\s*0/s.test(landingCss), "Hero content must paint immediately instead of fading in from opacity zero");
 
 function pageFile(language) {
   return path.join(root, language.code === "en" ? "" : language.code, "ultimate-clipboard-pro", "index.html");
@@ -42,6 +43,10 @@ for (const language of LANGUAGES) {
   assert.ok(html.includes("ucp-capture-panel-text") && html.includes("ucp-capture-panel-code") && html.includes("ucp-capture-panel-image"), `${label}: three capture workspaces`);
   assert.ok(html.includes("ucp-drive-section") && html.includes("ucp-faq-section"), `${label}: Drive and FAQ sections`);
   assert.ok(html.includes("ucp-language-showcase"), `${label}: early language showcase`);
+  assert.ok(!html.includes("Pin frequently used items for instant access"), `${label}: launcher copy must not claim capture pinning`);
+  assert.ok(html.includes("text-big-panel-rectangular-480.webp 480w") && html.includes("text-big-panel-rectangular-800.webp 800w"), `${label}: responsive hero image sources`);
+  assert.ok(html.includes('fetchpriority="high" decoding="async"'), `${label}: high-priority header logo`);
+  assert.ok(html.includes("computer-72.webp") && html.includes("drive-logo-128.webp"), `${label}: right-sized Drive device icons`);
   assert.strictEqual((html.match(/class="ucp-language-chip"/g) || []).length, LANGUAGES.length, `${label}: every supported language is listed`);
   assert.ok(!html.includes("__ARC_"), `${label}: no translation extraction marker`);
   if (label !== "en") assert.ok(!html.includes("What should I try first after installing?"), `${label}: localized closing call to action`);
@@ -51,12 +56,24 @@ for (const language of LANGUAGES) {
     for (const oldTitleCase of ["Trois Espaces de Travail Dédiés", "Recherche Avancée", "Lanceur Flottant", "Chronologie Visuelle des Sources", "Texte, Code et Images"]) {
       assert.ok(!html.includes(oldTitleCase), `fr: no English-style title casing for ${oldTitleCase}`);
     }
+    assert.ok(html.includes("choisissez l’écran ou les écrans") && html.includes("réduisez-le temporairement"), "fr: launcher copy explains multi-screen selection and temporary collapse");
   }
   assert.ok(new RegExp(`^\\s{4}${label}: \\{`, "m").test(installModal), `${label}: localized install modal`);
 
   for (const image of html.matchAll(/<img\b[^>]*>/g)) {
     assert.ok(/\bwidth="\d+"/.test(image[0]) && /\bheight="\d+"/.test(image[0]), `${label}: intrinsic image dimensions`);
   }
+}
+
+for (const [asset, maximumBytes] of [
+  ["assets/products/text-big-panel-rectangular-480.webp", 14000],
+  ["assets/products/text-big-panel-rectangular-800.webp", 26000],
+  ["assets/products/code-big-panel-rectangular-480.webp", 12000],
+  ["assets/products/code-big-panel-rectangular-800.webp", 20000],
+  ["assets/extension-runtime/assets/icons/computer-72.webp", 3000],
+  ["assets/extension-runtime/assets/icons/drive-logo-128.webp", 5000]
+]) {
+  assert.ok(fs.statSync(path.join(root, asset)).size <= maximumBytes, `${asset}: performance budget`);
 }
 
 console.log(`Ultimate Clipboard Pro landing checks passed for ${LANGUAGES.length} languages.`);

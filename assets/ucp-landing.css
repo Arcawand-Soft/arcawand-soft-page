@@ -227,7 +227,7 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
   gap: clamp(2rem, 5vw, 5rem);
 }
 
-.ucp-hero-copy { position: relative; z-index: 2; animation: ucp-enter-copy .7s cubic-bezier(.2,.7,.2,1) both; }
+.ucp-hero-copy { position: relative; z-index: 2; animation: ucp-enter-copy .42s cubic-bezier(.2,.7,.2,1) both; }
 .ucp-eyebrow {
   display: flex;
   align-items: center;
@@ -302,7 +302,7 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
 }
 .ucp-proof-list li::before { margin-right: .45rem; color: var(--ucp-green); content: "●"; font-size: .55rem; }
 
-.ucp-hero-visual { position: relative; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: space-between; gap: .8rem; animation: ucp-enter-visual .85s .08s cubic-bezier(.2,.7,.2,1) both; }
+.ucp-hero-visual { position: relative; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: space-between; gap: .8rem; animation: ucp-enter-visual .5s .04s cubic-bezier(.2,.7,.2,1) both; }
 .ucp-hero-glow {
   position: absolute;
   inset: 12% 10%;
@@ -501,8 +501,8 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
 [dir="rtl"] .language-menu-option { text-align: right; }
 [dir="rtl"] .ucp-faq-item p { margin-right: 0; margin-left: 3.3rem; }
 
-@keyframes ucp-enter-copy { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
-@keyframes ucp-enter-visual { from { opacity: 0; transform: translateX(28px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes ucp-enter-copy { from { transform: translateY(12px); } to { transform: none; } }
+@keyframes ucp-enter-visual { from { transform: translateX(16px) scale(.99); } to { transform: none; } }
 @keyframes ucp-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes ucp-spin { to { transform: rotate(360deg); } }
 
