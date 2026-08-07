@@ -4,8 +4,12 @@ const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-redesign";
+const version = "20260807-landing-ratio-fix";
 const installModal = fs.readFileSync(path.join(root, "assets", "install-extension-modal.js"), "utf8");
+const landingCss = fs.readFileSync(path.join(root, "assets", "ucp-landing.css"), "utf8");
+
+assert.ok(!landingCss.includes('"Arial Narrow"'), "Landing typography must not use a condensed system face");
+assert.match(landingCss, /\.ucp-flow-card img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain;/s, "Flow screenshots must preserve their intrinsic ratio");
 
 function pageFile(language) {
   return path.join(root, language.code === "en" ? "" : language.code, "ultimate-clipboard-pro", "index.html");
