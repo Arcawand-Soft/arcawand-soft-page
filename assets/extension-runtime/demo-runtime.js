@@ -2,7 +2,7 @@
   "use strict";
 
   const runtimeBase = "/assets/extension-runtime/";
-  const supportedLanguages = ["en", "fr", "es", "it", "de"];
+  const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
   const storageArea = "local";
 
   const copyByLang = {
@@ -102,6 +102,46 @@
       imagePrefix: "Demo-Bild"
     }
   };
+
+  const demoLocalePacks = global.UCP_DEMO_LOCALES || {};
+  Object.entries(demoLocalePacks).forEach(([language, pack]) => {
+    if (!supportedLanguages.includes(language) || !pack?.copy) return;
+    copyByLang[language] = { ...(copyByLang.en || {}), ...pack.copy };
+  });
+
+  function translateDemoString(value, dictionary) {
+    if (typeof value !== "string" || !value || !dictionary) return value;
+    return Object.prototype.hasOwnProperty.call(dictionary, value) ? dictionary[value] : value;
+  }
+
+  function localizeDemoState(state, language) {
+    if (language === "en") return state;
+    const dictionary = demoLocalePacks[language]?.dictionary;
+    if (!dictionary) throw new Error(`Missing Ultimate Clipboard Pro demo locale: ${language}`);
+    const translateFields = (entry, fields) => {
+      fields.forEach((field) => {
+        if (typeof entry?.[field] === "string") entry[field] = translateDemoString(entry[field], dictionary);
+      });
+      return entry;
+    };
+    const translateCategories = (list) => list.forEach((entry) => translateFields(entry, ["name"]));
+    translateCategories(state.categories);
+    translateCategories(state.devCategories);
+    translateCategories(state.imageCategories);
+    state.items.forEach((entry) => {
+      translateFields(entry, ["title", "content", "preview", "note", "categoryName", "sourceTitle"]);
+      (entry.versions || []).forEach((version) => translateFields(version, ["title", "content", "preview", "note"]));
+      (entry.captureVersions || []).forEach((version) => translateFields(version, ["title", "content", "preview", "note"]));
+    });
+    state.devItems.forEach((entry) => {
+      translateFields(entry, ["title", "note", "categoryName", "sourceTitle"]);
+      (entry.versions || []).forEach((version) => translateFields(version, ["title", "note"]));
+      (entry.captureVersions || []).forEach((version) => translateFields(version, ["title", "note"]));
+    });
+    state.imageItems.forEach((entry) => translateFields(entry, ["title", "altText", "note", "categoryName", "sourceTitle"]));
+    state.settings.language = language;
+    return state;
+  }
 
   const textSamples = {
     en: [
@@ -1223,6 +1263,8 @@ test("language menu routes to English product page", async ({ page }) => {
   }
 
   function createDemoState(language = resolveLanguage()) {
+    const requestedLanguage = supportedLanguages.includes(language) ? language : "en";
+    const sourceLanguage = requestedLanguage === "en" ? "en" : "en";
     const settings = enforceDemoProSettings({
       captureEnabled: true,
       imageCaptureEnabled: true,
@@ -1230,11 +1272,11 @@ test("language menu routes to English product page", async ({ page }) => {
       privateMode: false,
       askCategoryAfterCopy: false,
       classificationMode: "generalByDefault",
-      language,
+      language: requestedLanguage,
       languageSource: "manual",
       excludedDomains: [],
       theme: "dark",
-      accentColor: "#7c3aed",
+      accentColor: "#e50914",
       showScreenshotFloatingButton: true,
       keepFavoritesOnClear: true,
       keepImageFavoritesOnClear: true,
@@ -1273,18 +1315,19 @@ test("language menu routes to English product page", async ({ page }) => {
       licenseIntegrityLastCheckedAt: Date.now(),
       plan: "pro"
     });
-    return {
+    const state = {
       settings,
-      items: textItems(language),
-      categories: categories(language),
-      imageItems: imageItems(language),
-      imageCategories: imageCategories(language),
-      devItems: devItems(language),
-      devCategories: devCategories(language),
+      items: textItems(sourceLanguage),
+      categories: categories(sourceLanguage),
+      imageItems: imageItems(sourceLanguage),
+      imageCategories: imageCategories(sourceLanguage),
+      devItems: devItems(sourceLanguage),
+      devCategories: devCategories(sourceLanguage),
       snippets: [],
       templates: [],
       license: { plan: "pro", status: "active" }
     };
+    return localizeDemoState(state, requestedLanguage);
   }
 
   function makeStateBridge(language, callbacks = {}) {
@@ -1509,16 +1552,12 @@ test("language menu routes to English product page", async ({ page }) => {
     });
   }
 
-  async function loadSharedScripts() {
+  async function loadSharedScripts(language = resolveLanguage()) {
     await loadScript(`${runtimeBase}shared/constants.js`);
     await loadScript(`${runtimeBase}shared/utils.js`);
-    await Promise.all([
-      "shared/locales/en.js",
-      "shared/locales/fr.js",
-      "shared/locales/de.js",
-      "shared/locales/es.js",
-      "shared/locales/it.js"
-    ].map((script) => loadScript(`${runtimeBase}${script}`)));
+    const localeScripts = ["shared/locales/en.js", "shared/locales/categorySlugs.js"];
+    if (language !== "en") localeScripts.push(`shared/locales/${language}.js`);
+    await Promise.all(localeScripts.map((script) => loadScript(`${runtimeBase}${script}`)));
     const scripts = [
       "shared/i18n.js",
       "shared/dodoConfig.js",

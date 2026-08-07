@@ -5,6 +5,7 @@
   if (!root || !window.location.pathname.includes("/ultimate-clipboard-pro/demo")) return;
 
   const runtimeBase = "/assets/extension-runtime/";
+  const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
   const demoFloatingHostId = "mcp-demo-floating-host";
   let managerShell = null;
   let blockedDialog = null;
@@ -54,9 +55,70 @@
 
   function resolvePageLanguage() {
     const attrLang = (root.dataset.ucpDemoLang || document.documentElement.lang || "").slice(0, 2).toLowerCase();
-    if (localCopyByLang[attrLang]) return attrLang;
-    const match = window.location.pathname.match(/^\/(fr|es|it|de)\//);
+    if (supportedLanguages.includes(attrLang)) return attrLang;
+    const match = window.location.pathname.match(/^\/(fr|es|it|de|ro|pt|ar|zh|ja|ru|nl|pl|tr|ko|hi)\//);
     return match?.[1] || "en";
+  }
+
+  function installDemoDirectionGuard(host) {
+    if (!host) return;
+    host.setAttribute("dir", "ltr");
+    host.style.setProperty("direction", "ltr", "important");
+    const shadow = host.shadowRoot;
+    if (!shadow || shadow.querySelector("style[data-ucp-demo-direction-guard]")) return;
+    const style = document.createElement("style");
+    style.dataset.ucpDemoDirectionGuard = "true";
+    const arabicTextRules = resolvePageLanguage() === "ar" ? `
+      .mcp-preview-text, .mcp-meta, .mcp-brand-copy, .mcp-brand-copy *,
+      input, textarea, .mcp-category-chooser-title, .mcp-search-result-copy {
+        direction: rtl !important;
+        text-align: left !important;
+        unicode-bidi: plaintext !important;
+      }
+    ` : "";
+    style.textContent = `
+      :host, .mcp-panel, .mcp-header, .mcp-content, .mcp-list, .mcp-item,
+      .mcp-item-title, .mcp-item-content, .mcp-item-meta, .mcp-search,
+      .mcp-category-chooser, input, textarea { direction: ltr !important; }
+      .mcp-panel, .mcp-item, .mcp-item-title, .mcp-item-content,
+      .mcp-item-meta, .mcp-category-chooser, input, textarea { text-align: left !important; }
+      ${arabicTextRules}
+    `;
+    shadow.prepend(style);
+  }
+
+  function renderImmediateLauncher() {
+    const launcher = document.createElement("aside");
+    launcher.className = "ucp-demo-launcher-preboot";
+    launcher.setAttribute("dir", "ltr");
+    launcher.setAttribute("aria-hidden", "true");
+    launcher.innerHTML = `
+      <span class="ucp-demo-launcher-preboot__collapse"><img src="${runtimeBase}assets/icons/arrow_right.png" alt=""></span>
+      <span class="ucp-demo-launcher-preboot__brand"><img src="${runtimeBase}assets/icons/icon128.png" alt=""></span>
+      <span class="ucp-demo-launcher-preboot__utility"><span aria-hidden="true">↗</span></span>
+      <span class="ucp-demo-launcher-preboot__utility"><img src="${runtimeBase}assets/icons/tootls.png" alt=""></span>
+      <span class="ucp-demo-launcher-preboot__utility"><img src="${runtimeBase}assets/icons/screen_full_page_png.png" alt=""></span>
+    `;
+    document.body.append(launcher);
+    return launcher;
+  }
+
+  function waitForFloatingHost(timeoutMs = 5000) {
+    const existing = document.getElementById(demoFloatingHostId);
+    if (existing) return Promise.resolve(existing);
+    return new Promise((resolve) => {
+      const observer = new MutationObserver(() => {
+        const host = document.getElementById(demoFloatingHostId);
+        if (!host) return;
+        observer.disconnect();
+        resolve(host);
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      window.setTimeout(() => {
+        observer.disconnect();
+        resolve(document.getElementById(demoFloatingHostId));
+      }, timeoutMs);
+    });
   }
 
   function loadScript(src) {
@@ -75,7 +137,7 @@
     const lang = runtime?.resolveLanguage?.() || resolvePageLanguage();
     const localCopy = localCopyByLang[lang] || localCopyByLang.en;
     const runtimeCopy = runtime?.copyByLang?.[lang] || runtime?.copyByLang?.en || {};
-    return { ...localCopy, ...runtimeCopy, installLabel: localCopy.installLabel };
+    return { ...localCopy, ...runtimeCopy };
   }
 
   function showBlocked(customCopy = null) {
@@ -160,7 +222,7 @@
       const frame = document.createElement("iframe");
       frame.className = "ucp-real-demo-manager-frame";
       frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260516-card-view-compact&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-demo-i18n-ltr&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
       managerShell.append(frame);
       document.body.append(managerShell);
       window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
@@ -168,7 +230,7 @@
     }
     const frame = managerShell.querySelector("iframe");
     if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260516-card-view-compact&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-demo-i18n-ltr&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
     }
     managerShell.classList.add("is-visible");
   }
@@ -179,12 +241,17 @@
     if (event.data?.type === "UCP_DEMO_BLOCKED") showBlocked();
   });
 
-  if (!desktopQuery.matches) {
-    renderDesktopOnlyMessage();
-    return;
-  }
+  let prebootLauncher = desktopQuery.matches ? renderImmediateLauncher() : null;
   try {
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260515-rich-dataset`);
+    const requestedLanguage = resolvePageLanguage();
+    if (requestedLanguage !== "en") {
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260807-demo-i18n-v2`);
+    }
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260807-demo-i18n-ltr`);
+    if (!desktopQuery.matches) {
+      renderDesktopOnlyMessage();
+      return;
+    }
     const language = window.UCP_DEMO_RUNTIME.resolveLanguage();
     const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(language, {
       openManager,
@@ -195,11 +262,16 @@
     bridge.installChromeMock();
     window.__UCP_DEMO_BRIDGE__ = bridge;
 
-    await window.UCP_DEMO_RUNTIME.loadSharedScripts();
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260514-demo-isolated-host`);
+    await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260807-launcher-match`);
+
+    const floatingHost = await waitForFloatingHost();
+    installDemoDirectionGuard(floatingHost);
+    if (floatingHost) requestAnimationFrame(() => requestAnimationFrame(() => prebootLauncher?.remove()));
 
     root.dataset.ucpDemoRuntime = "real-extension";
   } catch (error) {
+    prebootLauncher?.remove();
     console.warn("Ultimate Clipboard Pro demo could not start.", error);
     root.dataset.ucpDemoRuntime = "unavailable";
     showBlocked();

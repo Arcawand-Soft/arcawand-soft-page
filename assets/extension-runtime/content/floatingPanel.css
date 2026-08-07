@@ -435,18 +435,18 @@ button:active,
   display: grid;
   place-items: center;
   padding: 0;
-  border-radius: 12px;
+  border-radius: 0;
   color: #fff;
   font-weight: 800;
   cursor: pointer;
-  background: var(--accent);
+  background: transparent;
   box-shadow: none !important;
   transition: background 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
 .mcp-brand:hover,
 .mcp-brand:focus-visible {
-  background: var(--accent);
+  background: transparent;
   box-shadow: none !important;
   transform: translateY(-1px);
 }
@@ -6936,19 +6936,25 @@ img.category-button-vault {
   border-color: transparent !important;
 }
 
-:host .mcp-brand,
 :host .mcp-fullpage-shot,
+:host .mcp-launcher-manager,
 :host .mcp-launcher-tools,
-:host .mcp-launcher-tab,
-:host([data-resolved-theme="light"]) .mcp-brand,
 :host([data-resolved-theme="light"]) .mcp-fullpage-shot,
+:host([data-resolved-theme="light"]) .mcp-launcher-manager,
 :host([data-resolved-theme="light"]) .mcp-launcher-tools,
-:host([data-resolved-theme="light"]) .mcp-launcher-tab,
 :host([data-resolved-theme="light"]) button.mcp-fullpage-shot:has(img):not(.is-active),
-:host([data-resolved-theme="light"]) button.mcp-launcher-tools:has(img):not(.is-active),
-:host([data-resolved-theme="light"]) button.mcp-brand:has(img):not(.is-active) {
-  background: var(--accent) !important;
+:host([data-resolved-theme="light"]) button.mcp-launcher-manager:not(.is-active),
+:host([data-resolved-theme="light"]) button.mcp-launcher-tools:has(img):not(.is-active) {
+  background: var(--utility-action-bg) !important;
   border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: none !important;
+}
+
+:host .mcp-brand,
+:host([data-resolved-theme="light"]) .mcp-brand,
+:host([data-resolved-theme="light"]) button.mcp-brand:has(img):not(.is-active) {
+  background: transparent !important;
+  border-color: transparent !important;
   box-shadow: none !important;
 }
 

@@ -103,6 +103,72 @@
 .ucp-demo-root {
   position: relative;
   min-height: 11rem;
+  direction: ltr;
+  text-align: left;
+}
+
+.ucp-demo-launcher-preboot {
+  position: fixed;
+  right: 18px;
+  bottom: 94px;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 66px;
+  padding: 8px 10px 10px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 16px;
+  direction: ltr;
+  background: #000;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .42);
+}
+
+.ucp-demo-launcher-preboot > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ucp-demo-launcher-preboot__collapse {
+  width: 46px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .88);
+}
+
+.ucp-demo-launcher-preboot__collapse img {
+  width: 14px;
+  height: 7px;
+  object-fit: contain;
+}
+
+.ucp-demo-launcher-preboot__brand {
+  width: 46px;
+  height: 40px;
+  background: transparent;
+}
+
+.ucp-demo-launcher-preboot__brand img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.ucp-demo-launcher-preboot__utility {
+  width: 46px;
+  height: 34px;
+  border-radius: 10px;
+  color: #fff;
+  background: #38475a;
+  font: 800 22px/1 Arial, sans-serif;
+}
+
+.ucp-demo-launcher-preboot__utility img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .ucp-demo-desktop-only {

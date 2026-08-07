@@ -2,9 +2,20 @@
   const LANGUAGE_NAMES = {
     en: "English",
     fr: "Français",
-    de: "Deutsch",
     es: "Español",
-    it: "Italiano"
+    it: "Italiano",
+    de: "Deutsch",
+    ro: "Română",
+    pt: "Português",
+    ar: "العربية",
+    zh: "中文",
+    ja: "日本語",
+    ru: "Русский",
+    nl: "Nederlands",
+    pl: "Polski",
+    tr: "Türkçe",
+    ko: "한국어",
+    hi: "हिन्दी"
   };
 
   LANGUAGE_NAMES.fr = "Fran\u00E7ais";
@@ -81,6 +92,7 @@
       headers: "Header e hero", icons: "Icone", screenshots: "Screenshot", scans: "Scansioni", receipts: "Ricevute e fatture", article: "Articolo", articles: "Articoli", hook: "Hook", hooks: "Hook", newsletter: "Newsletter", newsletters: "Newsletter", sheet: "Foglio", sheets: "Fogli", slide: "Slide", slides: "Slide", drive: "Drive", meet: "Meet", outlook: "Outlook", teams: "Teams", onedrive: "OneDrive", copilot: "Copilot", dropbox: "Dropbox", icloud: "iCloud", mega: "MEGA", slack: "Slack", discord: "Discord", whatsapp: "WhatsApp", linkedin: "LinkedIn", notion: "Notion", obsidian: "Obsidian", make: "Make", zapier: "Zapier", n8n: "n8n", webhooks: "Webhooks", rpa: "RPA", hivepress: "HivePress", branding: "Branding", campaign: "Campagna", campaigns: "Campagne", thumbnail: "Miniatura", thumbnails: "Miniature", hero: "Hero", header: "Header", design: "Design", web: "Web", documents: "Documenti", commerce: "Commerce", store: "Store", stores: "Store", photo: "Foto", photos: "Foto"
     }
   };
+  Object.assign(SLUG_LABELS, global.MCP_SLUG_LOCALES || {});
 
   const CATEGORY_TRANSLATIONS = {
     general: { en: "General", fr: "Général", de: "Allgemein", es: "General", it: "Generale" },
@@ -109,7 +121,19 @@
     "hr-recruitment": { en: "HR & recruitment", fr: "RH & recrutement", de: "HR & Recruiting", es: "RR. HH. y selección", it: "HR e recruiting" },
     legal: { en: "Legal", fr: "Juridique", de: "Rechtliches", es: "Legal", it: "Legale" },
     education: { en: "Training & learning", fr: "Formation & apprentissage", de: "Schulung & Lernen", es: "Formación y aprendizaje", it: "Formazione e apprendimento" },
-    media: { en: "Media", fr: "Médias", de: "Medien", es: "Medios", it: "Media" }
+    media: { en: "Media", fr: "Médias", de: "Medien", es: "Medios", it: "Media" },
+    "marketing-landing-pages": {
+      en: "Landing pages", fr: "Pages de destination", de: "Landingpages", es: "Páginas de destino",
+      it: "Landing page", ro: "Pagini de destinație", pt: "Páginas de destino", ar: "الصفحات المقصودة",
+      zh: "着陆页", ja: "ランディングページ", ru: "Целевые страницы", nl: "Landingspagina's",
+      pl: "Strony docelowe", tr: "Açılış sayfaları", ko: "랜딩 페이지", hi: "लैंडिंग पृष्ठ"
+    },
+    "security-excluded-sites": {
+      en: "Excluded sites", fr: "Sites exclus", de: "Ausgeschlossene Websites", es: "Sitios excluidos",
+      it: "Siti esclusi", ro: "Site-uri excluse", pt: "Sites excluídos", ar: "المواقع المستبعدة",
+      zh: "已排除的网站", ja: "除外サイト", ru: "Исключённые сайты", nl: "Uitgesloten sites",
+      pl: "Wykluczone witryny", tr: "Hariç tutulan siteler", ko: "제외된 사이트", hi: "बहिष्कृत साइटें"
+    }
     ,"dev-general": { en: "General", fr: "Général", de: "Allgemein", es: "General", it: "Generale" }
     ,"dev-favorites": { en: "Favorites", fr: "Favoris", de: "Favoriten", es: "Favoritos", it: "Preferiti" }
     ,"dev-trash": { en: "Trash", fr: "Corbeille", de: "Papierkorb", es: "Papelera", it: "Cestino" }
@@ -225,11 +249,176 @@
     return normalizeLanguageCode(settings?.language) || "en";
   }
 
+  function applyLanguageMetadata(target, language = "en") {
+    const normalized = normalizeLanguageCode(language) || "en";
+    const root = target?.documentElement || target;
+    if (!root) return normalized;
+    if ("lang" in root) root.lang = normalized;
+    root.setAttribute?.("dir", "ltr");
+    if (root.dataset) {
+      root.dataset.uiLanguage = normalized;
+      root.dataset.textDirection = normalized === "ar" ? "rtl" : "ltr";
+    }
+    return normalized;
+  }
+
+  const LICENSE_ENHANCEMENTS = Object.freeze({
+    en: {
+      "license.help": "After subscribing to a Lifetime plan, you will receive a license key by email. Paste it here to activate Ultimate Clipboard Pro on this computer.",
+      "license.viewPlans": "View plans", "license.chooseOffer": "Choose this plan", "license.currentOffer": "Current plan", "license.activate": "Activate license",
+      "license.keyPlaceholder": "Enter your license key here",
+      "license.showKey": "Show license key", "license.hideKey": "Hide license key",
+      "license.product": "Product", "license.customer": "License holder", "license.purchasedAt": "Purchased at"
+    },
+    fr: {
+      "license.help": "Après votre souscription à un plan Lifetime, vous recevrez une clé de licence par mail. Collez cette clé ici pour activer Ultimate Clipboard Pro sur cet ordinateur.",
+      "license.viewPlans": "Voir les offres", "license.chooseOffer": "Choisir cette offre", "license.currentOffer": "Offre actuelle", "license.activate": "Activer la licence",
+      "license.keyPlaceholder": "Saisissez ici votre clé de licence",
+      "license.showKey": "Afficher la clé de licence", "license.hideKey": "Masquer la clé de licence",
+      "license.product": "Produit", "license.customer": "Titulaire", "license.purchasedAt": "Achetée le"
+    },
+    es: {
+      "license.help": "Después de suscribirte a un plan Lifetime, recibirás una clave de licencia por correo electrónico. Pégala aquí para activar Ultimate Clipboard Pro en este ordenador.",
+      "license.viewPlans": "Ver ofertas", "license.chooseOffer": "Elegir esta oferta", "license.currentOffer": "Oferta actual", "license.activate": "Activar licencia",
+      "license.keyPlaceholder": "Introduce aquí tu clave de licencia",
+      "license.showKey": "Mostrar clave de licencia", "license.hideKey": "Ocultar clave de licencia",
+      "license.product": "Producto", "license.customer": "Titular", "license.purchasedAt": "Comprada el"
+    },
+    it: {
+      "license.help": "Dopo l'iscrizione a un piano Lifetime riceverai una chiave di licenza via e-mail. Incollala qui per attivare Ultimate Clipboard Pro su questo computer.",
+      "license.viewPlans": "Vedi offerte", "license.chooseOffer": "Scegli questa offerta", "license.currentOffer": "Offerta attuale", "license.activate": "Attiva licenza",
+      "license.keyPlaceholder": "Inserisci qui la chiave di licenza",
+      "license.showKey": "Mostra chiave di licenza", "license.hideKey": "Nascondi chiave di licenza",
+      "license.product": "Prodotto", "license.customer": "Titolare", "license.purchasedAt": "Acquistata il"
+    },
+    de: {
+      "license.help": "Nach dem Abschluss eines Lifetime-Plans erhältst du per E-Mail einen Lizenzschlüssel. Füge ihn hier ein, um Ultimate Clipboard Pro auf diesem Computer zu aktivieren.",
+      "license.viewPlans": "Angebote ansehen", "license.chooseOffer": "Dieses Angebot wählen", "license.currentOffer": "Aktuelles Angebot", "license.activate": "Lizenz aktivieren",
+      "license.keyPlaceholder": "Gib hier deinen Lizenzschlüssel ein",
+      "license.showKey": "Lizenzschlüssel anzeigen", "license.hideKey": "Lizenzschlüssel ausblenden",
+      "license.product": "Produkt", "license.customer": "Lizenzinhaber", "license.purchasedAt": "Gekauft am"
+    },
+    ro: {
+      "license.help": "După abonarea la un plan Lifetime, vei primi prin e-mail o cheie de licență. Lipește-o aici pentru a activa Ultimate Clipboard Pro pe acest computer.",
+      "license.viewPlans": "Vezi ofertele", "license.chooseOffer": "Alege această ofertă", "license.currentOffer": "Oferta actuală", "license.activate": "Activează licența",
+      "license.keyPlaceholder": "Introdu aici cheia de licență",
+      "license.showKey": "Afișează cheia de licență", "license.hideKey": "Ascunde cheia de licență",
+      "license.product": "Produs", "license.customer": "Titular", "license.purchasedAt": "Cumpărată la"
+    },
+    pt: {
+      "license.help": "Depois de subscreveres um plano Lifetime, receberás uma chave de licença por e-mail. Cola-a aqui para ativar o Ultimate Clipboard Pro neste computador.",
+      "license.viewPlans": "Ver ofertas", "license.chooseOffer": "Escolher esta oferta", "license.currentOffer": "Oferta atual", "license.activate": "Ativar licença",
+      "license.keyPlaceholder": "Introduz aqui a tua chave de licença",
+      "license.showKey": "Mostrar chave de licença", "license.hideKey": "Ocultar chave de licença",
+      "license.product": "Produto", "license.customer": "Titular", "license.purchasedAt": "Comprada em"
+    },
+    ar: {
+      "license.help": "بعد الاشتراك في خطة مدى الحياة، ستتلقى مفتاح ترخيص عبر البريد الإلكتروني. الصقه هنا لتفعيل Ultimate Clipboard Pro على هذا الكمبيوتر.",
+      "license.viewPlans": "عرض العروض", "license.chooseOffer": "اختيار هذا العرض", "license.currentOffer": "العرض الحالي", "license.activate": "تفعيل الترخيص",
+      "license.keyPlaceholder": "أدخل مفتاح الترخيص هنا",
+      "license.showKey": "إظهار مفتاح الترخيص", "license.hideKey": "إخفاء مفتاح الترخيص",
+      "license.product": "المنتج", "license.customer": "صاحب الترخيص", "license.purchasedAt": "تاريخ الشراء"
+    },
+    zh: {
+      "license.help": "订阅终身计划后，你会通过电子邮件收到许可证密钥。请将其粘贴到此处，以在这台电脑上激活 Ultimate Clipboard Pro。",
+      "license.viewPlans": "查看方案", "license.chooseOffer": "选择此方案", "license.currentOffer": "当前方案", "license.activate": "激活许可证",
+      "license.keyPlaceholder": "在此输入许可证密钥",
+      "license.showKey": "显示许可证密钥", "license.hideKey": "隐藏许可证密钥",
+      "license.product": "产品", "license.customer": "许可证持有人", "license.purchasedAt": "购买时间"
+    },
+    ja: {
+      "license.help": "Lifetimeプランに加入すると、ライセンスキーがメールで届きます。ここに貼り付けて、このパソコンでUltimate Clipboard Proを有効化してください。",
+      "license.viewPlans": "プランを見る", "license.chooseOffer": "このプランを選ぶ", "license.currentOffer": "現在のプラン", "license.activate": "ライセンスを有効化",
+      "license.keyPlaceholder": "ここにライセンスキーを入力",
+      "license.showKey": "ライセンスキーを表示", "license.hideKey": "ライセンスキーを隠す",
+      "license.product": "製品", "license.customer": "ライセンス所有者", "license.purchasedAt": "購入日時"
+    },
+    ru: {
+      "license.help": "После оформления плана Lifetime вы получите лицензионный ключ по электронной почте. Вставьте его сюда, чтобы активировать Ultimate Clipboard Pro на этом компьютере.",
+      "license.viewPlans": "Посмотреть предложения", "license.chooseOffer": "Выбрать это предложение", "license.currentOffer": "Текущее предложение", "license.activate": "Активировать лицензию",
+      "license.keyPlaceholder": "Введите лицензионный ключ здесь",
+      "license.showKey": "Показать лицензионный ключ", "license.hideKey": "Скрыть лицензионный ключ",
+      "license.product": "Продукт", "license.customer": "Владелец лицензии", "license.purchasedAt": "Дата покупки"
+    },
+    nl: {
+      "license.help": "Na je abonnement op een Lifetime-plan ontvang je per e-mail een licentiesleutel. Plak die hier om Ultimate Clipboard Pro op deze computer te activeren.",
+      "license.viewPlans": "Bekijk aanbiedingen", "license.chooseOffer": "Kies deze aanbieding", "license.currentOffer": "Huidige aanbieding", "license.activate": "Licentie activeren",
+      "license.keyPlaceholder": "Voer hier je licentiesleutel in",
+      "license.showKey": "Licentiesleutel tonen", "license.hideKey": "Licentiesleutel verbergen",
+      "license.product": "Product", "license.customer": "Licentiehouder", "license.purchasedAt": "Gekocht op"
+    },
+    pl: {
+      "license.help": "Po wykupieniu planu Lifetime otrzymasz klucz licencyjny e-mailem. Wklej go tutaj, aby aktywować Ultimate Clipboard Pro na tym komputerze.",
+      "license.viewPlans": "Zobacz oferty", "license.chooseOffer": "Wybierz tę ofertę", "license.currentOffer": "Aktualna oferta", "license.activate": "Aktywuj licencję",
+      "license.keyPlaceholder": "Wpisz tutaj klucz licencyjny",
+      "license.showKey": "Pokaż klucz licencyjny", "license.hideKey": "Ukryj klucz licencyjny",
+      "license.product": "Produkt", "license.customer": "Właściciel licencji", "license.purchasedAt": "Data zakupu"
+    },
+    tr: {
+      "license.help": "Lifetime planına abone olduktan sonra lisans anahtarın e-postayla gönderilir. Ultimate Clipboard Pro'yu bu bilgisayarda etkinleştirmek için anahtarı buraya yapıştır.",
+      "license.viewPlans": "Teklifleri gör", "license.chooseOffer": "Bu teklifi seç", "license.currentOffer": "Mevcut teklif", "license.activate": "Lisansı etkinleştir",
+      "license.keyPlaceholder": "Lisans anahtarını buraya gir",
+      "license.showKey": "Lisans anahtarını göster", "license.hideKey": "Lisans anahtarını gizle",
+      "license.product": "Ürün", "license.customer": "Lisans sahibi", "license.purchasedAt": "Satın alma tarihi"
+    },
+    ko: {
+      "license.help": "Lifetime 플랜에 가입하면 이메일로 라이선스 키를 받게 됩니다. 이 컴퓨터에서 Ultimate Clipboard Pro를 활성화하려면 여기에 붙여넣으세요.",
+      "license.viewPlans": "요금제 보기", "license.chooseOffer": "이 요금제 선택", "license.currentOffer": "현재 요금제", "license.activate": "라이선스 활성화",
+      "license.keyPlaceholder": "여기에 라이선스 키 입력",
+      "license.showKey": "라이선스 키 표시", "license.hideKey": "라이선스 키 숨기기",
+      "license.product": "제품", "license.customer": "라이선스 소유자", "license.purchasedAt": "구매일"
+    },
+    hi: {
+      "license.help": "Lifetime प्लान लेने के बाद आपको ईमेल से लाइसेंस कुंजी मिलेगी। इस कंप्यूटर पर Ultimate Clipboard Pro सक्रिय करने के लिए उसे यहाँ पेस्ट करें।",
+      "license.viewPlans": "ऑफ़र देखें", "license.chooseOffer": "यह ऑफ़र चुनें", "license.currentOffer": "मौजूदा ऑफ़र", "license.activate": "लाइसेंस सक्रिय करें",
+      "license.keyPlaceholder": "यहाँ अपनी लाइसेंस कुंजी दर्ज करें",
+      "license.showKey": "लाइसेंस कुंजी दिखाएँ", "license.hideKey": "लाइसेंस कुंजी छिपाएँ",
+      "license.product": "उत्पाद", "license.customer": "लाइसेंस धारक", "license.purchasedAt": "खरीद की तारीख"
+    }
+  });
+
+  const LICENSE_INSPECTION_KEYS = [
+    "license.inspectEyebrow", "license.inspectTitle", "license.inspectText", "license.inspectClose",
+    "license.inspectActivate", "license.inspectMissingKey", "license.inspectConclusion",
+    "license.inspectConclusionInvalid", "license.inspectConclusionActive", "license.inspectConclusionActivate",
+    "license.inspectFunctional", "license.inspectYes", "license.inspectNo", "license.inspectLocalState",
+    "license.inspectLocalActive", "license.inspectLocalInactive", "license.inspectCustomerEmail",
+    "license.inspectExpiresAt", "license.inspectRenewsAt", "license.inspectUpdatedAt",
+    "license.inspectSources", "license.inspectUnavailable", "license.inspectProductId",
+    "license.inspectLicenseId", "license.inspectInstanceId", "license.inspectChecking",
+    "license.activationInProgress"
+  ];
+  const LICENSE_INSPECTION_VALUES = Object.freeze({
+    en: ["License check", "Check license", "Here is the information available for this license key.", "Close", "Activate license", "Enter a license key before checking it.", "Conclusion", "The license is not functional or is inactive.", "The license is functional and active on this computer.", "The license is functional, but is not active on this computer yet.", "Functional", "Yes", "No", "Local state", "Active on this computer", "To activate", "Customer email", "Expiration", "Renewal", "Updated", "API sources", "Unavailable", "Product ID", "License ID", "Activation ID", "Checking license…", "Activating license…"],
+    fr: ["Vérification de licence", "Vérifier la licence", "Voici les informations disponibles pour cette clé de licence.", "Fermer", "Activer la licence", "Saisissez une clé de licence avant de la vérifier.", "Conclusion", "La licence n’est pas fonctionnelle ou est inactive.", "La licence est fonctionnelle et active sur cet ordinateur.", "La licence est fonctionnelle, mais pas encore active sur cet ordinateur.", "Fonctionnelle", "Oui", "Non", "État local", "Active sur cet ordinateur", "À activer", "E-mail client", "Expiration", "Renouvellement", "Mise à jour", "Sources API", "Non disponible", "ID produit", "ID licence", "ID activation", "Vérification de la licence…", "Activation de la licence…"],
+    es: ["Comprobación de licencia", "Verificar licencia", "Esta es la información disponible para esta clave de licencia.", "Cerrar", "Activar licencia", "Introduce una clave antes de verificarla.", "Conclusión", "La licencia no funciona o está inactiva.", "La licencia funciona y está activa en este ordenador.", "La licencia funciona, pero aún no está activa en este ordenador.", "Funcional", "Sí", "No", "Estado local", "Activa en este ordenador", "Por activar", "Correo del cliente", "Caducidad", "Renovación", "Actualización", "Fuentes API", "No disponible", "ID de producto", "ID de licencia", "ID de activación", "Verificando la licencia…", "Activando la licencia…"],
+    it: ["Verifica licenza", "Controlla la licenza", "Ecco le informazioni disponibili per questa chiave di licenza.", "Chiudi", "Attiva licenza", "Inserisci una chiave prima di verificarla.", "Conclusione", "La licenza non funziona o non è attiva.", "La licenza funziona ed è attiva su questo computer.", "La licenza funziona, ma non è ancora attiva su questo computer.", "Funzionante", "Sì", "No", "Stato locale", "Attiva su questo computer", "Da attivare", "E-mail cliente", "Scadenza", "Rinnovo", "Aggiornamento", "Fonti API", "Non disponibile", "ID prodotto", "ID licenza", "ID attivazione", "Verifica della licenza…", "Attivazione della licenza…"],
+    de: ["Lizenzprüfung", "Lizenz prüfen", "Hier sind die verfügbaren Informationen zu diesem Lizenzschlüssel.", "Schließen", "Lizenz aktivieren", "Gib vor der Prüfung einen Lizenzschlüssel ein.", "Ergebnis", "Die Lizenz funktioniert nicht oder ist inaktiv.", "Die Lizenz funktioniert und ist auf diesem Computer aktiv.", "Die Lizenz funktioniert, ist auf diesem Computer aber noch nicht aktiv.", "Funktionsfähig", "Ja", "Nein", "Lokaler Status", "Auf diesem Computer aktiv", "Zu aktivieren", "Kunden-E-Mail", "Ablauf", "Verlängerung", "Aktualisiert", "API-Quellen", "Nicht verfügbar", "Produkt-ID", "Lizenz-ID", "Aktivierungs-ID", "Lizenz wird geprüft…", "Lizenz wird aktiviert…"],
+    ro: ["Verificare licență", "Verifică licența", "Iată informațiile disponibile pentru această cheie de licență.", "Închide", "Activează licența", "Introdu o cheie înainte de verificare.", "Concluzie", "Licența nu este funcțională sau este inactivă.", "Licența funcționează și este activă pe acest computer.", "Licența funcționează, dar nu este încă activă pe acest computer.", "Funcțională", "Da", "Nu", "Stare locală", "Activă pe acest computer", "De activat", "E-mail client", "Expirare", "Reînnoire", "Actualizat", "Surse API", "Indisponibil", "ID produs", "ID licență", "ID activare", "Se verifică licența…", "Se activează licența…"],
+    pt: ["Verificação da licença", "Verificar licença", "Aqui estão as informações disponíveis para esta chave de licença.", "Fechar", "Ativar licença", "Introduz uma chave antes de a verificar.", "Conclusão", "A licença não funciona ou está inativa.", "A licença funciona e está ativa neste computador.", "A licença funciona, mas ainda não está ativa neste computador.", "Funcional", "Sim", "Não", "Estado local", "Ativa neste computador", "Por ativar", "E-mail do cliente", "Expiração", "Renovação", "Atualização", "Fontes API", "Indisponível", "ID do produto", "ID da licença", "ID de ativação", "A verificar licença…", "A ativar licença…"],
+    ar: ["فحص الترخيص", "التحقق من الترخيص", "هذه هي المعلومات المتاحة لمفتاح الترخيص هذا.", "إغلاق", "تفعيل الترخيص", "أدخل مفتاح ترخيص قبل التحقق منه.", "النتيجة", "الترخيص غير صالح أو غير نشط.", "الترخيص صالح ونشط على هذا الكمبيوتر.", "الترخيص صالح لكنه غير نشط بعد على هذا الكمبيوتر.", "صالح", "نعم", "لا", "الحالة المحلية", "نشط على هذا الكمبيوتر", "بانتظار التفعيل", "بريد العميل", "انتهاء الصلاحية", "التجديد", "آخر تحديث", "مصادر API", "غير متاح", "معرّف المنتج", "معرّف الترخيص", "معرّف التفعيل", "جارٍ التحقق من الترخيص…", "جارٍ تفعيل الترخيص…"],
+    zh: ["许可证检查", "检查许可证", "以下是此许可证密钥的可用信息。", "关闭", "激活许可证", "请先输入许可证密钥再检查。", "结论", "许可证无效或未启用。", "许可证有效且已在此电脑上激活。", "许可证有效，但尚未在此电脑上激活。", "有效", "是", "否", "本地状态", "已在此电脑激活", "待激活", "客户邮箱", "到期时间", "续订时间", "更新时间", "API 来源", "不可用", "产品 ID", "许可证 ID", "激活 ID", "正在检查许可证…", "正在激活许可证…"],
+    ja: ["ライセンス確認", "ライセンスを確認", "このライセンスキーで利用できる情報です。", "閉じる", "ライセンスを有効化", "確認する前にライセンスキーを入力してください。", "結果", "ライセンスは無効または停止中です。", "ライセンスは有効で、このパソコンで使用中です。", "ライセンスは有効ですが、このパソコンではまだ使用されていません。", "有効", "はい", "いいえ", "ローカル状態", "このパソコンで有効", "有効化待ち", "顧客メール", "有効期限", "更新", "更新日時", "API ソース", "利用不可", "製品 ID", "ライセンス ID", "有効化 ID", "ライセンスを確認中…", "ライセンスを有効化中…"],
+    ru: ["Проверка лицензии", "Проверить лицензию", "Доступная информация об этом лицензионном ключе.", "Закрыть", "Активировать лицензию", "Введите лицензионный ключ перед проверкой.", "Результат", "Лицензия не работает или неактивна.", "Лицензия работает и активна на этом компьютере.", "Лицензия работает, но ещё не активна на этом компьютере.", "Работает", "Да", "Нет", "Локальный статус", "Активна на этом компьютере", "Требует активации", "E-mail клиента", "Истечение", "Продление", "Обновлено", "Источники API", "Недоступно", "ID продукта", "ID лицензии", "ID активации", "Проверка лицензии…", "Активация лицензии…"],
+    nl: ["Licentiecontrole", "Licentie controleren", "Dit is de beschikbare informatie voor deze licentiesleutel.", "Sluiten", "Licentie activeren", "Voer een licentiesleutel in voordat je deze controleert.", "Conclusie", "De licentie werkt niet of is inactief.", "De licentie werkt en is actief op deze computer.", "De licentie werkt, maar is nog niet actief op deze computer.", "Werkend", "Ja", "Nee", "Lokale status", "Actief op deze computer", "Te activeren", "E-mail klant", "Vervaldatum", "Verlenging", "Bijgewerkt", "API-bronnen", "Niet beschikbaar", "Product-ID", "Licentie-ID", "Activerings-ID", "Licentie controleren…", "Licentie activeren…"],
+    pl: ["Sprawdzanie licencji", "Sprawdź licencję", "Oto dostępne informacje o tym kluczu licencyjnym.", "Zamknij", "Aktywuj licencję", "Wprowadź klucz licencyjny przed sprawdzeniem.", "Wniosek", "Licencja nie działa lub jest nieaktywna.", "Licencja działa i jest aktywna na tym komputerze.", "Licencja działa, ale nie jest jeszcze aktywna na tym komputerze.", "Działa", "Tak", "Nie", "Stan lokalny", "Aktywna na tym komputerze", "Do aktywacji", "E-mail klienta", "Wygaśnięcie", "Odnowienie", "Zaktualizowano", "Źródła API", "Niedostępne", "ID produktu", "ID licencji", "ID aktywacji", "Sprawdzanie licencji…", "Aktywowanie licencji…"],
+    tr: ["Lisans kontrolü", "Lisansı kontrol et", "Bu lisans anahtarı için mevcut bilgiler burada.", "Kapat", "Lisansı etkinleştir", "Kontrol etmeden önce bir lisans anahtarı gir.", "Sonuç", "Lisans çalışmıyor veya etkin değil.", "Lisans çalışıyor ve bu bilgisayarda etkin.", "Lisans çalışıyor ancak bu bilgisayarda henüz etkin değil.", "Çalışıyor", "Evet", "Hayır", "Yerel durum", "Bu bilgisayarda etkin", "Etkinleştirilecek", "Müşteri e-postası", "Son kullanma", "Yenileme", "Güncellendi", "API kaynakları", "Kullanılamaz", "Ürün kimliği", "Lisans kimliği", "Etkinleştirme kimliği", "Lisans kontrol ediliyor…", "Lisans etkinleştiriliyor…"],
+    ko: ["라이선스 확인", "라이선스 검사", "이 라이선스 키에 사용할 수 있는 정보입니다.", "닫기", "라이선스 활성화", "확인하기 전에 라이선스 키를 입력하세요.", "결론", "라이선스가 작동하지 않거나 비활성 상태입니다.", "라이선스가 정상이며 이 컴퓨터에서 활성화되어 있습니다.", "라이선스가 정상하지만 이 컴퓨터에서는 아직 활성화되지 않았습니다.", "정상 작동", "예", "아니요", "로컬 상태", "이 컴퓨터에서 활성", "활성화 필요", "고객 이메일", "만료", "갱신", "업데이트", "API 소스", "사용 불가", "제품 ID", "라이선스 ID", "활성화 ID", "라이선스 확인 중…", "라이선스 활성화 중…"],
+    hi: ["लाइसेंस जाँच", "लाइसेंस जाँचें", "इस लाइसेंस कुंजी की उपलब्ध जानकारी यहाँ है।", "बंद करें", "लाइसेंस सक्रिय करें", "जाँचने से पहले लाइसेंस कुंजी दर्ज करें।", "निष्कर्ष", "लाइसेंस काम नहीं कर रहा या निष्क्रिय है।", "लाइसेंस काम कर रहा है और इस कंप्यूटर पर सक्रिय है।", "लाइसेंस काम कर रहा है, लेकिन इस कंप्यूटर पर अभी सक्रिय नहीं है।", "काम कर रहा", "हाँ", "नहीं", "स्थानीय स्थिति", "इस कंप्यूटर पर सक्रिय", "सक्रिय करना है", "ग्राहक ईमेल", "समाप्ति", "नवीनीकरण", "अपडेट", "API स्रोत", "उपलब्ध नहीं", "उत्पाद ID", "लाइसेंस ID", "सक्रियण ID", "लाइसेंस की जाँच हो रही है…", "लाइसेंस सक्रिय हो रहा है…"]
+  });
+
+  function licenseInspectionCopy(language = "en") {
+    const values = LICENSE_INSPECTION_VALUES[language] || LICENSE_INSPECTION_VALUES.en;
+    return Object.fromEntries(LICENSE_INSPECTION_KEYS.map((key, index) => [key, values[index]]));
+  }
+
   function translate(key, params = {}, language = "en") {
     const locales = global.MCP_LOCALES || {};
     const dictionary = locales[language] || locales.en || {};
     const fallback = locales.en || {};
-    let value = dictionary[key] || fallback[key] || key;
+    const enhancements = LICENSE_ENHANCEMENTS[language] || LICENSE_ENHANCEMENTS.en;
+    const inspection = licenseInspectionCopy(language);
+    let value = enhancements[key] || LICENSE_ENHANCEMENTS.en[key] || inspection[key] || dictionary[key] || fallback[key] || key;
     Object.keys(params || {}).forEach((name) => {
       value = value.replaceAll(`{${name}}`, String(params[name]));
     });
@@ -239,16 +428,19 @@
   function translateCategoryName(category, language = "en") {
     if (!category) return "";
     if (category.customName) return repairMojibake(category.name);
-    const translatedCategory = CATEGORY_TRANSLATIONS[category.id]?.[language] || CATEGORY_TRANSLATIONS[category.id]?.en;
-    if (translatedCategory) return repairMojibake(translatedCategory);
-    if (category.id === "vault" || category.id === "image-vault" || category.id === "dev-vault") return translate("vault.title", {}, language);
-    if (String(category.id || "").startsWith("dev-")) return repairMojibake(category.name);
+    const cacheKey = `${language}:${category.id}`;
+    if (DEFAULT_CATEGORY_NAME_CACHE.has(cacheKey)) return DEFAULT_CATEGORY_NAME_CACHE.get(cacheKey);
+    const translatedCategory = CATEGORY_TRANSLATIONS[category.id]?.[language];
+    if (translatedCategory) return cacheDefaultCategoryName(cacheKey, repairMojibake(translatedCategory));
+    if (category.id === "vault" || category.id === "image-vault" || category.id === "dev-vault") {
+      return cacheDefaultCategoryName(cacheKey, translate("vault.title", {}, language));
+    }
     const key = `category.${category.id}`;
     const translated = translate(key, {}, language);
-    if (translated !== key) return translated;
+    if (translated !== key) return cacheDefaultCategoryName(cacheKey, translated);
     if (isDefaultLibraryCategory(category)) {
       const fallback = translatedSlugLabel(category, language);
-      if (fallback) return fallback;
+      if (fallback) return cacheDefaultCategoryName(cacheKey, fallback);
     }
     if (category.isSystem || category.isDefault) {
       if (category.id === "general") return translate("categories.general", {}, language);
@@ -256,24 +448,42 @@
       if (category.id === "trash") return translate("trash.title", {}, language);
       if (category.id === "vault" || category.id === "image-vault" || category.id === "dev-vault") return translate("vault.title", {}, language);
     }
-    return repairMojibake(category.name);
+    return repairMojibake(CATEGORY_TRANSLATIONS[category.id]?.en || category.name);
+  }
+
+  const DEFAULT_CATEGORY_NAME_CACHE = new Map();
+  let defaultCategoryIdCache = null;
+
+  function cacheDefaultCategoryName(key, value) {
+    if (DEFAULT_CATEGORY_NAME_CACHE.size > 5000) DEFAULT_CATEGORY_NAME_CACHE.clear();
+    DEFAULT_CATEGORY_NAME_CACHE.set(key, value);
+    return value;
   }
 
   function isDefaultLibraryCategory(category) {
-    return [
-      ...(global.MCP?.DEFAULT_CATEGORIES || []),
-      ...(global.MCP?.DEFAULT_IMAGE_CATEGORIES || []),
-      ...(global.MCP?.DEFAULT_DEV_CATEGORIES || [])
-    ].some((item) => item.id === category.id);
+    if (!defaultCategoryIdCache) {
+      defaultCategoryIdCache = new Set([
+        ...(global.MCP?.DEFAULT_CATEGORIES || []),
+        ...(global.MCP?.DEFAULT_IMAGE_CATEGORIES || []),
+        ...(global.MCP?.DEFAULT_DEV_CATEGORIES || [])
+      ].map((item) => item.id));
+    }
+    return defaultCategoryIdCache.has(category.id);
   }
 
   function translatedSlugLabel(category, language) {
-    const tokens = String(category.id || "").replace(/^(image|dev)-/, "").split("-").filter(Boolean);
+    const categoryId = String(category.id || "");
+    const parentPrefix = category.parentId ? `${category.parentId}-` : "";
+    const localId = parentPrefix && categoryId.startsWith(parentPrefix)
+      ? categoryId.slice(parentPrefix.length)
+      : categoryId.replace(/^(image|dev)-/, "");
+    const tokens = localId.split("-").filter(Boolean);
     const dictionary = SLUG_LABELS[language] || SLUG_LABELS.en;
     const translatedTokens = tokens.map((token) => dictionary[token] || SLUG_LABELS.en[token] || titleFromSlug(token));
     if (!translatedTokens.length) return titleFromSlug(category.name);
-    if (translatedTokens.length === 1) return repairMojibake(translatedTokens[0]);
-    return repairMojibake(translatedTokens.join(" "));
+    const result = repairMojibake(translatedTokens.length === 1 ? translatedTokens[0] : translatedTokens.join(" "));
+    const sourceName = repairMojibake(category.name);
+    return result.localeCompare(sourceName, undefined, { sensitivity: "accent" }) === 0 ? sourceName : result;
   }
 
   function titleFromSlug(value) {
@@ -381,7 +591,18 @@
       fr: "fr-FR",
       es: "es-ES",
       de: "de-DE",
-      it: "it-IT"
+      it: "it-IT",
+      ro: "ro-RO",
+      pt: "pt-PT",
+      ar: "ar",
+      zh: "zh-CN",
+      ja: "ja-JP",
+      ru: "ru-RU",
+      nl: "nl-NL",
+      pl: "pl-PL",
+      tr: "tr-TR",
+      ko: "ko-KR",
+      hi: "hi-IN"
     };
     return defaults[requestedBase] || requested;
   }
@@ -403,6 +624,7 @@
     detectPreferredLanguage,
     detectPreferredLanguageAsync,
     currentLanguage,
+    applyLanguageMetadata,
     t: translate,
     translateCategoryName,
     repairMojibake,

@@ -261,7 +261,8 @@ function patchLanguageState(content, code, pageKey) {
   content = content.replace(/<html lang="[^"]+"(?: dir="rtl")?>/, `<html lang="${language.html}"${language.rtl ? ' dir="rtl"' : ""}>`);
   content = content.replace(/window\.__ARCAWAND_LANG__="[^"]+"/g, `window.__ARCAWAND_LANG__="${code}"`);
   content = content.replace(/localStorage\.setItem\("arcawand-lang","[^"]+"\)/g, `localStorage.setItem("arcawand-lang","${pageKey === "ucp" && !baseLanguages.has(code) ? "en" : code}")`);
-  content = content.replace(/localStorage\.setItem\("ucp-lang","[^"]+"\)/g, `localStorage.setItem("ucp-lang","en")`);
+  content = content.replace(/localStorage\.setItem\("ucp-lang","[^"]+"\)/g, `localStorage.setItem("ucp-lang","${code}")`);
+  content = content.replace(/data-ucp-demo-lang="[^"]+"/g, `data-ucp-demo-lang="${code}"`);
   return content;
 }
 

@@ -1,16 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="/assets/extension-runtime/sidepanel/">
     <title>Ultimate Clipboard Pro Demo Manager</title>
-    <script src="../demo-runtime.js?v=20260515-rich-dataset"></script>
+    <script>
+      (function prepareDemoLanguage() {
+        const supported = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
+        const requested = new URLSearchParams(location.search).get("lang") || "en";
+        const language = supported.includes(requested) ? requested : "en";
+        window.__UCP_DEMO_LANGUAGE__ = language;
+        document.documentElement.lang = language;
+        document.documentElement.dir = "ltr";
+        document.documentElement.style.direction = "ltr";
+        if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260807-demo-i18n-v2"><\/script>`);
+      })();
+    </script>
+    <script src="../demo-runtime.js?v=20260807-demo-i18n-ltr"></script>
     <script>
       (function installDemoManagerBridge() {
         const params = new URLSearchParams(location.search);
-        const lang = params.get("lang") || "en";
+        const lang = window.__UCP_DEMO_LANGUAGE__ || params.get("lang") || "en";
         document.documentElement.lang = lang;
+        document.documentElement.dir = "ltr";
         const bridge = window.UCP_DEMO_RUNTIME.makeStateBridge(lang, {
           closeManager: () => parent.postMessage({ type: "UCP_DEMO_CLOSE_MANAGER" }, location.origin),
           showBlocked: () => parent.postMessage({ type: "UCP_DEMO_BLOCKED" }, location.origin),
@@ -29,6 +42,29 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
+        direction: ltr;
+        text-align: left;
+      }
+
+      html[lang="ar"] body,
+      html[lang="ar"] input,
+      html[lang="ar"] textarea,
+      html[lang="ar"] select,
+      html[lang="ar"] .item-card,
+      html[lang="ar"] .item-title,
+      html[lang="ar"] .item-content,
+      html[lang="ar"] .item-meta,
+      html[lang="ar"] .category-row {
+        text-align: left !important;
+      }
+
+      html[lang="ar"] .item-title,
+      html[lang="ar"] .item-content,
+      html[lang="ar"] .item-meta,
+      html[lang="ar"] input,
+      html[lang="ar"] textarea {
+        direction: rtl !important;
+        unicode-bidi: plaintext !important;
       }
     </style>
   </head>
@@ -121,10 +157,12 @@
     <script src="../shared/constants.js"></script>
     <script src="../shared/utils.js"></script>
     <script src="../shared/locales/en.js"></script>
-    <script src="../shared/locales/fr.js"></script>
-    <script src="../shared/locales/de.js"></script>
-    <script src="../shared/locales/es.js"></script>
-    <script src="../shared/locales/it.js"></script>
+    <script src="../shared/locales/categorySlugs.js"></script>
+    <script>
+      if (window.__UCP_DEMO_LANGUAGE__ !== "en") {
+        document.write(`<script src="../shared/locales/${window.__UCP_DEMO_LANGUAGE__}.js"><\/script>`);
+      }
+    </script>
     <script src="../shared/i18n.js"></script>
     <script src="../shared/dodoConfig.js"></script>
     <script src="../shared/featureGate.js"></script>

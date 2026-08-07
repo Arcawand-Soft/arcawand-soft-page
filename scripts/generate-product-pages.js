@@ -4,8 +4,8 @@ const { generateAll: generateUcpLandingPages } = require("./generate-ucp-landing
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260516-card-view-compact";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260516-demo-install-cta";
+const demoScript = "/assets/ucp-demo.js?v=20260807-demo-i18n-ltr";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260807-launcher-match";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 const socialImageAlt = "Ultimate Clipboard Pro browser extension preview";
 
@@ -909,7 +909,7 @@ ${structuredData(lang, page, title, desc, canonical)}
 <link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
 <link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">
 ${page === "demo" ? `<link rel="stylesheet" href="${demoStylesheet}">` : ""}
-${page === "demo" ? '<link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/icon128.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/tootls.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/screen_full_page_png.png">' : ""}
+${page === "demo" ? '<link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/icon128.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/arrow_right.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/tootls.png"><link rel="preload" as="image" href="/assets/extension-runtime/assets/icons/screen_full_page_png.png">' : ""}
 <script defer src="/assets/analytics.js"></script>
 <script defer src="${productPagesScript}"></script>
 <script defer src="/assets/install-extension-modal.js"></script>
