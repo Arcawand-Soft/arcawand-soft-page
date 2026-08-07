@@ -118,7 +118,7 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
 .ucp-brand img { width: 42px; height: 42px; object-fit: contain; }
 .ucp-brand span { display: grid; line-height: 1.05; }
 .ucp-brand strong { font-family: var(--ucp-display); font-size: .92rem; letter-spacing: -.01em; white-space: nowrap; }
-.ucp-brand small { margin-top: .25rem; color: var(--ucp-dim); font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+.ucp-brand small { margin-top: .25rem; color: var(--ucp-dim); font-size: .62rem; font-weight: 700; letter-spacing: .04em; }
 
 .ucp-landing-nav {
   justify-self: center;
@@ -236,8 +236,7 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
   color: var(--ucp-violet-soft);
   font-size: .72rem;
   font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: .16em;
+  letter-spacing: .08em;
 }
 .ucp-eyebrow > span {
   width: 34px;
@@ -299,8 +298,7 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
   list-style: none;
   font-size: .71rem;
   font-weight: 750;
-  text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .03em;
 }
 .ucp-proof-list li::before { margin-right: .45rem; color: var(--ucp-green); content: "●"; font-size: .55rem; }
 
@@ -384,15 +382,15 @@ body.ucp-landing-page svg { fill: none; stroke: currentColor; stroke-linecap: ro
   background: linear-gradient(130deg, rgba(141,92,246,.09), rgba(17,20,29,.78) 48%, rgba(93,224,230,.045));
 }
 .ucp-language-showcase-copy .ucp-eyebrow { margin-bottom: .75rem; }
-.ucp-language-showcase-copy h2 { display: flex; align-items: baseline; gap: .7rem; margin: 0; font-family: var(--ucp-display); line-height: 1; }
+.ucp-language-showcase-copy h2 { display: flex; align-items: center; gap: .7rem; margin: 0; font-family: var(--ucp-display); line-height: 1; }
 .ucp-language-showcase-copy h2 strong { color: #fff; font-size: clamp(2.8rem, 4vw, 4.2rem); letter-spacing: -.045em; }
 .ucp-language-showcase-copy h2 span { max-width: 190px; font-size: clamp(1.15rem, 1.6vw, 1.55rem); font-weight: 730; letter-spacing: -.02em; line-height: 1.05; }
 .ucp-language-showcase-copy > p:last-child { max-width: 390px; margin: .8rem 0 0; color: var(--ucp-muted); font-size: .86rem; }
 .ucp-language-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .55rem; margin: 0; padding: 0; list-style: none; }
 .ucp-language-chip { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .55rem; min-height: 46px; padding: .55rem .65rem; border: 1px solid var(--ucp-line); border-radius: 12px; background: rgba(8,10,16,.56); }
 .ucp-language-flag { width: 24px; height: 17px; display: block; object-fit: cover; border: 1px solid rgba(255,255,255,.16); border-radius: 3px; box-shadow: 0 2px 7px rgba(0,0,0,.28); }
-.ucp-language-name { min-width: 0; overflow: hidden; color: #f5f3fb; font-size: .72rem; font-weight: 720; text-overflow: ellipsis; white-space: nowrap; }
-.ucp-language-chip small { color: var(--ucp-dim); font-size: .56rem; font-weight: 800; letter-spacing: .08em; }
+.ucp-language-name { min-width: 0; overflow: hidden; color: #f5f3fb; font-size: .72rem; font-weight: 720; line-height: 1.2; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.ucp-language-chip small { justify-self: end; color: var(--ucp-dim); font-size: .56rem; font-weight: 800; line-height: 1; letter-spacing: .08em; }
 
 .ucp-section { width: min(calc(100% - 3rem), var(--ucp-max)); margin: 0 auto; padding: clamp(6rem, 8vw, 8rem) 0; }
 .ucp-section-heading { max-width: 880px; margin-bottom: clamp(3.5rem, 5vw, 5rem); }

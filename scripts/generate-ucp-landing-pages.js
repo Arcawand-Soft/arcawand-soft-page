@@ -4,7 +4,7 @@ const { LANGUAGES, languageMenu, localizedUrl } = require("./language-config");
 const locales = require("./ucp-landing-locales.json");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-language-showcase";
+const version = "20260807-landing-language-alignment";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 
 const languageShowcaseTranslations = {

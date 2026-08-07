@@ -4,12 +4,14 @@ const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-language-showcase";
+const version = "20260807-landing-language-alignment";
 const installModal = fs.readFileSync(path.join(root, "assets", "install-extension-modal.js"), "utf8");
 const landingCss = fs.readFileSync(path.join(root, "assets", "ucp-landing.css"), "utf8");
 
 assert.ok(!landingCss.includes('"Arial Narrow"'), "Landing typography must not use a condensed system face");
+assert.ok(!/text-transform:\s*uppercase/.test(landingCss), "Landing copy must not be forced into all caps");
 assert.match(landingCss, /\.ucp-flow-card img\s*\{[^}]*height:\s*auto;[^}]*object-fit:\s*contain;/s, "Flow screenshots must preserve their intrinsic ratio");
+assert.match(landingCss, /\.ucp-language-name\s*\{[^}]*text-align:\s*left;/s, "Every language name, including Arabic, must align left inside its chip");
 
 function pageFile(language) {
   return path.join(root, language.code === "en" ? "" : language.code, "ultimate-clipboard-pro", "index.html");
@@ -45,6 +47,11 @@ for (const language of LANGUAGES) {
   if (label !== "en") assert.ok(!html.includes("What should I try first after installing?"), `${label}: localized closing call to action`);
   assert.ok(!/[\uFFFD]/.test(html), `${label}: no replacement character`);
   assert.strictEqual(/<html[^>]*dir="rtl"/.test(html), Boolean(language.rtl), `${label}: RTL direction`);
+  if (label === "fr") {
+    for (const oldTitleCase of ["Trois Espaces de Travail Dédiés", "Recherche Avancée", "Lanceur Flottant", "Chronologie Visuelle des Sources", "Texte, Code et Images"]) {
+      assert.ok(!html.includes(oldTitleCase), `fr: no English-style title casing for ${oldTitleCase}`);
+    }
+  }
   assert.ok(new RegExp(`^\\s{4}${label}: \\{`, "m").test(installModal), `${label}: localized install modal`);
 
   for (const image of html.matchAll(/<img\b[^>]*>/g)) {
