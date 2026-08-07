@@ -1,169 +1,184 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<meta content="#8b5cf6" name="theme-color"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b12">
 <title>Ultimate Clipboard Pro - Chrome 高级剪贴板管理器</title>
-<meta content="在 Chrome 中捕获、整理、搜索并复用文本、代码、图片、截图和网页内容。" name="description"/>
-<meta content="index, follow" name="robots"/>
-<meta content="ArcaWand Soft" name="author"/>
-<link href="https://arcawand-soft.com/zh/ultimate-clipboard-pro/" rel="canonical"/>
-<link href="https://arcawand-soft.com/ultimate-clipboard-pro/" hreflang="en" rel="alternate"/>
-<link href="https://arcawand-soft.com/fr/ultimate-clipboard-pro/" hreflang="fr" rel="alternate"/>
-<link href="https://arcawand-soft.com/es/ultimate-clipboard-pro/" hreflang="es" rel="alternate"/>
-<link href="https://arcawand-soft.com/it/ultimate-clipboard-pro/" hreflang="it" rel="alternate"/>
-<link href="https://arcawand-soft.com/de/ultimate-clipboard-pro/" hreflang="de" rel="alternate"/>
-<link href="https://arcawand-soft.com/ro/ultimate-clipboard-pro/" hreflang="ro" rel="alternate"/>
-<link href="https://arcawand-soft.com/pt/ultimate-clipboard-pro/" hreflang="pt" rel="alternate"/>
-<link href="https://arcawand-soft.com/ar/ultimate-clipboard-pro/" hreflang="ar" rel="alternate"/>
-<link href="https://arcawand-soft.com/zh/ultimate-clipboard-pro/" hreflang="zh" rel="alternate"/>
-<link href="https://arcawand-soft.com/ja/ultimate-clipboard-pro/" hreflang="ja" rel="alternate"/>
-<link href="https://arcawand-soft.com/ru/ultimate-clipboard-pro/" hreflang="ru" rel="alternate"/>
-<link href="https://arcawand-soft.com/nl/ultimate-clipboard-pro/" hreflang="nl" rel="alternate"/>
-<link href="https://arcawand-soft.com/pl/ultimate-clipboard-pro/" hreflang="pl" rel="alternate"/>
-<link href="https://arcawand-soft.com/tr/ultimate-clipboard-pro/" hreflang="tr" rel="alternate"/>
-<link href="https://arcawand-soft.com/ko/ultimate-clipboard-pro/" hreflang="ko" rel="alternate"/>
-<link href="https://arcawand-soft.com/hi/ultimate-clipboard-pro/" hreflang="hi" rel="alternate"/>
-<link href="https://arcawand-soft.com/ultimate-clipboard-pro/" hreflang="x-default" rel="alternate"/>
-<meta content="product" property="og:type"/>
-<meta content="ArcaWand Soft" property="og:site_name"/>
-<meta content="Ultimate Clipboard Pro - Chrome 高级剪贴板管理器" property="og:title"/>
-<meta content="在 Chrome 中捕获、整理、搜索并复用文本、代码、图片、截图和网页内容。" property="og:description"/>
-<meta content="https://arcawand-soft.com/zh/ultimate-clipboard-pro/" property="og:url"/>
-<meta content="https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png" property="og:image"/>
-<meta content="https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png" property="og:image:secure_url"/>
-<meta content="image/png" property="og:image:type"/>
-<meta content="1200" property="og:image:width"/>
-<meta content="675" property="og:image:height"/>
-<meta content="Ultimate Clipboard Pro browser extension preview" property="og:image:alt"/>
-<meta content="summary_large_image" name="twitter:card"/>
-<meta content="Ultimate Clipboard Pro - Chrome 高级剪贴板管理器" name="twitter:title"/>
-<meta content="在 Chrome 中捕获、整理、搜索并复用文本、代码、图片、截图和网页内容。" name="twitter:description"/>
-<meta content="https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png" name="twitter:image"/>
-<meta content="Ultimate Clipboard Pro browser extension preview" name="twitter:image:alt"/>
-<link href="../../assets/Arcawand_Soft_Favicon.png" rel="icon" type="image/png"/>
-<link href="/assets/ucp-email-floating.css" rel="stylesheet"/>
-<link href="/assets/ucp-product-pages.css?v=20260807-drive-sync" rel="stylesheet"/>
-<link as="style" crossorigin="" href="../../ultimate-clipboard-pro/assets/index-BcSrau0n.css" onload="this.onload=null;this.rel='stylesheet'" rel="preload"/>
-<noscript><link crossorigin="" href="../../ultimate-clipboard-pro/assets/index-BcSrau0n.css" rel="stylesheet"/></noscript>
-<link as="image" fetchpriority="high" href="../../assets/Ultimate_Clipboard_Pro_poster_1600.webp" rel="preload"/>
-<link href="../../ultimate-clipboard-pro/assets/index-BRdfzjER.js" rel="modulepreload"/>
-<script>window.__ARCAWAND_LANG__="zh";try{localStorage.setItem("arcawand-lang","en");localStorage.setItem("ucp-lang","en");}catch(error){}</script>
-<style>
-    header.fixed.top-0.left-0.right-0 { display: none !important; }
-    body { scroll-padding-top: 0 !important; }
-    #hero { padding-top: 5.25rem !important; }
-    .arcawand-root-return { position: fixed; left: 1rem; top: 1rem; z-index: 60; display: inline-flex; align-items: center; gap: .5rem; min-height: 2.6rem; padding: 0 .9rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(10,12,22,.58); color: #fff; font: 800 .85rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 40px rgba(0,0,0,.22); }
-    .arcawand-root-return:hover { background: hsl(var(--primary)); }
-    .ucp-product-mark { position: fixed; left: 50%; top: 1rem; z-index: 60; display: inline-flex; align-items: center; gap: .7rem; min-height: 2.6rem; transform: translateX(-50%); color: #fff; font: 950 1.08rem/1 Geist, system-ui, sans-serif; letter-spacing: 0; text-shadow: 0 10px 28px rgba(0,0,0,.34); pointer-events: none; opacity: 1; visibility: visible; transition: opacity .32s ease, transform .32s cubic-bezier(.22,.9,.18,1), visibility .32s ease; will-change: opacity, transform; }
-    .ucp-product-mark.is-hidden { opacity: 0; visibility: hidden; transform: translateX(-50%) translateY(-.55rem) scale(.96); }
-    @media (prefers-reduced-motion: reduce) { .ucp-product-mark { transition: none; } }
-    .ucp-product-mark img { width: 2.85rem; height: 2.85rem; object-fit: contain; display: block; background: transparent; border: 0; box-shadow: none; }
-    .ucp-product-title { white-space: nowrap; }
-    .ucp-footer-product-icon-wrap { width: 2.75rem; height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 0; box-shadow: none; border-radius: 0; flex: 0 0 auto; }
-    .ucp-footer-product-icon { width: 2.55rem; height: 2.55rem; display: block; object-fit: contain; background: transparent; border: 0; box-shadow: none; }
-    .ucp-footer-arcawand-link { display: inline-flex; width: max-content; align-items: center; background: transparent; border: 0; }
-    .ucp-footer-arcawand-logo { width: clamp(112px, 11vw, 150px); height: auto; display: block; object-fit: contain; background: transparent; border: 0; }
-    .arcawand-product-language-menu { position: fixed; right: 1rem; top: 1rem; z-index: 120; }
-    .arcawand-product-language-menu .language-menu-button { display: inline-flex; align-items: center; gap: .55rem; min-height: 2.85rem; padding: .36rem .72rem .36rem .42rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.16); background: linear-gradient(145deg, rgba(10,12,22,.74), rgba(42,29,78,.64)); color: #fff; font: 900 .92rem Geist, system-ui, sans-serif; backdrop-filter: blur(16px); box-shadow: 0 18px 44px rgba(0,0,0,.28); cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
-    .arcawand-product-language-menu .language-menu-button:hover, .arcawand-product-language-menu.is-open .language-menu-button { transform: translateY(-1px); border-color: hsl(var(--primary)); background: linear-gradient(145deg, hsl(var(--primary) / .32), rgba(10,12,22,.82)); }
-    .arcawand-product-language-menu .language-menu-button img, .arcawand-product-language-menu .language-menu-option img { width: 1.85rem; height: 1.85rem; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.2), 0 8px 18px rgba(0,0,0,.24); }
-    .arcawand-product-language-menu .language-menu-chevron { width: .48rem; height: .48rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-.12rem); opacity: .76; transition: transform .18s ease; }
-    .arcawand-product-language-menu.is-open .language-menu-chevron { transform: rotate(225deg) translate(-.14rem, -.04rem); }
-    .arcawand-product-language-menu .language-menu-panel { position: absolute; top: calc(100% + .65rem); right: 0; width: 14.2rem; padding: .5rem; border-radius: 1.1rem; border: 1px solid rgba(255,255,255,.14); background: linear-gradient(145deg, rgba(10,12,22,.96), rgba(44,31,83,.96)); box-shadow: 0 28px 74px rgba(0,0,0,.42); opacity: 0; pointer-events: none; transform: translateY(.45rem) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .18s ease; }
-    .arcawand-product-language-menu.is-open .language-menu-panel { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
-    .arcawand-product-language-menu .language-menu-option { width: 100%; min-height: 2.9rem; display: flex; align-items: center; gap: .7rem; padding: .48rem .6rem; border: 0; border-radius: .82rem; background: transparent; color: rgba(255,255,255,.72); text-align: left; font: 900 .93rem Geist, system-ui, sans-serif; cursor: pointer; transition: background .16s ease, color .16s ease, transform .16s ease; }
-    .arcawand-product-language-menu .language-menu-option:hover, .arcawand-product-language-menu .language-menu-option[aria-selected="true"] { color: #fff; background: hsl(var(--primary) / .22); }
-    .arcawand-product-language-menu .language-menu-option:hover { transform: translateX(.12rem); }
-    @media (max-width: 640px) {
-      .arcawand-root-return { left: .75rem; top: .75rem; }
-      .ucp-product-mark { top: .72rem; }
-      .ucp-product-mark img { width: 2.55rem; height: 2.55rem; }
-      .ucp-product-title { display: none; }
-      .arcawand-product-language-menu { right: .75rem; top: .75rem; }
-      .arcawand-product-language-menu .language-menu-button { gap: .42rem; min-height: 2.55rem; padding: .32rem .58rem .32rem .36rem; }
-      .arcawand-product-language-menu .language-code-badge { width: 1.72rem; height: 1.72rem; flex: 0 0 1.72rem; font-size: .68rem; }
-      .arcawand-product-language-menu .language-menu-button > span:not(.language-code-badge):not(.language-menu-chevron) { display: none; }
-    }
-  </style>
-<script crossorigin="" src="../../ultimate-clipboard-pro/assets/index-BRdfzjER.js" type="module"></script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Ultimate Clipboard Pro - Chrome 高级剪贴板管理器","description":"在Chrome中提取、整理、搜索和恢复文本、代码、图片、截图和网页内容。","url":"https://arcawand-soft.com/zh/ultimate-clipboard-pro/","inLanguage":"zh","publisher":{"@type":"Organization","name":"ArcaWand Soft","url":"https://arcawand-soft.com/"}}</script>
-<script defer="" src="/assets/analytics.js"></script>
-<script defer="" src="/assets/ucp-product-pages.js?v=20260807-drive-sync"></script>
-
-<script defer="" src="/assets/performance-fixes.js"></script>
+<meta name="description" content="在强大的 Chrome 剪贴板工作区中捕获、整理、搜索并重复使用文本、代码、图片、屏幕截图和网页内容。">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="ArcaWand Soft">
+<link rel="canonical" href="https://arcawand-soft.com/zh/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="en" href="https://arcawand-soft.com/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="fr" href="https://arcawand-soft.com/fr/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="es" href="https://arcawand-soft.com/es/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="it" href="https://arcawand-soft.com/it/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="de" href="https://arcawand-soft.com/de/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="ro" href="https://arcawand-soft.com/ro/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="pt" href="https://arcawand-soft.com/pt/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="ar" href="https://arcawand-soft.com/ar/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="zh" href="https://arcawand-soft.com/zh/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="ja" href="https://arcawand-soft.com/ja/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="ru" href="https://arcawand-soft.com/ru/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="nl" href="https://arcawand-soft.com/nl/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="pl" href="https://arcawand-soft.com/pl/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="tr" href="https://arcawand-soft.com/tr/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="ko" href="https://arcawand-soft.com/ko/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="hi" href="https://arcawand-soft.com/hi/ultimate-clipboard-pro/">
+<link rel="alternate" hreflang="x-default" href="https://arcawand-soft.com/ultimate-clipboard-pro/">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="ArcaWand Soft">
+<meta property="og:title" content="Ultimate Clipboard Pro - Chrome 高级剪贴板管理器">
+<meta property="og:description" content="在强大的 Chrome 剪贴板工作区中捕获、整理、搜索并重复使用文本、代码、图片、屏幕截图和网页内容。">
+<meta property="og:url" content="https://arcawand-soft.com/zh/ultimate-clipboard-pro/">
+<meta property="og:image" content="https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta property="og:image:alt" content="Ultimate Clipboard Pro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ultimate Clipboard Pro - Chrome 高级剪贴板管理器">
+<meta name="twitter:description" content="在强大的 Chrome 剪贴板工作区中捕获、整理、搜索并重复使用文本、代码、图片、屏幕截图和网页内容。">
+<meta name="twitter:image" content="https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ultimate Clipboard Pro","applicationCategory":"BrowserApplication","applicationSubCategory":"Clipboard manager","operatingSystem":"Chrome","description":"在强大的 Chrome 剪贴板工作区中捕获、整理、搜索并重复使用文本、代码、图片、屏幕截图和网页内容。","url":"https://arcawand-soft.com/zh/ultimate-clipboard-pro/","image":"https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png","screenshot":["https://arcawand-soft.com/assets/products/text-big-panel-rectangular.webp","https://arcawand-soft.com/assets/products/code-big-panel-rectangular.webp","https://arcawand-soft.com/assets/products/image-big-panel-rectangular_960.webp"],"featureList":["文字捕捉","代码捕获","捕获图像和屏幕截图","高级搜索","视觉源时间轴","20 个适合高级用户的内置工具"],"inLanguage":"zh","publisher":{"@type":"Organization","name":"ArcaWand Soft","url":"https://arcawand-soft.com/"}}</script>
+<link rel="icon" type="image/png" href="/assets/Arcawand_Soft_Favicon.png">
+<link rel="preload" as="image" href="/assets/products/text-big-panel-rectangular.webp" fetchpriority="high">
+<link rel="stylesheet" href="/assets/ucp-landing.css?v=20260807-landing-redesign">
+<script>window.__ARCAWAND_LANG__="zh";</script>
+<script defer src="/assets/analytics.js"></script>
+<script defer src="/assets/ucp-landing.js?v=20260807-landing-redesign"></script>
+<script defer src="/assets/install-extension-modal.js?v=20260807-i18n"></script>
 </head>
-<body>
-<a aria-label="Back to ArcaWand Soft" class="arcawand-root-return" href="../">← ArcaWand Soft</a>
-<div class="ucp-product-mark">
-<img alt="" decoding="async" fetchpriority="high" height="48" src="../../assets/ultimate_clipboard_pro_icon_96.webp" width="48"/>
-<span class="ucp-product-title">Ultimate Clipboard Pro</span>
-</div>
-<div class="language-menu arcawand-product-language-menu" data-current-lang="zh"><button aria-expanded="false" aria-haspopup="listbox" aria-label="更改语言" class="language-menu-button" type="button"><span aria-hidden="true" class="language-code-badge">CN</span><span>中文</span><span aria-hidden="true" class="language-menu-chevron"></span></button><div aria-label="更改语言" class="language-menu-panel" role="listbox"><button class="language-menu-option" data-lang="en" data-target-url="https://arcawand-soft.com/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">GB</span><span>英语</span></button><button class="language-menu-option" data-lang="fr" data-target-url="https://arcawand-soft.com/fr/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">FR</span><span>法国人</span></button><button class="language-menu-option" data-lang="es" data-target-url="https://arcawand-soft.com/es/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">ES</span><span>西班牙语</span></button><button class="language-menu-option" data-lang="it" data-target-url="https://arcawand-soft.com/it/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">IT</span><span>意大利人</span></button><button class="language-menu-option" data-lang="de" data-target-url="https://arcawand-soft.com/de/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">DE</span><span>德语</span></button><button class="language-menu-option" data-lang="ro" data-target-url="https://arcawand-soft.com/ro/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">RO</span><span>罗马语</span></button><button class="language-menu-option" data-lang="pt" data-target-url="https://arcawand-soft.com/pt/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">PT</span><span>葡萄牙语</span></button><button class="language-menu-option" data-lang="ar" data-target-url="https://arcawand-soft.com/ar/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">SA</span><span>العربية</span></button><button aria-selected="true" class="language-menu-option" data-lang="zh" data-target-url="https://arcawand-soft.com/zh/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">CN</span><span>中文</span></button><button class="language-menu-option" data-lang="ja" data-target-url="https://arcawand-soft.com/ja/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">JP</span><span>日本語</span></button><button class="language-menu-option" data-lang="ru" data-target-url="https://arcawand-soft.com/ru/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">RU</span><span>Русский</span></button><button class="language-menu-option" data-lang="nl" data-target-url="https://arcawand-soft.com/nl/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">NL</span><span>荷兰</span></button><button class="language-menu-option" data-lang="pl" data-target-url="https://arcawand-soft.com/pl/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">PL</span><span>波尔斯基</span></button><button class="language-menu-option" data-lang="tr" data-target-url="https://arcawand-soft.com/tr/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">TR</span><span>图尔克切</span></button><button class="language-menu-option" data-lang="ko" data-target-url="https://arcawand-soft.com/ko/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">KR</span><span>한국어</span></button><button class="language-menu-option" data-lang="hi" data-target-url="https://arcawand-soft.com/hi/ultimate-clipboard-pro/" role="option" type="button"><span aria-hidden="true" class="language-code-badge">IN</span><span>हिन्दी</span></button></div></div>
-<nav aria-label="Ultimate Clipboard Pro" class="ucp-product-nav"><a aria-current="page" data-ucp-nav="presentation" href="./">介绍</a><a data-ucp-nav="demo" href="demo/">演示</a><a data-ucp-nav="faq" href="faq/">FAQ</a><a data-ucp-nav="privacy" href="privacy/">隐私政策</a><a data-ucp-nav="terms" href="terms/">使用条款</a></nav>
-<div id="root"></div>
-<script>
-    (() => {
-      const homeUrl = "https://arcawand-soft.com/";
-      const productIconUrl = "../../assets/ultimate_clipboard_pro_icon_96.webp";
-      const arcawandLogoUrl = "../../assets/Arcawand_Soft_Logo_320.webp";
+<body class="ucp-landing-page">
+<a class="ucp-skip-link" href="#ucp-main">产品介绍</a>
+<header class="ucp-landing-header">
+  <a class="ucp-home-link" href="/zh/" aria-label="ArcaWand Soft"><span aria-hidden="true">←</span><span>ArcaWand Soft</span></a>
+  <a class="ucp-brand" href="/zh/ultimate-clipboard-pro/" aria-label="Ultimate Clipboard Pro">
+    <img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="48" height="48" decoding="async">
+    <span><strong>Ultimate Clipboard Pro</strong><small>Chrome 扩展</small></span>
+  </a>
+  <button class="ucp-nav-toggle" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  <nav class="ucp-landing-nav" aria-label="Ultimate Clipboard Pro">
+    <a href="/zh/ultimate-clipboard-pro/" aria-current="page">产品介绍</a>
+    <a href="/zh/ultimate-clipboard-pro/demo/">演示</a>
+    <a href="/zh/ultimate-clipboard-pro/faq/">常见问题</a>
+    <a href="/zh/ultimate-clipboard-pro/privacy/">隐私政策</a>
+    <a href="/zh/ultimate-clipboard-pro/terms/">使用条款</a>
+  </nav>
+  <div class="language-menu arcawand-product-language-menu" data-current-lang="zh"><button class="language-menu-button" type="button" aria-label="更改语言" aria-haspopup="listbox" aria-expanded="false"><span class="language-code-badge" aria-hidden="true">CN</span><span>中文</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="更改语言"><button class="language-menu-option" type="button" role="option" data-lang="en" data-target-url="https://arcawand-soft.com/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">GB</span><span>English</span></button><button class="language-menu-option" type="button" role="option" data-lang="fr" data-target-url="https://arcawand-soft.com/fr/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">FR</span><span>Français</span></button><button class="language-menu-option" type="button" role="option" data-lang="es" data-target-url="https://arcawand-soft.com/es/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">ES</span><span>Español</span></button><button class="language-menu-option" type="button" role="option" data-lang="it" data-target-url="https://arcawand-soft.com/it/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">IT</span><span>Italiano</span></button><button class="language-menu-option" type="button" role="option" data-lang="de" data-target-url="https://arcawand-soft.com/de/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">DE</span><span>Deutsch</span></button><button class="language-menu-option" type="button" role="option" data-lang="ro" data-target-url="https://arcawand-soft.com/ro/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">RO</span><span>Română</span></button><button class="language-menu-option" type="button" role="option" data-lang="pt" data-target-url="https://arcawand-soft.com/pt/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">PT</span><span>Português</span></button><button class="language-menu-option" type="button" role="option" data-lang="ar" data-target-url="https://arcawand-soft.com/ar/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">SA</span><span>العربية</span></button><button class="language-menu-option" type="button" role="option" data-lang="zh" data-target-url="https://arcawand-soft.com/zh/ultimate-clipboard-pro/" aria-selected="true"><span class="language-code-badge" aria-hidden="true">CN</span><span>中文</span></button><button class="language-menu-option" type="button" role="option" data-lang="ja" data-target-url="https://arcawand-soft.com/ja/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">JP</span><span>日本語</span></button><button class="language-menu-option" type="button" role="option" data-lang="ru" data-target-url="https://arcawand-soft.com/ru/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">RU</span><span>Русский</span></button><button class="language-menu-option" type="button" role="option" data-lang="nl" data-target-url="https://arcawand-soft.com/nl/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">NL</span><span>Nederlands</span></button><button class="language-menu-option" type="button" role="option" data-lang="pl" data-target-url="https://arcawand-soft.com/pl/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">PL</span><span>Polski</span></button><button class="language-menu-option" type="button" role="option" data-lang="tr" data-target-url="https://arcawand-soft.com/tr/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">TR</span><span>Türkçe</span></button><button class="language-menu-option" type="button" role="option" data-lang="ko" data-target-url="https://arcawand-soft.com/ko/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">KR</span><span>한국어</span></button><button class="language-menu-option" type="button" role="option" data-lang="hi" data-target-url="https://arcawand-soft.com/hi/ultimate-clipboard-pro/"><span class="language-code-badge" aria-hidden="true">IN</span><span>हिन्दी</span></button></div></div>
+</header>
 
-      function patchProductFooter() {
-        const footer = document.querySelector("footer");
-        if (!footer) return false;
+<main id="ucp-main">
+  <section class="ucp-hero">
+    <div class="ucp-hero-copy" data-reveal>
+      <p class="ucp-eyebrow"><span></span>适合要求较高的用户的高级剪贴板。</p>
+      <h1>再也不会丢失复制的内容</h1>
+      <p class="ucp-hero-lead">Ultimate Clipboard Pro 捕获您复制的所有内容 - 文本、代码、图像、屏幕截图 - 并将其组织到三个专用工作区中。再也不会丢失重要信息。</p>
+      <div class="ucp-actions">
+        <button class="ucp-button ucp-button-primary" type="button" data-install-extension-trigger="true">安装扩展<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></button>
+        <a class="ucp-button ucp-button-secondary" href="/zh/ultimate-clipboard-pro/demo/">演示</a>
+      </div>
+      <ul class="ucp-proof-list" aria-label="Ultimate Clipboard Pro">
+        <li>Manifest V3</li><li>本地优先</li><li>文本、代码和图像</li>
+      </ul>
+    </div>
+    <div class="ucp-hero-visual" data-reveal>
+      <div class="ucp-hero-glow"></div>
+      <figure class="ucp-window-frame ucp-window-frame-hero">
+        <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
+        <img src="/assets/products/text-big-panel-rectangular.webp" alt="文字捕捉" width="1400" height="788" fetchpriority="high" decoding="async">
+      </figure>
+      <div class="ucp-floating-capture ucp-floating-capture-code"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-3 3 3 3m8-6 3 3-3 3m-2-9-4 12"/></svg><span>代码捕获</span></div>
+      <div class="ucp-floating-capture ucp-floating-capture-image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 5"/></svg><span>捕获图像和屏幕截图</span></div>
+    </div>
+  </section>
 
-        const iconBox = Array.from(footer.querySelectorAll("div")).find((node) =>
-          node.classList.contains("w-8") &&
-          node.classList.contains("h-8") &&
-          node.classList.contains("bg-gradient-to-br") &&
-          node.classList.contains("justify-center")
-        );
+  <section class="ucp-signal-strip" aria-label="Ultimate Clipboard Pro">
+    <p><strong>3</strong><span>文本、代码和图像</span></p>
+    <p><strong>20</strong><span>使用专业级工具转换、分析和增强您的剪贴板内容</span></p>
+    <p><strong>50+</strong><span>带有语法高亮的代码捕获</span></p>
+    <p><strong>3</strong><span>连接 Google Drive，让许可证覆盖的电脑持续同步已捕获的文本、代码和图片。</span></p>
+  </section>
 
-        if (iconBox && !iconBox.dataset.arcawandFooterIcon) {
-          iconBox.dataset.arcawandFooterIcon = "true";
-          iconBox.className = "ucp-footer-product-icon-wrap";
-          iconBox.replaceChildren();
-          const icon = document.createElement("img");
-          icon.className = "ucp-footer-product-icon";
-          icon.src = productIconUrl;
-          icon.alt = "";
-          icon.setAttribute("aria-hidden", "true");
-          iconBox.appendChild(icon);
-        }
+  <section class="ucp-section ucp-capture-section">
+    <div class="ucp-section-heading" data-reveal><p class="ucp-eyebrow"><span></span>改变您工作流程的核心功能</p><h2>三个专用工作区</h2><p>文本、代码和图像工作区可按类型组织您的内容。每个工作区都有自己的类别、搜索和专用工具。</p></div>
+    <div class="ucp-capture-stack">
+      <article class="ucp-capture-panel ucp-capture-panel-text" data-reveal>
+    <div class="ucp-capture-copy">
+      <span class="ucp-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14M12 5v14M8 19h8"/></svg></span>
+      <h3>文字捕捉</h3>
+      <p>将复制的文本保存为可重复使用的捕获，包含源、日期、图标、类别、收藏夹和快速操作。保留笔记、提示、回复和研究片段以供重复使用。</p>
+    </div>
+    <figure class="ucp-window-frame">
+      <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
+      <img src="/assets/products/text-big-panel-rectangular.webp" alt="文字捕捉" width="1400" height="788" loading="lazy" decoding="async">
+    </figure>
+  </article>
+      <article class="ucp-capture-panel ucp-capture-panel-code" data-reveal>
+    <div class="ucp-capture-copy">
+      <span class="ucp-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-3 3 3 3m8-6 3 3-3 3m-2-9-4 12"/></svg></span>
+      <h3>代码捕获</h3>
+      <p>将复制的代码块与纯文本分开存储，具有干净的格式、保留的缩进、自动语言检测和分类选择，以将每个捕获放入正确的编程语言中。</p>
+    </div>
+    <figure class="ucp-window-frame">
+      <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
+      <img src="/assets/products/code-big-panel-rectangular.webp" alt="代码捕获" width="1400" height="788" loading="lazy" decoding="async">
+    </figure>
+  </article>
+      <article class="ucp-capture-panel ucp-capture-panel-image" data-reveal>
+    <div class="ucp-capture-copy">
+      <span class="ucp-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 5"/></svg></span>
+      <h3>捕获图像和屏幕截图</h3>
+      <p>屏幕截图、复制的图像和视觉内容会自动组织在您的图像工作区中。内置 OCR 从图像中提取文本以方便搜索。</p>
+    </div>
+    <figure class="ucp-window-frame">
+      <div class="ucp-window-bar"><span></span><span></span><span></span><b>Ultimate Clipboard Pro</b></div>
+      <img src="/assets/products/image-big-panel-rectangular_960.webp" alt="捕获图像和屏幕截图" width="959" height="540" loading="lazy" decoding="async">
+    </figure>
+  </article>
+    </div>
+  </section>
 
-        const brandText = footer.querySelector(".space-y-4 > p.text-sm.text-muted-foreground");
-        if (brandText && !brandText.dataset.arcawandFooterLogo) {
-          brandText.dataset.arcawandFooterLogo = "true";
-          brandText.replaceChildren();
-          const link = document.createElement("a");
-          link.className = "ucp-footer-arcawand-link";
-          link.href = homeUrl;
-          link.setAttribute("aria-label", "ArcaWand Soft");
-          const logo = document.createElement("img");
-          logo.className = "ucp-footer-arcawand-logo";
-          logo.src = arcawandLogoUrl;
-          logo.alt = "ArcaWand Soft";
-          link.appendChild(logo);
-          brandText.appendChild(link);
-        }
+  <section class="ucp-section ucp-flow-section">
+    <div class="ucp-section-heading" data-reveal><p class="ucp-eyebrow"><span></span>浮动发射器</p><h2>高级搜索</h2><p>通过跨所有工作区的全文搜索即时查找任何内容。按内容、来源、日期、类别或语义进行搜索。</p></div>
+    <div class="ucp-flow-grid">
+      <div class="ucp-flow-rail" aria-hidden="true"><i></i><i></i><i></i></div>
+      <article class="ucp-flow-card" data-reveal><span class="ucp-flow-number">01</span><div><h3>浮动发射器</h3><p>使用可定制的浮动启动器从任何地方访问您的剪贴板历史记录。固定常用项目以便即时访问。</p></div><img src="/assets/launcher.webp" alt="浮动发射器" width="1400" height="788" loading="lazy" decoding="async"></article>
+      <article class="ucp-flow-card ucp-flow-card-reverse" data-reveal><span class="ucp-flow-number">02</span><div><h3>高级搜索</h3><p>通过跨所有工作区的全文搜索即时查找任何内容。按内容、来源、日期、类别或语义进行搜索。</p></div><img src="/assets/advanced_search.webp" alt="高级搜索" width="953" height="500" loading="lazy" decoding="async"></article>
+      <article class="ucp-flow-card" data-reveal><span class="ucp-flow-number">03</span><div><h3>视觉源时间轴</h3><p>通过视觉源指示器查看每个项目的来源。以时间戳精度跟踪您跨网站、应用程序和文档的复制历史记录。</p></div><img src="/assets/source_history_2.webp" alt="视觉源时间轴" width="1400" height="702" loading="lazy" decoding="async"></article>
+    </div>
+  </section>
 
-        return Boolean(iconBox || brandText);
-      }
+  <section class="ucp-section ucp-power-section">
+    <div class="ucp-power-copy" data-reveal><p class="ucp-eyebrow"><span></span>20 个适合高级用户的内置工具</p><h2>您的数据归您所有</h2><p>本地优先架构意味着您的剪贴板数据永远不会离开您的设备，除非您选择同步</p></div>
+    <div class="ucp-power-grid">
+      <article data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.8 2.9 8.3 7 10 4.1-1.7 7-5.2 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg><h3>本地存储</h3><p>所有剪贴板数据都存储在您的设备本地。没有云服务器，没有第三方访问。</p></article>
+      <article data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0-9-9m9 9c-2.5-2.4-4-5.4-4-9s1.5-6.6 4-9m0 18c2.5-2.4 4-5.4 4-9s-1.5-6.6-4-9M3 12h18"/></svg><h3>源头恢复</h3><p>重新打开文本、代码块或图像所在的页面，因此捕获永远不会与其原始上下文断开连接。</p></article>
+      <article data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg><h3>收藏夹和固定捕获</h3><p>通过文本、代码和图像中的收藏夹和固定项目，让重要的捕获触手可及。</p></article>
+      <article data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 5"/></svg><h3>图像、OCR 和颜色工具</h3><p>从图像和屏幕截图中高精度提取文本。在整个图书馆中搜索提取的文本</p></article>
+    </div>
+  </section>
 
-      if (!patchProductFooter()) {
-        const observer = new MutationObserver(() => {
-          if (patchProductFooter()) observer.disconnect();
-        });
-        observer.observe(document.getElementById("root") || document.body, { childList: true, subtree: true });
-      }
-      window.addEventListener("load", patchProductFooter, { once: true });
-    })();
-  </script>
+  <section class="ucp-section ucp-drive-section" data-reveal>
+    <div class="ucp-drive-copy"><p class="ucp-eyebrow"><span></span>一个工作区，随处可用</p><h2>一次备份，最多同步三台设备。</h2><p>连接 Google Drive，让许可证覆盖的电脑持续同步已捕获的文本、代码和图片。</p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14M12 5v14M8 19h8"/></svg>文本</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-3 3 3 3m8-6 3 3-3 3m-2-9-4 12"/></svg>代码</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 2-2 5 5"/></svg>图片</li></ul><small>本地工作区始终可用。只有在您启用后，Drive 同步才会开始。</small></div>
+    <div class="ucp-drive-map" aria-label="一次备份，最多同步三台设备。">
+      <div class="ucp-drive-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="ucp-drive-hub"><img src="/assets/extension-runtime/assets/icons/drive-logo.png" alt="Google Drive" width="64" height="64"><strong>私人 Drive 备份</strong><span>实时同步</span></div>
+      <div class="ucp-device ucp-device-1"><img src="/assets/extension-runtime/assets/icons/computer.png" alt="" width="42" height="42"><strong>台式电脑</strong><span>实时同步</span></div><div class="ucp-device ucp-device-2"><img src="/assets/extension-runtime/assets/icons/computer.png" alt="" width="42" height="42"><strong>工作笔记本</strong><span>实时同步</span></div><div class="ucp-device ucp-device-3"><img src="/assets/extension-runtime/assets/icons/computer.png" alt="" width="42" height="42"><strong>MacBook Pro</strong><span>实时同步</span></div>
+    </div>
+  </section>
 
-<script>(()=>{const mark=document.querySelector('.ucp-product-mark');if(!mark)return;let ticking=false;const update=()=>{mark.classList.toggle('is-hidden',window.scrollY>36);ticking=false;};update();window.addEventListener('scroll',()=>{if(ticking)return;ticking=true;window.requestAnimationFrame(update);},{passive:true});})();</script>
-<script defer="" src="/assets/install-extension-modal.js"></script>
-<script defer="" src="/assets/ucp-email-floating.js"></script>
-<script defer="" src="/assets/ucp-runtime-locales.js?v=20260620-full-i18n"></script>
+  <section class="ucp-section ucp-faq-section">
+    <div class="ucp-section-heading" data-reveal><p class="ucp-eyebrow"><span></span>Ultimate Clipboard Pro</p><h2>常见问题</h2></div>
+    <div class="ucp-faq-list"><details class="ucp-faq-item" open data-reveal><summary>How is it different from a basic clipboard history?<span aria-hidden="true">+</span></summary><p>A basic history is usually a long timeline. Ultimate Clipboard Pro gives you dedicated workspaces for text, code and images, plus titles, categories, source URLs, notes, favorites, pins, visual source history, advanced search and Pro workflows such as versioning and montage.</p></details><details class="ucp-faq-item" data-reveal><summary>Can I organize captures instead of scrolling through a huge list?<span aria-hidden="true">+</span></summary><p>Yes. You can use categories and subcategories, separate text/code/image spaces, favorites, pinned items, trash and vault workflows. The goal is to make your copied material feel organized, not buried.</p></details><details class="ucp-faq-item" data-reveal><summary>What is versioning used for?<span aria-hidden="true">+</span></summary><p>Versioning lets Pro users keep several versions of the same text or code capture inside one item. It is ideal for prompts, replies, snippets, drafts and improvements where you want evolution without duplicate clutter.</p></details><details class="ucp-faq-item" data-reveal><summary>What is capture montage?<span aria-hidden="true">+</span></summary><p>Montage lets you assemble several text captures into one clean combined text. It is useful for preparing prompts, reports, summaries, briefs, research notes or reusable content blocks.</p></details><details class="ucp-faq-item" data-reveal><summary>Do I have to use Google Drive?<span aria-hidden="true">+</span></summary><p>No. Google Drive sync is optional. You can work locally and use local export/restore. Drive sync is for users who want a cloud backup and restore path across their own Google account.</p></details><details class="ucp-faq-item" data-reveal><summary>Is my content private?<span aria-hidden="true">+</span></summary><p>The extension is designed with a local-first philosophy. Normal capture management happens in the browser extension environment on your device. Optional services such as Google Drive sync, payment and licensing are separated and used only for their specific purpose.</p></details></div>
+  </section>
+
+  <section class="ucp-final-cta" data-reveal>
+    <img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="80" height="80" loading="lazy" decoding="async">
+    <div><h2>安装后应该先尝试什么？</h2><p>先捕获一段实用文本、一个代码片段和一张图片。然后打开管理器，添加标题、归类项目、按来源搜索并重新使用一条捕获内容。完成这一轮操作，你就会明白它不只是剪贴板历史。</p></div>
+    <div class="ucp-actions"><button class="ucp-button ucp-button-primary" type="button" data-install-extension-trigger="true">安装扩展<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg></button><a class="ucp-button ucp-button-secondary" href="/zh/ultimate-clipboard-pro/demo/">演示</a></div>
+  </section>
+</main>
+
+<footer class="ucp-landing-footer"><a href="/zh/"><img src="/assets/Arcawand_Soft_Logo_320.webp" alt="ArcaWand Soft" width="160" height="44" loading="lazy" decoding="async"></a><p>© 2026 Arcawand Soft。版权所有。</p><nav><a href="/zh/ultimate-clipboard-pro/privacy/">隐私政策</a><a href="/zh/ultimate-clipboard-pro/terms/">使用条款</a><a href="mailto:contact@arcawand-soft.com">联系方式</a></nav></footer>
 </body>
 </html>

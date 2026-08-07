@@ -29,6 +29,72 @@
       message: "Die Erweiterung wird bald verfügbar sein. Sie befindet sich derzeit im Betatest mit freiwilligen Nutzern. Vielen Dank für Ihre Geduld.",
       close: "Schließen",
       labels: ["extension installieren", "erweiterung installieren"]
+    },
+    ro: {
+      title: "În curând",
+      message: "Extensia va fi disponibilă în curând. În prezent este testată în versiune beta de utilizatori voluntari. Îți mulțumim pentru răbdare.",
+      close: "Închide",
+      labels: ["instalează extensia"]
+    },
+    pt: {
+      title: "Em breve",
+      message: "A extensão estará disponível em breve. Neste momento, está em teste beta com utilizadores voluntários. Agradecemos a sua paciência.",
+      close: "Fechar",
+      labels: ["instalar extensão"]
+    },
+    ar: {
+      title: "قريبًا",
+      message: "سيصبح الامتداد متاحًا قريبًا. وهو حاليًا في مرحلة الاختبار التجريبي مع مستخدمين متطوعين. شكرًا لصبرك.",
+      close: "إغلاق",
+      labels: ["تثبيت الامتداد"]
+    },
+    zh: {
+      title: "即将推出",
+      message: "该扩展程序即将上线，目前正由志愿用户进行测试。感谢您的耐心等待。",
+      close: "关闭",
+      labels: ["安装扩展程序"]
+    },
+    ja: {
+      title: "近日公開",
+      message: "この拡張機能は近日公開予定です。現在、ボランティアユーザーによるベータテストを実施しています。しばらくお待ちください。",
+      close: "閉じる",
+      labels: ["拡張機能をインストール"]
+    },
+    ru: {
+      title: "Скоро",
+      message: "Расширение скоро станет доступно. Сейчас оно проходит бета-тестирование с участием добровольцев. Спасибо за терпение.",
+      close: "Закрыть",
+      labels: ["установить расширение"]
+    },
+    nl: {
+      title: "Binnenkort beschikbaar",
+      message: "De extensie is binnenkort beschikbaar en wordt momenteel getest door vrijwillige bètagebruikers. Bedankt voor je geduld.",
+      close: "Sluiten",
+      labels: ["extensie installeren"]
+    },
+    pl: {
+      title: "Już wkrótce",
+      message: "Rozszerzenie będzie dostępne już wkrótce. Obecnie jest testowane przez użytkowników wersji beta. Dziękujemy za cierpliwość.",
+      close: "Zamknij",
+      labels: ["zainstaluj rozszerzenie"]
+    },
+    tr: {
+      title: "Yakında",
+      message: "Uzantı yakında kullanıma sunulacak. Şu anda gönüllü kullanıcılarla beta testinde. Sabrınız için teşekkür ederiz.",
+      close: "Kapat",
+      labels: ["uzantıyı yükle"]
+    },
+    ko: {
+      title: "곧 출시됩니다",
+      message: "확장 프로그램이 곧 공개됩니다. 현재 자원 사용자들과 베타 테스트를 진행하고 있습니다. 기다려 주셔서 감사합니다.",
+      close: "닫기",
+      labels: ["확장 프로그램 설치"]
+    },
+    hi: {
+      title: "जल्द उपलब्ध",
+      message: "एक्सटेंशन जल्द उपलब्ध होगा। अभी स्वयंसेवी उपयोगकर्ताओं के साथ इसका बीटा परीक्षण चल रहा है। आपके धैर्य के लिए धन्यवाद।",
+      close: "बंद करें",
+      labels: ["एक्सटेंशन इंस्टॉल करें"]
     }
   };
 

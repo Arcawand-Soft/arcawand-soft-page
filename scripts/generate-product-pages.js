@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { generateAll: generateUcpLandingPages } = require("./generate-ucp-landing-pages");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
@@ -947,25 +948,6 @@ function patchLanguageButtonLabel(content, lang) {
     .replace(/<div class="language-menu-panel" role="listbox" aria-label="Language"/g, `<div class="language-menu-panel" role="listbox" aria-label="${label}"`);
 }
 
-function patchProductIndex(lang) {
-  const file = path.join(root, productBase(lang), "index.html");
-  let content = fs.readFileSync(file, "utf8");
-  if (!content.includes("/assets/ucp-product-pages.css")) {
-    content = content.replace('<link rel="stylesheet" href="/assets/ucp-email-floating.css">', '<link rel="stylesheet" href="/assets/ucp-email-floating.css">\n<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">');
-  }
-  content = content.replace(/<link rel="stylesheet" href="\/assets\/ucp-product-pages\.css(?:\?[^"]*)?">/g, '<link rel="stylesheet" href="/assets/ucp-product-pages.css?v=20260515-heading-flow">');
-  content = content.replace(/\.arcawand-product-language-menu \{ position: fixed; right: 1rem; top: 1rem; z-index: 70; \}/g, ".arcawand-product-language-menu { position: fixed; right: 1rem; top: 1rem; z-index: 120; }");
-  if (!content.includes("/assets/ucp-product-pages.js")) {
-    content = content.replace('<script defer src="/assets/analytics.js"></script>', `<script defer src="/assets/analytics.js"></script>\n<script defer src="${productPagesScript}"></script>`);
-  }
-  content = content.replace(/<script defer src="\/assets\/ucp-product-pages\.js(?:\?[^"]*)?"><\/script>/g, `<script defer src="${productPagesScript}"></script>`);
-  content = content.replace(/Fran\u00c3\u00a7ais/g, "Français").replace(/Espa\u00c3\u00b1ol/g, "Español");
-  content = content.replace(/<nav class="ucp-product-nav"[\s\S]*?<\/nav>\s*/g, "");
-  content = content.replace(/(<div id="root"><\/div>)/, `${productNav(lang, "presentation", relFromProductPage("presentation"))}\n  $1`);
-  content = patchLanguageButtonLabel(content, lang);
-  content = content.replace(/<script>\(\(\)=>\{const routeMap=[\s\S]*?\}\)\(\);<\/script>\s*/g, "");
-  fs.writeFileSync(file, content, "utf8");
-}
 function patchSiteJs() {
   const file = path.join(root, "assets/site.js");
   let content = fs.readFileSync(file, "utf8");
@@ -977,7 +959,6 @@ function patchSiteJs() {
 }
 function writeProductPages() {
   for (const lang of Object.keys(langs)) {
-    patchProductIndex(lang);
     for (const page of ["demo", "faq", "privacy", "terms"]) {
       const dir = path.join(root, productBase(lang), page);
       fs.mkdirSync(dir, { recursive: true });
@@ -995,6 +976,7 @@ function patchSitemap() {
 }
 
 writeProductPages();
+generateUcpLandingPages();
 [
   ["index.html", "en", 0], ["contact/index.html", "en", 1], ["privacy/index.html", "en", 1],
   ["fr/index.html", "fr", 0], ["fr/contact/index.html", "fr", 1], ["fr/privacy/index.html", "fr", 1],
