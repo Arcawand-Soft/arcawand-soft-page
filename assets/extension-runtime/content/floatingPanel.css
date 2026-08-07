@@ -468,6 +468,10 @@ button:active,
   height: 13px;
 }
 
+img[src*="pro-icon.png"] {
+  filter: drop-shadow(1.25px 0 0 #fff) drop-shadow(-1.25px 0 0 #fff) drop-shadow(0 1.25px 0 #fff) drop-shadow(0 -1.25px 0 #fff);
+}
+
 .mcp-panel.is-minimized .mcp-brand > .brand-pro-badge {
   display: none !important;
 }
@@ -1042,9 +1046,10 @@ button:active,
   place-items: center;
   width: 19px;
   height: 19px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 0;
   border-radius: 999px;
-  background: #111;
+  background: transparent;
+  box-shadow: none;
 }
 
 .brand-pro-badge[hidden] {

@@ -222,7 +222,7 @@
       const frame = document.createElement("iframe");
       frame.className = "ucp-real-demo-manager-frame";
       frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-demo-i18n-ltr&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-pro-badge&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
       managerShell.append(frame);
       document.body.append(managerShell);
       window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
@@ -230,7 +230,7 @@
     }
     const frame = managerShell.querySelector("iframe");
     if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-demo-i18n-ltr&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-pro-badge&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
     }
     managerShell.classList.add("is-visible");
   }
@@ -263,7 +263,7 @@
     window.__UCP_DEMO_BRIDGE__ = bridge;
 
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260807-launcher-match`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260807-pro-badge`);
 
     const floatingHost = await waitForFloatingHost();
     installDemoDirectionGuard(floatingHost);

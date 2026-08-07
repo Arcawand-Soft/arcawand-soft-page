@@ -13,7 +13,7 @@ for (const language of languages) {
   html = html.replace(/<!doctype html>[\s\S]*?<html/i, "<!doctype html>\n<html");
   html = html.replace(/data-ucp-demo-lang="[^"]+"/g, `data-ucp-demo-lang="${language}"`);
   html = html.replace(/\/assets\/ucp-demo\.css\?v=[^"']+/g, "/assets/ucp-demo.css?v=20260807-launcher-match");
-  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260807-demo-i18n-ltr");
+  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260807-pro-badge");
   if (!html.includes("assets/icons/arrow_right.png")) {
     html = html.replace(
       /(<link[^>]+href="\/assets\/extension-runtime\/assets\/icons\/icon128\.png"[^>]*>)/i,

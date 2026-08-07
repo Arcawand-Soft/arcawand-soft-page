@@ -17,5 +17,6 @@ copy(path.join("shared", "i18n.js"));
 copy(path.join("shared", "locales", "categorySlugs.js"));
 localeNames.forEach((language) => copy(path.join("shared", "locales", `${language}.js`)));
 copy(path.join("assets", "icons", "arrow_right.png"));
+copy(path.join("assets", "icons", "pro-icon.png"));
 
 console.log(`Synced canonical Ultimate Clipboard Pro i18n for ${localeNames.length} languages.`);

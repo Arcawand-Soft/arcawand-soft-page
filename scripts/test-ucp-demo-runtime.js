@@ -7,6 +7,16 @@ const root = path.resolve(__dirname, "..");
 const languages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
 const runtimeSource = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-runtime.js"), "utf8");
 
+const proIcon = fs.readFileSync(path.join(root, "assets", "extension-runtime", "assets", "icons", "pro-icon.png"));
+assert.strictEqual(proIcon.readUInt32BE(16), 360, "Demo must use the current 360px Pro badge asset");
+assert.strictEqual(proIcon.readUInt32BE(20), 360, "Demo Pro badge must remain square");
+for (const stylesheet of ["content/floatingPanel.css", "sidepanel/sidepanel.css"]) {
+  const css = fs.readFileSync(path.join(root, "assets", "extension-runtime", stylesheet), "utf8");
+  assert(css.includes('img[src*="pro-icon.png"]'), `${stylesheet} must style the Pro PNG itself`);
+  assert(css.includes("drop-shadow(1.25px 0 0 #fff)"), `${stylesheet} must keep the fine white Pro outline`);
+  assert(/\.brand-pro-badge\s*\{[\s\S]*?border:\s*0;[\s\S]*?background:\s*transparent;/m.test(css), `${stylesheet} Pro badge container must stay transparent`);
+}
+
 function contextFor(language) {
   const window = { location: { search: `?lang=${language}`, pathname: `/${language}/ultimate-clipboard-pro/demo/` } };
   window.window = window;
