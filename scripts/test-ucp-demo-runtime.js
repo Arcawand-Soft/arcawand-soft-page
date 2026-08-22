@@ -2,6 +2,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 const extensionRoot = path.resolve(root, "..", "multi-copy-paste", "extension");
@@ -53,6 +54,8 @@ for (const language of languages) {
   assert(html.startsWith("<!doctype html>\n<html"), `${language} demo route has content before its html element`);
   assert(html.includes(`data-ucp-demo-lang="${language}"`), `${language} demo route points to the wrong runtime locale`);
   assert(html.includes("assets/icons/arrow_right.png"), `${language} demo route does not preload the launcher arrow`);
+  assert(new RegExp(`data-ucp-nav="sales"[^>]*>${salesNavLabel(language).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}</a>`).test(html), `${language} demo top navigation is missing the sales terms link`);
+  assert(html.includes(`<a href="../sales/">${salesNavLabel(language)}</a>`), `${language} demo product-pages card is missing the sales terms link`);
 }
 
 const arabicContext = contextFor("ar");

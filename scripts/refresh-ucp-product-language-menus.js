@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { LANGUAGE_CODES, languageMenu } = require("./language-config");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 const pageKeys = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms", sales: "ucpSales" };
@@ -34,7 +35,9 @@ function refreshUcpProductLanguageMenus() {
       const labels = chromeLabels[language];
       const next = html
         .replace(/<div class="language-menu arcawand-product-language-menu"[\s\S]*?<\/div><\/div>/, languageMenu(language, pageKey, labels.language))
-        .replace(/<a aria-label="[^"]*" class="arcawand-root-return"/, `<a aria-label="${labels.back}" class="arcawand-root-return"`);
+        .replace(/<a aria-label="[^"]*" class="arcawand-root-return"/, `<a aria-label="${labels.back}" class="arcawand-root-return"`)
+        .replace(/(<a href="[^"]*" data-ucp-nav="sales"[^>]*>)[\s\S]*?<\/a>/, `$1${salesNavLabel(language)}</a>`)
+        .replace(/(<a href="[^\"]*sales\/">)[\s\S]*?<\/a>/g, `$1${salesNavLabel(language)}</a>`);
       if (next !== html) {
         fs.writeFileSync(file, next, "utf8");
         updated += 1;

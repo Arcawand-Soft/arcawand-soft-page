@@ -973,12 +973,18 @@ function patchSiteJs() {
   fs.writeFileSync(file, content, "utf8");
 }
 function writeProductPages() {
+  for (const page of ["demo", "faq", "privacy", "terms", "sales"]) {
+    writeProductPageType(page);
+  }
+}
+function writeProductPageType(page) {
+  if (!["demo", "faq", "privacy", "terms", "sales"].includes(page)) {
+    throw new Error(`Unsupported product page type: ${page}`);
+  }
   for (const lang of Object.keys(langs)) {
-    for (const page of ["demo", "faq", "privacy", "terms", "sales"]) {
       const dir = path.join(root, productBase(lang), page);
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, "index.html"), staticProductPage(lang, page), "utf8");
-    }
   }
 }
 function patchSitemap() {
@@ -990,20 +996,25 @@ function patchSitemap() {
   fs.writeFileSync(file, content, "utf8");
 }
 
-writeProductPages();
-applyCurrentProductContent();
-generateUcpLandingPages();
-refreshUcpProductLanguageMenus();
-[
-  ["index.html", "en", 0], ["contact/index.html", "en", 1], ["privacy/index.html", "en", 1],
-  ["fr/index.html", "fr", 0], ["fr/contact/index.html", "fr", 1], ["fr/privacy/index.html", "fr", 1],
-  ["es/index.html", "es", 0], ["es/contact/index.html", "es", 1], ["es/privacy/index.html", "es", 1],
-  ["it/index.html", "it", 0], ["it/contact/index.html", "it", 1], ["it/privacy/index.html", "it", 1],
-  ["de/index.html", "de", 0], ["de/contact/index.html", "de", 1], ["de/privacy/index.html", "de", 1]
-].forEach(([file, lang, depth]) => patchSiteNav(path.join(root, file), lang, depth));
-patchSiteJs();
-patchSitemap();
-cloneFullLanguagePages();
-generateUcpLandingPages();
-applyLegalCompliance();
-refreshUcpProductLanguageMenus();
+function generateProductPages() {
+  writeProductPages();
+  applyCurrentProductContent();
+  generateUcpLandingPages();
+  refreshUcpProductLanguageMenus();
+  [
+    ["index.html", "en", 0], ["contact/index.html", "en", 1], ["privacy/index.html", "en", 1],
+    ["fr/index.html", "fr", 0], ["fr/contact/index.html", "fr", 1], ["fr/privacy/index.html", "fr", 1],
+    ["es/index.html", "es", 0], ["es/contact/index.html", "es", 1], ["es/privacy/index.html", "es", 1],
+    ["it/index.html", "it", 0], ["it/contact/index.html", "it", 1], ["it/privacy/index.html", "it", 1],
+    ["de/index.html", "de", 0], ["de/contact/index.html", "de", 1], ["de/privacy/index.html", "de", 1]
+  ].forEach(([file, lang, depth]) => patchSiteNav(path.join(root, file), lang, depth));
+  patchSiteJs();
+  patchSitemap();
+  cloneFullLanguagePages();
+  generateUcpLandingPages();
+  applyLegalCompliance();
+  refreshUcpProductLanguageMenus();
+}
+
+if (require.main === module) generateProductPages();
+module.exports = { generateProductPages, writeProductPageType };
