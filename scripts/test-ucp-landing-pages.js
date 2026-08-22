@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 const version = "20260822-product-refresh";
@@ -43,6 +44,7 @@ for (const language of LANGUAGES) {
   assert.ok(html.includes("ucp-capture-panel-text") && html.includes("ucp-capture-panel-code") && html.includes("ucp-capture-panel-image"), `${label}: three capture workspaces`);
   assert.ok(html.includes("ucp-drive-section") && html.includes("ucp-faq-section"), `${label}: Drive and FAQ sections`);
   assert.ok(html.includes("ucp-language-showcase"), `${label}: early language showcase`);
+  assert.ok(html.includes(`sales/">${salesNavLabel(label)}</a>`), `${label}: compact localized sales navigation label`);
   assert.ok(!html.includes("Pin frequently used items for instant access"), `${label}: launcher copy must not claim capture pinning`);
   assert.ok(html.includes("text-big-panel-rectangular-480.webp 480w") && html.includes("text-big-panel-rectangular-800.webp 800w"), `${label}: responsive hero image sources`);
   assert.ok(html.includes('fetchpriority="high" decoding="async"'), `${label}: high-priority header logo`);

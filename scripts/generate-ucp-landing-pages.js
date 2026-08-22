@@ -3,6 +3,7 @@ const path = require("path");
 const { LANGUAGES, languageMenu, localizedUrl } = require("./language-config");
 const locales = require("./ucp-landing-locales.json");
 const legalContent = require("./ucp-legal-content.json");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 const version = "20260822-product-refresh";
@@ -196,7 +197,7 @@ function renderNav(language, t) {
     <a href="${base}faq/">${escapeHtml(t("FAQ"))}</a>
     <a href="${base}privacy/">${escapeHtml(t("Privacy policy"))}</a>
     <a href="${base}terms/">${escapeHtml(t("Terms of use"))}</a>
-    <a href="${base}sales/">${escapeHtml(legal["popup.salesTerms"])}</a>
+    <a href="${base}sales/">${escapeHtml(salesNavLabel(language.code))}</a>
   </nav>`;
 }
 
@@ -400,7 +401,7 @@ ${LANGUAGES.map((item) => `<link rel="alternate" hreflang="${item.code}" href="$
   </section>
 </main>
 
-<footer class="ucp-landing-footer"><a href="${home}"><img src="/assets/Arcawand_Soft_Logo_320.webp" alt="ArcaWand Soft" width="160" height="44" loading="lazy" decoding="async"></a><p>${escapeHtml(t("© 2026 Arcawand Soft. All rights reserved."))}</p><nav><a href="${productBase}privacy/">${escapeHtml(t("Privacy policy"))}</a><a href="${productBase}terms/">${escapeHtml(t("Terms of use"))}</a><a href="${productBase}sales/">${escapeHtml((legalContent[language.code] || legalContent.en)["popup.salesTerms"])}</a><a href="mailto:contact@arcawand-soft.com">${escapeHtml(t("Contact"))}</a></nav></footer>
+<footer class="ucp-landing-footer"><a href="${home}"><img src="/assets/Arcawand_Soft_Logo_320.webp" alt="ArcaWand Soft" width="160" height="44" loading="lazy" decoding="async"></a><p>${escapeHtml(t("© 2026 Arcawand Soft. All rights reserved."))}</p><nav><a href="${productBase}privacy/">${escapeHtml(t("Privacy policy"))}</a><a href="${productBase}terms/">${escapeHtml(t("Terms of use"))}</a><a href="${productBase}sales/">${escapeHtml(salesNavLabel(language.code))}</a><a href="mailto:contact@arcawand-soft.com">${escapeHtml(t("Contact"))}</a></nav></footer>
 </body>
 </html>
 `;

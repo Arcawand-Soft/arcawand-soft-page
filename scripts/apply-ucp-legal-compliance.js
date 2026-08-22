@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { LANGUAGES, localizedPath } = require("./language-config");
 const legal = require("./ucp-legal-content.json");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 const effectiveDate = new Date("2026-08-22T00:00:00Z");
@@ -117,13 +118,13 @@ function updatePageChrome(html, code, page, dictionary) {
     .replace(/(<a href="[^"]*" data-ucp-nav="faq"[^>]*>)[\s\S]*?<\/a>/, `$1${esc(dictionary["popup.faq"])}</a>`)
     .replace(/(<a href="[^"]*" data-ucp-nav="privacy"[^>]*>)[\s\S]*?<\/a>/, `$1${esc(dictionary["popup.privacy"])}</a>`)
     .replace(/(<a href="[^"]*" data-ucp-nav="terms"[^>]*>)[\s\S]*?<\/a>/, `$1${esc(dictionary["popup.terms"])}</a>`)
-    .replace(/(<a href="[^"]*" data-ucp-nav="sales"[^>]*>)[\s\S]*?<\/a>/, `$1${esc(dictionary["popup.salesTerms"])}</a>`)
+    .replace(/(<a href="[^"]*" data-ucp-nav="sales"[^>]*>)[\s\S]*?<\/a>/, `$1${esc(salesNavLabel(code))}</a>`)
     .replace(/(<a href="[^\"]*presentation[^\"]*">)[\s\S]*?<\/a>/, `$1${esc(presentation)}</a>`)
     .replace(/(<a href="[^\"]*demo\/">)[\s\S]*?<\/a>/g, `$1${esc(demo)}</a>`)
     .replace(/(<a href="[^\"]*faq\/">)[\s\S]*?<\/a>/g, `$1${esc(dictionary["popup.faq"])}</a>`)
     .replace(/(<a href="[^\"]*privacy\/">)[\s\S]*?<\/a>/g, `$1${esc(dictionary["popup.privacy"])}</a>`)
     .replace(/(<a href="[^\"]*terms\/">)[\s\S]*?<\/a>/g, `$1${esc(dictionary["popup.terms"])}</a>`)
-    .replace(/(<a href="[^\"]*sales\/">)[\s\S]*?<\/a>/g, `$1${esc(dictionary["popup.salesTerms"])}</a>`)
+    .replace(/(<a href="[^\"]*sales\/">)[\s\S]*?<\/a>/g, `$1${esc(salesNavLabel(code))}</a>`)
     .replace(/(<a class="arcawand-root-return" href="[^"]*" aria-label=")[^"]*(">)[\s\S]*?<\/a>/, `$1${esc(back)}$2&larr; ${esc(back)}</a>`)
     .replace(/(<aside class="ucp-side-card"><h2>)[\s\S]*?(<\/h2><p>)[\s\S]*?(<\/p>)/, `$1Ultimate Clipboard Pro$2${esc(description)}$3`)
     .replace(/(<aside class="ucp-side-card">[\s\S]*?<nav><a href="\.\.\/">)[\s\S]*?<\/a>/, `$1${esc(presentation)}</a>`);

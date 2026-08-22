@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { LANGUAGES, localizedPath } = require("./language-config");
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 
 const root = path.resolve(__dirname, "..");
 for (const { code } of LANGUAGES) {
@@ -11,6 +12,10 @@ for (const { code } of LANGUAGES) {
     if (!html.includes("contact@arcawand-soft.com")) throw new Error(`${code} ${page} missing contact`);
     if (!html.includes("data-ucp-nav=\"terms\"") || !html.includes("data-ucp-nav=\"sales\"")) {
       throw new Error(`${code} ${page} missing CGU/CGV navigation`);
+    }
+    const salesLabel = salesNavLabel(code).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if (!new RegExp(`data-ucp-nav="sales"[^>]*>${salesLabel}</a>`).test(html)) {
+      throw new Error(`${code} ${page} has the wrong compact sales label`);
     }
   }
 }

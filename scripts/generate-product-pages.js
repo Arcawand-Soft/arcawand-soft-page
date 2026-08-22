@@ -870,9 +870,10 @@ function demoPrebootLauncher() {
 function legalLabel(lang, key, fallback) {
   return legalContent[lang]?.[key] || legalContent.en?.[key] || fallback;
 }
+const { salesNavLabel } = require("./ucp-legal-nav-labels");
 function productNav(lang, active, rel) {
   const l = langs[lang];
-  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.demo}" data-ucp-nav="demo"${active === "demo" ? ' aria-current="page"' : ""}>${esc(l.demo)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}" data-ucp-nav="sales"${active === "sales" ? ' aria-current="page"' : ""}>${esc(legalLabel(lang, "popup.salesTerms", "Terms of sale"))}</a></nav>`;
+  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.demo}" data-ucp-nav="demo"${active === "demo" ? ' aria-current="page"' : ""}>${esc(l.demo)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}" data-ucp-nav="sales"${active === "sales" ? ' aria-current="page"' : ""}>${esc(salesNavLabel(lang))}</a></nav>`;
 }
 function staticProductPage(lang, page) {
   const l = langs[lang];
@@ -936,7 +937,7 @@ ${languageMenu(lang, page)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
 <section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${productHeading(lang, page)}</h1><p>${esc(lead)}</p></section>
-<section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}">${esc(legalLabel(lang, "popup.salesTerms", "Terms of sale"))}</a></nav></aside></section>
+<section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}">${esc(salesNavLabel(lang))}</a></nav></aside></section>
 </main>
 <footer class="ucp-static-footer"><span>${esc(l.footer)}</span><span><a href="mailto:contact@arcawand-soft.com">contact@arcawand-soft.com</a></span></footer>
 </body>
