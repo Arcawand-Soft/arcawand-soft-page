@@ -3,7 +3,7 @@
   if (window.__ULTIMATE_CLIPBOARD_PRO_CONTENT_ACTIVE__ === CONTENT_BOOT_VERSION) return;
   if (window.__ULTIMATE_CLIPBOARD_PRO_CONTENT_ACTIVE__) {
     window.__UCP_CONTENT_LIFECYCLE_CLEANUP__?.();
-    document.getElementById("mcp-floating-host")?.remove();
+    document.getElementById("ucp-demo-floating-host")?.remove();
     window.__UCP_GLOBAL_TOOL_SELECTION_CLEANUP__?.();
     document.getElementById("mcp-global-tool-selection-host")?.remove();
   }
@@ -21,7 +21,7 @@
     contentContextDisposed = true;
     contentLifecycleCleanups.splice(0).forEach((cleanup) => cleanup());
     window.__UCP_GLOBAL_TOOL_SELECTION_CLEANUP__?.();
-    document.getElementById("mcp-floating-host")?.remove();
+    document.getElementById("ucp-demo-floating-host")?.remove();
     document.getElementById("mcp-global-tool-selection-host")?.remove();
     if (window.__UCP_CONTENT_LIFECYCLE_CLEANUP__ === disposeContentContext) {
       delete window.__UCP_CONTENT_LIFECYCLE_CLEANUP__;
@@ -972,7 +972,7 @@ const floatingToolHistory = new Map();
   }
 
   async function captureFullPageScreenshot(target) {
-    const panelHost = document.getElementById("mcp-floating-host");
+    const panelHost = document.getElementById("ucp-demo-floating-host");
     const previousVisibility = panelHost?.style.visibility || "";
 
     try {
@@ -1776,7 +1776,7 @@ const floatingToolHistory = new Map();
   function removeFloatingPanel() {
     floatingDriveQuickSyncController?.destroy();
     floatingDriveQuickSyncController = null;
-    const host = document.getElementById("mcp-floating-host");
+    const host = document.getElementById("ucp-demo-floating-host");
     if (host) host.remove();
     removeLauncherShell();
     shadowRoot = null;
@@ -2477,7 +2477,7 @@ const floatingToolHistory = new Map();
     }
     currentPageZoomFactor = nextZoomFactor;
     const inverse = String(1 / nextZoomFactor);
-    [document.getElementById("mcp-floating-host")].filter(Boolean).forEach((host) => {
+    [document.getElementById("ucp-demo-floating-host")].filter(Boolean).forEach((host) => {
       host.dataset.pageZoom = String(nextZoomFactor);
       host.style.setProperty("--mcp-page-zoom", String(nextZoomFactor));
       host.style.setProperty("--mcp-page-zoom-inverse", inverse);
@@ -3148,7 +3148,7 @@ const floatingToolHistory = new Map();
 
   function injectFloatingPanel(options = {}) {
     const editorVersion = "unified-text-editor-v5";
-    const existingHost = document.getElementById("mcp-floating-host");
+    const existingHost = document.getElementById("ucp-demo-floating-host");
     if (existingHost) {
       const existingEditor = existingHost.shadowRoot?.querySelector("[data-role='editor']");
       if (existingEditor?.dataset.editorVersion === editorVersion) {
@@ -3158,7 +3158,7 @@ const floatingToolHistory = new Map();
       existingHost.remove();
     }
     const host = document.createElement("div");
-    host.id = "mcp-floating-host";
+    host.id = "ucp-demo-floating-host";
     host.classList.toggle("is-web-launcher", IS_WEB_LAUNCHER);
     if (IS_WEB_LAUNCHER) {
       host.dataset.pageZoom = String(currentPageZoomFactor);

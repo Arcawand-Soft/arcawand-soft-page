@@ -5,7 +5,18 @@
     fr: { presentation: "Présentation", demo: "Démo", faq: "FAQ", privacy: "Politique de confidentialité", terms: "CGU", contact: "Contact" },
     es: { presentation: "Presentación", demo: "Demo", faq: "FAQ", privacy: "Política de privacidad", terms: "Términos de uso", contact: "Contacto" },
     it: { presentation: "Presentazione", demo: "Demo", faq: "FAQ", privacy: "Informativa privacy", terms: "Termini d’uso", contact: "Contatto" },
-    de: { presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen", contact: "Kontakt" }
+    de: { presentation: "Präsentation", demo: "Demo", faq: "FAQ", privacy: "Datenschutz", terms: "Nutzungsbedingungen", contact: "Kontakt" },
+    ro: { presentation: "Prezentare", demo: "Demonstrație", faq: "Întrebări frecvente", privacy: "Politica de confidențialitate", terms: "Termeni de utilizare", contact: "Contact" },
+    pt: { presentation: "Apresentação", demo: "Demonstração", faq: "Perguntas frequentes", privacy: "Política de privacidade", terms: "Termos de uso", contact: "Contato" },
+    ar: { presentation: "نظرة عامة", demo: "عرض توضيحي", faq: "الأسئلة الشائعة", privacy: "سياسة الخصوصية", terms: "شروط الاستخدام", contact: "اتصال" },
+    zh: { presentation: "产品介绍", demo: "演示", faq: "常见问题", privacy: "隐私政策", terms: "使用条款", contact: "联系" },
+    ja: { presentation: "製品紹介", demo: "デモ", faq: "よくある質問", privacy: "プライバシーポリシー", terms: "利用規約", contact: "お問い合わせ" },
+    ru: { presentation: "Обзор", demo: "Демо", faq: "Вопросы и ответы", privacy: "Политика конфиденциальности", terms: "Условия использования", contact: "Контакты" },
+    nl: { presentation: "Presentatie", demo: "Demo", faq: "Veelgestelde vragen", privacy: "Privacybeleid", terms: "Gebruiksvoorwaarden", contact: "Contact" },
+    pl: { presentation: "Prezentacja", demo: "Demo", faq: "Najczęstsze pytania", privacy: "Polityka prywatności", terms: "Warunki użytkowania", contact: "Kontakt" },
+    tr: { presentation: "Tanıtım", demo: "Demo", faq: "Sık sorulan sorular", privacy: "Gizlilik politikası", terms: "Kullanım koşulları", contact: "İletişim" },
+    ko: { presentation: "제품 소개", demo: "데모", faq: "자주 묻는 질문", privacy: "개인정보 처리방침", terms: "이용 약관", contact: "문의" },
+    hi: { presentation: "परिचय", demo: "डेमो", faq: "अक्सर पूछे जाने वाले प्रश्न", privacy: "गोपनीयता नीति", terms: "उपयोग की शर्तें", contact: "संपर्क" }
   };
   const languageButtonLabels = {
     en: "Change language",

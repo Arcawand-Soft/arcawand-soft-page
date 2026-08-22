@@ -2,11 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const { generateAll: generateUcpLandingPages } = require("./generate-ucp-landing-pages");
 const { applyCurrentProductContent } = require("./update-ucp-current-product-content");
+const { languageMenu: fullLanguageMenu } = require("./language-config");
+const { refreshUcpProductLanguageMenus } = require("./refresh-ucp-product-language-menus");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260822-demo-fast-pro";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260822-demo-fast-pro";
+const demoScript = "/assets/ucp-demo.js?v=20260822-demo-isolated-v2";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260822-demo-isolated-v2";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 const socialImageAlt = "Ultimate Clipboard Pro browser extension preview";
 
@@ -854,11 +856,12 @@ function homeHrefs(depth) {
     terms: `${prefix}ultimate-clipboard-pro/terms/`
   };
 }
-function languageMenu(current) {
-  const codeLabels = { en: "GB", fr: "FR", es: "ES", it: "IT", de: "DE" };
-  const name = { en: "English", fr: "Français", es: "Español", it: "Italiano", de: "Deutsch" };
-  const options = Object.keys(langs).map((code) => `<button class="language-menu-option" type="button" role="option" data-lang="${code}"${code === current ? ' aria-selected="true"' : ""}><span class="language-code-badge">${codeLabels[code]}</span><span>${name[code]}</span></button>`).join("");
-  return `<div class="language-menu arcawand-product-language-menu" data-current-lang="${current}"><button class="language-menu-button" type="button" aria-label="${esc(langs[current].languageButtonLabel)}" aria-haspopup="listbox" aria-expanded="false"><span class="language-code-badge">${codeLabels[current] || current.toUpperCase()}</span><span>${name[current]}</span><span class="language-menu-chevron" aria-hidden="true"></span></button><div class="language-menu-panel" role="listbox" aria-label="${esc(langs[current].languageButtonLabel)}">${options}</div></div>`;
+function languageMenu(current, page) {
+  const pageKey = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms" }[page];
+  return fullLanguageMenu(current, pageKey, esc(langs[current]?.languageButtonLabel || "Change language"));
+}
+function demoPrebootLauncher() {
+  return `<aside class="ucp-demo-launcher-preboot" dir="ltr" aria-hidden="true"><span class="ucp-demo-launcher-preboot__collapse"><img src="/assets/extension-runtime/assets/icons/arrow_right.png" alt=""></span><span class="ucp-demo-launcher-preboot__brand"><img src="/assets/extension-runtime/assets/icons/icon128.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility"><span aria-hidden="true">↗</span></span><span class="ucp-demo-launcher-preboot__utility"><img src="/assets/extension-runtime/assets/icons/tootls.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility ucp-demo-launcher-preboot__recent"><img src="/assets/extension-runtime/assets/icons/tools-icons/emojis.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility"><img src="/assets/extension-runtime/assets/icons/screen_full_page_png.png" alt=""></span></aside>`;
 }
 function productNav(lang, active, rel) {
   const l = langs[lang];
@@ -917,9 +920,10 @@ ${page === "demo" ? '<link rel="preload" as="image" href="/assets/extension-runt
 ${page === "demo" ? `<script defer src="${demoScript}"></script>` : ""}
 </head>
 <body class="ucp-static-page${page === "demo" ? " ucp-demo-page" : ""}">
+${page === "demo" ? demoPrebootLauncher() : ""}
 <a class="arcawand-root-return" href="${l.home}" aria-label="${esc(l.back)}">&larr; ArcaWand Soft</a>
 <div class="ucp-product-mark"><img src="/assets/ultimate_clipboard_pro_icon_96.webp" alt="" width="48" height="48" decoding="async"><span class="ucp-product-title">Ultimate Clipboard Pro</span></div>
-${languageMenu(lang)}
+${languageMenu(lang, page)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
 <section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${productHeading(lang, page)}</h1><p>${esc(lead)}</p></section>
@@ -979,6 +983,7 @@ function patchSitemap() {
 writeProductPages();
 applyCurrentProductContent();
 generateUcpLandingPages();
+refreshUcpProductLanguageMenus();
 [
   ["index.html", "en", 0], ["contact/index.html", "en", 1], ["privacy/index.html", "en", 1],
   ["fr/index.html", "fr", 0], ["fr/contact/index.html", "fr", 1], ["fr/privacy/index.html", "fr", 1],

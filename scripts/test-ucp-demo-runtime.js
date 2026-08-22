@@ -66,13 +66,29 @@ assert(demoScript.includes("preloadManager"), "The manager must be warmed before
 assert(!demoScript.includes("managerShell?.remove()"), "Closing the manager must preserve its warmed iframe");
 assert(demoScript.includes("ucp-demo-surface-open"), "An open demo surface must lock the document behind it");
 assert(demoScript.includes("prepareIsolatedDemoHost"), "The website demo must not reuse a host injected by the installed extension");
-assert(demoScript.includes("ucpDemoOwned"), "The demo launcher host must be explicitly identifiable");
+assert(demoScript.includes('const demoFloatingHostId = "ucp-demo-floating-host"'), "The website demo must use a host id that cannot collide with the installed extension");
 assert(demoScript.includes("openDemoTools"), "The launcher tools button must open the Pro tools catalog in the demo");
+assert(demoScript.includes("UCP_DEMO_TOOL_BLOCKED"), "Tool execution must be blocked by the demo shell");
 assert(runtimeSource.includes("forceDemoProRuntime"), "The isolated demo runtime must expose a deterministic Pro capability gate");
+assert(runtimeSource.includes('message.surface === "tools" && message.toolId'), "The launcher recent-tool shortcut must be blocked instead of opening a tool");
 assert(runtimeSource.includes("Promise.all("), "Shared demo dependencies must not load as one long network waterfall");
 
 const demoManagerHtml = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-sidepanel.html"), "utf8");
 assert(demoManagerHtml.includes("__UCP_DEMO_FORCE_PRO__"), "The manager must enable Pro mode before its renderer starts");
 assert(demoManagerHtml.includes("UCP_DEMO_SELECT_TAB"), "The warmed manager must switch tabs without reloading its iframe");
+assert(demoManagerHtml.includes("driveQuickSyncControl.css"), "The Drive quick-sync renderer needs its component stylesheet");
+assert(demoManagerHtml.includes("data-manager-action=\"open-tool\""), "The demo manager must intercept tool execution at the interaction boundary");
+
+for (const language of languages) {
+  for (const page of ["demo", "faq", "privacy", "terms"]) {
+    const route = language === "en"
+      ? path.join(root, "ultimate-clipboard-pro", page, "index.html")
+      : path.join(root, language, "ultimate-clipboard-pro", page, "index.html");
+    const html = fs.readFileSync(route, "utf8");
+    const menu = html.match(/<div class="language-menu-panel"[\s\S]*?<\/div>/)?.[0] || "";
+    assert.strictEqual((menu.match(/class="language-menu-option"/g) || []).length, 16, `${language}/${page} must expose all 16 languages`);
+    if (page === "demo") assert(html.includes("ucp-demo-launcher-preboot"), `${language} demo needs a parser-rendered launcher fallback`);
+  }
+}
 
 console.log(`Validated Ultimate Clipboard Pro demo runtime in ${languages.length} languages.`);

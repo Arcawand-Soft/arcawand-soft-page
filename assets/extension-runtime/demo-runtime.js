@@ -1473,6 +1473,10 @@ test("language menu routes to English product page", async ({ page }) => {
       if (type === "MCP_DODO_GET_LICENSE_STATUS") return { ok: true, data: { isPro: true, licenseStatus: "active", dodoEnv: "live", plan: "pro" } };
       if (type === "MCP_DRIVE_GET_STATUS") return { ok: true, data: { connected: false, syncEnabled: false } };
       if (type === "MCP_OPEN_MANAGER") {
+        if (message.surface === "tools" && message.toolId) {
+          callbacks.blockTool?.(message);
+          return { ok: true, data: { opened: false, blocked: true } };
+        }
         callbacks.openManager?.(message);
         return { ok: true };
       }

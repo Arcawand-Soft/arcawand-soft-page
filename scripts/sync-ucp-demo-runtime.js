@@ -47,6 +47,13 @@ function enableDemoOnlyProHook() {
   if (!source.includes(hook.trim())) fs.writeFileSync(target, source.replace(anchor, `${hook}${anchor}`), "utf8");
 }
 
+function isolateDemoFloatingHost() {
+  const target = path.join(runtimeRoot, "content", "contentScript.js");
+  const source = fs.readFileSync(target, "utf8");
+  if (!source.includes("mcp-floating-host")) throw new Error("Unable to locate the canonical floating host id");
+  fs.writeFileSync(target, source.replaceAll("mcp-floating-host", "ucp-demo-floating-host"), "utf8");
+}
+
 // The public demo deliberately reuses the extension's production renderers.
 // Synchronizing the public renderer directories prevents UI drift. OCR model
 // binaries are intentionally excluded: the website demo never runs OCR and
@@ -55,6 +62,7 @@ copyDirectory("shared", "shared", (source) => !source.replace(/\\/g, "/").includ
 enableDemoOnlyProHook();
 removeExcludedRuntimeDirectory(path.join("shared", "vendor", "tesseract"));
 copy(path.join("content", "contentScript.js"));
+isolateDemoFloatingHost();
 copy(path.join("content", "floatingPanel.css"));
 copy(path.join("sidepanel", "sidepanel.js"));
 copy(path.join("sidepanel", "sidepanel.css"));

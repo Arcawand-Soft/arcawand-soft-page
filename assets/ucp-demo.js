@@ -6,7 +6,7 @@
 
   const runtimeBase = "/assets/extension-runtime/";
   const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
-  const demoFloatingHostId = "mcp-floating-host";
+  const demoFloatingHostId = "ucp-demo-floating-host";
   let managerShell = null;
   let managerFrame = null;
   let managerReady = false;
@@ -90,6 +90,8 @@
   }
 
   function renderImmediateLauncher() {
+    const existing = document.querySelector(".ucp-demo-launcher-preboot");
+    if (existing) return existing;
     const launcher = document.createElement("aside");
     launcher.className = "ucp-demo-launcher-preboot";
     launcher.setAttribute("dir", "ltr");
@@ -126,8 +128,6 @@
   }
 
   function prepareIsolatedDemoHost() {
-    const existing = document.getElementById(demoFloatingHostId);
-    if (existing && existing.dataset.ucpDemoOwned !== "true") existing.remove();
     const observer = new MutationObserver(() => {
       const host = document.getElementById(demoFloatingHostId);
       if (host && host.dataset.ucpDemoOwned !== "true") host.dataset.ucpDemoOwned = "true";
@@ -135,6 +135,30 @@
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
     return observer;
+  }
+
+  const toolBlockedByLang = {
+    en: ["Tool unavailable in demo mode", "You can browse the tools catalog, but tools cannot be run from the website demo."],
+    fr: ["Outil indisponible en mode démo", "Vous pouvez parcourir le catalogue, mais les outils ne peuvent pas être exécutés depuis la démo du site."],
+    es: ["Herramienta no disponible en modo demo", "Puedes explorar el catálogo, pero las herramientas no se pueden ejecutar desde la demo del sitio."],
+    it: ["Strumento non disponibile in modalità demo", "Puoi esplorare il catalogo, ma gli strumenti non possono essere eseguiti dalla demo del sito."],
+    de: ["Werkzeug im Demo-Modus nicht verfügbar", "Sie können den Katalog ansehen, Werkzeuge aber nicht in der Website-Demo ausführen."],
+    ro: ["Instrument indisponibil în modul demo", "Puteți consulta catalogul, dar instrumentele nu pot fi rulate din demonstrația site-ului."],
+    pt: ["Ferramenta indisponível no modo de demonstração", "Pode explorar o catálogo, mas as ferramentas não podem ser executadas na demonstração do site."],
+    ar: ["الأداة غير متاحة في الوضع التجريبي", "يمكنك تصفح كتالوج الأدوات، لكن لا يمكن تشغيلها من العرض التجريبي للموقع."],
+    zh: ["演示模式下无法使用工具", "您可以浏览工具目录，但不能在网站演示中运行工具。"],
+    ja: ["デモモードではツールを使用できません", "ツール一覧は閲覧できますが、サイトのデモから実行することはできません。"],
+    ru: ["Инструмент недоступен в деморежиме", "Каталог инструментов можно просматривать, но запускать их в демоверсии сайта нельзя."],
+    nl: ["Tool niet beschikbaar in demomodus", "U kunt de toolcatalogus bekijken, maar tools kunnen niet vanuit de websitedemo worden uitgevoerd."],
+    pl: ["Narzędzie niedostępne w trybie demonstracyjnym", "Możesz przeglądać katalog, ale narzędzi nie można uruchamiać w demonstracji witryny."],
+    tr: ["Araç demo modunda kullanılamıyor", "Araç kataloğuna göz atabilirsiniz, ancak araçlar site demosundan çalıştırılamaz."],
+    ko: ["데모 모드에서는 도구를 사용할 수 없습니다", "도구 카탈로그는 볼 수 있지만 웹사이트 데모에서는 도구를 실행할 수 없습니다."],
+    hi: ["डेमो मोड में टूल उपलब्ध नहीं है", "आप टूल कैटलॉग देख सकते हैं, लेकिन वेबसाइट डेमो से टूल चला नहीं सकते।"]
+  };
+
+  function showToolBlocked() {
+    const [blockedTitle, blocked] = toolBlockedByLang[resolvePageLanguage()] || toolBlockedByLang.en;
+    showBlocked({ ...currentCopy(), blockedTitle, blocked });
   }
 
   function loadScript(src) {
@@ -232,7 +256,7 @@
     managerFrame = document.createElement("iframe");
     managerFrame.className = "ucp-real-demo-manager-frame";
     managerFrame.title = "Ultimate Clipboard Pro demo manager";
-    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-demo-fast-pro&lang=${encodeURIComponent(language)}&tab=text`;
+    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-demo-isolated-v2&lang=${encodeURIComponent(language)}&tab=text`;
     managerFrame.addEventListener("load", () => { managerReady = true; }, { once: true });
     managerShell.append(managerFrame);
     managerShell.addEventListener("wheel", (event) => {
@@ -265,15 +289,16 @@
     if (event.origin !== window.location.origin) return;
     if (event.data?.type === "UCP_DEMO_CLOSE_MANAGER") closeManager();
     if (event.data?.type === "UCP_DEMO_BLOCKED") showBlocked();
+    if (event.data?.type === "UCP_DEMO_TOOL_BLOCKED") showToolBlocked();
   });
 
   let prebootLauncher = desktopQuery.matches ? renderImmediateLauncher() : null;
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-demo-fast-pro`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-demo-isolated-v2`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-demo-fast-pro`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-demo-isolated-v2`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -283,7 +308,8 @@
       openManager,
       closeManager,
       showBlocked,
-      openTools: openDemoTools
+      openTools: openDemoTools,
+      blockTool: showToolBlocked
     });
     bridge.installChromeMock();
     window.__UCP_DEMO_BRIDGE__ = bridge;
@@ -291,7 +317,7 @@
     const demoHostObserver = prepareIsolatedDemoHost();
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
     window.UCP_DEMO_RUNTIME.forceDemoProRuntime();
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-demo-fast-pro`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-demo-isolated-v2`);
 
     const floatingHost = await waitForFloatingHost();
     demoHostObserver.disconnect();
