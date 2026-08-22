@@ -2,6 +2,12 @@
   min-height: 100vh;
 }
 
+html.ucp-demo-surface-open,
+html.ucp-demo-surface-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 .ucp-demo-page-grid {
   align-items: start;
 }
@@ -208,12 +214,14 @@
   background: rgba(0, 0, 0, .48);
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
   transition: opacity .18s ease;
 }
 
 .ucp-real-demo-manager-shell.is-visible {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
 }
 
 .ucp-real-demo-manager-frame {

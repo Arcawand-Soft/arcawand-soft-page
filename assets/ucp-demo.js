@@ -8,6 +8,8 @@
   const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
   const demoFloatingHostId = "mcp-floating-host";
   let managerShell = null;
+  let managerFrame = null;
+  let managerReady = false;
   let blockedDialog = null;
   const desktopQuery = window.matchMedia("(min-width: 1100px) and (hover: hover) and (pointer: fine)");
   const localCopyByLang = {
@@ -106,20 +108,33 @@
 
   function waitForFloatingHost(timeoutMs = 5000) {
     const existing = document.getElementById(demoFloatingHostId);
-    if (existing) return Promise.resolve(existing);
+    if (existing?.dataset.ucpDemoOwned === "true") return Promise.resolve(existing);
     return new Promise((resolve) => {
       const observer = new MutationObserver(() => {
         const host = document.getElementById(demoFloatingHostId);
-        if (!host) return;
+        if (!host || host.dataset.ucpDemoOwned !== "true") return;
         observer.disconnect();
         resolve(host);
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
       window.setTimeout(() => {
         observer.disconnect();
-        resolve(document.getElementById(demoFloatingHostId));
+        const host = document.getElementById(demoFloatingHostId);
+        resolve(host?.dataset.ucpDemoOwned === "true" ? host : null);
       }, timeoutMs);
     });
+  }
+
+  function prepareIsolatedDemoHost() {
+    const existing = document.getElementById(demoFloatingHostId);
+    if (existing && existing.dataset.ucpDemoOwned !== "true") existing.remove();
+    const observer = new MutationObserver(() => {
+      const host = document.getElementById(demoFloatingHostId);
+      if (host && host.dataset.ucpDemoOwned !== "true") host.dataset.ucpDemoOwned = "true";
+      if (host?.dataset.ucpDemoOwned === "true") observer.disconnect();
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+    return observer;
   }
 
   function loadScript(src) {
@@ -204,10 +219,27 @@
   function closeManager() {
     if (!managerShell) return;
     managerShell.classList.remove("is-visible");
-    window.setTimeout(() => {
-      managerShell?.remove();
-      managerShell = null;
-    }, 180);
+    managerShell.setAttribute("aria-hidden", "true");
+    document.documentElement.classList.remove("ucp-demo-surface-open");
+  }
+
+  function preloadManager(language = "en") {
+    if (managerShell) return managerShell;
+    managerShell = document.createElement("section");
+    managerShell.className = "ucp-real-demo-manager-shell";
+    managerShell.setAttribute("aria-label", "Ultimate Clipboard Pro demo manager");
+    managerShell.setAttribute("aria-hidden", "true");
+    managerFrame = document.createElement("iframe");
+    managerFrame.className = "ucp-real-demo-manager-frame";
+    managerFrame.title = "Ultimate Clipboard Pro demo manager";
+    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-demo-fast-pro&lang=${encodeURIComponent(language)}&tab=text`;
+    managerFrame.addEventListener("load", () => { managerReady = true; }, { once: true });
+    managerShell.append(managerFrame);
+    managerShell.addEventListener("wheel", (event) => {
+      if (event.target === managerShell) event.preventDefault();
+    }, { passive: false });
+    document.body.append(managerShell);
+    return managerShell;
   }
 
   function openManager(message = {}) {
@@ -215,25 +247,18 @@
     const floatingPanelRoot = document.getElementById(demoFloatingHostId)?.shadowRoot;
     floatingPanelRoot?.querySelector("[data-action='close-panel']")?.click();
     floatingPanelRoot?.querySelector(".mcp-panel")?.classList.add("is-minimized");
-    if (!managerShell) {
-      managerShell = document.createElement("section");
-      managerShell.className = "ucp-real-demo-manager-shell";
-      managerShell.setAttribute("aria-label", "Ultimate Clipboard Pro demo manager");
-
-      const frame = document.createElement("iframe");
-      frame.className = "ucp-real-demo-manager-frame";
-      frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-production-v2&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
-      managerShell.append(frame);
-      document.body.append(managerShell);
-      window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
-      return;
-    }
-    const frame = managerShell.querySelector("iframe");
-    if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-production-v2&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
-    }
+    preloadManager(lang);
+    managerShell.setAttribute("aria-hidden", "false");
+    document.documentElement.classList.add("ucp-demo-surface-open");
+    if (managerReady) managerFrame?.contentWindow?.postMessage({ type: "UCP_DEMO_SELECT_TAB", mediaType: message.mediaType || "text" }, location.origin);
     managerShell.classList.add("is-visible");
+  }
+
+  function openDemoTools() {
+    openManager({ mediaType: "text" });
+    const revealTools = () => managerFrame?.contentWindow?.postMessage({ type: "UCP_DEMO_OPEN_TOOLS" }, location.origin);
+    if (managerReady) revealTools();
+    else managerFrame?.addEventListener("load", revealTools, { once: true });
   }
 
   window.addEventListener("message", (event) => {
@@ -246,9 +271,9 @@
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-production-v2`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-demo-fast-pro`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-production-v2`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-demo-fast-pro`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -258,17 +283,23 @@
       openManager,
       closeManager,
       showBlocked,
-      openTools: showBlocked
+      openTools: openDemoTools
     });
     bridge.installChromeMock();
     window.__UCP_DEMO_BRIDGE__ = bridge;
 
+    const demoHostObserver = prepareIsolatedDemoHost();
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-production-v2`);
+    window.UCP_DEMO_RUNTIME.forceDemoProRuntime();
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-demo-fast-pro`);
 
     const floatingHost = await waitForFloatingHost();
+    demoHostObserver.disconnect();
     installDemoDirectionGuard(floatingHost);
     if (floatingHost) requestAnimationFrame(() => requestAnimationFrame(() => prebootLauncher?.remove()));
+    const warmManager = () => preloadManager(language);
+    if ("requestIdleCallback" in window) window.requestIdleCallback(warmManager, { timeout: 1200 });
+    else window.setTimeout(warmManager, 250);
 
     root.dataset.ucpDemoRuntime = "real-extension";
   } catch (error) {

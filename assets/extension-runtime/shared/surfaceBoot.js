@@ -140,6 +140,7 @@
       loadScript("shared/snippetTemplateRepository.js"),
       surface !== "options" ? loadScript("shared/quickSettingsMenu.js") : Promise.resolve()
     ]);
+    if (globalThis.__UCP_DEMO_FORCE_PRO__) globalThis.UCP_DEMO_RUNTIME?.forceDemoProRuntime?.();
     if (surface === "manager") await loadScript("shared/classifier.js");
     await loadScript("shared/storage.js");
     if (surface === "options") {

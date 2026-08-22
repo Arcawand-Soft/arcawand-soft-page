@@ -62,5 +62,17 @@ assert(/[\u0600-\u06ff]/.test(arabicState.items[0].content), "Arabic captures we
 const demoScript = fs.readFileSync(path.join(root, "assets", "ucp-demo.js"), "utf8");
 assert(demoScript.includes('host.setAttribute("dir", "ltr")'), "Floating demo host needs an explicit LTR boundary");
 assert(demoScript.includes("text-align: left !important"), "Arabic demo content must remain left aligned");
+assert(demoScript.includes("preloadManager"), "The manager must be warmed before its first opening");
+assert(!demoScript.includes("managerShell?.remove()"), "Closing the manager must preserve its warmed iframe");
+assert(demoScript.includes("ucp-demo-surface-open"), "An open demo surface must lock the document behind it");
+assert(demoScript.includes("prepareIsolatedDemoHost"), "The website demo must not reuse a host injected by the installed extension");
+assert(demoScript.includes("ucpDemoOwned"), "The demo launcher host must be explicitly identifiable");
+assert(demoScript.includes("openDemoTools"), "The launcher tools button must open the Pro tools catalog in the demo");
+assert(runtimeSource.includes("forceDemoProRuntime"), "The isolated demo runtime must expose a deterministic Pro capability gate");
+assert(runtimeSource.includes("Promise.all("), "Shared demo dependencies must not load as one long network waterfall");
+
+const demoManagerHtml = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-sidepanel.html"), "utf8");
+assert(demoManagerHtml.includes("__UCP_DEMO_FORCE_PRO__"), "The manager must enable Pro mode before its renderer starts");
+assert(demoManagerHtml.includes("UCP_DEMO_SELECT_TAB"), "The warmed manager must switch tabs without reloading its iframe");
 
 console.log(`Validated Ultimate Clipboard Pro demo runtime in ${languages.length} languages.`);

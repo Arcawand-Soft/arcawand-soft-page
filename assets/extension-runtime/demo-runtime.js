@@ -1505,7 +1505,8 @@ test("language menu routes to English product page", async ({ page }) => {
       }
       if (type === "MCP_FETCH_IMAGE_AS_DATA_URL") return { ok: true, dataUrl: message.url || "", data: { dataUrl: message.url || "" } };
       if (type === "MCP_OPEN_TOOLS_OVERLAY") {
-        return { ok: false, error: "Demo manager should open its local tools window." };
+        callbacks.openTools?.();
+        return { ok: true };
       }
       if (/COPY|CREATE|DELETE|OPEN_OPTIONS|OPEN_SOURCE|CAPTURE|DRIVE|DODO|RUN_OCR|START_|CLEAR|RESTORE|ACTIVATE|VALIDATE|RESET|SEARCH_OVERLAY/.test(type)) {
         return showBlocked();
@@ -1572,10 +1573,19 @@ test("language menu routes to English product page", async ({ page }) => {
     });
   }
 
+  function forceDemoProRuntime() {
+    global.MCP = global.MCP || {};
+    global.MCP.currentPlan = () => "pro";
+    global.MCP.isProPlan = () => true;
+    global.MCP.canUseFeature = () => true;
+    global.MCP.canUseTool = () => true;
+    global.MCP.canCreateCapture = () => true;
+  }
+
   async function loadSharedScripts(language = resolveLanguage()) {
-    const scripts = [
+    await loadScript(`${runtimeBase}shared/constants.js`);
+    const coreScripts = [
       "shared/toolMetadata.js",
-      "shared/constants.js",
       "shared/utils.js",
       "shared/security.js",
       "shared/textVisuals.js",
@@ -1583,8 +1593,9 @@ test("language menu routes to English product page", async ({ page }) => {
       "shared/locales/en.js",
       "shared/locales/categorySlugs.js"
     ];
-    if (language !== "en") scripts.push(`shared/locales/${language}.js`);
-    scripts.push(
+    if (language !== "en") coreScripts.push(`shared/locales/${language}.js`);
+    await Promise.all(coreScripts.map((script) => loadScript(`${runtimeBase}${script}`)));
+    const scripts = [
       "shared/i18n.js",
       "shared/dialogKeyboard.js",
       "shared/dodoConfig.js",
@@ -1608,8 +1619,9 @@ test("language menu routes to English product page", async ({ page }) => {
       "shared/pageMarkdownCapture.js",
       "shared/previewAutoScroll.js",
       "shared/metaOverflowMarquee.js"
-    );
+    ];
     for (const script of scripts) await loadScript(`${runtimeBase}${script}`);
+    forceDemoProRuntime();
     // The installed extension excludes these routes to avoid drawing over the
     // website simulation. This isolated demo runtime is the simulation itself.
     global.MCP.DEFAULT_EXCLUDED_DEMO_URLS = [];
@@ -1621,6 +1633,7 @@ test("language menu routes to English product page", async ({ page }) => {
     resolveLanguage,
     createDemoState,
     makeStateBridge,
+    forceDemoProRuntime,
     loadSharedScripts,
     loadScript,
     copyByLang

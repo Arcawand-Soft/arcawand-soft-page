@@ -38,11 +38,21 @@ function removeExcludedRuntimeDirectory(relativeTarget) {
   fs.rmSync(target, { recursive: true, force: true });
 }
 
+function enableDemoOnlyProHook() {
+  const target = path.join(runtimeRoot, "shared", "surfaceBoot.js");
+  const source = fs.readFileSync(target, "utf8");
+  const anchor = "    if (surface === \"manager\") await loadScript(\"shared/classifier.js\");";
+  const hook = "    if (globalThis.__UCP_DEMO_FORCE_PRO__) globalThis.UCP_DEMO_RUNTIME?.forceDemoProRuntime?.();\n";
+  if (!source.includes(anchor)) throw new Error("Unable to locate the manager boot hook in surfaceBoot.js");
+  if (!source.includes(hook.trim())) fs.writeFileSync(target, source.replace(anchor, `${hook}${anchor}`), "utf8");
+}
+
 // The public demo deliberately reuses the extension's production renderers.
 // Synchronizing the public renderer directories prevents UI drift. OCR model
 // binaries are intentionally excluded: the website demo never runs OCR and
 // shipping them would add tens of megabytes to every deployment.
 copyDirectory("shared", "shared", (source) => !source.replace(/\\/g, "/").includes("shared/vendor/tesseract"));
+enableDemoOnlyProHook();
 removeExcludedRuntimeDirectory(path.join("shared", "vendor", "tesseract"));
 copy(path.join("content", "contentScript.js"));
 copy(path.join("content", "floatingPanel.css"));

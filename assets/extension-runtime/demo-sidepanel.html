@@ -20,10 +20,10 @@
         document.documentElement.lang = language;
         document.documentElement.dir = "ltr";
         document.documentElement.style.direction = "ltr";
-        if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260822-production-v2"><\/script>`);
+        if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260822-demo-fast-pro"><\/script>`);
       })();
     </script>
-    <script src="../demo-runtime.js?v=20260822-production-v2"></script>
+    <script src="../demo-runtime.js?v=20260822-demo-fast-pro"></script>
     <script>
       (function installDemoManagerBridge() {
         const params = new URLSearchParams(location.search);
@@ -37,6 +37,7 @@
         });
         bridge.installChromeMock();
         window.__UCP_DEMO_BRIDGE__ = bridge;
+        window.__UCP_DEMO_FORCE_PRO__ = true;
         window.close = () => parent.postMessage({ type: "UCP_DEMO_CLOSE_MANAGER" }, location.origin);
       })();
     </script>
@@ -130,9 +131,12 @@
               </div>
             </div>
             <nav id="categoryList" class="category-list" aria-label="Categories"></nav>
+            <div id="managerDriveQuickSync" class="manager-drive-quick-sync-host"></div>
           </aside>
 
-          <section class="content-pane">
+          <section class="content-pane" id="managerContentPane">
+            <div class="content-pane-flipper">
+            <section class="content-pane-face content-pane-front" aria-label="Capture management" aria-hidden="false">
             <div class="content-pane-head">
               <div id="currentViewTitleSlot" class="current-view-title-slot"></div>
               <section id="imageViewModes" class="view-modes" hidden aria-label="Image display">
@@ -155,6 +159,26 @@
               <img class="floating-montage-icon" src="../assets/icons/montage-lightmod.png" alt="" aria-hidden="true">
               <span data-role="montage-button-label">Montage</span>
             </button>
+            </section>
+            <section id="managerMontageWorkspace" class="content-pane-face content-pane-back manager-montage-workspace" aria-hidden="true" inert>
+              <header class="manager-montage-workspace-head">
+                <div><strong data-role="montage-title">Text montage</strong><p data-role="montage-subtitle"></p></div>
+                <button type="button" class="manager-montage-workspace-close" data-manager-action="close-montage" aria-label="Close">&times;</button>
+              </header>
+              <div class="manager-montage-layout">
+                <aside class="manager-montage-source">
+                  <div class="manager-montage-section-head"><strong data-role="montage-available"></strong><span data-role="montage-source-count"></span></div>
+                  <div id="managerMontageAvailable" class="manager-montage-list"></div>
+                </aside>
+                <section class="manager-montage-chain">
+                  <div class="manager-montage-section-head"><strong data-role="montage-chain"></strong><span data-role="montage-count"></span></div>
+                  <div class="manager-montage-tools"><label><span data-role="montage-format-label"></span><select id="managerMontageFormat"><option value="plain"></option><option value="numbered"></option><option value="bullets"></option><option value="sections"></option><option value="markdown"></option><option value="spaced"></option></select></label><button type="button" data-manager-action="open-montage-final-editor"></button></div>
+                  <div id="managerMontageChain" class="manager-montage-list is-chain"></div>
+                  <footer><button type="button" data-manager-action="clear-montage"></button><button type="button" data-manager-action="classify-montage"></button><button type="button" class="primary" data-manager-action="copy-montage"></button></footer>
+                </section>
+              </div>
+            </section>
+            </div>
           </section>
         </section>
       </section>
@@ -162,6 +186,15 @@
 
     <script src="../shared/surfaceBoot.js" data-surface="manager"></script>
     <script>
+      window.addEventListener("message", (event) => {
+        if (event.origin !== location.origin) return;
+        if (event.data?.type === "UCP_DEMO_SELECT_TAB") {
+          const tab = event.data.mediaType;
+          const button = tab === "image" ? document.getElementById("imageTab") : tab === "dev" ? document.getElementById("devTab") : document.getElementById("textTab");
+          button?.click();
+        }
+        if (event.data?.type === "UCP_DEMO_OPEN_TOOLS") document.getElementById("openTools")?.click();
+      });
       window.addEventListener("load", () => {
         const tab = new URLSearchParams(location.search).get("tab");
         const button = tab === "image" ? document.getElementById("imageTab") : tab === "dev" ? document.getElementById("devTab") : document.getElementById("textTab");
