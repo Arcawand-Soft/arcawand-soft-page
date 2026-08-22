@@ -1610,6 +1610,9 @@ test("language menu routes to English product page", async ({ page }) => {
       "shared/metaOverflowMarquee.js"
     );
     for (const script of scripts) await loadScript(`${runtimeBase}${script}`);
+    // The installed extension excludes these routes to avoid drawing over the
+    // website simulation. This isolated demo runtime is the simulation itself.
+    global.MCP.DEFAULT_EXCLUDED_DEMO_URLS = [];
   }
 
   global.UCP_DEMO_RUNTIME = {

@@ -7,6 +7,7 @@ const root = path.resolve(__dirname, "..");
 const extensionRoot = path.resolve(root, "..", "multi-copy-paste", "extension");
 const languages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
 const runtimeSource = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-runtime.js"), "utf8");
+assert.ok(runtimeSource.includes("global.MCP.DEFAULT_EXCLUDED_DEMO_URLS = []"), "Demo runtime must bypass extension-only demo URL exclusions");
 
 const proIcon = fs.readFileSync(path.join(root, "assets", "extension-runtime", "assets", "icons", "pro-icon.png"));
 const canonicalProIcon = fs.readFileSync(path.join(extensionRoot, "assets", "icons", "pro-icon.png"));
