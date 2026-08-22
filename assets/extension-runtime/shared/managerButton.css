@@ -1,0 +1,54 @@
+#openSidePanel {
+  appearance: none !important;
+  box-sizing: border-box !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: 0 0 34px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--utility-action-border, rgba(255, 255, 255, 0.16)) !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  background: var(--utility-action-bg, #38475a) !important;
+  background-color: var(--utility-action-bg, #38475a) !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  transition: transform 140ms ease, opacity 140ms ease, background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease !important;
+}
+
+#openSidePanel:hover,
+#openSidePanel:focus-visible {
+  color: #fff !important;
+  border-color: var(--utility-action-hover-border, rgba(255, 255, 255, 0.24)) !important;
+  background: var(--utility-action-hover, #465a72) !important;
+  background-color: var(--utility-action-hover, #465a72) !important;
+  box-shadow: none !important;
+}
+
+#openSidePanel:active {
+  transform: scale(0.92) !important;
+}
+
+#openSidePanel > .manager-arrow-glyph {
+  display: block !important;
+  width: 20px !important;
+  min-width: 20px !important;
+  max-width: 20px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: contain !important;
+  object-position: 50% 50% !important;
+  pointer-events: none !important;
+  transform: none !important;
+}

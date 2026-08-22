@@ -1,11 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const { generateAll: generateUcpLandingPages } = require("./generate-ucp-landing-pages");
+const { applyCurrentProductContent } = require("./update-ucp-current-product-content");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260807-pro-badge";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260807-launcher-match";
+const demoScript = "/assets/ucp-demo.js?v=20260822-current-runtime";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260822-current-runtime";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 const socialImageAlt = "Ultimate Clipboard Pro browser extension preview";
 
@@ -976,6 +977,7 @@ function patchSitemap() {
 }
 
 writeProductPages();
+applyCurrentProductContent();
 generateUcpLandingPages();
 [
   ["index.html", "en", 0], ["contact/index.html", "en", 1], ["privacy/index.html", "en", 1],

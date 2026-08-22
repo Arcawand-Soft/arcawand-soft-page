@@ -36,12 +36,32 @@
     dev: 5,
     image: 5
   });
+  let cachedAuthorization = null;
 
   function currentPlan(settings = {}) {
-    const currentEnv = global.MCP?.normalizeDodoEnv?.(settings.dodoEnv || global.MCP?.DODO_ENV || "live") || "live";
-    const licenseEnv = global.MCP?.normalizeDodoEnv?.(settings.licenseDodoEnv || currentEnv) || currentEnv;
-    const hasIntegrityProof = Boolean(settings.licenseProof && settings.licenseProofVersion === "v1");
-    return settings.plan === "pro" && settings.licenseStatus === "active" && licenseEnv === currentEnv && hasIntegrityProof ? "pro" : "free";
+    if (settings.licenseAuthVersion !== "v3" || !settings.licenseAuthorizationToken || !settings.licenseInstallationId) return "free";
+    const cacheKey = [
+      settings.licenseAuthorizationToken,
+      settings.licenseInstallationId,
+      Number(settings.licenseMaxSeenTime || 0)
+    ].join("\n");
+    try {
+      const verificationOptions = {
+        installationId: settings.licenseInstallationId,
+        allowGrace: true,
+        maxSeenTime: Number(settings.licenseMaxSeenTime || 0)
+      };
+      if (
+        cachedAuthorization?.key === cacheKey
+        && global.MCP.isArcawandAuthorizationUsable?.(cachedAuthorization.claims, verificationOptions)
+      ) return "pro";
+      const claims = global.MCP.verifyArcawandLicenseTokenSync(settings.licenseAuthorizationToken, verificationOptions);
+      cachedAuthorization = { key: cacheKey, claims };
+      return "pro";
+    } catch {
+      if (cachedAuthorization?.key === cacheKey) cachedAuthorization = null;
+      return "free";
+    }
   }
 
   function isPro(settings = {}) {

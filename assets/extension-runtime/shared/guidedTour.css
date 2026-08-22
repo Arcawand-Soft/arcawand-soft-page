@@ -1,0 +1,432 @@
+#ucpGuidedTourSpotlight {
+  position: fixed;
+  z-index: 2147483645;
+  pointer-events: none;
+  border: 3px solid var(--accent, #e50914) !important;
+  border-radius: 14px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent, #e50914) 22%, transparent), 0 0 0 9999px rgba(0, 0, 0, .82) !important;
+  transition: inset .24s ease, width .24s ease, height .24s ease;
+}
+
+#ucpGuidedTourCard {
+  position: fixed;
+  z-index: 2147483647;
+  width: min(360px, calc(100vw - 28px));
+  box-sizing: border-box;
+  padding: 18px;
+  color: #172033;
+  background: #fff;
+  border: 2px solid color-mix(in srgb, var(--accent, #e50914) 62%, #172033) !important;
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 24px 60px rgba(0, 0, 0, .52) !important;
+  font: 600 14px/1.45 Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: left;
+  direction: ltr;
+}
+
+.ucp-tour-card::before {
+  content: "";
+  position: absolute;
+  display: none;
+  width: 24px;
+  height: 18px;
+  background: var(--accent, #e50914);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .45));
+  animation: ucp-tour-pointer-pulse 1.35s ease-in-out infinite;
+}
+.ucp-tour-card.has-pointer::before { display: block; }
+
+.ucp-tour-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ucp-tour-card-controls { display: flex; align-items: center; gap: 5px; }
+.ucp-tour-info {
+  display: grid !important;
+  place-items: center !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  padding: 0 !important;
+  color: #344157 !important;
+  background: #e8edf5 !important;
+  border: 1px solid #c5cfdd !important;
+  border-radius: 9px !important;
+  cursor: pointer;
+}
+.ucp-tour-info span,
+.ucp-tour-info-emblem {
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: url("../assets/icons/welcome/help-circle.svg") center / contain no-repeat;
+  mask: url("../assets/icons/welcome/help-circle.svg") center / contain no-repeat;
+}
+.ucp-tour-info:hover { color: #fff !important; background: var(--accent, #e50914) !important; border-color: var(--accent, #e50914) !important; }
+.ucp-tour-info:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #e50914) 45%, white) !important; outline-offset: 2px; }
+#ucpGuidedTourCard .ucp-tour-exit {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  color: #243147 !important;
+  background: #edf1f6 !important;
+  border: 1px solid #9aa8bb !important;
+  border-radius: 9px !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .12) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer;
+}
+#ucpGuidedTourCard .ucp-tour-exit:hover {
+  color: #111827 !important;
+  background: #dce4ee !important;
+  border-color: #718096 !important;
+}
+#ucpGuidedTourCard .ucp-tour-exit:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent, #e50914) 52%, white) !important;
+  outline-offset: 2px;
+}
+
+.ucp-tour-card[data-placement="bottom"]::before { top: -16px; left: var(--tour-arrow, 28px); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.ucp-tour-card[data-placement="top"]::before { bottom: -16px; left: var(--tour-arrow, 28px); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.ucp-tour-card[data-placement="right"]::before { left: -22px; top: var(--tour-arrow, 28px); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.ucp-tour-card[data-placement="left"]::before { right: -22px; top: var(--tour-arrow, 28px); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+.ucp-tour-progress { color: #526078; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.ucp-tour-title { margin: 6px 0 5px; color: inherit; font-size: 18px; line-height: 1.2; }
+.ucp-tour-copy { margin: 0; color: #4b5870; font-weight: 500; }
+.ucp-tour-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 16px; }
+.ucp-tour-actions button {
+  min-height: 40px;
+  padding: 0 16px;
+  color: #172033;
+  background: #e8edf5;
+  border: 1px solid #c5cfdd;
+  border-radius: 10px;
+  font: 700 13px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.ucp-tour-actions .ucp-tour-primary { color: #fff; background: var(--accent, #e50914); border-color: var(--accent, #e50914); }
+.ucp-tour-actions button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #e50914) 45%, white); outline-offset: 2px; }
+.ucp-tour-target { scroll-margin: var(--ucp-tour-scroll-margin, 88px); }
+html[data-resolved-theme="light"] .ucp-tour-actions .ucp-tour-primary,
+html[data-theme="light"] .ucp-tour-actions .ucp-tour-primary,
+body.theme-light .ucp-tour-actions .ucp-tour-primary { color: #fff; background: var(--accent, #e50914); border-color: var(--accent, #e50914); }
+
+html[data-resolved-theme="light"] #ucpGuidedTourSpotlight,
+html[data-theme="light"] #ucpGuidedTourSpotlight,
+body.theme-light #ucpGuidedTourSpotlight {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent, #e50914) 25%, transparent), 0 0 0 9999px rgba(255, 255, 255, .91) !important;
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourCard,
+html[data-theme="light"] #ucpGuidedTourCard,
+body.theme-light #ucpGuidedTourCard {
+  color: #f8fafc;
+  background: #111827;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 68%, #f8fafc) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 24px 60px rgba(15, 23, 42, .34) !important;
+}
+
+html[data-resolved-theme="light"] .ucp-tour-progress,
+html[data-theme="light"] .ucp-tour-progress,
+body.theme-light .ucp-tour-progress,
+html[data-resolved-theme="light"] .ucp-tour-copy,
+html[data-theme="light"] .ucp-tour-copy,
+body.theme-light .ucp-tour-copy { color: #cbd5e1; }
+
+html[data-resolved-theme="light"] #ucpGuidedTourCard .ucp-tour-exit,
+html[data-theme="light"] #ucpGuidedTourCard .ucp-tour-exit,
+body.theme-light #ucpGuidedTourCard .ucp-tour-exit {
+  color: #f8fafc !important;
+  background: #29364a !important;
+  border-color: #64748b !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3) !important;
+}
+html[data-resolved-theme="light"] #ucpGuidedTourCard .ucp-tour-exit:hover,
+html[data-theme="light"] #ucpGuidedTourCard .ucp-tour-exit:hover,
+body.theme-light #ucpGuidedTourCard .ucp-tour-exit:hover { color: #fff !important; background: #3b4a62 !important; border-color: #94a3b8 !important; }
+html[data-resolved-theme="light"] .ucp-tour-actions button,
+html[data-theme="light"] .ucp-tour-actions button,
+body.theme-light .ucp-tour-actions button { color: #f8fafc; background: #253044; border-color: #46536a; }
+
+html[data-resolved-theme="light"] .ucp-tour-info,
+html[data-theme="light"] .ucp-tour-info,
+body.theme-light .ucp-tour-info {
+  color: #e2e8f0 !important;
+  background: #253044 !important;
+  border-color: #46536a !important;
+}
+html[data-resolved-theme="light"] .ucp-tour-info:hover,
+html[data-theme="light"] .ucp-tour-info:hover,
+body.theme-light .ucp-tour-info:hover {
+  color: #fff !important;
+  background: var(--accent, #e50914) !important;
+  border-color: var(--accent, #e50914) !important;
+}
+
+#ucpGuidedTourInfoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  color: #172033;
+  background: rgba(5, 9, 16, .76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font: 500 14px/1.5 Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-align: left;
+  direction: ltr;
+}
+
+#ucpGuidedTourInfoDialog {
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(720px, calc(100vh - 32px));
+  overflow: auto;
+  color: #172033;
+  background: #fff;
+  border: 2px solid color-mix(in srgb, var(--accent, #e50914) 62%, #172033) !important;
+  border-radius: 20px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, .48) !important;
+}
+
+.ucp-tour-info-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 20px 17px;
+  border-bottom: 1px solid #d7dee9;
+}
+.ucp-tour-info-heading { display: flex; align-items: center; min-width: 0; gap: 13px; }
+.ucp-tour-info-emblem {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  color: var(--accent, #e50914);
+}
+.ucp-tour-info-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  color: #36445b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.ucp-tour-info-dialog h2 { margin: 0; color: inherit; font-size: 21px; line-height: 1.2; overflow-wrap: anywhere; }
+.ucp-tour-info-close {
+  display: grid !important;
+  place-items: center !important;
+  width: 38px !important;
+  min-width: 38px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 !important;
+  color: #26344a !important;
+  background: #e8edf5 !important;
+  border: 1px solid #c5cfdd !important;
+  border-radius: 11px !important;
+  font: 500 27px/1 system-ui, sans-serif !important;
+  cursor: pointer;
+}
+.ucp-tour-info-close:hover { color: #fff !important; background: var(--accent, #e50914) !important; border-color: var(--accent, #e50914) !important; }
+.ucp-tour-info-close:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent, #e50914) 45%, white) !important; outline-offset: 2px; }
+.ucp-tour-info-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px 20px 20px;
+}
+.ucp-tour-info-content > section,
+.ucp-tour-info-content > aside {
+  min-width: 0;
+  padding: 15px;
+  background: #f1f4f8;
+  border: 1px solid #d7dee9;
+  border-radius: 13px;
+}
+.ucp-tour-info-content > aside {
+  grid-column: 1 / -1;
+  background: color-mix(in srgb, var(--accent, #e50914) 8%, #f8fafc);
+  border-color: color-mix(in srgb, var(--accent, #e50914) 30%, #d7dee9);
+}
+.ucp-tour-info-content strong { display: block; margin-bottom: 5px; color: #172033; font-size: 13px; }
+.ucp-tour-info-content p { margin: 0; color: #536176; font-weight: 500; overflow-wrap: anywhere; }
+
+html[data-resolved-theme="light"] #ucpGuidedTourInfoOverlay,
+html[data-theme="light"] #ucpGuidedTourInfoOverlay,
+body.theme-light #ucpGuidedTourInfoOverlay { color: #0f172a; background: rgba(255, 255, 255, .82); }
+html[data-resolved-theme="light"] #ucpGuidedTourInfoDialog,
+html[data-theme="light"] #ucpGuidedTourInfoDialog,
+body.theme-light #ucpGuidedTourInfoDialog {
+  color: #1e293b;
+  background: #f8f7f1;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 26%, #e2e8f0) !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, .22) !important;
+}
+html[data-resolved-theme="light"] .ucp-tour-info-header,
+html[data-theme="light"] .ucp-tour-info-header,
+body.theme-light .ucp-tour-info-header { border-color: #cfd5e0; }
+html[data-resolved-theme="light"] .ucp-tour-info-eyebrow,
+html[data-theme="light"] .ucp-tour-info-eyebrow,
+body.theme-light .ucp-tour-info-eyebrow { color: #e2e8f0; }
+html[data-resolved-theme="light"] .ucp-tour-info-content > section,
+html[data-theme="light"] .ucp-tour-info-content > section,
+body.theme-light .ucp-tour-info-content > section { background: #f8f6ef; border-color: #d6dce7; }
+html[data-resolved-theme="light"] .ucp-tour-info-content > aside,
+html[data-theme="light"] .ucp-tour-info-content > aside,
+body.theme-light .ucp-tour-info-content > aside {
+  background: color-mix(in srgb, var(--accent, #e50914) 12%, #f2efeb);
+  border-color: color-mix(in srgb, var(--accent, #e50914) 28%, #d6dce7);
+}
+html[data-resolved-theme="light"] .ucp-tour-info-content strong,
+html[data-theme="light"] .ucp-tour-info-content strong,
+body.theme-light .ucp-tour-info-content strong { color: #1e293b; }
+html[data-resolved-theme="light"] .ucp-tour-info-content p,
+html[data-theme="light"] .ucp-tour-info-content p,
+body.theme-light .ucp-tour-info-content p { color: #475569; }
+html[data-resolved-theme="light"] .ucp-tour-info-close,
+html[data-theme="light"] .ucp-tour-info-close,
+body.theme-light .ucp-tour-info-close { color: #1e293b !important; background: #eef1f7 !important; border-color: #bfc7d8 !important; }
+
+@media (max-width: 560px) {
+  .ucp-tour-info-content { grid-template-columns: 1fr; }
+  .ucp-tour-info-content > aside { grid-column: auto; }
+}
+
+@keyframes ucp-tour-pointer-pulse {
+  0%, 100% { transform: scale(.88); opacity: .82; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucp-tour-spotlight { transition: none; }
+  .ucp-tour-card::before { animation: none; }
+}
+
+/* Final pop-up tone-up for guided-tour surfaces in light mode to keep contrast readable. */
+html[data-resolved-theme="light"] #ucpGuidedTourSpotlight,
+html[data-theme="light"] #ucpGuidedTourSpotlight,
+body.theme-light #ucpGuidedTourSpotlight {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent, #e50914) 24%, transparent), 0 0 0 9999px rgba(255, 255, 255, 0.92) !important;
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourCard,
+html[data-theme="light"] #ucpGuidedTourCard,
+body.theme-light #ucpGuidedTourCard {
+  color: #172033;
+  background: #f8f7f1;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 28%, #cbd5e1) !important;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1), 0 24px 60px rgba(15, 23, 42, 0.24) !important;
+}
+
+html[data-resolved-theme="light"] .ucp-tour-progress,
+html[data-theme="light"] .ucp-tour-progress,
+body.theme-light .ucp-tour-progress,
+html[data-resolved-theme="light"] .ucp-tour-copy,
+html[data-theme="light"] .ucp-tour-copy,
+body.theme-light .ucp-tour-copy {
+  color: #334155;
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourInfoOverlay,
+html[data-theme="light"] #ucpGuidedTourInfoOverlay,
+body.theme-light #ucpGuidedTourInfoOverlay {
+  color: #0f172a;
+  background: rgba(255, 255, 255, .82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourInfoDialog,
+html[data-theme="light"] #ucpGuidedTourInfoDialog,
+body.theme-light #ucpGuidedTourInfoDialog {
+  color: #1e293b;
+  background: #f8f7f1;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 24%, #e2e8f0) !important;
+  box-shadow: 0 24px 68px rgba(15, 23, 42, 0.22) !important;
+}
+/* Final pop-up tone-up (all themes): guided-tour prompts keep readable contrast with accent harmony. */
+html[data-resolved-theme="light"] #ucpGuidedTourSpotlight,
+html[data-theme="light"] #ucpGuidedTourSpotlight,
+body.theme-light #ucpGuidedTourSpotlight {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent, #e50914) 24%, transparent),
+    0 0 0 9999px rgba(255, 255, 255, 0.94) !important;
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourCard,
+html[data-theme="light"] #ucpGuidedTourCard,
+body.theme-light #ucpGuidedTourCard {
+  color: #172033;
+  background: #f8f7f1;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 28%, #cbd5e1) !important;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1), 0 24px 60px rgba(15, 23, 42, 0.24) !important;
+}
+
+html[data-resolved-theme="light"] .ucp-tour-progress,
+html[data-theme="light"] .ucp-tour-progress,
+body.theme-light .ucp-tour-progress,
+html[data-resolved-theme="light"] .ucp-tour-copy,
+html[data-theme="light"] .ucp-tour-copy,
+body.theme-light .ucp-tour-copy {
+  color: #334155;
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourInfoOverlay,
+html[data-theme="light"] #ucpGuidedTourInfoOverlay,
+body.theme-light #ucpGuidedTourInfoOverlay {
+  color: #0f172a;
+  background: rgba(255, 255, 255, .82);
+}
+
+html[data-resolved-theme="light"] #ucpGuidedTourInfoDialog,
+html[data-theme="light"] #ucpGuidedTourInfoDialog,
+body.theme-light #ucpGuidedTourInfoDialog {
+  color: #1e293b;
+  background: #f8f7f1;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 24%, #e2e8f0) !important;
+  box-shadow: 0 24px 68px rgba(15, 23, 42, 0.22) !important;
+}
+
+:root:not([data-resolved-theme="light"]) #ucpGuidedTourSpotlight {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent, #e50914) 28%, transparent),
+    0 0 0 9999px rgba(0, 0, 0, 0.84) !important;
+}
+
+:root:not([data-resolved-theme="light"]) #ucpGuidedTourCard {
+  color: #f8fafc;
+  background: #111827;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 62%, #f8fafc) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 24px 60px rgba(15, 23, 42, 0.34) !important;
+}
+
+:root:not([data-resolved-theme="light"]) .ucp-tour-progress,
+:root:not([data-resolved-theme="light"]) .ucp-tour-copy {
+  color: #cbd5e1 !important;
+}
+
+:root:not([data-resolved-theme="light"]) #ucpGuidedTourInfoOverlay {
+  color: #f8fafc;
+  background: rgba(5, 9, 16, 0.78);
+}
+
+:root:not([data-resolved-theme="light"]) #ucpGuidedTourInfoDialog {
+  color: #f8fafc;
+  background: #111827;
+  border-color: color-mix(in srgb, var(--accent, #e50914) 62%, #cbd5e1) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.56) !important;
+}
+
+:root:not([data-resolved-theme="light"]) .ucp-tour-info-eyebrow { color: #cbd5e1 !important; }
+:root:not([data-resolved-theme="light"]) .ucp-tour-info-content > section,
+:root:not([data-resolved-theme="light"]) .ucp-tour-info-content > aside {
+  background: color-mix(in srgb, #111827 82%, #1e293b 18%);
+  border-color: color-mix(in srgb, var(--accent, #e50914) 24%, #334155) !important;
+}
+
+:root:not([data-resolved-theme="light"]) .ucp-tour-info-content strong { color: #f8fafc !important; }
+:root:not([data-resolved-theme="light"]) .ucp-tour-info-content p { color: #d2dce9 !important; }

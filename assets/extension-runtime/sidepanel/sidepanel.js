@@ -1,5 +1,8 @@
 (function initSidePanel() {
   const { MESSAGE_TYPES } = window.MCP;
+  const managerToolSelectionContextId = crypto.randomUUID();
+  window.MCP.installDialogKeyboardSupport(document);
+  const managerMetaOverflowController = window.MCP.createMetaOverflowMarqueeController(document);
   const REFRESH_EVENTS = new Set([
     MESSAGE_TYPES.ITEM_CREATED,
     MESSAGE_TYPES.ITEM_UPDATED,
@@ -54,8 +57,8 @@
   let editorCategoryDragState = null;
   let managerSearchState = { query: "", selectedIndex: 0, filters: {}, mediaType: "text", dateKey: "", calendarMonth: "", results: [] };
   let managerSearchSelectedRow = null;
-  let managerClassifyState = { item: null, mediaType: "text", query: "" };
-  let montageState = { query: "", itemIds: [], versionIds: {}, edits: {}, format: "plain", finalDraft: "", draggingId: "" };
+  let managerClassifyState = { item: null, mediaType: "text", query: "", mode: "item", montageContent: "", montageTitle: "" };
+  let montageState = { isOpen: false, query: "", itemIds: [], versionIds: {}, edits: {}, format: "plain", finalDraft: "", finalTitle: "", draggingId: "" };
   let montageEditingId = "";
   let montageEditingVersionId = "";
   let createCodeMismatchState = null;
@@ -63,9 +66,18 @@
   let managerMenu = null;
   let managerTextModal = null;
   let managerTextModalReturn = null;
-  let managerToolDragState = null;
-  let managerToolSuppressClickUntil = 0;
-  let managerToolStateSaveTimer = null;
+  let managerPremiumController = null;
+  let managerDriveQuickSyncController = null;
+  const managerTabContextPromise = chrome.tabs.getCurrent()
+    .then((tab) => Boolean(tab?.id))
+    .catch(() => false);
+  let managerToolsCatalogController = null;
+  let managerToolHistoryController = null;
+  let managerToolStateController = null;
+  let managerToolLayoutController = null;
+  let managerToolWorkspaceView = null;
+  let managerToolCommands = null;
+  let managerToolCollectionRenderers = null;
   let itemDragState = null;
   let customItemDrag = null;
   let suppressManagerReadyPasteClickUntil = 0;
@@ -101,14 +113,17 @@
   const VIRTUAL_IMAGE_OVERSCAN_ROWS = 3;
   const MAX_CAPTURE_VERSIONS = 10;
   const ARCAWAND_SITE_URL = "https://arcawand-soft.com/";
-  const DEVELOPER_SUPPORT_URL = "https://checkout.dodopayments.com/buy/pdt_0NeUVWCjgZlrNxssj70uo?quantity=1";
+  const DEVELOPER_SUPPORT_URL = "https://buymeacoffee.com/arcawandsoft";
   const MANAGER_VIEW_STATE_STORAGE_KEY = "ucp_manager_view_state_v1";
   const MANAGER_FAST_STATE_STORAGE_KEY = "ucp_manager_fast_state_v1";
+  const MANAGER_FAST_STATE_SCHEMA_VERSION = 2;
+  const MANAGER_FAST_STATE_TTL_MS = 15 * 60 * 1000;
+  const MANAGER_EXTENSION_VERSION = chrome.runtime.getManifest().version;
   const MANAGER_FAST_STATE_MAX_ITEMS = 260;
   const MANAGER_FAST_TEXT_LIMIT = 6000;
   const MANAGER_FAST_IMAGE_URL_LIMIT = 160000;
   const MANAGER_VIEW_STATE_SOURCE_ID = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const previewScrollAnimations = new WeakMap();
+  const previewAutoScroller = window.MCP.createPreviewAutoScrollController({ textSelector: ".item-preview-text" });
   const previewOverflowQueue = new Set();
   const inlineTitleSaveTimers = new Map();
   let previewOverflowRaf = 0;
@@ -117,13 +132,16 @@
   let loadStateRerunRequested = false;
   let managerViewStateSaveTimer = 0;
   let managerFastStateSaveTimer = 0;
+  let managerRenderRaf = 0;
+  let optimisticRefreshSuppressUntil = 0;
+  const optimisticRefreshStorageKeys = new Set();
   let pendingManagerViewModeSettings = {};
   let pendingManagerViewModeSettingsUntil = 0;
   let restoredFastState = false;
   let restoredManagerViewState = false;
   let fullStateLoaded = false;
-  let pendingManagerItemsScrollTop = 0;
-  let pendingManagerCategoryScrollTop = 0;
+  let pendingManagerItemsScrollTop = null;
+  let pendingManagerCategoryScrollTop = null;
   let managerViewStateSavedAt = 0;
   let applyingManagerViewState = false;
   const managerItemsScrollTops = { text: 0, dev: 0, image: 0 };
@@ -132,7 +150,10 @@
   let categorySearchRenderRaf = 0;
   let managerSearchDetailRenderRaf = 0;
   let managerSearchDetailRenderTimer = 0;
+  let managerSearchInputRaf = 0;
+  let managerSearchReturnFocus = null;
   let suppressInlineTitleRefreshUntil = 0;
+  let managerRealtimePatchUntil = 0;
   let sourceTimelineSortMode = "date";
   let sourceTimelineMediaType = "text";
   let sourceTimelineRenderJob = null;
@@ -141,62 +162,6 @@
   const expandedCategories = new Set(["general"]);
   const editorExpandedCategories = new Set(["general"]);
   const managerClassifierExpanded = new Set(["general", "image-general"]);
-
-  function isDemoMode() {
-    return Boolean(state.settings?.demoMode);
-  }
-
-  function showDemoBlockedNotice() {
-    chrome.runtime.sendMessage({ type: "MCP_DEMO_BLOCKED" }).catch(() => {
-      showManagerToast(t("common.error"));
-    });
-  }
-
-  function blockDemoAction(event) {
-    if (!isDemoMode()) return false;
-    event?.preventDefault?.();
-    event?.stopPropagation?.();
-    showDemoBlockedNotice();
-    return true;
-  }
-
-  const DEMO_BLOCKED_MANAGER_ACTIONS = new Set([
-    "bulk-enable",
-    "bulk-select-all",
-    "bulk-deselect-all",
-    "bulk-delete",
-    "open-tool",
-    "copy-emoji",
-    "copy-special-character",
-    "start-color-pick",
-    "start-image-text-capture",
-    "search-word-replacer",
-    "replace-word-replacer",
-    "copy-color-format",
-    "copy-tool-output",
-    "capture-tool-output",
-    "empty-trash",
-    "save-editor",
-    "open-editor-classifier",
-    "save-create-version",
-    "create-current-item",
-    "save-create-item",
-    "save-create-code-detected",
-    "save-create-code-current",
-    "copy-montage",
-    "clear-montage",
-    "save-montage-as-text",
-    "add-all-montage",
-    "polish-montage",
-    "copy-montage-final-editor",
-    "save-montage-final-editor",
-    "save-montage-edit",
-    "add-montage-item",
-    "remove-montage-item",
-    "edit-montage-item",
-    "move-montage-up",
-    "move-montage-down"
-  ]);
 
   function createEmptyBulkSelectionState() {
     return {
@@ -225,17 +190,16 @@
     textViewModes: document.getElementById("textViewModes"),
     currentViewTitleSlot: document.getElementById("currentViewTitleSlot"),
     categoryPaneTitle: document.getElementById("categoryPaneTitle"),
-    openManagerMenu: document.getElementById("openManagerMenu")
+    openManagerMenu: document.getElementById("openManagerMenu"),
+    driveQuickSync: document.getElementById("managerDriveQuickSync")
   };
-  const ABOUT_KEYS = [
-    "popup.aboutIntro",
-    "popup.aboutCapture",
-    "popup.aboutImages",
-    "popup.aboutSearch",
-    "popup.aboutSecurity",
-    "popup.aboutBackup",
-    "popup.aboutDrive",
-    "popup.aboutLicense"
+  const ABOUT_SECTIONS = [
+    { title: "popup.aboutSectionIdentity", keys: ["popup.aboutVersion", "popup.aboutIntro"] },
+    { title: "popup.aboutSectionCapture", keys: ["popup.aboutCapture", "popup.aboutImages", "popup.aboutVersioning"] },
+    { title: "popup.aboutSectionFind", keys: ["popup.aboutSearch", "popup.aboutMontage"] },
+    { title: "popup.aboutSectionControl", keys: ["popup.aboutSecurity", "popup.aboutBackup", "popup.aboutDrive", "popup.aboutMultiDevice"] },
+    { title: "popup.aboutSectionTechnical", keys: ["popup.aboutTechnical", "popup.aboutCompatibility", "popup.aboutLicense"] },
+    { title: "popup.aboutSectionSupport", keys: ["popup.aboutSupport"] }
   ];
   const PRIVACY_KEYS = [
     "popup.privacyIntro",
@@ -246,26 +210,46 @@
     "popup.privacyPermissions",
     "popup.privacyControl",
     "popup.privacyDodo",
+    "popup.privacyMultiDevice",
     "popup.privacyContact"
   ];
   const PRO_KEYS = [
     "popup.proIntro"
   ];
   const FAQ_IDS = [
-    "01", "02", "05", "06", "07", "10", "12", "15",
-    "17", "18", "20", "24", "34", "41", "42", "43",
-    "45", "50", "61", "63", "64", "65", "66", "75"
+    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "76", "77"
   ];
   const FAQ_KEYS = FAQ_IDS.map((id) => [`faq.${id}.q`, `faq.${id}.a`]);
 
   restoreManagerViewState();
   restoreManagerFastState();
+  notifyManagerReady();
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadState, { once: true });
   else loadState();
-  chrome.runtime.onMessage.addListener((message) => {
+  chrome.runtime.onMessage.addListener((message, sender) => {
+    if (message?.type === MESSAGE_TYPES.DRIVE_SYNC_UPDATED) {
+      managerDriveQuickSyncController?.refresh();
+    }
+    if (message?.type === MESSAGE_TYPES.TOOL_SELECTION_RESULT
+      && sender?.id === chrome.runtime.id
+      && !sender?.tab
+      && message.sourceContextId === managerToolSelectionContextId) {
+      if (message.kind === "colorPicker") applyManagerColorPickResult(message.result || {});
+      if (message.kind === "imageText") applyManagerImageTextResult(message.result || {});
+      return;
+    }
     if (message?.type === MESSAGE_TYPES.ITEM_SAVED || REFRESH_EVENTS.has(message?.type)) {
       if (Date.now() < suppressInlineTitleRefreshUntil && (message?.type === MESSAGE_TYPES.ITEM_UPDATED || message?.type === MESSAGE_TYPES.DEV_UPDATED)) return;
       if (shouldSuppressManagerReadyPasteRefresh(message)) return;
+      if (applyRealtimeManagerPatch(message)) return;
+      if (Date.now() < managerRealtimePatchUntil && [
+        MESSAGE_TYPES.ITEM_SAVED,
+        MESSAGE_TYPES.IMAGE_SAVED,
+        MESSAGE_TYPES.DEV_SAVED,
+        MESSAGE_TYPES.SEARCH_INDEX_UPDATED,
+        MESSAGE_TYPES.STORAGE_REFRESH_REQUIRED
+      ].includes(message?.type)) return;
       scheduleSidePanelRefresh();
     }
   });
@@ -277,12 +261,24 @@
       return;
     }
     const settingsChange = changes[window.MCP.STORAGE_KEYS.SETTINGS];
+    if (settingsChange?.newValue) {
+      window.MCP.configureDateTimeFormatting(Object.assign({}, state.settings || {}, settingsChange.newValue));
+    }
+    if (settingsChange?.newValue && window.MCP.isQuickSettingsOnlyChange(settingsChange.oldValue || {}, settingsChange.newValue || {})) {
+      state.settings = Object.assign({}, state.settings || {}, settingsChange.newValue);
+      window.MCP.applyThemeSettings(state.settings);
+      managerMenu?.querySelector(".ucp-quick-settings")?.refreshQuickSettings?.();
+      managerDriveQuickSyncController?.render();
+      if (settingsChange.oldValue?.theme !== settingsChange.newValue?.theme) render();
+      return;
+    }
     if (settingsChange?.newValue && isVisualSettingsOnlyChange(settingsChange.oldValue || {}, settingsChange.newValue || {})) {
       const viewModeChanged = managerViewModeSettingsChanged(settingsChange.oldValue || {}, settingsChange.newValue || {});
       state.settings = managerSettingsWithPendingViewModes(Object.assign({}, state.settings || {}, settingsChange.newValue || {}));
       applyManagerViewModeSettings(state.settings);
       applyTheme();
-      if (viewModeChanged) render();
+      managerDriveQuickSyncController?.render();
+      if (viewModeChanged || settingsChange.oldValue?.theme !== settingsChange.newValue?.theme) render();
       return;
     }
     const changedKeys = Object.keys(changes);
@@ -291,6 +287,12 @@
       && changedKeys.length === 1
       && (changedKeys[0] === window.MCP.STORAGE_KEYS.ITEMS || changedKeys[0] === window.MCP.STORAGE_KEYS.DEV_ITEMS)) return;
     if (shouldSuppressManagerReadyPasteStorageRefresh(changedKeys)) return;
+    if (shouldSuppressOptimisticRefresh(changedKeys)) return;
+    if (Date.now() < managerRealtimePatchUntil && changedKeys.length > 0 && changedKeys.every((key) => [
+      window.MCP.STORAGE_KEYS.ITEMS,
+      window.MCP.STORAGE_KEYS.IMAGE_ITEMS,
+      window.MCP.STORAGE_KEYS.DEV_ITEMS
+    ].includes(key))) return;
     if (changedKeys.some((key) => LOCAL_STORAGE_KEYS.has(key))) {
       scheduleSidePanelRefresh();
     }
@@ -307,10 +309,7 @@
     scheduleCategorySearchRender();
   });
   elements.openMontage.addEventListener("click", openMontage);
-  elements.newCategory.addEventListener("click", (event) => {
-    if (blockDemoAction(event)) return;
-    createCategory(event);
-  });
+  elements.newCategory.addEventListener("click", createCategory);
   elements.openManagerMenu?.addEventListener("click", toggleManagerMenu);
   elements.openSourceTimeline?.addEventListener("click", openSourceTimelineModal);
   elements.openTools?.addEventListener("click", openToolsFromManager);
@@ -361,6 +360,8 @@
     persistManagerViewState();
     cacheManagerFastState();
   });
+  window.addEventListener("hashchange", consumeManagerSurfaceRequest);
+  window.addEventListener("focus", notifyManagerReady);
   document.addEventListener("keydown", handleKeyboard);
   document.addEventListener("keydown", cancelManagerJumpFromNavigationKey, { capture: true });
   document.addEventListener("click", handleDocumentClick);
@@ -375,6 +376,10 @@
   elements.items.addEventListener("wheel", cancelManagerJumpFromUserInput, { passive: true });
   elements.items.addEventListener("touchstart", cancelManagerJumpFromUserInput, { passive: true });
   elements.items.addEventListener("pointerdown", cancelManagerJumpFromUserInput, { passive: true });
+
+  function notifyManagerReady() {
+    chrome.runtime.sendMessage({ type: "MCP_MANAGER_READY" }).catch(() => null);
+  }
 
   function openArcawandSite() {
     chrome.tabs.create({ url: ARCAWAND_SITE_URL, active: true }).catch(() => {
@@ -460,10 +465,14 @@
   function applyManagerScrollSnapshot(saved = {}) {
     restoreScrollTopMap(managerItemsScrollTops, saved.itemsScrollTops);
     restoreScrollTopMap(managerCategoryScrollTops, saved.categoryScrollTops);
-    if (!managerItemsScrollTops[activeTab]) managerItemsScrollTops[activeTab] = Math.max(0, Number(saved.itemsScrollTop) || 0);
-    if (!managerCategoryScrollTops[activeTab]) managerCategoryScrollTops[activeTab] = Math.max(0, Number(saved.categoryScrollTop) || 0);
+    if (!hasScrollTopForTab(saved.itemsScrollTops, activeTab)) managerItemsScrollTops[activeTab] = Math.max(0, Number(saved.itemsScrollTop) || 0);
+    if (!hasScrollTopForTab(saved.categoryScrollTops, activeTab)) managerCategoryScrollTops[activeTab] = Math.max(0, Number(saved.categoryScrollTop) || 0);
     pendingManagerItemsScrollTop = Math.max(0, Number(managerItemsScrollTops[activeTab]) || 0);
     pendingManagerCategoryScrollTop = Math.max(0, Number(managerCategoryScrollTops[activeTab]) || 0);
+  }
+
+  function hasScrollTopForTab(source, tab) {
+    return Boolean(source && typeof source === "object" && Object.prototype.hasOwnProperty.call(source, tab));
   }
 
   function restoreScrollTopMap(target, source) {
@@ -524,7 +533,14 @@
     if (!raw) return;
     try {
       const cached = JSON.parse(raw);
-      if (!cached || cached.version !== 1 || !cached.data) return;
+      if (!cached
+        || cached.version !== MANAGER_FAST_STATE_SCHEMA_VERSION
+        || cached.extensionVersion !== MANAGER_EXTENSION_VERSION
+        || !cached.data
+        || Date.now() - Number(cached.savedAt || 0) > MANAGER_FAST_STATE_TTL_MS) {
+        localStorage.removeItem(MANAGER_FAST_STATE_STORAGE_KEY);
+        return;
+      }
       if (cached.activeTab && cached.activeTab !== activeTab) return;
       restoredFastState = true;
       applyStateData(cached.data);
@@ -549,7 +565,8 @@
     if (!fullStateLoaded || restoredFastState) return;
     try {
       localStorage.setItem(MANAGER_FAST_STATE_STORAGE_KEY, JSON.stringify({
-        version: 1,
+        version: MANAGER_FAST_STATE_SCHEMA_VERSION,
+        extensionVersion: MANAGER_EXTENSION_VERSION,
         activeTab,
         savedAt: Date.now(),
         data: fastStateSnapshot()
@@ -576,13 +593,13 @@
   }
 
   function restoreManagerItemsScrollPosition(attempts = 5) {
-    if (!pendingManagerItemsScrollTop || !elements.items) return;
-    const targetTop = pendingManagerItemsScrollTop;
+    if (pendingManagerItemsScrollTop === null || pendingManagerItemsScrollTop === undefined || !elements.items) return;
+    const targetTop = Math.max(0, Number(pendingManagerItemsScrollTop) || 0);
     const apply = (remaining) => {
       if (!elements.items?.isConnected) return;
       elements.items.scrollTop = targetTop;
       if (remaining <= 0 || Math.abs((elements.items.scrollTop || 0) - targetTop) < 3) {
-        pendingManagerItemsScrollTop = 0;
+        pendingManagerItemsScrollTop = null;
         return;
       }
       requestAnimationFrame(() => apply(remaining - 1));
@@ -591,13 +608,13 @@
   }
 
   function restoreManagerCategoryScrollPosition(attempts = 5) {
-    if (!pendingManagerCategoryScrollTop || !elements.categories) return;
-    const targetTop = pendingManagerCategoryScrollTop;
+    if (pendingManagerCategoryScrollTop === null || pendingManagerCategoryScrollTop === undefined || !elements.categories) return;
+    const targetTop = Math.max(0, Number(pendingManagerCategoryScrollTop) || 0);
     const apply = (remaining) => {
       if (!elements.categories?.isConnected) return;
       elements.categories.scrollTop = targetTop;
       if (remaining <= 0 || Math.abs((elements.categories.scrollTop || 0) - targetTop) < 3) {
-        pendingManagerCategoryScrollTop = 0;
+        pendingManagerCategoryScrollTop = null;
         return;
       }
       requestAnimationFrame(() => apply(remaining - 1));
@@ -642,6 +659,7 @@
     const ordered = [];
     const push = (item) => {
       if (!item?.id || seen.has(item.id) || ordered.length >= MANAGER_FAST_STATE_MAX_ITEMS) return;
+      if (isVaultCategoryId(item.categoryId) || isVaultCategoryId(item.languageId)) return;
       seen.add(item.id);
       ordered.push(item);
     };
@@ -702,26 +720,27 @@
     if (response?.ok) {
       applyStateData(response.data);
     } else {
-      const settings = await window.MCP.getSettings();
-      applyStateData({
-        settings,
-        items: await window.MCP.getClipboardItems(),
-        categories: await window.MCP.getCategories(settings.language || "en"),
-        imageItems: await window.MCP.getImageItems(),
-        imageCategories: await window.MCP.getImageCategories(settings.language || "en"),
-        devItems: await window.MCP.getDevItems(),
-        devCategories: await window.MCP.getDevCategories(settings.language || "en")
-      });
+      const [settings, collections] = await Promise.all([
+        window.MCP.getSettings(),
+        window.MCP.getUiStateCollections()
+      ]);
+      const language = settings.language || "en";
+      collections.categories = window.MCP.localizeCategoriesForLanguage(collections.categories, language);
+      collections.imageCategories = window.MCP.localizeCategoriesForLanguage(collections.imageCategories, language);
+      collections.devCategories = window.MCP.localizeCategoriesForLanguage(collections.devCategories, language);
+      applyStateData(Object.assign({ settings }, collections));
     }
+    await window.MCP.ensureLocaleLoaded?.(state.settings.language || "en");
     fullStateLoaded = true;
     restoredFastState = false;
+    window.MCP.applyLanguageMetadata(document, state.settings.language || "en");
     applyTheme();
     translateSidePanel();
-    const shouldRepeatInitialRender = !stateLoaded;
+    getManagerDriveQuickSyncController()?.refresh();
+    applyInitialUrlState();
     stateLoaded = true;
     render();
-    if (shouldRepeatInitialRender) requestAnimationFrame(render);
-    applyInitialUrlState();
+    consumeManagerSurfaceRequest();
     scheduleManagerFastStateCache();
   }
 
@@ -731,17 +750,93 @@
       openedInitialSearch = true;
       return;
     }
-    const requestedMediaType = new URLSearchParams(window.location.search).get("mediaType");
-    if (requestedMediaType !== "image" && requestedMediaType !== "text" && requestedMediaType !== "dev") return;
+    const requestedMediaType = managerSurfaceRequestFromLocation().mediaType
+      || new URLSearchParams(window.location.search).get("mediaType");
+    if (requestedMediaType !== "image" && requestedMediaType !== "text" && requestedMediaType !== "dev") {
+      openedInitialSearch = true;
+      return;
+    }
     openedInitialSearch = true;
     activeTab = requestedMediaType;
     selectedCategory = "all";
     favoritesOnly = false;
-    render();
+  }
+
+  function managerSurfaceRequestFromLocation() {
+    const query = new URLSearchParams(window.location.search);
+    const hash = String(window.location.hash || "");
+    const hashMatch = /^#(advanced-search|library|tools|about|faq|privacy|pro)(?:\?(.*))?$/.exec(hash);
+    const hashParams = new URLSearchParams(hashMatch?.[2] || "");
+    const legacySearchRequested = query.get("search") === "1";
+    const surface = hashMatch?.[1] || (legacySearchRequested ? "advanced-search" : "");
+    const rawMediaType = hashParams.get("mediaType") || query.get("mediaType") || "";
+    return {
+      requested: Boolean(surface),
+      surface,
+      reason: hashParams.get("reason") || "",
+      toolId: hashParams.get("toolId") || "",
+      toolName: hashParams.get("toolName") || "",
+      mediaType: ["text", "dev", "image"].includes(rawMediaType) ? rawMediaType : ""
+    };
+  }
+
+  function consumeManagerSurfaceRequest() {
+    if (!stateLoaded) return;
+    const request = managerSurfaceRequestFromLocation();
+    if (!request.requested) return;
+    history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    if (request.surface === "library") {
+      activeTab = request.mediaType || "text";
+      selectedCategory = "all";
+      favoritesOnly = false;
+      selectedIndex = 0;
+      preparePendingManagerScrollPositions(activeTab);
+      render();
+      return;
+    }
+    if (request.surface === "advanced-search") {
+      openManagerSearch({ mediaType: request.mediaType || activeTab });
+      return;
+    }
+    if (request.surface === "tools") {
+      if (request.toolId) {
+        const locked = window.MCP.canUseTool ? !window.MCP.canUseTool(request.toolId, state.settings) : false;
+        if (locked) {
+          const title = t(`tools.${request.toolId}.title`);
+          openManagerProUpgradeModal({ reason: "tool", toolId: request.toolId, toolName: title });
+          showManagerToast(t("pro.toolsLocked"));
+        } else {
+          openToolWorkspace(request.toolId);
+        }
+      } else {
+        openManagerToolsModal();
+      }
+      return;
+    }
+    if (request.surface === "about") {
+      openManagerTextModal("popup.aboutTitle", ABOUT_SECTIONS);
+      return;
+    }
+    if (request.surface === "faq") {
+      openManagerTextModal("popup.faqTitle", FAQ_KEYS);
+      return;
+    }
+    if (request.surface === "privacy") {
+      openManagerTextModal("popup.privacyTitle", PRIVACY_KEYS);
+      return;
+    }
+    if (request.surface === "pro") {
+      renderManagerProUpgradeModal({
+        reason: request.reason || "pro",
+        toolId: request.toolId,
+        toolName: request.toolName
+      });
+    }
   }
 
   function applyStateData(data = {}) {
     state.settings = managerSettingsWithPendingViewModes(data.settings || {});
+    window.MCP.configureDateTimeFormatting(state.settings);
     applyManagerViewModeSettings(state.settings);
     state.items = Array.isArray(data.items) ? data.items : [];
     state.categories = Array.isArray(data.categories) ? data.categories : [];
@@ -842,7 +937,53 @@
 
   function scheduleSidePanelRefresh() {
     clearTimeout(scheduleSidePanelRefresh.timer);
-    scheduleSidePanelRefresh.timer = setTimeout(refreshSidePanel, 140);
+    scheduleSidePanelRefresh.timer = setTimeout(refreshSidePanel, 80);
+  }
+
+  function applyRealtimeManagerPatch(message = {}) {
+    const type = String(message.type || "");
+    let mediaType = "";
+    if (type === MESSAGE_TYPES.ITEM_CREATED || type === MESSAGE_TYPES.ITEM_UPDATED) mediaType = "text";
+    else if (type === MESSAGE_TYPES.DEV_CREATED || type === MESSAGE_TYPES.DEV_UPDATED) mediaType = "dev";
+    else if (type === MESSAGE_TYPES.IMAGE_CREATED || type === MESSAGE_TYPES.IMAGE_UPDATED) mediaType = "image";
+    if (!mediaType) return false;
+    const itemId = message.item?.id || message.itemId;
+    if (!itemId) return false;
+    const patch = message.item || message.updates;
+    if (!patch || typeof patch !== "object") return false;
+    rememberCurrentScrollForOptimisticRender();
+    applyOptimisticItem(mediaType, itemId, patch, { replace: Boolean(message.item) });
+    managerRealtimePatchUntil = Date.now() + 900;
+    clearTimeout(scheduleSidePanelRefresh.timer);
+    scheduleManagerFastStateCache();
+    if (mediaType !== activeTab || (type.endsWith("_UPDATED") && isReadyPasteUsageUpdate(message.updates || {}))) {
+      return true;
+    }
+    scheduleManagerRender();
+    return true;
+  }
+
+  function suppressOptimisticRefresh(keys = [], duration = 900) {
+    const list = Array.isArray(keys) ? keys : [keys];
+    list.filter(Boolean).forEach((key) => optimisticRefreshStorageKeys.add(key));
+    optimisticRefreshSuppressUntil = Math.max(optimisticRefreshSuppressUntil, Date.now() + duration);
+    clearTimeout(scheduleSidePanelRefresh.timer);
+  }
+
+  function shouldSuppressOptimisticRefresh(changedKeys = []) {
+    if (Date.now() > optimisticRefreshSuppressUntil) {
+      optimisticRefreshStorageKeys.clear();
+      return false;
+    }
+    return changedKeys.length > 0 && changedKeys.every((key) => optimisticRefreshStorageKeys.has(key));
+  }
+
+  function scheduleManagerRender() {
+    cancelAnimationFrame(managerRenderRaf);
+    managerRenderRaf = requestAnimationFrame(() => {
+      managerRenderRaf = 0;
+      render();
+    });
   }
 
   function markManagerReadyPasteUsageUpdate() {
@@ -918,8 +1059,12 @@
     elements.textTab.classList.toggle("is-active", activeTab === "text");
     elements.devTab.classList.toggle("is-active", activeTab === "dev");
     elements.imageTab.classList.toggle("is-active", activeTab === "image");
+    elements.textTab.setAttribute("aria-selected", String(activeTab === "text"));
+    elements.devTab.setAttribute("aria-selected", String(activeTab === "dev"));
+    elements.imageTab.setAttribute("aria-selected", String(activeTab === "image"));
     updateManagerImageProLock();
     updateManagerMontageProLock();
+    managerDriveQuickSyncController?.render();
     elements.imageViewModes.hidden = activeTab !== "image";
     elements.imageViewModes.style.display = activeTab === "image" ? "inline-flex" : "none";
     if (elements.textViewModes) {
@@ -942,6 +1087,13 @@
     updateManagerBrandProBadge();
     renderCategories();
     renderStatus();
+    if (montageState.isOpen) {
+      renderMontage();
+      restoreManagerScrollPositions();
+      scheduleManagerViewStateSave();
+      scheduleManagerFastStateCache();
+      return;
+    }
     renderItems();
     restoreManagerScrollPositions();
     scheduleManagerViewStateSave();
@@ -1154,9 +1306,13 @@
     if (activeTab === "image") await window.MCP.deleteImageItems(ids, { permanent: effectivePermanent });
     else if (activeTab === "dev") await window.MCP.deleteDevItems(ids, { permanent: effectivePermanent });
     else await window.MCP.deleteClipboardItems(ids, { permanent: effectivePermanent });
+    suppressOptimisticRefresh(itemStorageKeyForMediaType(activeTab), 1100);
+    ids.forEach((id) => applyOptimisticItem(activeTab, id, effectivePermanent
+      ? null
+      : { categoryId: activeTab === "image" ? "image-trash" : activeTab === "dev" ? "dev-trash" : "trash", isFavorite: false, isPinned: false, trashedAt: Date.now() },
+      { remove: effectivePermanent }));
     resetManagerBulkSelection({ renderControls: false });
-    await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.STORAGE_REFRESH_REQUIRED }).catch(() => null);
-    await loadState();
+    render();
     showManagerToast(t(effectivePermanent ? "bulk.permanentlyDeleted" : "bulk.deleted", { count: ids.length }));
   }
 
@@ -1178,7 +1334,6 @@
       event.stopPropagation();
       toggleManagerBulkItem(item.id);
     });
-    button.appendChild(document.createElement("span"));
     return button;
   }
 
@@ -1221,13 +1376,19 @@
     }
     const categoryButton = event.target.closest(".manager-category-choice[data-manager-category-id]");
     if (categoryButton) {
-      if (blockDemoAction(event)) return;
       assignManagerCategory(categoryButton.dataset.managerCategoryId);
       return;
     }
     if (!action) return;
-    if (DEMO_BLOCKED_MANAGER_ACTIONS.has(action) && blockDemoAction(event)) return;
     if (action === "close-search") closeManagerSearch();
+    if (action === "clear-advanced-search") {
+      const input = document.getElementById("managerSearchInput");
+      managerSearchState.query = "";
+      managerSearchState.selectedIndex = 0;
+      if (input) input.value = "";
+      renderManagerSearch();
+      input?.focus();
+    }
     if (action === "close-source-timeline") closeSourceTimelineModal();
     if (action === "close-versioning") closeVersioningModal();
     if (action === "source-timeline-sort") {
@@ -1251,10 +1412,14 @@
     if (action === "close-image-info") closeImageInfo();
     if (action === "close-tools") closeToolsModal();
     if (action === "open-tool") {
-      if (Date.now() < managerToolSuppressClickUntil) return;
+      if (getManagerToolsCatalogController().isClickSuppressed()) return;
       const toolButton = event.target.closest("[data-tool-id]");
       if (toolButton?.dataset.proLocked === "true") {
-        openManagerProUpgradeModal({ reason: "tool", toolName: toolButton.getAttribute("aria-label") || toolButton.textContent?.trim() || "" });
+        openManagerProUpgradeModal({
+          reason: "tool",
+          toolId: toolButton.dataset.toolId || "",
+          toolName: toolButton.getAttribute("aria-label") || toolButton.textContent?.trim() || ""
+        });
         showManagerToast(t("pro.toolsLocked"));
         return;
       }
@@ -1262,6 +1427,12 @@
     }
     if (action === "close-tool-workspace") closeToolWorkspace();
     if (action === "open-tool-info") openManagerToolInfoModal();
+    if (action === "tool-example") loadManagerToolExample();
+    if (action === "tool-smart") applyManagerToolSmartPreset();
+    if (action === "tool-swap") swapManagerToolInputs();
+    if (action === "tool-undo") restoreManagerToolHistory(-1);
+    if (action === "tool-redo") restoreManagerToolHistory(1);
+    if (action === "tool-reset") resetManagerToolWorkspace();
     if (action === "copy-emoji") copyManagerEmoji(event.target.closest("[data-emoji]")?.dataset.emoji || "");
     if (action === "copy-special-character") copyManagerSpecialCharacter(event.target.closest("[data-symbol]")?.dataset.symbol || "");
     if (action === "start-color-pick") startManagerColorPick();
@@ -1270,6 +1441,8 @@
     if (action === "replace-word-replacer") replaceManagerWords();
     if (action === "copy-color-format") copyManagerColorFormat(event.target.closest("[data-format]"));
     if (action === "copy-tool-output") copyToolOutput();
+    if (action === "use-tool-output") useManagerToolOutput();
+    if (action === "export-tool-output") exportManagerToolOutput();
     if (action === "capture-tool-output") captureToolOutput();
     if (action === "empty-trash") emptyCurrentTrash();
     if (action === "close-editor") closeEditor();
@@ -1288,13 +1461,11 @@
     if (action === "close-montage") closeMontage();
     if (action === "copy-montage") copyMontage();
     if (action === "clear-montage") clearMontage();
-    if (action === "save-montage-as-text") saveCurrentMontageAsText();
-    if (action === "add-all-montage") addAllMontageItems();
-    if (action === "polish-montage") polishMontage();
+    if (action === "classify-montage") classifyCurrentMontage();
     if (action === "open-montage-final-editor") openMontageFinalEditor();
     if (action === "close-montage-final-editor") closeMontageFinalEditor();
     if (action === "copy-montage-final-editor") copyMontageFinalDraft();
-    if (action === "save-montage-final-editor") saveMontageFinalDraftAsText();
+    if (action === "classify-montage-final-editor") classifyMontageFinalDraft();
     if (action === "save-montage-edit") saveMontageSandboxEdit();
     if (action === "close-montage-edit") closeMontageSandboxEditor();
     if (action === "add-montage-item") {
@@ -1339,12 +1510,23 @@
       ["faq", t("popup.faq")],
       ["advanced-search", t("search.advanced")],
       ["settings", t("ui.options")],
+      ["quick-settings", t("quickSettings.title")],
       ["privacy", t("popup.privacy")],
       isPro ? ["pro-status", "", "pro-status"] : ["pro", t("popup.pro"), "pro"],
-      ...(isPro && !state.settings?.demoMode ? [["support-developer", t("popup.supportDeveloper"), "support"]] : []),
+      ...(isPro ? [["support-developer", t("popup.supportDeveloper"), "support"]] : []),
       ["contact", t("popup.contactDeveloper"), "contact"]
     ];
     managerMenu.replaceChildren(...menuItems.map(([action, label, icon]) => {
+      if (action === "quick-settings") {
+        return window.MCP.createQuickSettingsMenu({
+          classPrefix: "manager",
+          actionAttribute: "managerMenuAction",
+          actionValue: action,
+          t,
+          getSettings: () => state.settings || {},
+          persistSetting: saveManagerQuickSetting
+        });
+      }
       const button = document.createElement("button");
       button.type = "button";
       button.dataset.managerMenuAction = action;
@@ -1362,6 +1544,12 @@
       button.addEventListener("click", handleManagerMenuAction);
       return button;
     }));
+  }
+
+  async function saveManagerQuickSetting(key, value) {
+    const currentSettings = await window.MCP.getSettings().catch(() => state.settings || {});
+    state.settings = await window.MCP.saveSettings(Object.assign({}, currentSettings || {}, { [key]: value }));
+    return state.settings;
   }
 
   function createManagerMenuIcon(icon) {
@@ -1419,11 +1607,10 @@
   function handleManagerMenuAction(event) {
     const action = event.currentTarget.dataset.managerMenuAction;
     closeManagerMenu();
-    if (action === "about") return openManagerTextModal("popup.aboutTitle", ABOUT_KEYS);
+    if (action === "about") return openManagerTextModal("popup.aboutTitle", ABOUT_SECTIONS);
     if (action === "faq") return openManagerTextModal("popup.faqTitle", FAQ_KEYS);
     if (action === "advanced-search") return openUnifiedAdvancedSearch();
     if (action === "privacy") return openManagerTextModal("popup.privacyTitle", PRIVACY_KEYS);
-    if (isDemoMode() && ["pro", "pro-status", "settings", "support-developer"].includes(action)) return showDemoBlockedNotice();
     if (action === "pro") return openManagerProUpgradeModal("pro");
     if (action === "pro-status") return chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_OPTIONS, section: "license" }).catch(() => {});
     if (action === "settings") return chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_OPTIONS }).catch(() => {});
@@ -1432,15 +1619,8 @@
   }
 
   async function openUnifiedAdvancedSearch() {
-    closeManagerSearch();
     triggerMicroAnimation(elements.openManagerMenu || elements.openMontage, "success-pulse", 440);
-    if (isDemoMode()) return openManagerSearch();
-    const response = await chrome.runtime.sendMessage({
-      type: MESSAGE_TYPES.OPEN_SEARCH_OVERLAY,
-      mediaType: activeTab
-    }).catch(() => null);
-    if (response?.opened || response?.ok || response?.data?.opened || response?.data?.ok) return;
-    showManagerToast(t("common.error"));
+    openManagerSearch({ mediaType: activeTab });
   }
 
   function openManagerTextModal(titleKey, paragraphKeys) {
@@ -1449,8 +1629,8 @@
       managerTextModal.className = "manager-text-modal";
       managerTextModal.hidden = true;
       managerTextModal.innerHTML = [
-        "<section class=\"manager-text-card\" role=\"dialog\" aria-modal=\"true\">",
-        "<header><h2 data-role=\"manager-text-title\"></h2><button type=\"button\" class=\"manager-text-close\" data-role=\"manager-text-close\" aria-label=\"Close\">&times;</button></header>",
+        "<section class=\"manager-text-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"managerTextTitle\">",
+        "<header><h2 id=\"managerTextTitle\" data-role=\"manager-text-title\"></h2><button type=\"button\" class=\"manager-text-close\" data-role=\"manager-text-close\" aria-label=\"Close\">&times;</button></header>",
         "<div class=\"manager-text-content\" data-role=\"manager-text-content\"></div>",
         "</section>"
       ].join("");
@@ -1467,6 +1647,8 @@
     content.scrollTop = 0;
     if (titleKey === "popup.faqTitle") {
       content.replaceChildren(createManagerFaqContent(paragraphKeys));
+    } else if (titleKey === "popup.aboutTitle") {
+      content.replaceChildren(createManagerAboutContent(paragraphKeys));
     } else {
       content.replaceChildren(...paragraphKeys.map((key) => {
         const paragraph = document.createElement("p");
@@ -1489,9 +1671,11 @@
     items.forEach(([questionKey, answerKey], index) => {
       const article = document.createElement("article");
       article.className = "manager-faq-item";
+      const isLicenseWarning = questionKey === "faq.76.q";
+      if (isLicenseWarning) article.classList.add("is-license-warning");
       const badge = document.createElement("span");
       badge.className = "manager-faq-number";
-      badge.textContent = String(index + 1).padStart(2, "0");
+      badge.textContent = isLicenseWarning ? "⚠" : String(index + 1).padStart(2, "0");
       const copy = document.createElement("div");
       copy.className = "manager-faq-copy";
       const question = document.createElement("h3");
@@ -1503,6 +1687,27 @@
       list.appendChild(article);
     });
     return list;
+  }
+
+  function createManagerAboutContent(sections) {
+    const wrap = document.createElement("div");
+    wrap.className = "manager-about-content";
+    sections.forEach((section) => {
+      if (!section?.title || !Array.isArray(section.keys)) return;
+      const article = document.createElement("section");
+      article.className = "manager-about-section";
+      const heading = document.createElement("h3");
+      heading.textContent = t(section.title);
+      const list = document.createElement("ul");
+      section.keys.forEach((key) => {
+        const item = document.createElement("li");
+        item.textContent = t(key);
+        list.appendChild(item);
+      });
+      article.append(heading, list);
+      wrap.appendChild(article);
+    });
+    return wrap;
   }
 
   function createManagerAboutBrandSignature() {
@@ -1518,249 +1723,58 @@
     return signature;
   }
 
-  function openManagerProUpgradeModal(context = "pro") {
-    managerTextModalReturn = captureManagerTextModalReturn();
-    openManagerTextModal("popup.proTitle", PRO_KEYS);
-    const content = managerTextModal?.querySelector("[data-role='manager-text-content']");
-    if (!content) return;
-    renderManagerProModalBrand();
-    managerTextModal.querySelector(".manager-text-card")?.classList.add("is-pro-upgrade");
-    const contextNode = createManagerProContextNode(context);
-    if (contextNode) content.prepend(contextNode);
-    content.appendChild(createManagerProPlanComparison());
-    const actions = document.createElement("div");
-    actions.className = "manager-pro-actions";
-    const getPro = document.createElement("button");
-    getPro.type = "button";
-    getPro.className = "primary";
-    getPro.textContent = t("license.buy");
-    getPro.addEventListener("click", async () => {
-      const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.DODO_OPEN_CHECKOUT }).catch(() => null);
-      showManagerToast(response?.ok ? t("license.checkoutOpened") : t("common.error"));
-    });
-    actions.append(getPro);
-    content.append(createManagerProUpgradeFooter(actions));
+  async function openManagerProUpgradeModal(context = "pro") {
+    const value = typeof context === "string" ? { reason: context } : (context && typeof context === "object" ? context : {});
+    if (await managerTabContextPromise) return renderManagerProUpgradeModal(value);
+    return chrome.runtime.sendMessage({
+      type: MESSAGE_TYPES.SHOW_PRO_UPGRADE,
+      reason: value.reason || "pro",
+      toolId: value.toolId || "",
+      toolName: value.toolName || ""
+    }).catch(() => null);
   }
 
-  function createManagerProContextNode(context = "pro") {
-    const resolved = resolveManagerProUpgradeContext(context);
-    const text = t(resolved.key, resolved.params);
-    if (!text) return null;
-    const paragraph = document.createElement("p");
-    paragraph.className = "manager-pro-context";
-    paragraph.textContent = text;
-    return paragraph;
-  }
-
-  function resolveManagerProUpgradeContext(context = "pro") {
-    const value = typeof context === "string" ? { reason: context } : (context && typeof context === "object" && !("target" in context) ? context : {});
-    const reason = value.reason || "pro";
-    if (reason === "tool") return { key: "pro.context.tool", params: { tool: value.toolName || t("tools.title") } };
-    const keys = {
-      imageCapture: "pro.context.imageCapture",
-      fullPageScreenshot: "pro.context.fullPageScreenshot",
-      pageMarkdownCapture: "pro.context.pageMarkdownCapture",
-      driveSync: "pro.context.driveSync",
-      itemComposition: "pro.context.itemComposition",
-      trashManagement: "pro.context.trashManagement",
-      vault: "pro.context.vault",
-      captureVersioning: "pro.context.captureVersioning",
-      textLimit: "pro.context.textLimit",
-      codeLimit: "pro.context.codeLimit",
-      allTools: "pro.context.allTools",
-      pro: "pro.context.default"
-    };
-    return { key: keys[reason] || keys.pro, params: {} };
-  }
-
-  function renderManagerProModalBrand() {
-    const title = managerTextModal?.querySelector("[data-role='manager-text-title']");
-    if (!title) return;
-    title.replaceChildren(createManagerProModalBrand());
-  }
-
-  function createManagerProModalBrand() {
-    const brand = document.createElement("span");
-    brand.className = "pro-modal-brand";
-    const icon = createProModalAppIcon("../assets/icons/icon128.png", "../assets/icons/pro-icon.png");
-    const copy = document.createElement("span");
-    copy.className = "pro-modal-brand-copy";
-    const name = document.createElement("strong");
-    name.textContent = t("app.name");
-    const signature = document.createElement("span");
-    signature.className = "pro-modal-brand-signature";
-    const by = document.createElement("span");
-    by.textContent = t("brand.by");
-    const logo = document.createElement("img");
-    logo.src = "../assets/icons/Arcawand_Soft_Logo.png";
-    logo.alt = "Arcawand Soft";
-    wireArcawandLogoLink(logo);
-    signature.append(by, logo);
-    copy.append(name, signature);
-    brand.append(icon, copy);
-    return brand;
-  }
-
-  function createProModalAppIcon(iconSrc, badgeSrc) {
-    const wrap = document.createElement("span");
-    wrap.className = "pro-modal-app-icon-wrap";
-    const icon = document.createElement("img");
-    icon.className = "pro-modal-app-icon";
-    icon.src = iconSrc;
-    icon.alt = "";
-    icon.setAttribute("aria-hidden", "true");
-    const badge = document.createElement("span");
-    badge.className = "brand-pro-badge";
-    badge.setAttribute("aria-hidden", "true");
-    const badgeIcon = document.createElement("img");
-    badgeIcon.src = badgeSrc;
-    badgeIcon.alt = "";
-    badge.appendChild(badgeIcon);
-    wrap.append(icon, badge);
-    return wrap;
-  }
-
-  function createManagerProUpgradeFooter(actions) {
-    const footer = document.createElement("div");
-    footer.className = "manager-pro-upgrade-footer";
-    const payment = document.createElement("img");
-    payment.className = "manager-pro-payment-methods";
-    payment.src = "../assets/icons/way-pay.png";
-    payment.alt = "";
-    payment.setAttribute("aria-hidden", "true");
-    footer.append(payment, actions);
-    return footer;
-  }
-
-  function createManagerProPlanComparison() {
-    const wrap = document.createElement("div");
-    wrap.className = "manager-pro-plans";
-    wrap.append(
-      createManagerProPlanCard("free", "pro.freeTitle", [
-        ["text_icon.png", "pro.freeTextLimit"],
-        ["dev.png", "pro.freeCodeLimit"],
-        ["images_icon.png", "pro.freeImageLimit"],
-        ["screen_full_page_png.png", "pro.proScreenshotCapture"],
-        ["tootls.png", "pro.freeToolsLimit"],
-        ["computer.png", "pro.freeLocalBackup"]
-      ]),
-      createManagerProPlanCard("pro", "pro.proTitle", [
-        ["text_icon.png", "pro.proTextUnlimited"],
-        ["dev.png", "pro.proCodeUnlimited"],
-        ["images_icon.png", "pro.proImageUnlimited"],
-        ["locker-darkmod.png", "pro.proVault"],
-        ["screen_full_page_png.png", "pro.proScreenshotCapture"],
-        ["webpage-markdown.png", "pro.proMarkdownCapture"],
-        ["erase.png", "pro.proTrash"],
-        ["montage-lightmod.png", "pro.proMontage"],
-        ["versioning-darkmode.png", "pro.proVersioning"],
-        ["tootls.png", "pro.proToolsLimit"],
-        ["drive-logo.png", "pro.proDriveSync"]
-      ])
-    );
-    return wrap;
-  }
-
-  function createManagerProPlanCard(variant, titleKey, rows) {
-    const card = document.createElement("section");
-    card.className = `manager-pro-plan-card is-${variant}`;
-    const head = document.createElement("div");
-    head.className = "manager-pro-plan-head";
-    const title = document.createElement("strong");
-    if (variant === "pro") {
-      const titleText = document.createElement("span");
-      titleText.textContent = t(titleKey);
-      const titleCopy = document.createElement("span");
-      titleCopy.className = "manager-pro-plan-title-copy";
-      const lifetime = document.createElement("small");
-      lifetime.textContent = t("pro.lifetime");
-      titleCopy.append(titleText, lifetime);
-      title.append(titleCopy);
-    } else {
-      title.textContent = t(titleKey);
+  function getManagerDriveQuickSyncController() {
+    if (managerDriveQuickSyncController || !elements.driveQuickSync || !window.MCP.createDriveQuickSyncControl) {
+      return managerDriveQuickSyncController;
     }
-    const price = document.createElement("div");
-    price.className = "manager-pro-plan-price";
-    const amount = document.createElement("strong");
-    if (variant === "pro") {
-      const badge = document.createElement("span");
-      badge.className = "manager-pro-launch-badge";
-      badge.textContent = t("pro.launchPriceBadge");
-      const oldPrice = document.createElement("s");
-      oldPrice.className = "manager-pro-old-price";
-      oldPrice.textContent = t("pro.regularPrice");
-      amount.textContent = t("pro.proPrice");
-      price.append(badge, oldPrice, amount);
-    } else {
-      amount.textContent = t("pro.freePrice");
-      price.appendChild(amount);
-    }
-    head.append(title, price);
-    const list = document.createElement("ul");
-    rows.forEach(([iconName, key]) => {
-      const item = document.createElement("li");
-      const icon = document.createElement("img");
-      icon.src = `../assets/icons/${themedIconName(iconName, { forceDarkIcon: key === "pro.proTrash" || key === "pro.proVault" || key === "pro.proVersioning" })}`;
-      icon.alt = "";
-      icon.setAttribute("aria-hidden", "true");
-      if (key === "pro.proTrash" || key === "pro.proVault" || key === "pro.proScreenshotCapture" || key === "pro.proMarkdownCapture" || key === "pro.proMontage" || key === "pro.proVersioning") icon.classList.add("is-compact-benefit-icon");
-      const label = document.createElement("span");
-      appendProBenefitLabel(label, t(key));
-      item.append(icon, label);
-      list.appendChild(item);
+    managerDriveQuickSyncController = window.MCP.createDriveQuickSyncControl({
+      mount: elements.driveQuickSync,
+      getSettings: () => state.settings || {},
+      openPremium: () => openManagerProUpgradeModal("driveSync"),
+      showToast: showManagerToast
     });
-    if (variant === "free") appendManagerEmptyProBenefitRows(list);
-    card.append(head, list);
-    return card;
+    return managerDriveQuickSyncController;
   }
 
-  function appendManagerEmptyProBenefitRows(list) {
-    for (let index = 0; index < 5; index += 1) {
-      const item = document.createElement("li");
-      item.className = "is-empty-benefit";
-      item.setAttribute("aria-hidden", "true");
-      const icon = document.createElement("span");
-      const label = document.createElement("span");
-      label.textContent = "\u00a0";
-      item.append(icon, label);
-      list.appendChild(item);
-    }
+  function getManagerPremiumController() {
+    if (managerPremiumController) return managerPremiumController;
+    managerPremiumController = window.MCP.createManagerPremiumController({
+      t,
+      getSettings: () => state.settings || {},
+      getModal: () => managerTextModal,
+      openTextModal: openManagerTextModal,
+      captureModalReturn: captureManagerTextModalReturn,
+      rememberModalReturn: (value) => {
+        managerTextModalReturn = value;
+      },
+      showToast: showManagerToast,
+      onOpened: () => window.setTimeout(() => window.MCP.startContextualGuidedTour?.("toolsCatalog"), 80),
+      wireLogoLink: wireArcawandLogoLink,
+      themedIconName,
+      requestCheckout: (payload) => chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.DODO_OPEN_CHECKOUT,
+        ...payload
+      }),
+      premiumApi: window.MCP
+    });
+    return managerPremiumController;
   }
 
-  function appendProBenefitLabel(label, text) {
-    const patterns = [
-      /Unlimited|Unbegrenzte|illimit[\w\u00e0-\u017f]*|ilimitad[\w\u00e0-\u017f]*/i,
-      /20\s+(?:outils|tools|Werkzeuge|herramientas|strumenti)/i,
-      /(?:Synchro Google Drive|Google Drive Sync|Google-Drive-Sync|Sincronizaci\u00f3n Google Drive|Sincronizzazione Google Drive)\s+\(Cloud\)/i
-    ];
-    appendHighlightedText(label, text, patterns);
+  function renderManagerProUpgradeModal(context = "pro") {
+    return getManagerPremiumController().render(context);
   }
 
-  function appendHighlightedText(node, text, patterns) {
-    const value = String(text || "");
-    const matches = [];
-    patterns.forEach((pattern) => {
-      const match = pattern.exec(value);
-      if (match) matches.push({ start: match.index, end: match.index + match[0].length });
-    });
-    matches.sort((left, right) => left.start - right.start);
-    const ranges = [];
-    matches.forEach((match) => {
-      const previous = ranges.at(-1);
-      if (previous && match.start < previous.end) return;
-      ranges.push(match);
-    });
-    let cursor = 0;
-    ranges.forEach((range) => {
-      if (range.start > cursor) node.appendChild(document.createTextNode(value.slice(cursor, range.start)));
-      const strong = document.createElement("strong");
-      strong.className = "pro-benefit-highlight";
-      strong.textContent = value.slice(range.start, range.end);
-      node.appendChild(strong);
-      cursor = range.end;
-    });
-    if (cursor < value.length) node.appendChild(document.createTextNode(value.slice(cursor)));
-  }
 
   function closeManagerTextModal() {
     if (restoreManagerTextModalReturn()) return;
@@ -1796,245 +1810,88 @@
     return true;
   }
 
-  async function openToolsFromManager() {
+  function openToolsFromManager() {
     triggerMicroAnimation(elements.openTools);
-    let modal = document.getElementById("managerToolsModal");
-    if (!modal) {
-      modal = document.createElement("div");
-      modal.id = "managerToolsModal";
-      modal.className = "manager-modal manager-tools-modal";
-      modal.innerHTML = [
-        "<div class=\"manager-backdrop\" data-manager-action=\"close-tools\"></div>",
-        "<section class=\"manager-tools-card\" role=\"dialog\" aria-modal=\"true\">",
-        "<header class=\"mcp-search-head\"><strong data-role=\"tools-title\"></strong><button type=\"button\" data-manager-action=\"close-tools\" aria-label=\"Close\">X</button></header>",
-        "<div class=\"manager-tools-grid\" data-role=\"manager-tools-grid\"></div>",
-        "</section>"
-      ].join("");
-      document.body.appendChild(modal);
-      setupManagerToolsDrag(modal.querySelector("[data-role='manager-tools-grid']"));
-    }
-    modal.querySelector("[data-role='tools-title']").textContent = t("tools.title");
-    modal.querySelector("[data-manager-action='close-tools']").setAttribute("aria-label", t("common.close"));
-    renderManagerToolsGrid(modal.querySelector("[data-role='manager-tools-grid']"));
-    modal.hidden = false;
+    openManagerToolsModal();
   }
 
-  function destroyLegacyManagerToolsWindows() {
-    document.getElementById("managerToolsModal")?.remove();
-    document.getElementById("managerToolWorkspaceModal")?.remove();
-  }
-
-  function renderManagerToolsGrid(grid) {
-    if (!grid) return;
-    const tools = window.MCP.getTools(t, state.settings?.toolOrder);
-    grid.replaceChildren(...tools.map(createManagerToolTile));
-  }
-
-  function createManagerToolTile(tool) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "manager-tool-tile";
-    button.dataset.managerAction = "open-tool";
-    button.dataset.toolId = tool.id;
-    button.draggable = true;
-    button.setAttribute("aria-label", tool.title);
-    button.title = tool.description;
-    button.setAttribute("aria-grabbed", "false");
-    const locked = window.MCP.canUseTool ? !window.MCP.canUseTool(tool.id, state.settings) : false;
-    if (locked) {
-      button.classList.add("is-pro-locked");
-      button.draggable = false;
-      button.dataset.proLocked = "true";
-      button.title = t("pro.toolsLocked");
-    }
-    if (tool.icon) {
-      const icon = document.createElement("img");
-      icon.className = "manager-tool-tile-icon";
-      icon.src = chrome.runtime.getURL(tool.icon);
-      icon.alt = "";
-      icon.setAttribute("aria-hidden", "true");
-      button.appendChild(icon);
-    }
-    const label = document.createElement("span");
-    label.className = "manager-tool-tile-title";
-    label.textContent = tool.title;
-    button.appendChild(label);
-    if (locked) button.appendChild(createManagerProLockIcon());
-    return button;
-  }
-
-  function createManagerProLockIcon() {
-    const icon = document.createElement("img");
-    icon.className = "manager-pro-lock-icon";
-    icon.src = "../assets/icons/pro-icon.png";
-    icon.alt = t("license.getPro");
-    return icon;
-  }
-
-  function setupManagerToolsDrag(grid) {
-    if (!grid || grid.dataset.dragReady === "true") return;
-    grid.dataset.dragReady = "true";
-    grid.addEventListener("dragstart", handleManagerToolDragStart);
-    grid.addEventListener("dragenter", handleManagerToolDragHover);
-    grid.addEventListener("dragover", handleManagerToolDragHover);
-    grid.addEventListener("drop", handleManagerToolDrop);
-    grid.addEventListener("dragend", handleManagerToolDragEnd);
-  }
-
-  function handleManagerToolDragStart(event) {
-    const tile = event.target.closest(".manager-tool-tile[data-tool-id]");
-    if (!tile) return;
-    managerToolDragState = { id: tile.dataset.toolId, moved: false };
-    tile.classList.add("is-dragging");
-    tile.setAttribute("aria-grabbed", "true");
-    tile.closest(".manager-tools-grid")?.classList.add("is-dragging");
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", tile.dataset.toolId);
-  }
-
-  function handleManagerToolDragHover(event) {
-    const grid = event.currentTarget;
-    const target = event.target.closest(".manager-tool-tile[data-tool-id]");
-    if (!managerToolDragState || !target || !grid.contains(target)) return;
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-    const source = grid.querySelector(`.manager-tool-tile[data-tool-id="${CSS.escape(managerToolDragState.id)}"]`);
-    if (!source || source === target) return;
-    swapSiblingNodes(source, target);
-    managerToolDragState.moved = true;
-    target.classList.add("is-swap-target");
-    setTimeout(() => target.classList.remove("is-swap-target"), 160);
-  }
-
-  function swapSiblingNodes(first, second) {
-    const parent = first.parentNode;
-    const marker = document.createTextNode("");
-    parent.insertBefore(marker, first);
-    parent.insertBefore(first, second);
-    parent.insertBefore(second, marker);
-    parent.removeChild(marker);
-  }
-
-  function handleManagerToolDrop(event) {
-    if (!managerToolDragState) return;
-    event.preventDefault();
-    persistManagerToolGridOrder(event.currentTarget);
-  }
-
-  function handleManagerToolDragEnd(event) {
-    const grid = event.currentTarget;
-    grid.querySelectorAll(".manager-tool-tile").forEach((tile) => {
-      tile.classList.remove("is-dragging", "is-swap-target");
-      tile.setAttribute("aria-grabbed", "false");
+  function getManagerToolsCatalogController() {
+    if (managerToolsCatalogController) return managerToolsCatalogController;
+    managerToolsCatalogController = window.MCP.createManagerToolsCatalogController({
+      t,
+      getSettings: () => state.settings || {},
+      updateSettings: (patch) => {
+        state.settings = Object.assign({}, state.settings, patch);
+      },
+      showToast: showManagerToast,
+      getRuntimeUrl: (path) => chrome.runtime.getURL(path),
+      toolApi: window.MCP
     });
-    grid.classList.remove("is-dragging");
-    if (managerToolDragState?.moved) persistManagerToolGridOrder(grid);
-    managerToolDragState = null;
-    managerToolSuppressClickUntil = Date.now() + 450;
+    return managerToolsCatalogController;
   }
 
-  async function persistManagerToolGridOrder(grid) {
-    const order = Array.from(grid.querySelectorAll(".manager-tool-tile[data-tool-id]")).map((tile) => tile.dataset.toolId);
-    const normalized = window.MCP.normalizeToolOrder ? window.MCP.normalizeToolOrder(order) : order;
-    if (JSON.stringify(normalized) === JSON.stringify(window.MCP.normalizeToolOrder?.(state.settings?.toolOrder || []) || state.settings?.toolOrder || [])) return;
-    const currentSettings = await window.MCP.getSettings().catch(() => state.settings || {});
-    const nextSettings = Object.assign({}, currentSettings, { toolOrder: normalized });
-    state.settings = Object.assign({}, state.settings, { toolOrder: normalized });
-    await window.MCP.saveSettings(nextSettings).catch(() => {});
+  function openManagerToolsModal() {
+    closeToolWorkspace();
+    return getManagerToolsCatalogController().open();
   }
 
   function closeToolsModal() {
-    const modal = document.getElementById("managerToolsModal");
-    if (modal) modal.hidden = true;
+    return getManagerToolsCatalogController().close();
   }
 
+
   function openToolWorkspace(toolId) {
+    if (typeof window.MCP.getTools !== "function" || typeof window.MCP.runTool !== "function") {
+      getManagerToolsCatalogController().ensureRuntime()
+        .then(() => openToolWorkspace(toolId))
+        .catch(() => showManagerToast(t("common.error")));
+      return;
+    }
     const tool = window.MCP.getTools(t).find((item) => item.id === toolId);
     if (!tool) return;
-    let modal = document.getElementById("managerToolWorkspaceModal");
-    if (!modal) {
-      modal = document.createElement("div");
-      modal.id = "managerToolWorkspaceModal";
-      modal.className = "manager-modal manager-tool-workspace-modal";
-      modal.innerHTML = [
-        "<div class=\"manager-backdrop\" data-manager-action=\"close-tool-workspace\"></div>",
-        "<section class=\"manager-tool-workspace-card\" role=\"dialog\" aria-modal=\"true\">",
-        "<header class=\"mcp-search-head\"><strong data-role=\"tool-title\"></strong><div class=\"manager-tool-head-actions\"><button type=\"button\" class=\"manager-tool-info-button\" data-manager-action=\"open-tool-info\" aria-label=\"Info\">i</button><button type=\"button\" data-manager-action=\"close-tool-workspace\" aria-label=\"Close\">X</button></div></header>",
-        "<p data-role=\"tool-description\"></p>",
-        "<div class=\"manager-tool-insights\" data-role=\"tool-insights\"></div>",
-        "<div class=\"manager-tool-options\" data-role=\"tool-options\"></div>",
-        "<section class=\"manager-emoji-browser\" data-role=\"emoji-browser\" hidden><input data-role=\"emoji-search\" type=\"search\"><div class=\"manager-emoji-grid\" data-role=\"emoji-grid\"></div></section>",
-        "<div class=\"manager-tool-areas\">",
-        "<label><span data-role=\"tool-input-label\"></span><textarea data-role=\"tool-input\"></textarea></label>",
-        "<label data-role=\"tool-compare-panel\"><span data-role=\"tool-compare-label\"></span><textarea data-role=\"tool-compare-input\"></textarea></label>",
-        "<label><span data-role=\"tool-output-label\"></span><textarea data-role=\"tool-output\" readonly></textarea></label>",
-        "</div>",
-        "<section class=\"manager-tool-compare-visual\" data-role=\"tool-compare-visual\" hidden>",
-        "<header><span data-role=\"compare-legend-remove\"></span><span data-role=\"compare-legend-add\"></span></header>",
-        "<div class=\"manager-tool-compare-visual-grid\">",
-        "<article><strong data-role=\"compare-left-title\"></strong><div class=\"manager-tool-compare-render\" data-role=\"compare-left-render\"></div></article>",
-        "<article><strong data-role=\"compare-right-title\"></strong><div class=\"manager-tool-compare-render\" data-role=\"compare-right-render\"></div></article>",
-        "</div>",
-        "</section>",
-        "<footer>",
-        "<button type=\"button\" class=\"primary\" data-manager-action=\"copy-tool-output\"></button>",
-        "<button type=\"button\" data-manager-action=\"capture-tool-output\"></button>",
-        "<button type=\"button\" data-manager-action=\"close-tool-workspace\"></button>",
-        "</footer>",
-        "</section>"
-      ].join("");
-      document.body.appendChild(modal);
-      modal.querySelector("[data-role='tool-input']").addEventListener("input", () => {
-        if (modal.dataset.toolId === "variableInjector") {
-          updateManagerWordReplacerHighlight(modal);
-          scheduleManagerToolStateSave(modal);
-          return;
-        }
-        runActiveTool({ silent: true });
-      });
-      modal.querySelector("[data-role='tool-compare-input']").addEventListener("input", () => runActiveTool({ silent: true }));
-      modal.querySelector("[data-role='tool-options']").addEventListener("input", (event) => {
-        syncManagerColorFields(modal, event.target);
-        if (modal.dataset.toolId === "variableInjector") {
-          updateManagerWordReplacerHighlight(modal);
-          scheduleManagerToolStateSave(modal);
-          return;
-        }
-        runActiveTool({ silent: true });
-      });
-      modal.querySelector("[data-role='tool-options']").addEventListener("change", (event) => {
-        syncManagerColorFields(modal, event.target);
-        if (modal.dataset.toolId === "variableInjector") {
-          updateManagerWordReplacerHighlight(modal);
-          scheduleManagerToolStateSave(modal);
-          return;
-        }
-        runActiveTool({ silent: true });
-      });
-      modal.querySelector("[data-role='emoji-search']").addEventListener("input", () => {
-        if (modal.dataset.toolId === "longTextSplitter") renderManagerSpecialCharacters(modal);
-        else renderManagerEmojiPicker(modal);
-        scheduleManagerToolStateSave(modal);
-      });
-    }
+    closeToolsModal();
+    rememberRecentTool(tool.id);
+    const modal = getManagerToolWorkspaceView().ensure();
     modal.dataset.toolId = tool.id;
     const card = modal.querySelector(".manager-tool-workspace-card");
     card.dataset.toolLayout = tool.layout || "editor";
     card.dataset.toolId = tool.id;
+    const toolIcon = modal.querySelector("[data-role='tool-icon']");
+    if (toolIcon) toolIcon.src = chrome.runtime.getURL(tool.icon);
     modal.querySelector("[data-role='tool-title']").textContent = tool.title;
     modal.querySelector("[data-manager-action='open-tool-info']").setAttribute("aria-label", t("tools.help.infoButton", { tool: tool.title }));
     modal.querySelector("[data-manager-action='open-tool-info']").title = t("tools.help.infoButton", { tool: tool.title });
     modal.querySelector("[data-role='tool-description']").textContent = tool.description;
+    modal.querySelector("[data-role='tool-settings-title']").textContent = t("tools.workbench.settings");
+    modal.querySelector("[data-role='tool-status']").textContent = t("tools.workbench.live");
+    const exampleButton = modal.querySelector("[data-manager-action='tool-example']");
+    exampleButton.textContent = t("tools.workbench.example");
+    exampleButton.hidden = !window.MCP.toolSupportsExample?.(tool.id);
+    modal.dataset.exampleSignature = "";
+    modal.dataset.exampleIndex = "0";
+    const smartButton = modal.querySelector("[data-manager-action='tool-smart']");
+    smartButton.textContent = t("tools.workbench.smart");
+    smartButton.hidden = Object.keys(window.MCP.toolSmartPreset?.(tool.id) || {}).length === 0;
+    modal.querySelector("[data-manager-action='tool-swap']").textContent = t("tools.workbench.swap");
+    modal.querySelector("[data-manager-action='tool-reset']").textContent = t("tools.workbench.reset");
+    const undoButton = modal.querySelector("[data-manager-action='tool-undo']");
+    const redoButton = modal.querySelector("[data-manager-action='tool-redo']");
+    const closeButton = modal.querySelector("header [data-manager-action='close-tool-workspace']");
+    undoButton.title = t("tools.workbench.undo");
+    undoButton.setAttribute("aria-label", t("tools.workbench.undo"));
+    redoButton.title = t("tools.workbench.redo");
+    redoButton.setAttribute("aria-label", t("tools.workbench.redo"));
+    closeButton.setAttribute("aria-label", t("common.close"));
+    closeButton.title = t("common.close");
     modal.querySelector("[data-role='tool-input-label']").textContent = t("tools.input");
     modal.querySelector("[data-role='tool-compare-label']").textContent = t("tools.options.compareText");
     modal.querySelector("[data-role='tool-output-label']").textContent = t("tools.output");
-    modal.querySelector("[data-role='compare-legend-remove']").textContent = t("tools.compareLegendRemoved");
-    modal.querySelector("[data-role='compare-legend-add']").textContent = t("tools.compareLegendAdded");
     modal.querySelector("[data-role='compare-left-title']").textContent = t("tools.compareLeft");
     modal.querySelector("[data-role='compare-right-title']").textContent = t("tools.compareRight");
     modal.querySelector("[data-manager-action='copy-tool-output']").textContent = t("tools.copyOutput");
+    modal.querySelector("[data-manager-action='use-tool-output']").textContent = t("tools.workbench.useResult");
+    modal.querySelector("[data-manager-action='export-tool-output']").textContent = t("tools.workbench.export");
     modal.querySelector("[data-manager-action='capture-tool-output']").textContent = t("tools.captureOutput");
-    modal.querySelector("footer [data-manager-action='close-tool-workspace']").textContent = t("common.close");
     const optionNodes = toolOptionNodes(tool.id);
     const optionsNode = modal.querySelector("[data-role='tool-options']");
     optionsNode.replaceChildren(...optionNodes);
@@ -2043,6 +1900,8 @@
     modal.querySelector("[data-role='tool-compare-input']").value = "";
     const emojiSearch = modal.querySelector("[data-role='emoji-search']");
     if (emojiSearch) emojiSearch.value = "";
+    const emojiBrowser = modal.querySelector("[data-role='emoji-browser']");
+    if (emojiBrowser && tool.id === "emojiPicker") emojiBrowser.dataset.emojiCategory = "all";
     resetManagerToolWorkspaceMode(modal, tool.id);
     restoreManagerToolState(modal, tool.id);
     modal.querySelector("[data-role='tool-input']").placeholder = tool.id === "loremGenerator" ? "" : tool.id === "variableInjector" ? t("tools.wordReplacer.inputPlaceholder") : t("tools.inputPlaceholder");
@@ -2053,84 +1912,108 @@
     else if (tool.id === "longTextSplitter") renderManagerSpecialCharacters(modal);
     else if (tool.id === "variableInjector") updateManagerWordReplacerHighlight(modal);
     else runActiveTool({ silent: true });
+    resetManagerToolHistory(modal);
+    requestAnimationFrame(() => {
+      const preferredFocus = tool.id === "emojiPicker" || tool.id === "longTextSplitter"
+        ? modal.querySelector("[data-role='emoji-search']")
+        : modal.querySelector("[data-role='tool-input']:not([hidden])");
+      preferredFocus?.focus({ preventScroll: true });
+      window.MCP.startContextualGuidedTour?.("toolWorkspace");
+    });
+  }
+
+  function rememberRecentTool(toolId) {
+    const recentToolIds = window.MCP.normalizeRecentToolIds?.([
+      toolId,
+      ...(state.settings?.recentToolIds || [])
+    ], 3) || [toolId];
+    state.settings = Object.assign({}, state.settings, { recentToolIds });
+    window.MCP.getSettings()
+      .then((current) => window.MCP.saveSettings(Object.assign({}, current, { recentToolIds })))
+      .catch(() => {});
   }
 
   function resetManagerToolWorkspaceMode(modal, toolId) {
-    const isComparator = toolId === "textComparator";
-    const isDuplicateDetector = toolId === "duplicateDetector";
-    const isEmojiPicker = toolId === "emojiPicker";
-    const isSpecialCharacters = toolId === "longTextSplitter";
-    const isColorPicker = toolId === "colorPicker";
-    const isImageText = toolId === "imageText";
-    const hasVisual = isComparator || isDuplicateDetector;
-    const inputLabel = modal.querySelector("[data-role='tool-input-label']");
-    const compareLabel = modal.querySelector("[data-role='tool-compare-label']");
-    const comparePanel = modal.querySelector("[data-role='tool-compare-panel']");
-    const areas = modal.querySelector(".manager-tool-areas");
-    const outputPanel = modal.querySelector("[data-role='tool-output']")?.closest("label");
-    const compareVisual = modal.querySelector("[data-role='tool-compare-visual']");
-    const emojiBrowser = modal.querySelector("[data-role='emoji-browser']");
-    inputLabel.textContent = isComparator ? t("tools.compareLeft") : t("tools.input");
-    compareLabel.textContent = isComparator ? t("tools.compareRight") : t("tools.options.compareText");
-    if (comparePanel) comparePanel.hidden = !isComparator;
-    if (areas) areas.hidden = isEmojiPicker || isSpecialCharacters;
-    if (outputPanel) outputPanel.hidden = isComparator || isEmojiPicker;
-    modal.querySelector("[data-role='tool-input']")?.closest("label")?.toggleAttribute("hidden", isEmojiPicker || isColorPicker || isImageText);
-    if (outputPanel && isImageText) outputPanel.querySelector("span").textContent = t("tools.imageText.extracted");
-    if (emojiBrowser) {
-      emojiBrowser.hidden = !(isEmojiPicker || isSpecialCharacters);
-      const search = emojiBrowser.querySelector("[data-role='emoji-search']");
-      if (search) {
-        const placeholder = isSpecialCharacters ? t("tools.specialCharacters.search") : t("tools.emojiSearch");
-        search.placeholder = placeholder;
-        search.setAttribute("aria-label", placeholder);
-      }
+    if (!managerToolLayoutController) {
+      managerToolLayoutController = window.MCP.createManagerToolLayoutController({ t });
     }
-    ["copy-tool-output", "capture-tool-output"].forEach((managerAction) => {
-      const button = modal.querySelector(`[data-manager-action='${managerAction}']`);
-      if (button) button.hidden = isEmojiPicker || isSpecialCharacters;
-    });
-    const duplicateHighlight = modal.querySelector("[data-role='duplicate-source-highlight']");
-    if (duplicateHighlight && !isDuplicateDetector) duplicateHighlight.remove();
-    const wordReplacerHighlight = modal.querySelector("[data-role='word-replacer-highlight']");
-    if (wordReplacerHighlight && toolId !== "variableInjector") wordReplacerHighlight.remove();
-    modal.querySelector("[data-role='tool-input']")?.closest("label")?.classList.toggle("is-word-replacer-source", toolId === "variableInjector");
-    if (compareVisual) {
-      compareVisual.hidden = !hasVisual;
-      const addedLegend = compareVisual.querySelector("[data-role='compare-legend-add']");
-      const leftRender = compareVisual.querySelector("[data-role='compare-left-render']");
-      if (leftRender) {
-        leftRender.contentEditable = "false";
-        delete leftRender.dataset.duplicateBound;
-        leftRender.removeAttribute("role");
-        leftRender.removeAttribute("aria-multiline");
-        leftRender.removeAttribute("tabindex");
-        leftRender.removeAttribute("data-placeholder");
-      }
-      if (isDuplicateDetector) {
-        compareVisual.querySelector("[data-role='compare-legend-remove']").textContent = t("tools.duplicateLegend");
-        if (addedLegend) addedLegend.hidden = true;
-        compareVisual.querySelector("[data-role='compare-left-title']").textContent = t("tools.input");
-        compareVisual.querySelector("[data-role='compare-right-title']").textContent = t("tools.output");
-      } else if (isComparator) {
-        compareVisual.querySelector("[data-role='compare-legend-remove']").textContent = t("tools.compareLegendRemoved");
-        if (addedLegend) {
-          addedLegend.hidden = false;
-          addedLegend.textContent = t("tools.compareLegendAdded");
-        }
-        compareVisual.querySelector("[data-role='compare-left-title']").textContent = t("tools.compareLeft");
-        compareVisual.querySelector("[data-role='compare-right-title']").textContent = t("tools.compareRight");
-      }
-      if (!hasVisual) {
-        compareVisual.querySelector("[data-role='compare-left-render']")?.replaceChildren();
-        compareVisual.querySelector("[data-role='compare-right-render']")?.replaceChildren();
-      }
-    }
+    return managerToolLayoutController.reset(modal, toolId);
   }
 
   function closeToolWorkspace() {
-    const modal = document.getElementById("managerToolWorkspaceModal");
-    if (modal) modal.hidden = true;
+    return getManagerToolWorkspaceView().close();
+  }
+
+  function getManagerToolWorkspaceView() {
+    if (managerToolWorkspaceView) return managerToolWorkspaceView;
+    managerToolWorkspaceView = window.MCP.createManagerToolWorkspaceView({
+      runActiveTool,
+      syncColorFields: syncManagerColorFields,
+      updateWordReplacerHighlight: updateManagerWordReplacerHighlight,
+      scheduleStateSave: scheduleManagerToolStateSave,
+      renderSpecialCharacters: renderManagerSpecialCharacters,
+      renderEmojiPicker: renderManagerEmojiPicker
+    });
+    return managerToolWorkspaceView;
+  }
+
+  function getManagerToolHistoryController() {
+    if (managerToolHistoryController) return managerToolHistoryController;
+    managerToolHistoryController = window.MCP.createManagerToolHistoryController({
+      getWorkspaceModal: () => document.getElementById("managerToolWorkspaceModal"),
+      runActiveTool,
+      renderEmojiPicker: renderManagerEmojiPicker,
+      renderSpecialCharacters: renderManagerSpecialCharacters
+    });
+    return managerToolHistoryController;
+  }
+
+  function resetManagerToolHistory(modal) {
+    return getManagerToolHistoryController().reset(modal);
+  }
+
+  function recordManagerToolHistory(modal, options) {
+    return getManagerToolHistoryController().record(modal, options);
+  }
+
+  function restoreManagerToolHistory(direction) {
+    return getManagerToolHistoryController().restore(direction);
+  }
+
+  function loadManagerToolExample() {
+    return getManagerToolCommands().example();
+  }
+
+  function applyManagerToolSmartPreset() {
+    return getManagerToolCommands().smartPreset();
+  }
+
+  function swapManagerToolInputs() {
+    return getManagerToolCommands().swap();
+  }
+
+  function resetManagerToolWorkspace() {
+    return getManagerToolCommands().reset();
+  }
+
+  function useManagerToolOutput() {
+    return getManagerToolCommands().useOutput();
+  }
+
+  function exportManagerToolOutput() {
+    return getManagerToolCommands().exportOutput();
+  }
+
+  function getManagerToolCommands() {
+    if (managerToolCommands) return managerToolCommands;
+    managerToolCommands = window.MCP.createManagerToolCommands({
+      t, getLanguage: () => state.settings.language || "en", toolApi: window.MCP,
+      collectOptions: collectToolOptions, run: runActiveTool, record: recordManagerToolHistory,
+      updateWordReplacerHighlight: updateManagerWordReplacerHighlight,
+      renderEmojiPicker: renderManagerEmojiPicker, renderSpecialCharacters: renderManagerSpecialCharacters,
+      showToast: showManagerToast, getHistory: getManagerToolHistoryController
+    });
+    return managerToolCommands;
   }
 
   function openManagerToolInfoModal() {
@@ -2147,6 +2030,8 @@
       content.scrollTop = 0;
     });
     managerTextModal.querySelector(".manager-text-card")?.classList.add("is-tool-help");
+    document.body.appendChild(managerTextModal);
+    managerTextModal.querySelector("[data-role='manager-text-close']")?.focus({ preventScroll: true });
   }
 
   function createManagerToolHelpContent(tool) {
@@ -2187,55 +2072,29 @@
     });
   }
 
-  function getManagerToolState(toolId) {
-    const states = state.settings?.toolStates;
-    return states && typeof states === "object" && states[toolId] && typeof states[toolId] === "object" ? states[toolId] : {};
+  function getManagerToolStateController() {
+    if (managerToolStateController) return managerToolStateController;
+    managerToolStateController = window.MCP.createManagerToolStateController({
+      getSettings: () => state.settings || {},
+      updateSettings: (patch) => {
+        state.settings = Object.assign({}, state.settings, patch);
+      },
+      loadSettings: () => window.MCP.getSettings(),
+      persistSettings: (settings) => window.MCP.saveSettings(settings)
+    });
+    return managerToolStateController;
   }
 
   function restoreManagerToolState(modal, toolId) {
-    const saved = getManagerToolState(toolId);
-    const input = modal.querySelector("[data-role='tool-input']");
-    const compare = modal.querySelector("[data-role='tool-compare-input']");
-    const emojiSearch = modal.querySelector("[data-role='emoji-search']");
-    if (input && typeof saved.input === "string") input.value = saved.input;
-    if (compare && typeof saved.compare === "string") compare.value = saved.compare;
-    if (emojiSearch && typeof saved.emojiSearch === "string") emojiSearch.value = saved.emojiSearch;
-    const options = saved.options && typeof saved.options === "object" ? saved.options : {};
-    modal.querySelectorAll("[data-tool-option]").forEach((field) => {
-      if (Object.prototype.hasOwnProperty.call(options, field.dataset.toolOption)) {
-        field.value = options[field.dataset.toolOption];
-      }
-    });
-  }
-
-  function collectManagerToolState(modal) {
-    const options = {};
-    modal.querySelectorAll("[data-tool-option]").forEach((field) => {
-      options[field.dataset.toolOption] = field.value;
-    });
-    return {
-      input: modal.querySelector("[data-role='tool-input']")?.value || "",
-      compare: modal.querySelector("[data-role='tool-compare-input']")?.value || "",
-      emojiSearch: modal.querySelector("[data-role='emoji-search']")?.value || "",
-      options
-    };
+    return getManagerToolStateController().restore(modal, toolId);
   }
 
   function scheduleManagerToolStateSave(modal) {
-    if (!modal || modal.hidden || !modal.dataset.toolId) return;
-    clearTimeout(managerToolStateSaveTimer);
-    managerToolStateSaveTimer = window.setTimeout(() => saveManagerToolState(modal), 280);
+    return getManagerToolStateController().schedule(modal);
   }
 
-  async function saveManagerToolState(modal) {
-    if (!modal || !modal.dataset.toolId) return;
-    const toolId = modal.dataset.toolId;
-    const nextToolState = collectManagerToolState(modal);
-    const currentSettings = await window.MCP.getSettings().catch(() => state.settings || {});
-    const nextToolStates = Object.assign({}, currentSettings.toolStates || {}, { [toolId]: nextToolState });
-    const nextSettings = Object.assign({}, currentSettings, { toolStates: nextToolStates });
-    state.settings = Object.assign({}, state.settings, { toolStates: nextToolStates });
-    await window.MCP.saveSettings(nextSettings).catch(() => {});
+  function saveManagerToolState(modal) {
+    return getManagerToolStateController().save(modal);
   }
 
   function toolOptionNodes(toolId) {
@@ -2274,7 +2133,15 @@
       label.append(span, field);
       nodes.push(label);
     };
-    if (toolId === "caseConverter") select("caseMode", [["upper", "tools.case.upper"], ["lower", "tools.case.lower"], ["title", "tools.case.title"], ["sentence", "tools.case.sentence"], ["camel", "tools.case.camel"], ["snake", "tools.case.snake"], ["kebab", "tools.case.kebab"], ["pascal", "tools.case.pascal"]]);
+    const toggle = (name, enabled = false) => select(name, [[String(enabled), enabled ? "tools.workbench.on" : "tools.workbench.off"], [String(!enabled), enabled ? "tools.workbench.off" : "tools.workbench.on"]]);
+    if (toolId === "textCleaner") select("cleanLevel", [["gentle", "tools.clean.gentle"], ["standard", "tools.clean.standard"], ["deep", "tools.clean.deep"]]);
+    if (toolId === "typographyNormalizer") select("typographyMode", [["editorial", "tools.typography.editorial"], ["web", "tools.typography.web"], ["codeSafe", "tools.typography.codeSafe"]]);
+    if (toolId === "caseConverter") select("caseMode", [["upper", "tools.case.upper"], ["lower", "tools.case.lower"], ["title", "tools.case.title"], ["sentence", "tools.case.sentence"], ["camel", "tools.case.camel"], ["snake", "tools.case.snake"], ["kebab", "tools.case.kebab"], ["pascal", "tools.case.pascal"], ["constant", "tools.case.constant"], ["dot", "tools.case.dot"], ["path", "tools.case.path"], ["slug", "tools.case.slug"], ["swap", "tools.case.swap"]]);
+    if (toolId === "advancedCounter") {
+      input("readingSpeed", "220");
+      input("targetLimit", "0");
+    }
+    if (toolId === "duplicateDetector") select("duplicateSensitivity", [["exact", "tools.duplicate.exact"], ["balanced", "tools.duplicate.balanced"], ["fuzzy", "tools.duplicate.fuzzy"]]);
     if (toolId === "promptTemplateManager") {
       select("promptPreset", [["general", "tools.promptPreset.general"], ["strategy", "tools.promptPreset.strategy"], ["marketing", "tools.promptPreset.marketing"], ["seo", "tools.promptPreset.seo"], ["social", "tools.promptPreset.social"], ["email", "tools.promptPreset.email"], ["sales", "tools.promptPreset.sales"], ["support", "tools.promptPreset.support"], ["product", "tools.promptPreset.product"], ["ux", "tools.promptPreset.ux"], ["code", "tools.promptPreset.code"], ["debug", "tools.promptPreset.debug"], ["data", "tools.promptPreset.data"], ["research", "tools.promptPreset.research"], ["summary", "tools.promptPreset.summary"], ["translation", "tools.promptPreset.translation"], ["teaching", "tools.promptPreset.teaching"], ["recruiting", "tools.promptPreset.recruiting"], ["project", "tools.promptPreset.project"], ["automation", "tools.promptPreset.automation"], ["imagePrompt", "tools.promptPreset.imagePrompt"]]);
       select("promptDepth", [["deep", "tools.promptDepth.deep"], ["fast", "tools.promptDepth.fast"], ["standard", "tools.promptDepth.standard"], ["exhaustive", "tools.promptDepth.exhaustive"]]);
@@ -2299,13 +2166,25 @@
       select("imagePromptNegative", [["standard", "tools.imagePrompt.negative.standard"], ["product", "tools.imagePrompt.negative.product"], ["portrait", "tools.imagePrompt.negative.portrait"], ["text", "tools.imagePrompt.negative.text"], ["none", "tools.imagePrompt.negative.none"]]);
     }
     if (toolId === "variableInjector") nodes.push(createManagerWordReplacerPanel());
-    if (toolId === "listTransformer") select("listMode", [["bullets", "tools.list.bullets"], ["numbered", "tools.list.numbered"], ["csv", "tools.list.csv"], ["markdownTable", "tools.list.table"], ["sort", "tools.list.sort"], ["unique", "tools.list.unique"], ["reverse", "tools.list.reverse"]]);
-    if (toolId === "universalEncoder") select("encodeMode", [["urlEncode", "tools.encode.urlEncode"], ["urlDecode", "tools.encode.urlDecode"], ["base64Encode", "tools.encode.base64Encode"], ["base64Decode", "tools.encode.base64Decode"], ["htmlEncode", "tools.encode.htmlEncode"], ["htmlDecode", "tools.encode.htmlDecode"], ["jwtDecode", "tools.encode.jwtDecode"]]);
+    if (toolId === "listTransformer") select("listMode", [["bullets", "tools.list.bullets"], ["numbered", "tools.list.numbered"], ["csv", "tools.list.csv"], ["markdownTable", "tools.list.table"], ["sort", "tools.list.sort"], ["unique", "tools.list.unique"], ["reverse", "tools.list.reverse"], ["jsonArray", "tools.list.jsonArray"], ["queryParams", "tools.list.queryParams"]]);
+    if (toolId === "informationExtractor") select("extractFormat", [["report", "tools.extract.report"], ["json", "tools.extract.json"], ["csv", "tools.extract.csv"]]);
+    if (toolId === "localAnonymizer") select("anonymizeMode", [["labels", "tools.anonymize.labels"], ["pseudonyms", "tools.anonymize.pseudonyms"], ["mask", "tools.anonymize.mask"]]);
+    if (toolId === "universalEncoder") select("encodeMode", [["urlEncode", "tools.encode.urlEncode"], ["urlDecode", "tools.encode.urlDecode"], ["base64Encode", "tools.encode.base64Encode"], ["base64Decode", "tools.encode.base64Decode"], ["htmlEncode", "tools.encode.htmlEncode"], ["htmlDecode", "tools.encode.htmlDecode"], ["jwtDecode", "tools.encode.jwtDecode"], ["hexEncode", "tools.encode.hexEncode"], ["hexDecode", "tools.encode.hexDecode"], ["unicodeEscape", "tools.encode.unicodeEscape"], ["unicodeUnescape", "tools.encode.unicodeUnescape"], ["jsonString", "tools.encode.jsonString"], ["jsonUnstring", "tools.encode.jsonUnstring"]]);
     if (toolId === "colorPicker") nodes.push(createManagerColorPickerPanel());
     if (toolId === "imageText") nodes.push(createManagerImageTextPanel());
-    if (toolId === "jsonFormatter") select("jsonMode", [["pretty", "tools.json.pretty"], ["minify", "tools.json.minify"]]);
-    if (toolId === "loremGenerator") input("wordCount", "120");
+    if (toolId === "jsonFormatter") {
+      select("jsonMode", [["pretty", "tools.json.pretty"], ["minify", "tools.json.minify"]]);
+      toggle("sortJsonKeys", true);
+    }
+    if (toolId === "loremGenerator") {
+      input("wordCount", "120");
+      input("paragraphCount", "3");
+    }
     if (toolId === "markdownToolkit") select("markdownMode", [["checklist", "tools.markdown.checklist"], ["html", "tools.markdown.html"], ["code", "tools.markdown.code"], ["headings", "tools.markdown.headings"]]);
+    if (toolId === "textComparator") {
+      toggle("ignoreWhitespace", true);
+      toggle("compareCaseSensitive", false);
+    }
     return nodes;
   }
 
@@ -2363,7 +2242,10 @@
       "<label><span></span><input type=\"text\" data-tool-option=\"replaceFind\"></label>",
       "<button type=\"button\" data-manager-action=\"search-word-replacer\"></button>",
       "<label><span></span><input type=\"text\" data-tool-option=\"replaceWith\"></label>",
-      "<button type=\"button\" class=\"primary\" data-manager-action=\"replace-word-replacer\"></button>"
+      "<button type=\"button\" class=\"primary\" data-manager-action=\"replace-word-replacer\"></button>",
+      "<label class=\"manager-word-replacer-toggle\"><span></span><select data-tool-option=\"replaceCaseSensitive\"><option value=\"false\"></option><option value=\"true\"></option></select></label>",
+      "<label class=\"manager-word-replacer-toggle\"><span></span><select data-tool-option=\"replaceWholeWord\"><option value=\"false\"></option><option value=\"true\"></option></select></label>",
+      "<label class=\"manager-word-replacer-toggle\"><span></span><select data-tool-option=\"replaceRegex\"><option value=\"false\"></option><option value=\"true\"></option></select></label>"
     ].join("");
     const labels = panel.querySelectorAll("label span");
     labels[0].textContent = t("tools.options.replaceFind");
@@ -2372,6 +2254,13 @@
     panel.querySelector("[data-tool-option='replaceWith']").placeholder = t("tools.wordReplacer.replacePlaceholder");
     panel.querySelector("[data-manager-action='search-word-replacer']").textContent = t("tools.wordReplacer.search");
     panel.querySelector("[data-manager-action='replace-word-replacer']").textContent = t("tools.wordReplacer.replace");
+    const toggles = panel.querySelectorAll(".manager-word-replacer-toggle");
+    ["replaceCaseSensitive", "replaceWholeWord", "replaceRegex"].forEach((name, index) => {
+      toggles[index].querySelector("span").textContent = t(`tools.options.${name}`);
+      const options = toggles[index].querySelectorAll("option");
+      options[0].textContent = t("tools.workbench.off");
+      options[1].textContent = t("tools.workbench.on");
+    });
     return panel;
   }
 
@@ -2427,13 +2316,49 @@
     }
   }
 
+  async function applyManagerColorPickResult(result = {}) {
+    openToolWorkspace("colorPicker");
+    const modal = document.getElementById("managerToolWorkspaceModal");
+    if (!modal) return;
+    const hex = String(result.hex || "").trim().toUpperCase();
+    if (hex) {
+      const colorInput = modal.querySelector("[data-tool-option='colorHex']");
+      const textInput = modal.querySelector("[data-tool-option='colorText']");
+      if (colorInput) colorInput.value = hex;
+      if (textInput) textInput.value = hex;
+      runActiveTool({ silent: true });
+      await saveManagerToolState(modal).catch(() => {});
+      showManagerToast(`${t("tools.colorPicker.picked")} ${hex}`);
+      return;
+    }
+    if (result.cancelled) showManagerToast(t("tools.colorPicker.cancelled"));
+  }
+
+  async function applyManagerImageTextResult(result = {}) {
+    openToolWorkspace("imageText");
+    const modal = document.getElementById("managerToolWorkspaceModal");
+    if (!modal) return;
+    const input = modal.querySelector("[data-role='tool-input']");
+    if (input && result.text) input.value = result.text;
+    runActiveTool({ silent: true });
+    await saveManagerToolState(modal).catch(() => {});
+    showManagerToast(result.text ? t("tools.imageText.extracted") : result.cancelled ? t("tools.imageText.cancelled") : t("tools.imageText.noText"));
+  }
+
   async function startManagerColorPick() {
     const modal = document.getElementById("managerToolWorkspaceModal");
     if (modal?.dataset.toolId === "colorPicker") await saveManagerToolState(modal).catch(() => {});
     closeToolWorkspace();
     closeToolsModal();
-    const response = await chrome.runtime.sendMessage({ type: window.MCP?.MESSAGE_TYPES?.START_COLOR_PICKER || "MCP_START_COLOR_PICKER" }).catch((error) => ({ ok: false, error: error.message }));
-    if (!response?.ok || response?.data?.opened === false) showManagerToast(t("tools.colorPicker.unsupported"));
+    const response = await chrome.runtime.sendMessage({
+      type: window.MCP?.MESSAGE_TYPES?.START_COLOR_PICKER || "MCP_START_COLOR_PICKER",
+      sourceContextId: managerToolSelectionContextId
+    }).catch((error) => ({ ok: false, error: error.message }));
+    if (!response?.ok || response?.data?.opened === false) {
+      openToolWorkspace("colorPicker");
+      showManagerToast(t("tools.colorPicker.unsupported"));
+      return;
+    }
   }
 
   async function startManagerImageTextCapture() {
@@ -2441,8 +2366,15 @@
     if (modal?.dataset.toolId === "imageText") await saveManagerToolState(modal).catch(() => {});
     closeToolWorkspace();
     closeToolsModal();
-    const response = await chrome.runtime.sendMessage({ type: window.MCP?.MESSAGE_TYPES?.START_IMAGE_TEXT_CAPTURE || "MCP_START_IMAGE_TEXT_CAPTURE" }).catch((error) => ({ ok: false, error: error.message }));
-    if (!response?.ok || response?.data?.opened === false) showManagerToast(t("tools.imageText.unsupported"));
+    const response = await chrome.runtime.sendMessage({
+      type: window.MCP?.MESSAGE_TYPES?.START_IMAGE_TEXT_CAPTURE || "MCP_START_IMAGE_TEXT_CAPTURE",
+      sourceContextId: managerToolSelectionContextId
+    }).catch((error) => ({ ok: false, error: error.message }));
+    if (!response?.ok || response?.data?.opened === false) {
+      openToolWorkspace("imageText");
+      showManagerToast(t("tools.imageText.unsupported"));
+      return;
+    }
   }
 
   async function copyManagerColorFormat(button) {
@@ -2454,22 +2386,24 @@
     if (!color) return;
     const formats = window.MCP.colorFormats(color, state.settings.language || "en");
     const value = custom || formats[format] || formats.hex;
-    await navigator.clipboard.writeText(value).catch(() => {});
-    showManagerToast(t("tools.colorPicker.copied"));
+    await copyManagerToolValue(value);
   }
 
-  function runActiveTool({ silent = false } = {}) {
+  function runActiveTool({ silent = false, recordHistory = true } = {}) {
     const modal = document.getElementById("managerToolWorkspaceModal");
     if (!modal || modal.hidden) return "";
     const input = modal.querySelector("[data-role='tool-input']").value;
     const options = collectToolOptions(modal);
     const output = window.MCP.runTool(modal.dataset.toolId, input, options);
     modal.querySelector("[data-role='tool-output']").value = output;
+    const liveStatus = modal.querySelector("[data-role='tool-status']");
+    if (liveStatus) liveStatus.textContent = output ? t("tools.workbench.resultReady") : t("tools.workbench.live");
     if (modal.dataset.toolId === "colorPicker") renderManagerColorPicker(modal, options);
     if (modal.dataset.toolId === "textComparator") renderManagerTextComparator(modal, input, options.compareText || "");
     else if (modal.dataset.toolId === "duplicateDetector") renderManagerDuplicateDetector(modal, input, output, options);
     renderToolInsights(modal, input, output, options);
     scheduleManagerToolStateSave(modal);
+    if (recordHistory) recordManagerToolHistory(modal);
     if (!silent) showManagerToast(t("tools.processed"));
     return output;
   }
@@ -2487,7 +2421,7 @@
       showManagerToast(t("tools.wordReplacer.missingNeedle"));
       return;
     }
-    const count = window.MCP.countWordReplacerMatches ? window.MCP.countWordReplacerMatches(input, needle) : 0;
+    const count = window.MCP.countWordReplacerMatches ? window.MCP.countWordReplacerMatches(input, needle, collectToolOptions(modal)) : 0;
     updateManagerWordReplacerHighlight(modal);
     showManagerToast(count ? t("tools.wordReplacer.found", { count }) : t("tools.wordReplacer.notFound"));
   }
@@ -2505,7 +2439,7 @@
       showManagerToast(t("tools.wordReplacer.missingNeedle"));
       return;
     }
-    const count = window.MCP.countWordReplacerMatches ? window.MCP.countWordReplacerMatches(input, needle) : 0;
+    const count = window.MCP.countWordReplacerMatches ? window.MCP.countWordReplacerMatches(input, needle, collectToolOptions(modal)) : 0;
     runActiveTool({ silent: true });
     updateManagerWordReplacerHighlight(modal);
     showManagerToast(count ? t("tools.wordReplacer.replaced", { count }) : t("tools.wordReplacer.notFound"));
@@ -2517,7 +2451,7 @@
     if (!input) return;
     const highlight = ensureManagerWordReplacerHighlight(input);
     const needle = modal.querySelector("[data-tool-option='replaceFind']")?.value || "";
-    highlight.innerHTML = buildManagerWordReplacerHighlightHtml(input.value, needle);
+    highlight.innerHTML = window.MCP.buildReplacementHighlightHtml(input.value, needle, collectToolOptions(modal));
     highlight.scrollTop = input.scrollTop;
     highlight.scrollLeft = input.scrollLeft;
   }
@@ -2541,36 +2475,13 @@
     return highlight;
   }
 
-  function buildManagerWordReplacerHighlightHtml(text, needle) {
-    const source = String(text || "");
-    const search = String(needle || "");
-    if (!source) return "&nbsp;";
-    if (!search) return escapeHtml(source);
-    const regex = new RegExp(escapeManagerRegExp(search), "gi");
-    let cursor = 0;
-    let html = "";
-    let match;
-    while ((match = regex.exec(source))) {
-      if (match.index > cursor) html += escapeHtml(source.slice(cursor, match.index));
-      html += `<mark>${escapeHtml(match[0])}</mark>`;
-      cursor = match.index + match[0].length;
-      if (match[0].length === 0) regex.lastIndex += 1;
-    }
-    if (cursor < source.length) html += escapeHtml(source.slice(cursor));
-    return html || "&nbsp;";
-  }
-
-  function escapeManagerRegExp(value) {
-    return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-
   function renderManagerTextComparator(modal, leftText, rightText) {
     const left = String(leftText || "");
     const right = String(rightText || "");
     const leftNode = modal.querySelector("[data-role='compare-left-render']");
     const rightNode = modal.querySelector("[data-role='compare-right-render']");
     if (!leftNode || !rightNode) return;
-    const visual = buildTextCompareVisual(left, right);
+    const visual = window.MCP.buildTextCompareVisual(left, right);
     leftNode.innerHTML = visual.leftHtml;
     rightNode.innerHTML = visual.rightHtml;
     const insight = modal.querySelector("[data-role='tool-insights']");
@@ -2585,14 +2496,9 @@
   }
 
   function renderManagerDuplicateDetector(modal, input, output, options) {
-    const leftNode = modal.querySelector("[data-role='compare-left-render']");
-    const rightNode = modal.querySelector("[data-role='compare-right-render']");
-    if (!leftNode || !rightNode || !window.MCP.detectDuplicateText) return;
-    const report = window.MCP.detectDuplicateText(input, options.locale || state.settings.language || "en");
+    if (!window.MCP.detectDuplicateText) return;
+    const report = window.MCP.detectDuplicateText(input, options.locale || state.settings.language || "en", options);
     updateManagerDuplicateTextareaHighlight(modal, report);
-    if (input.trim()) leftNode.innerHTML = buildManagerDuplicateSourceHtml(input, report.groups);
-    else leftNode.replaceChildren();
-    rightNode.innerHTML = `<pre class="cleaned-output">${escapeHtml(output || report.cleanedText || "") || "&nbsp;"}</pre>`;
   }
 
   function updateManagerDuplicateTextareaHighlight(modal, report) {
@@ -2629,137 +2535,6 @@
     return highlight;
   }
 
-  function bindManagerDuplicateSource(leftNode, modal) {
-    if (leftNode.dataset.duplicateBound === "true") return;
-    leftNode.dataset.duplicateBound = "true";
-    leftNode.contentEditable = "true";
-    leftNode.setAttribute("role", "textbox");
-    leftNode.setAttribute("aria-multiline", "true");
-    leftNode.setAttribute("tabindex", "0");
-    leftNode.setAttribute("data-placeholder", t("tools.inputPlaceholder"));
-    leftNode.addEventListener("pointerdown", () => {
-      window.setTimeout(() => {
-        if (document.activeElement !== leftNode) leftNode.focus();
-      }, 0);
-    });
-    leftNode.addEventListener("paste", (event) => {
-      event.preventDefault();
-      const text = event.clipboardData?.getData("text/plain") || "";
-      insertPlainTextIntoEditable(leftNode, text);
-      syncManagerDuplicateSource(modal, leftNode);
-      runActiveTool({ silent: true });
-    });
-    leftNode.addEventListener("input", () => {
-      syncManagerDuplicateSource(modal, leftNode);
-      runActiveTool({ silent: true });
-    });
-    leftNode.addEventListener("blur", () => runActiveTool({ silent: true }));
-  }
-
-  function getManagerDuplicateSourceText(modal) {
-    const leftNode = modal.querySelector("[data-role='compare-left-render']");
-    const visibleText = leftNode ? getEditablePlainText(leftNode) : "";
-    return visibleText.trim() ? visibleText : modal.querySelector("[data-role='tool-input']")?.value || "";
-  }
-
-  function syncManagerDuplicateSource(modal, leftNode) {
-    const input = modal.querySelector("[data-role='tool-input']");
-    if (input) input.value = getEditablePlainText(leftNode);
-  }
-
-  function getEditablePlainText(node) {
-    return String(node?.innerText || node?.textContent || "")
-      .replace(/\u00a0/g, " ")
-      .replace(/^(?:[ \t]*\r?\n)+/, "");
-  }
-
-  function isManagerDuplicateSourceFocused(node) {
-    return document.activeElement === node || node?.matches?.(":focus");
-  }
-
-  function insertPlainTextIntoEditable(node, text) {
-    const cleanText = normalizeDuplicatePastedText(text);
-    node.focus();
-    if (!getEditablePlainText(node).trim()) {
-      node.textContent = cleanText;
-      placeCaretAtEditableEnd(node);
-      return;
-    }
-    const selection = window.getSelection();
-    if (!selection || !selection.rangeCount || !node.contains(selection.anchorNode)) {
-      const textNode = document.createTextNode(cleanText);
-      node.appendChild(textNode);
-      placeCaretAfterNode(textNode);
-      return;
-    }
-    const range = selection.getRangeAt(0);
-    range.deleteContents();
-    const textNode = document.createTextNode(cleanText);
-    range.insertNode(textNode);
-    placeCaretAfterNode(textNode);
-  }
-
-  function normalizeDuplicatePastedText(text) {
-    return String(text || "")
-      .replace(/\u00a0/g, " ")
-      .replace(/\r\n/g, "\n")
-      .replace(/\r/g, "\n")
-      .replace(/[\u200B-\u200D\uFEFF]/g, "")
-      .replace(/^(?:[ \t]*\n)+/, "");
-  }
-
-  function placeCaretAfterNode(node) {
-    const selection = window.getSelection();
-    if (!selection) return;
-    const range = document.createRange();
-    range.setStartAfter(node);
-    range.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-
-  function placeCaretAtEditableEnd(node) {
-    const selection = window.getSelection();
-    if (!selection) return;
-    const range = document.createRange();
-    range.selectNodeContents(node);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  }
-
-  function buildManagerDuplicateSourceHtml(input, groups = []) {
-    const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#14b8a6", "#f43f5e"];
-    const colorByKey = new Map(groups.map((group, index) => [group.key, colors[index % colors.length]]));
-    const segments = window.MCP.detectDuplicateText ? duplicateVisualSegments(input) : [];
-    return segments.map((segment) => {
-      const key = normalizeManagerDuplicateKey(segment.value);
-      const color = colorByKey.get(key);
-      if (!color || !segment.value.trim()) return escapeHtml(segment.raw);
-      return `<span class="duplicate-hit" style="--duplicate-color:${color}">${escapeHtml(segment.raw)}</span>`;
-    }).join("") || "&nbsp;";
-  }
-
-  function duplicateVisualSegments(text) {
-    const paragraphs = String(text || "").split(/(\n\s*\n+)/);
-    const paragraphSegments = [];
-    for (let index = 0; index < paragraphs.length; index += 2) {
-      const value = paragraphs[index] || "";
-      const separator = paragraphs[index + 1] || "";
-      if (value.trim()) paragraphSegments.push({ raw: value + separator, value });
-    }
-    if (paragraphSegments.length >= 2 && paragraphSegments.some((segment) => segment.value.length > 80)) return paragraphSegments;
-    const lines = String(text || "").split(/(\r?\n)/);
-    const lineSegments = [];
-    for (let index = 0; index < lines.length; index += 2) {
-      lineSegments.push({ raw: (lines[index] || "") + (lines[index + 1] || ""), value: lines[index] || "" });
-    }
-    if (lineSegments.filter((segment) => segment.value.trim()).length >= 2) return lineSegments;
-    const sentences = String(text || "").match(/[^.!?]+[.!?]+|\S[\s\S]*$/g) || [];
-    if (sentences.length >= 2) return sentences.map((value) => ({ raw: value, value }));
-    return String(text || "").split(/(\s+)/).filter((value) => value).map((value) => ({ raw: value, value: /\s+/.test(value) ? "" : value }));
-  }
-
   function normalizeManagerDuplicateKey(value) {
     return String(value || "")
       .normalize("NFKC")
@@ -2772,72 +2547,8 @@
       .toLocaleLowerCase();
   }
 
-  function buildTextCompareVisual(leftText, rightText) {
-    const leftLines = String(leftText || "").split("\n");
-    const rightLines = String(rightText || "").split("\n");
-    const max = Math.max(leftLines.length, rightLines.length);
-    const leftHtml = [];
-    const rightHtml = [];
-    let addedTokens = 0;
-    let removedTokens = 0;
-    let sameLines = 0;
-    let changedLines = 0;
-    for (let index = 0; index < max; index += 1) {
-      const left = leftLines[index] ?? "";
-      const right = rightLines[index] ?? "";
-      if (left === right) {
-        sameLines += 1;
-        leftHtml.push(`<div class="same">${escapeHtml(left) || "&nbsp;"}</div>`);
-        rightHtml.push(`<div class="same">${escapeHtml(right) || "&nbsp;"}</div>`);
-        continue;
-      }
-      changedLines += 1;
-      const diff = wordDiff(left, right);
-      leftHtml.push(`<div class="changed">${diff.left}</div>`);
-      rightHtml.push(`<div class="changed">${diff.right}</div>`);
-      removedTokens += diff.removed;
-      addedTokens += diff.added;
-    }
-    return {
-      leftHtml: leftHtml.join(""),
-      rightHtml: rightHtml.join(""),
-      stats: { addedTokens, removedTokens, changedLines, sameLines }
-    };
-  }
-
-  function wordDiff(leftLine, rightLine) {
-    const leftTokens = tokenizeWithSpaces(leftLine);
-    const rightTokens = tokenizeWithSpaces(rightLine);
-    const common = new Set(rightTokens.filter((token) => token.trim()));
-    let removed = 0;
-    const left = leftTokens.map((token) => {
-      if (!token.trim()) return escapeHtml(token);
-      if (common.has(token)) return escapeHtml(token);
-      removed += 1;
-      return `<span class="removed">${escapeHtml(token)}</span>`;
-    }).join("");
-    const commonLeft = new Set(leftTokens.filter((token) => token.trim()));
-    let added = 0;
-    const right = rightTokens.map((token) => {
-      if (!token.trim()) return escapeHtml(token);
-      if (commonLeft.has(token)) return escapeHtml(token);
-      added += 1;
-      return `<span class="added">${escapeHtml(token)}</span>`;
-    }).join("");
-    return { left, right, added, removed };
-  }
-
-  function tokenizeWithSpaces(text) {
-    return String(text || "").split(/(\s+)/);
-  }
-
   function escapeHtml(text) {
-    return String(text || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    return window.MCP.escapeHtml(text);
   }
 
   function renderToolInsights(modal, input, output, options) {
@@ -2878,96 +2589,54 @@
   }
 
   function renderManagerEmojiPicker(modal) {
-    const grid = modal.querySelector("[data-role='emoji-grid']");
-    const search = modal.querySelector("[data-role='emoji-search']");
-    if (!grid || !window.MCP.getEmojiLibrary) return;
-    const locale = String(state.settings.language || "en").slice(0, 2).toLowerCase();
-    const query = normalizeEmojiQuery(search?.value || "");
-    const items = window.MCP.getEmojiLibrary().filter((item) => {
-      if (!query) return true;
-      return normalizeEmojiQuery([item.emoji, item.names?.[locale], item.names?.en, item.search].join(" ")).includes(query);
-    });
-    grid.replaceChildren(...items.map((item) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "manager-emoji-item";
-      button.dataset.managerAction = "copy-emoji";
-      button.dataset.emoji = item.emoji;
-      const emoji = document.createElement("span");
-      emoji.className = "manager-emoji-symbol";
-      emoji.textContent = item.emoji;
-      const name = document.createElement("strong");
-      name.textContent = item.names?.[locale] || item.names?.en || item.emoji;
-      const copy = document.createElement("span");
-      copy.className = "manager-emoji-copy";
-      copy.textContent = t("common.copy");
-      button.append(emoji, name, copy);
-      return button;
-    }));
+    return getManagerToolCollectionRenderers().renderEmoji(modal);
   }
 
   function renderManagerSpecialCharacters(modal) {
-    const grid = modal.querySelector("[data-role='emoji-grid']");
-    const search = modal.querySelector("[data-role='emoji-search']");
-    if (!grid || !window.MCP.getSpecialCharacterLibrary) return;
-    const locale = String(state.settings.language || "en").slice(0, 2).toLowerCase();
-    const query = normalizeEmojiQuery(search?.value || "");
-    const items = window.MCP.getSpecialCharacterLibrary(locale).filter((item) => {
-      if (!query) return true;
-      return normalizeEmojiQuery([item.symbol, item.names?.[locale], item.names?.en, item.search].join(" ")).includes(query);
-    });
-    grid.replaceChildren(...items.map((item) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "manager-emoji-item manager-special-character-item";
-      button.dataset.managerAction = "copy-special-character";
-      button.dataset.symbol = item.symbol;
-      const symbol = document.createElement("span");
-      symbol.className = "manager-emoji-symbol manager-special-character-symbol";
-      symbol.textContent = item.symbol;
-      const name = document.createElement("strong");
-      name.textContent = item.names?.[locale] || item.names?.en || item.symbol;
-      const copy = document.createElement("span");
-      copy.className = "manager-emoji-copy";
-      copy.textContent = t("common.copy");
-      button.append(symbol, name, copy);
-      return button;
-    }));
+    return getManagerToolCollectionRenderers().renderSpecialCharacters(modal);
   }
 
-  function normalizeEmojiQuery(value) {
-    return String(value || "")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
+  function getManagerToolCollectionRenderers() {
+    if (managerToolCollectionRenderers) return managerToolCollectionRenderers;
+    managerToolCollectionRenderers = window.MCP.createManagerToolCollectionRenderers({
+      t, getLanguage: () => state.settings.language || "en", toolApi: window.MCP
+    });
+    return managerToolCollectionRenderers;
+  }
+
+  async function copyManagerToolValue(value) {
+    if (!value) return false;
+    try {
+      await navigator.clipboard.writeText(value);
+      showManagerToast(t("tools.workbench.itemCopied"));
+      return true;
+    } catch (_) {
+      showManagerToast(t("clipboard.blocked"));
+      return false;
+    }
   }
 
   async function copyManagerEmoji(emoji) {
-    if (!emoji) return;
-    await navigator.clipboard.writeText(emoji);
-    showManagerToast(t("tools.emojiCopied"));
+    return copyManagerToolValue(String(emoji || "").normalize("NFC"));
   }
 
   async function copyManagerSpecialCharacter(symbol) {
-    if (!symbol) return;
-    await navigator.clipboard.writeText(symbol);
-    showManagerToast(t("tools.specialCharacters.copied"));
+    return copyManagerToolValue(symbol);
   }
 
   async function copyToolOutput() {
     const output = runActiveTool({ silent: true });
-    if (!output) return;
-    await navigator.clipboard.writeText(output);
-    showManagerToast(t("clipboard.readyToPaste"));
+    return copyManagerToolValue(output);
   }
 
   async function captureToolOutput() {
     const output = runActiveTool({ silent: true });
     if (!output) return;
-    await window.MCP.saveClipboardItem({ content: output, categoryId: "general", categoryName: "General", sourceTitle: t("tools.title"), sourceDomain: "Ultimate Clipboard Pro" });
-    await loadState();
+    if (!await confirmManagerCryptoSensitiveCapture(output)) return;
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("text"), 1100);
+    const result = await window.MCP.saveClipboardItem({ content: output, categoryId: "general", categoryName: "General", sourceTitle: t("tools.title"), sourceDomain: "Ultimate Clipboard Pro" });
+    if (result?.item) applyOptimisticCreatedItem("text", result.item);
+    render();
     showManagerToast(t("tools.captured"));
   }
 
@@ -3285,7 +2954,6 @@
   async function handleCategoryDrop(event, targetCategory, mode) {
     event.preventDefault();
     if (itemDragState) {
-      if (blockDemoAction(event)) return;
       clearCategoryDropMarkers(event.currentTarget);
       await dropItemOnCategory(targetCategory);
       return;
@@ -3320,10 +2988,18 @@
     const insertBefore = dropPosition === "before";
     orderedIds.splice(Math.max(0, targetIndex + (insertBefore ? 0 : 1)), 0, sourceCategory.id);
     try {
-      if (mode === "image") await window.MCP.reorderImageCategories(parentId, orderedIds);
-      else if (mode === "dev") await window.MCP.reorderDevCategories(parentId, orderedIds);
-      else await window.MCP.reorderCategories(parentId, orderedIds);
-      await loadState();
+      suppressOptimisticRefresh(mode === "image"
+        ? window.MCP.STORAGE_KEYS.IMAGE_CATEGORIES
+        : mode === "dev"
+          ? window.MCP.STORAGE_KEYS.DEV_CATEGORIES
+          : window.MCP.STORAGE_KEYS.CATEGORIES, 1100);
+      const categories = mode === "image"
+        ? await window.MCP.reorderImageCategories(parentId, orderedIds)
+        : mode === "dev"
+          ? await window.MCP.reorderDevCategories(parentId, orderedIds)
+          : await window.MCP.reorderCategories(parentId, orderedIds);
+      applyOptimisticCategories(mode, categories);
+      renderCategories();
       if (!document.getElementById("managerClassifierModal")?.hidden) renderManagerCategoryChooser();
       showManagerToast(t("categories.reordered"));
     } catch (error) {
@@ -3445,23 +3121,43 @@
 
   async function moveManagerItemToTrash(item, mediaType = "text") {
     if (!item) return false;
-    const versionCount = embeddedVersions(item).length;
-    const hasEmbeddedVersionSet = mediaType !== "image" && versionCount > 1;
+    const versions = embeddedVersions(item);
+    const activeVersionId = mediaType !== "image" && versions.length > 1 ? currentEmbeddedVersionId(item, mediaType) : "";
+    const versionNumber = activeVersionId ? Math.max(1, versions.findIndex((version) => version.id === activeVersionId) + 1) : 0;
     const confirmed = await openManagerConfirmDialog({
-      title: hasEmbeddedVersionSet ? t("versioning.deleteAllVersionsTitle") : t("common.delete"),
-      message: hasEmbeddedVersionSet ? t("versioning.deleteAllVersionsTrashConfirm", { count: versionCount }) : t("editor.deleteConfirm"),
+      title: activeVersionId ? t("versioning.deleteVersionTitle") : t("common.delete"),
+      message: activeVersionId ? t("versioning.trashVersionConfirm", { number: versionNumber }) : t("editor.deleteConfirm"),
       confirmText: t("common.delete"),
       cancelText: t("common.cancel")
     });
     if (!confirmed) return false;
+    suppressOptimisticRefresh(itemStorageKeyForMediaType(mediaType), 1100);
+    let movedItem = null;
     if (mediaType === "image") {
-      await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.DELETE_IMAGE_ITEM, itemId: item.id, permanent: false }).catch(() => {});
+      const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.DELETE_IMAGE_ITEM, itemId: item.id, permanent: false }).catch(() => null);
+      movedItem = response?.imageItems?.find?.((candidate) => candidate.id === item.id) || null;
+    } else if (activeVersionId) {
+      const type = mediaType === "dev" ? MESSAGE_TYPES.DELETE_DEV_VERSION : MESSAGE_TYPES.DELETE_ITEM_VERSION;
+      await chrome.runtime.sendMessage({ type, itemId: item.id, versionId: activeVersionId, permanent: false }).catch(() => null);
+      await refreshState();
+      render();
+      showManagerToast(t("trash.moved"));
+      return true;
     } else if (mediaType === "dev") {
-      await window.MCP.deleteDevItem(item.id, { permanent: false });
+      movedItem = await window.MCP.deleteDevItem(item.id, { permanent: false });
     } else {
-      await window.MCP.deleteClipboardItem(item.id, { permanent: false });
+      movedItem = await window.MCP.deleteClipboardItem(item.id, { permanent: false });
     }
-    await loadState();
+    applyOptimisticItem(mediaType, item.id, movedItem || {
+      categoryId: mediaType === "image" ? "image-trash" : mediaType === "dev" ? "dev-trash" : "trash",
+      categoryName: "Trash",
+      languageId: mediaType === "dev" ? "dev-trash" : undefined,
+      languageName: mediaType === "dev" ? "Trash" : undefined,
+      isFavorite: false,
+      isPinned: false,
+      trashedAt: Date.now()
+    }, { replace: Boolean(movedItem) });
+    render();
     showManagerToast(t("trash.moved"));
     return true;
   }
@@ -3527,10 +3223,16 @@
 
   function getDropPosition(event) {
     const rect = event.currentTarget.getBoundingClientRect();
-    return event.clientY < rect.top + rect.height / 2 ? "before" : "after";
+    const midpoint = rect.top + rect.height / 2;
+    const previous = event.currentTarget.dataset.dropPosition || "";
+    const deadZone = Math.min(8, Math.max(4, rect.height * 0.12));
+    if (previous === "before" && event.clientY <= midpoint + deadZone) return "before";
+    if (previous === "after" && event.clientY >= midpoint - deadZone) return "after";
+    return event.clientY < midpoint ? "before" : "after";
   }
 
   function markCategoryDropTarget(node, position) {
+    if (node.classList.contains("is-drop-target") && node.dataset.dropPosition === position) return;
     clearAllCategoryDropTargets();
     node.dataset.dropPosition = position;
     node.classList.add("is-drop-target", position === "before" ? "is-drop-before" : "is-drop-after");
@@ -3581,6 +3283,95 @@
     return activeTab === "image" ? state.imageItems : activeTab === "dev" ? state.devItems || [] : state.items;
   }
 
+  function itemStorageKeyForMediaType(mediaType = activeTab) {
+    if (mediaType === "image") return window.MCP.STORAGE_KEYS.IMAGE_ITEMS;
+    if (mediaType === "dev") return window.MCP.STORAGE_KEYS.DEV_ITEMS;
+    return window.MCP.STORAGE_KEYS.ITEMS;
+  }
+
+  function categoryStorageKeyForActiveTab() {
+    if (activeTab === "image") return window.MCP.STORAGE_KEYS.IMAGE_CATEGORIES;
+    if (activeTab === "dev") return window.MCP.STORAGE_KEYS.DEV_CATEGORIES;
+    return window.MCP.STORAGE_KEYS.CATEGORIES;
+  }
+
+  function categoryStateKeyForMediaType(mediaType = activeTab) {
+    if (mediaType === "image") return "imageCategories";
+    if (mediaType === "dev") return "devCategories";
+    return "categories";
+  }
+
+  function categoryTreeStateKeyForMediaType(mediaType = activeTab) {
+    if (mediaType === "image") return "imageCategoryTree";
+    if (mediaType === "dev") return "devCategoryTree";
+    return "categoryTree";
+  }
+
+  function itemStateKeyForMediaType(mediaType = activeTab) {
+    if (mediaType === "image") return "imageItems";
+    if (mediaType === "dev") return "devItems";
+    return "items";
+  }
+
+  function applyOptimisticItem(mediaType, id, itemOrUpdates = {}, options = {}) {
+    if (!id) return null;
+    const listKey = itemStateKeyForMediaType(mediaType);
+    const current = Array.isArray(state[listKey]) ? state[listKey] : [];
+    let nextItem = null;
+    const remove = options.remove === true;
+    const next = current.reduce((acc, item) => {
+      if (item.id !== id) {
+        acc.push(item);
+        return acc;
+      }
+      if (remove) return acc;
+      nextItem = options.replace === true
+        ? Object.assign({}, itemOrUpdates)
+        : Object.assign({}, item, itemOrUpdates || {});
+      acc.push(nextItem);
+      return acc;
+    }, []);
+    if (!remove && !nextItem && itemOrUpdates?.id) {
+      nextItem = Object.assign({}, itemOrUpdates);
+      next.unshift(nextItem);
+    }
+    state[listKey] = window.MCP.sortItems ? window.MCP.sortItems(next) : next;
+    renderCountMaps.delete(mediaType);
+    categoryPathCache = null;
+    return nextItem;
+  }
+
+  function applyOptimisticCreatedItem(mediaType, item) {
+    if (!item?.id) return null;
+    return applyOptimisticItem(mediaType, item.id, item, { replace: true });
+  }
+
+  function applyOptimisticCategories(mediaType, categories = []) {
+    if (!Array.isArray(categories)) return;
+    const language = state.settings.language || "en";
+    const localized = categories.map((category) => Object.assign({}, category, {
+      name: window.MCP.translateCategoryName ? window.MCP.translateCategoryName(category, language) : category.name
+    }));
+    state[categoryStateKeyForMediaType(mediaType)] = localized;
+    state[categoryTreeStateKeyForMediaType(mediaType)] = buildTreeFromCategories(localized);
+    renderCountMaps.delete(mediaType);
+    categoryPathCache = null;
+  }
+
+  function applyCategoryResponseData(data = {}, mediaType = activeTab) {
+    const nextCategories = mediaType === "image"
+      ? data.imageCategories
+      : mediaType === "dev"
+        ? data.devCategories
+        : data.categories;
+    if (Array.isArray(nextCategories)) applyOptimisticCategories(mediaType, nextCategories);
+  }
+
+  function rememberCurrentScrollForOptimisticRender() {
+    pendingManagerItemsScrollTop = Math.max(0, Math.round(elements.items?.scrollTop || 0));
+    pendingManagerCategoryScrollTop = Math.max(0, Math.round(elements.categories?.scrollTop || 0));
+  }
+
   function countMapFor(mediaType = activeTab) {
     if (renderCountMaps.has(mediaType)) return renderCountMaps.get(mediaType);
     const categories = mediaType === "image" ? state.imageCategories : mediaType === "dev" ? state.devCategories || [] : state.categories;
@@ -3615,6 +3406,7 @@
 
   function setActiveTab(nextTab) {
     if (activeTab === nextTab) return;
+    if (montageState.isOpen) closeMontage({ renderView: false });
     rememberCurrentManagerScrollPositions(activeTab);
     resetManagerBulkSelection();
     activeTab = nextTab;
@@ -3655,7 +3447,7 @@
     cancelItemRenderJob();
     const query = elements.search.value;
     ensureValidSelectedCategory();
-    elements.items.classList.remove("is-text-list-view", "is-text-card-view", "is-dev-card-view");
+    elements.items.classList.remove("is-text-list-view", "is-text-card-view", "is-dev-card-view", "is-virtualized-text");
     if (activeTab === "image") {
       renderImageItems(query);
       return;
@@ -3790,6 +3582,7 @@
     const itemHeight = virtualTextItemHeight(items, mediaType);
     slice.style.setProperty("--virtual-text-item-height", `${itemHeight}px`);
     canvas.appendChild(slice);
+    elements.items.classList.add("is-virtualized-text");
     elements.items.replaceChildren(canvas);
     virtualItemsState = {
       type: "text",
@@ -3807,7 +3600,9 @@
   }
 
   function virtualTextItemHeight(items = [], mediaType = activeTab) {
-    if (!isTextCardView(mediaType)) return VIRTUAL_TEXT_ITEM_HEIGHT;
+    if (!isTextCardView(mediaType)) {
+      return VIRTUAL_TEXT_ITEM_HEIGHT;
+    }
     const viewportHeight = Math.max(
       1,
       virtualItemsState?.container?.clientHeight ||
@@ -3979,8 +3774,8 @@
   }
 
   function managerCaptureShortcutLabel() {
-    return window.MCP?.shortcutLabel
-      ? window.MCP.shortcutLabel(state.settings?.textCaptureShortcut || "ctrl_alt_c")
+    return window.MCP?.configuredCaptureShortcutLabel
+      ? window.MCP.configuredCaptureShortcutLabel(state.settings)
       : "Ctrl + Alt + C";
   }
 
@@ -4113,31 +3908,42 @@
 
     const meta = document.createElement("div");
     meta.className = "item-meta";
+    if (item.isFavorite) {
+      const favoriteIcon = document.createElement("img");
+      favoriteIcon.className = "mcp-meta-favorite-icon";
+      favoriteIcon.src = "../assets/icons/favorited.png";
+      favoriteIcon.alt = "";
+      favoriteIcon.setAttribute("aria-hidden", "true");
+      meta.appendChild(favoriteIcon);
+    }
     [
-      item.isFavorite ? `\u2605 ${t("categories.favorites")}` : null,
       translatedCategoryPath(item.categoryId) || item.categoryName || t("categories.general"),
       mediaType === "dev" ? item.languageName : null
     ].filter(Boolean).forEach((value) => {
       const span = document.createElement("span");
       span.textContent = value;
+      window.MCP.decorateMetaOverflowToken(span, "category");
       meta.appendChild(span);
     });
     appendSourceMeta(meta, item);
     const dateMeta = document.createElement("span");
     dateMeta.textContent = window.MCP.formatLocalizedDate(displayItem.createdAt || item.createdAt, state.settings.language || "en");
+    window.MCP.decorateMetaOverflowToken(dateMeta, "date");
     meta.appendChild(dateMeta);
 
     const actions = document.createElement("div");
     actions.className = "item-actions";
     actions.append(actionButton(t("common.useCapture"), "primary use-capture-action", () => copyItem(resolveDisplayItem(), mediaType, article)));
     if (sourceVersionActive) {
-      actions.append(
-        actionButton(t("categories.classify"), "", () => mediaType === "dev" ? classifyDev(item) : classifyText(item)),
-        actionButton(t("source.open"), "icon-only", () => openSource(item), "reverse.png")
-      );
+      actions.append(actionButton(t("categories.classify"), "", () => mediaType === "dev" ? classifyDev(item) : classifyText(item)));
+      if (mediaType === "text" || mediaType === "dev") {
+        actions.append(actionButton(t("source.open"), "icon-only", () => openSource(item), "reverse.png"));
+      }
     }
     if (!inTrash && (mediaType === "text" || mediaType === "dev")) {
-      actions.append(actionButton(t("versioning.addButtonLabel"), "version-create-action", () => openCreateVersionModal(item, mediaType, article.dataset.activeVersionId || "")));
+      actions.append(actionButton(t("versioning.addButtonLabel"), "version-create-action", () => openCreateVersionModal(item, mediaType, article.dataset.activeVersionId || ""), "", {
+        accessibleLabel: t("versioning.addVersion")
+      }));
     }
 
     const quickActions = document.createElement("div");
@@ -4154,20 +3960,20 @@
       if (sourceVersionActive) {
         quickActions.append(
           actionButton(item.isFavorite ? t("common.favoriteRemove") : t("common.favoriteAdd"), item.isFavorite ? "is-active icon-only" : "icon-only", async () => {
-          if (mediaType === "dev") await updateDev(item.id, { isFavorite: !item.isFavorite });
-          else await updateItem(item.id, { isFavorite: !item.isFavorite });
-          showManagerToast(t(item.isFavorite ? "common.favoriteRemove" : "common.favoriteAdd"));
-          render();
+          const wasFavorite = Boolean(item.isFavorite);
+          if (mediaType === "dev") await updateDev(item.id, { isFavorite: !wasFavorite });
+          else await updateItem(item.id, { isFavorite: !wasFavorite });
+          showManagerToast(t(wasFavorite ? "common.favoriteRemove" : "common.favoriteAdd"));
           }, item.isFavorite ? "favorited.png" : "not_yet_favorited.png"),
           actionButton(item.isPinned ? t("common.unpin") : t("common.pin"), item.isPinned ? "is-active icon-only" : "icon-only", async () => {
-          if (mediaType === "dev") await updateDev(item.id, { isPinned: !item.isPinned });
-          else await updateItem(item.id, { isPinned: !item.isPinned });
-          showManagerToast(t(item.isPinned ? "common.unpin" : "common.pin"));
-          render();
+          const wasPinned = Boolean(item.isPinned);
+          if (mediaType === "dev") await updateDev(item.id, { isPinned: !wasPinned });
+          else await updateItem(item.id, { isPinned: !wasPinned });
+          showManagerToast(t(wasPinned ? "common.unpin" : "common.pin"));
           }, item.isPinned ? "go_unpin.png" : "go_pin.png")
         );
       }
-      quickActions.append(actionButton(t("common.delete"), "icon-only", () => mediaType === "dev" ? deleteDev(item.id) : deleteItem(item.id), "erase.png"));
+      quickActions.append(actionButton(t("common.delete"), "icon-only", () => deleteActiveTextLikeCapture(item, mediaType, article.dataset.activeVersionId || ""), "erase.png"));
     }
 
     article.append(...[bulkCheckbox, inlineTitleField, versionTabs, preview, meta, actions, quickActions].filter(Boolean));
@@ -4186,53 +3992,11 @@
   }
 
   function startPreviewAutoScroll(container, inner) {
-    if (!container || !inner) return;
-    stopPreviewAutoScroll(container, false);
-    const maxScroll = Math.max(0, Math.ceil((inner.getBoundingClientRect?.().height || inner.scrollHeight || inner.offsetHeight || 0) - container.clientHeight));
-    container.classList.toggle("is-scrollable", maxScroll > 4);
-    if (maxScroll <= 4) return;
-    container.classList.add("is-auto-scrolling");
-    inner.style.setProperty("transform", "translateY(0)", "important");
-    let direction = 1;
-    let lastFrame = performance.now();
-    let holdUntil = lastFrame + 160;
-    const downSpeed = Math.min(110, Math.max(48, maxScroll / 3.8));
-    const upSpeed = Math.min(190, Math.max(82, maxScroll / 2.1));
-    let offset = 0;
-    const step = (now) => {
-      const state = previewScrollAnimations.get(container);
-      if (!state) return;
-      if (now < holdUntil) {
-        state.raf = requestAnimationFrame(step);
-        return;
-      }
-      const delta = Math.min(48, now - lastFrame);
-      lastFrame = now;
-      offset += direction * (direction > 0 ? downSpeed : upSpeed) * (delta / 1000);
-      offset = Math.max(0, Math.min(maxScroll, offset));
-      inner.style.setProperty("transform", `translateY(-${offset}px)`, "important");
-      if (direction > 0 && offset >= maxScroll - 1) {
-        offset = maxScroll;
-        inner.style.setProperty("transform", `translateY(-${maxScroll}px)`, "important");
-        direction = -1;
-        holdUntil = now + 300;
-      } else if (direction < 0 && offset <= 1) {
-        offset = 0;
-        inner.style.setProperty("transform", "translateY(0)", "important");
-        direction = 1;
-        holdUntil = now + 220;
-      }
-      state.raf = requestAnimationFrame(step);
-    };
-    previewScrollAnimations.set(container, { raf: requestAnimationFrame(step) });
+    previewAutoScroller.start(container, inner);
   }
 
   function stopPreviewAutoScroll(container, reset = true) {
-    const state = previewScrollAnimations.get(container);
-    if (state?.raf) cancelAnimationFrame(state.raf);
-    previewScrollAnimations.delete(container);
-    container?.classList.remove("is-auto-scrolling");
-    if (reset) container?.querySelector(".item-preview-text")?.style?.removeProperty("transform");
+    previewAutoScroller.stop(container, reset);
   }
 
   function schedulePreviewOverflowCheck(container, inner) {
@@ -4270,7 +4034,6 @@
   }
 
   function prepareItemPointerDrag(event, item, mediaType) {
-    if (blockDemoAction(event)) return;
     if (event.button !== 0 || event.target.closest("button, input, textarea, select, a")) return;
     event.preventDefault();
     window.getSelection?.()?.removeAllRanges?.();
@@ -4562,6 +4325,9 @@
     image.src = item.thumbnailUrl || item.imageUrl;
     image.alt = item.altText || item.title || t("images.image");
     image.loading = "lazy";
+    image.decoding = "async";
+    image.fetchPriority = "low";
+    bindManagerStoredImageFallback(image, item);
     if (item.isScreenshot) frame.appendChild(screenBadge());
     const overlayActions = document.createElement("div");
     overlayActions.className = "image-overlay-actions";
@@ -4569,7 +4335,7 @@
       overlayActions.append(
         actionButton(t("trash.restore"), "restore-action", () => restoreItem(item, "image")),
         actionButton(t("images.info"), "icon-only image-info-action", () => openImageInfo(item)),
-        actionButton(t("images.download"), "icon-only image-download-action", () => downloadImage(item)),
+        actionButton(t("images.download"), "icon-only image-download-action", () => downloadImage(item), "save_icon.png"),
         actionButton(t("trash.permanentDelete"), "icon-only", () => deleteImage(item.id, true), "erase.png", { forceDarkIcon: true })
       );
     } else {
@@ -4577,23 +4343,33 @@
         actionButton(item.isFavorite ? t("common.favoriteRemove") : t("common.favoriteAdd"), item.isFavorite ? "is-active icon-only" : "icon-only", () => updateImage(item.id, { isFavorite: !item.isFavorite }), item.isFavorite ? "favorited.png" : "not_yet_favorited.png", { forceDarkIcon: true }),
         actionButton(item.isPinned ? t("common.unpin") : t("common.pin"), item.isPinned ? "is-active icon-only" : "icon-only", () => updateImage(item.id, { isPinned: !item.isPinned }), item.isPinned ? "go_unpin.png" : "go_pin.png", { forceDarkIcon: true }),
         actionButton(t("images.info"), "icon-only image-info-action", () => openImageInfo(item)),
-        actionButton(t("images.download"), "icon-only image-download-action", () => downloadImage(item)),
+        actionButton(t("images.download"), "icon-only image-download-action", () => downloadImage(item), "save_icon.png"),
         actionButton(t("common.delete"), "icon-only", () => deleteImage(item.id), "erase.png", { forceDarkIcon: true })
       );
     }
     frame.append(image, overlayActions);
     const meta = document.createElement("div");
     meta.className = "image-meta";
+    if (item.isFavorite) {
+      const favoriteIcon = document.createElement("img");
+      favoriteIcon.className = "mcp-meta-favorite-icon";
+      favoriteIcon.src = "../assets/icons/favorited.png";
+      favoriteIcon.alt = "";
+      favoriteIcon.setAttribute("aria-hidden", "true");
+      meta.appendChild(favoriteIcon);
+    }
     [translatedCategoryPath(item.categoryId)]
       .filter(Boolean)
       .forEach((value) => {
         const span = document.createElement("span");
         span.textContent = value;
+        window.MCP.decorateMetaOverflowToken(span, "category");
         meta.appendChild(span);
       });
     appendSourceMeta(meta, item);
     const dateMeta = document.createElement("span");
     dateMeta.textContent = window.MCP.formatLocalizedDate(item.createdAt, state.settings.language || "en");
+    window.MCP.decorateMetaOverflowToken(dateMeta, "date");
     meta.appendChild(dateMeta);
     const actions = document.createElement("div");
     actions.className = "image-actions";
@@ -4605,6 +4381,21 @@
     article.append(...[bulkCheckbox, titleField, frame, meta, actions].filter(Boolean));
     article.addEventListener("click", (event) => handleManagerReadyPasteCardClick(event, item, "image", article));
     return article;
+  }
+
+  function bindManagerStoredImageFallback(image, item) {
+    if (!image || !item?.id || image.dataset.storedFallbackBound === "true") return;
+    image.dataset.storedFallbackBound = "true";
+    image.addEventListener("error", async () => {
+      if (image.dataset.storedFallbackTried === "true") return;
+      image.dataset.storedFallbackTried = "true";
+      const response = await chrome.runtime.sendMessage({
+        type: MESSAGE_TYPES.FETCH_IMAGE_AS_DATA_URL,
+        itemId: item.id,
+        url: item.imageUrl || ""
+      }).catch(() => null);
+      if (response?.ok && response.data?.dataUrl) image.src = response.data.dataUrl;
+    });
   }
 
   function renderImageInlineTitleField(item) {
@@ -4645,7 +4436,6 @@
   }
 
   function handleManagerReadyPasteCardClick(event, item, mediaType, card) {
-    if (blockDemoAction(event)) return;
     if (!item || !card || isManagerBulkSelectionMode(mediaType)) return;
     if (Date.now() < suppressManagerReadyPasteClickUntil) return;
     if (card.classList.contains("is-item-dragging")) return;
@@ -4668,8 +4458,9 @@
     const resolvedLabel = isUseCapture ? t("common.useCapture") : label;
     button.type = "button";
     button.className = className;
-    button.title = resolvedLabel;
-    button.setAttribute("aria-label", resolvedLabel);
+    const accessibleLabel = String(options.accessibleLabel || resolvedLabel);
+    button.title = accessibleLabel;
+    button.setAttribute("aria-label", accessibleLabel);
     if (isUseCapture) {
       const image = document.createElement("img");
       image.src = "../assets/icons/copy.png";
@@ -4688,10 +4479,7 @@
     } else {
       button.textContent = className.includes("image-info-action") ? "i" : className.includes("image-download-action") ? "\u21e9" : label;
     }
-    button.addEventListener("click", (event) => {
-      if (blockDemoAction(event)) return;
-      onClick(event);
-    });
+    button.addEventListener("click", onClick);
     return button;
   }
 
@@ -4800,7 +4588,8 @@
   function isEmbeddedSourceVersionActive(item, mediaType = "text") {
     const versions = embeddedVersions(item);
     if (mediaType === "image" || versions.length <= 1) return true;
-    return currentEmbeddedVersionId(item, mediaType) === versions[0]?.id;
+    const sourceVersionId = item.sourceVersionId || versions[0]?.id || "";
+    return currentEmbeddedVersionId(item, mediaType) === sourceVersionId;
   }
 
   function createLocalPreview(content = "") {
@@ -4933,7 +4722,6 @@
   }
 
   async function saveInlineCaptureTitle(item, mediaType, rawTitle, versionId = "") {
-    if (isDemoMode()) return;
     if (!item?.id || mediaType === "image") return;
     const title = String(rawTitle || "").trim().slice(0, 30);
     const versions = embeddedVersions(item);
@@ -4976,7 +4764,6 @@
   }
 
   async function saveInlineImageTitle(item, rawTitle) {
-    if (isDemoMode()) return;
     if (!item?.id) return;
     const title = String(rawTitle || "").trim().slice(0, 80);
     if (title === String(item.title || "")) return;
@@ -5045,31 +4832,25 @@
   }
 
   async function deleteEmbeddedVersion(item, mediaType, versionId, number = 1) {
-    if (blockDemoAction()) return;
     const versions = embeddedVersions(item);
     if (!item?.id || versions.length <= 1) return;
+    const effectivePermanent = !canUseTrashManagement();
     const confirmed = await openManagerConfirmDialog({
       title: t("versioning.deleteVersionTitle"),
-      message: t("versioning.deleteVersionConfirm", { number }),
+      message: t(effectivePermanent ? "versioning.permanentVersionConfirm" : "versioning.trashVersionConfirm", { number }),
       confirmText: t("common.delete"),
       cancelText: t("common.cancel")
     });
     if (!confirmed) return;
-    const nextVersions = versions.filter((version) => version.id !== versionId);
-    const nextActive = nextVersions[Math.min(number - 1, nextVersions.length - 1)] || nextVersions[nextVersions.length - 1];
-    const updates = {
-      captureVersions: nextVersions,
-      activeVersionId: nextActive?.id || "",
-      title: nextActive?.title || "",
-      content: nextActive?.content || "",
-      note: nextActive?.note || ""
-    };
-    const updater = mediaType === "dev" ? updateDev : updateItem;
-    await updater(item.id, updates);
-    managerItemVersionSelection.set(item.id, updates.activeVersionId);
+    const type = mediaType === "dev" ? MESSAGE_TYPES.DELETE_DEV_VERSION : MESSAGE_TYPES.DELETE_ITEM_VERSION;
+    const response = await chrome.runtime.sendMessage({ type, itemId: item.id, versionId, permanent: effectivePermanent }).catch(() => null);
+    const responseItems = mediaType === "dev" ? response?.data?.devItems : response?.data?.items;
+    const updatedItem = responseItems?.find?.((candidate) => candidate.id === item.id);
+    managerItemVersionSelection.set(item.id, updatedItem?.activeVersionId || "");
     persistManagerViewState();
+    await refreshState();
     render();
-    showManagerToast(t("versioning.deleted"));
+    showManagerToast(effectivePermanent ? t("trash.permanentlyDeleted") : t("trash.moved"));
   }
 
   function themedIconName(fileName, options = {}) {
@@ -5229,13 +5010,19 @@
   }
 
   async function updateItem(id, updates) {
-    await window.MCP.updateClipboardItem(id, updates);
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("text"), 1100);
+    const updatedItem = await window.MCP.updateClipboardItem(id, updates);
+    applyOptimisticItem("text", id, updatedItem || updates, { replace: Boolean(updatedItem) });
+    scheduleManagerRender();
   }
 
   async function updateDev(id, updates) {
-    await window.MCP.updateDevItem(id, updates);
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("dev"), 1100);
+    const updatedItem = await window.MCP.updateDevItem(id, updates);
+    applyOptimisticItem("dev", id, updatedItem || updates, { replace: Boolean(updatedItem) });
+    scheduleManagerRender();
   }
 
   function cleanSharedVersionUpdates(updates = {}) {
@@ -5244,49 +5031,67 @@
 
   async function deleteItem(id, permanent = false) {
     const item = (state.items || []).find((candidate) => candidate.id === id);
-    const versionCount = embeddedVersions(item).length;
-    const hasEmbeddedVersionSet = versionCount > 1;
     const effectivePermanent = permanent || !canUseTrashManagement();
-    if (state.settings.confirmBeforeDelete || hasEmbeddedVersionSet) {
+    if (state.settings.confirmBeforeDelete) {
       const confirmed = await openManagerConfirmDialog({
-        title: hasEmbeddedVersionSet ? t("versioning.deleteAllVersionsTitle") : t("common.delete"),
-        message: hasEmbeddedVersionSet
-          ? t(effectivePermanent ? "versioning.deleteAllVersionsPermanentConfirm" : "versioning.deleteAllVersionsTrashConfirm", { count: versionCount })
-          : t("editor.deleteConfirm"),
+        title: t("common.delete"),
+        message: t("editor.deleteConfirm"),
         confirmText: t("common.delete"),
         cancelText: t("common.cancel")
       });
       if (!confirmed) return;
     }
-    await window.MCP.deleteClipboardItem(id, { permanent: effectivePermanent });
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("text"), 1100);
+    const nextItem = await window.MCP.deleteClipboardItem(id, { permanent: effectivePermanent });
+    if (effectivePermanent) applyOptimisticItem("text", id, null, { remove: true });
+    else applyOptimisticItem("text", id, nextItem || { categoryId: "trash", categoryName: "Corbeille", isFavorite: false, isPinned: false, trashedAt: Date.now() }, { replace: Boolean(nextItem) });
+    scheduleManagerRender();
     showManagerToast(effectivePermanent ? t("trash.permanentlyDeleted") : t("trash.moved"));
   }
 
   async function deleteDev(id, permanent = false) {
     const item = (state.devItems || []).find((candidate) => candidate.id === id);
-    const versionCount = embeddedVersions(item).length;
-    const hasEmbeddedVersionSet = versionCount > 1;
     const effectivePermanent = permanent || !canUseTrashManagement();
-    if (state.settings.confirmBeforeDelete || hasEmbeddedVersionSet) {
+    if (state.settings.confirmBeforeDelete) {
       const confirmed = await openManagerConfirmDialog({
-        title: hasEmbeddedVersionSet ? t("versioning.deleteAllVersionsTitle") : t("common.delete"),
-        message: hasEmbeddedVersionSet
-          ? t(effectivePermanent ? "versioning.deleteAllVersionsPermanentConfirm" : "versioning.deleteAllVersionsTrashConfirm", { count: versionCount })
-          : t("editor.deleteConfirm"),
+        title: t("common.delete"),
+        message: t("editor.deleteConfirm"),
         confirmText: t("common.delete"),
         cancelText: t("common.cancel")
       });
       if (!confirmed) return;
     }
-    await window.MCP.deleteDevItem(id, { permanent: effectivePermanent });
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("dev"), 1100);
+    const nextItem = await window.MCP.deleteDevItem(id, { permanent: effectivePermanent });
+    if (effectivePermanent) applyOptimisticItem("dev", id, null, { remove: true });
+    else applyOptimisticItem("dev", id, nextItem || { categoryId: "dev-trash", categoryName: "Trash", languageId: "dev-trash", languageName: "Trash", isFavorite: false, isPinned: false, trashedAt: Date.now() }, { replace: Boolean(nextItem) });
+    scheduleManagerRender();
     showManagerToast(effectivePermanent ? t("trash.permanentlyDeleted") : t("trash.moved"));
   }
 
+  async function deleteActiveTextLikeCapture(item, mediaType = "text", activeVersionId = "") {
+    const versions = embeddedVersions(item);
+    const versionId = activeVersionId && versions.some((version) => version.id === activeVersionId)
+      ? activeVersionId
+      : currentEmbeddedVersionId(item, mediaType);
+    if (versions.length > 1 && versionId) {
+      const number = Math.max(1, versions.findIndex((version) => version.id === versionId) + 1);
+      await deleteEmbeddedVersion(item, mediaType, versionId, number);
+      return;
+    }
+    if (mediaType === "dev") await deleteDev(item.id);
+    else await deleteItem(item.id);
+  }
+
   async function updateImage(id, updates) {
-    await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.UPDATE_IMAGE_ITEM, itemId: id, updates }).catch(() => {});
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh([itemStorageKeyForMediaType("image"), window.MCP.STORAGE_KEYS.SETTINGS], 1100);
+    const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.UPDATE_IMAGE_ITEM, itemId: id, updates }).catch(() => null);
+    const updatedItem = response?.imageItems?.find?.((item) => item.id === id) || response?.item || null;
+    applyOptimisticItem("image", id, updatedItem || updates, { replace: Boolean(updatedItem) });
+    scheduleManagerRender();
   }
 
   async function copyImage(item, feedbackCard = null) {
@@ -5338,7 +5143,7 @@
       if (!response.ok) throw new Error("Image fetch failed.");
       return response.blob();
     }).catch(async () => {
-      const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.FETCH_IMAGE_AS_DATA_URL, url: item.imageUrl || source });
+      const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.FETCH_IMAGE_AS_DATA_URL, itemId: item.id, url: item.imageUrl || source });
       if (!response?.ok || !response.data?.dataUrl) throw new Error(response?.error || "Image fetch failed.");
       chrome.runtime.sendMessage({
         type: MESSAGE_TYPES.UPDATE_IMAGE_ITEM,
@@ -5411,8 +5216,13 @@
       if (!confirmed) return;
     }
     const effectivePermanent = permanent || !canUseTrashManagement();
-    await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.DELETE_IMAGE_ITEM, itemId: id, permanent: effectivePermanent }).catch(() => {});
-    await loadState();
+    rememberCurrentScrollForOptimisticRender();
+    suppressOptimisticRefresh([itemStorageKeyForMediaType("image"), window.MCP.STORAGE_KEYS.SETTINGS], 1100);
+    const response = await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.DELETE_IMAGE_ITEM, itemId: id, permanent: effectivePermanent }).catch(() => null);
+    const nextItem = response?.imageItems?.find?.((item) => item.id === id) || response?.item || null;
+    if (effectivePermanent) applyOptimisticItem("image", id, null, { remove: true });
+    else applyOptimisticItem("image", id, nextItem || { categoryId: "image-trash", categoryName: "Trash", isFavorite: false, isPinned: false, trashedAt: Date.now() }, { replace: Boolean(nextItem) });
+    scheduleManagerRender();
     showManagerToast(effectivePermanent ? t("trash.permanentlyDeleted") : t("trash.moved"));
   }
 
@@ -5422,17 +5232,26 @@
 
   async function restoreItem(item, mediaType = activeTab) {
     if (!item) return;
-    if (mediaType === "image") await window.MCP.restoreImageItem(item.id);
-    else if (mediaType === "dev") await window.MCP.restoreDevItem(item.id);
-    else await window.MCP.restoreClipboardItem(item.id);
-    await loadState();
+    suppressOptimisticRefresh(itemStorageKeyForMediaType(mediaType), 1100);
+    const restored = mediaType === "image"
+      ? await window.MCP.restoreImageItem(item.id)
+      : mediaType === "dev"
+        ? await window.MCP.restoreDevItem(item.id)
+        : await window.MCP.restoreClipboardItem(item.id);
+    applyOptimisticItem(mediaType, item.id, restored || item, { replace: Boolean(restored) });
+    render();
     showManagerToast(t("trash.restored"));
   }
 
   async function emptyCurrentTrash() {
     if (!isTrashSelected()) return;
+    suppressOptimisticRefresh(itemStorageKeyForMediaType(activeTab), 1100);
     await window.MCP.emptyTrash(activeTab);
-    await loadState();
+    const listKey = itemStateKeyForMediaType(activeTab);
+    const trashId = activeTab === "image" ? "image-trash" : activeTab === "dev" ? "dev-trash" : "trash";
+    state[listKey] = (state[listKey] || []).filter((item) => item.categoryId !== trashId && item.languageId !== trashId);
+    renderCountMaps.delete(activeTab);
+    render();
     showManagerToast(t("trash.emptied"));
   }
 
@@ -5449,6 +5268,15 @@
     openManagerClassifier(item, "image");
   }
 
+  function activateContentPaneFace({ visibleFace, hiddenFace, focusTarget }) {
+    if (!visibleFace || !hiddenFace) return;
+    visibleFace.inert = false;
+    visibleFace.setAttribute("aria-hidden", "false");
+    focusTarget?.focus({ preventScroll: true });
+    hiddenFace.inert = true;
+    hiddenFace.setAttribute("aria-hidden", "true");
+  }
+
   function openMontage() {
     if (activeTab !== "text") return;
     if (window.MCP.canUseFeature && !window.MCP.canUseFeature("itemComposition", state.settings)) {
@@ -5457,43 +5285,37 @@
       return;
     }
     triggerMicroAnimation(elements.openMontage, "success-pulse", 440);
-    let modal = document.getElementById("managerMontageModal");
-    if (!modal) {
-      modal = document.createElement("div");
-      modal.id = "managerMontageModal";
-      modal.className = "manager-modal manager-montage-modal";
-      modal.innerHTML = [
-        "<div class=\"manager-backdrop\" data-manager-action=\"close-montage\"></div>",
-        "<section class=\"manager-montage-card\" role=\"dialog\" aria-modal=\"true\">",
-        "<header class=\"mcp-search-head\"><div><strong data-role=\"montage-title\"></strong><p data-role=\"montage-subtitle\"></p></div><button type=\"button\" data-manager-action=\"close-montage\" aria-label=\"Close\">&times;</button></header>",
-        "<div class=\"manager-montage-layout\">",
-        "<aside class=\"manager-montage-source\"><div class=\"manager-montage-section-head\"><strong data-role=\"montage-available\"></strong><button type=\"button\" data-manager-action=\"add-all-montage\"></button></div><input id=\"managerMontageSearch\" class=\"manager-modal-search\" type=\"search\"><div id=\"managerMontageAvailable\" class=\"manager-montage-list\"></div></aside>",
-        "<section class=\"manager-montage-chain\"><div class=\"manager-montage-section-head\"><strong data-role=\"montage-chain\"></strong><span data-role=\"montage-count\"></span></div><div class=\"manager-montage-tools\"><label><span data-role=\"montage-format-label\"></span><select id=\"managerMontageFormat\"><option value=\"plain\"></option><option value=\"numbered\"></option><option value=\"bullets\"></option><option value=\"sections\"></option><option value=\"markdown\"></option><option value=\"spaced\"></option></select></label><button type=\"button\" data-manager-action=\"open-montage-final-editor\"></button><button type=\"button\" data-manager-action=\"polish-montage\"></button></div><div id=\"managerMontageChain\" class=\"manager-montage-list is-chain\"></div><footer><button type=\"button\" data-manager-action=\"clear-montage\"></button><button type=\"button\" data-manager-action=\"close-montage\"></button><button type=\"button\" data-manager-action=\"save-montage-as-text\"></button><button type=\"button\" class=\"primary\" data-manager-action=\"copy-montage\"></button></footer></section>",
-        "</div>",
-        "</section>"
-      ].join("");
-      document.body.appendChild(modal);
-      modal.querySelector("#managerMontageSearch").addEventListener("input", (event) => {
-        montageState.query = event.target.value;
-        renderMontage();
-      });
-      const chain = modal.querySelector("#managerMontageChain");
+    activeTab = "text";
+    selectedCategory = "general";
+    favoritesOnly = false;
+    selectedIndex = 0;
+    montageState.isOpen = true;
+    const workspace = document.getElementById("managerMontageWorkspace");
+    const contentPane = document.getElementById("managerContentPane");
+    const front = contentPane?.querySelector(".content-pane-front");
+    if (!workspace || !contentPane) return;
+    if (workspace.dataset.ready !== "true") {
+      workspace.dataset.ready = "true";
+      const chain = workspace.querySelector("#managerMontageChain");
       chain.addEventListener("dragover", handleMontageChainDragOver);
       chain.addEventListener("drop", handleMontageChainDrop);
-      modal.querySelector("#managerMontageFormat").addEventListener("change", (event) => {
+      workspace.querySelector("#managerMontageFormat").addEventListener("change", (event) => {
         montageState.format = event.target.value || "plain";
         montageState.finalDraft = "";
-        const copyButton = modal.querySelector("[data-manager-action='copy-montage']");
+        const copyButton = workspace.querySelector("[data-manager-action='copy-montage']");
         if (copyButton) copyButton.textContent = t("montage.copyCombined");
         triggerMicroAnimation(event.target, "success-pulse", 440);
       });
     }
-    modal.hidden = false;
-    translateMontageModal(modal);
-    renderMontage();
-    const input = modal.querySelector("#managerMontageSearch");
-    input.value = montageState.query;
-    input.focus();
+    contentPane.classList.add("is-montage-open");
+    render();
+    activateContentPaneFace({
+      visibleFace: workspace,
+      hiddenFace: front,
+      focusTarget: workspace.querySelector("[data-manager-action='close-montage']")
+    });
+    persistManagerViewState();
+    window.setTimeout(() => window.MCP.startContextualGuidedTour?.("montage"), 80);
   }
 
   function translateMontageModal(modal) {
@@ -5501,8 +5323,6 @@
     modal.querySelector("[data-role='montage-subtitle']").textContent = t("montage.subtitle");
     modal.querySelector("[data-role='montage-available']").textContent = t("montage.available");
     modal.querySelector("[data-role='montage-chain']").textContent = t("montage.chain");
-    modal.querySelector("#managerMontageSearch").placeholder = t("montage.searchPlaceholder");
-    modal.querySelector("[data-manager-action='add-all-montage']").textContent = t("montage.addAll");
     modal.querySelector("[data-role='montage-format-label']").textContent = t("montage.format");
     modal.querySelector("#managerMontageFormat").value = montageState.format || "plain";
     modal.querySelector("#managerMontageFormat option[value='plain']").textContent = t("montage.formatPlain");
@@ -5512,16 +5332,16 @@
     modal.querySelector("#managerMontageFormat option[value='markdown']").textContent = t("montage.formatMarkdown");
     modal.querySelector("#managerMontageFormat option[value='spaced']").textContent = t("montage.formatSpaced");
     modal.querySelector("[data-manager-action='open-montage-final-editor']").textContent = t("montage.editFinal");
-    modal.querySelector("[data-manager-action='polish-montage']").textContent = t("montage.polish");
     modal.querySelector("[data-manager-action='clear-montage']").textContent = t("montage.clear");
-    modal.querySelector(".manager-montage-chain footer [data-manager-action='close-montage']").textContent = t("common.cancel");
-    modal.querySelector("[data-manager-action='save-montage-as-text']").textContent = t("montage.copyToGeneral");
+    modal.querySelector("[data-manager-action='classify-montage']").textContent = t("montage.captureAndClassify");
     modal.querySelector("[data-manager-action='copy-montage']").textContent = t("montage.copyCombined");
+    modal.querySelector("[data-manager-action='close-montage']").setAttribute("aria-label", t("common.close"));
   }
 
   function renderMontage() {
-    const modal = document.getElementById("managerMontageModal");
+    const modal = document.getElementById("managerMontageWorkspace");
     if (!modal) return;
+    translateMontageModal(modal);
     const available = modal.querySelector("#managerMontageAvailable");
     const chain = modal.querySelector("#managerMontageChain");
     const count = modal.querySelector("[data-role='montage-count']");
@@ -5531,6 +5351,8 @@
     const selected = new Set(montageState.itemIds);
     const availableItems = montageAvailableItems(selected)
       .slice(0, 80);
+    const sourceCount = modal.querySelector("[data-role='montage-source-count']");
+    if (sourceCount) sourceCount.textContent = String(availableItems.length);
     if (!availableItems.length) {
       available.appendChild(emptyMontage(t("montage.noAvailable")));
     } else {
@@ -5568,14 +5390,17 @@
     row.dataset.source = "available";
     row.dataset.itemId = item.id;
     row.dataset.entryKey = entryKey;
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.setAttribute("aria-label", `${t("montage.add")} ${montageDisplayItem(item, versionId)?.title || item.title || ""}`.trim());
     row.addEventListener("dragstart", (event) => startMontageDrag(event, item.id, "available", entryKey));
     row.addEventListener("dragend", () => row.classList.remove("is-dragging"));
-    const add = document.createElement("button");
-    add.type = "button";
-    add.dataset.managerAction = "add-montage-item";
-    add.dataset.itemId = item.id;
-    add.textContent = t("montage.add");
-    row.appendChild(add);
+    row.addEventListener("click", () => addMontageItem(item.id, versionId));
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      addMontageItem(item.id, versionId);
+    });
     return row;
   }
 
@@ -5608,14 +5433,20 @@
 
   function isMontageAvailableItem(item, selectedIds = new Set()) {
     if (!item) return false;
-    if (isTrashCategoryId(item.categoryId) || item.trashedAt) return false;
+    const isTrashItem = isTrashCategoryId(item.categoryId) || Boolean(item.trashedAt);
+    if (isTrashItem) return isTrashCategoryId(selectedCategory);
     return true;
   }
 
   function montageAvailableItems(selectedIds = new Set()) {
     const normalizedQuery = window.MCP.normalizeContent(montageState.query || "");
     const available = window.MCP.sortItems(state.items || [])
-      .filter((item) => isMontageAvailableItem(item, selectedIds));
+      .filter((item) => isMontageAvailableItem(item, selectedIds))
+      .filter((item) => {
+        if (favoritesOnly) return item.isFavorite;
+        if (selectedCategory === "all") return true;
+        return collectCategoryIds(selectedCategory).has(item.categoryId);
+      });
     const selectedKeys = new Set([...selectedIds].map((key) => String(key || "")));
     const selectedLegacyIds = new Set([...selectedKeys].filter((key) => !key.includes("::")));
     const entries = [];
@@ -5675,8 +5506,6 @@
       titleNode.textContent = title;
       row.appendChild(titleNode);
     }
-    const versionBadge = context === "available" ? montageVersionBadge(item, forcedVersionId) : null;
-    if (versionBadge) row.appendChild(versionBadge);
     const preview = document.createElement("div");
     preview.className = "manager-montage-preview";
     const previewText = document.createElement("div");
@@ -5685,12 +5514,14 @@
     preview.appendChild(previewText);
     const meta = document.createElement("span");
     meta.className = "manager-montage-meta";
-    renderInlineSourceMeta(meta, item, [
+    const metaParts = [
       montageEditedContent(item, forcedVersionId) ? t("montage.sandboxEdited") : "",
       translatedCategoryPath(item.categoryId),
       window.MCP.formatLocalizedDate(displayItem.createdAt || item.createdAt, state.settings.language || "en")
-    ]);
+    ].filter(Boolean);
+    meta.textContent = metaParts.join(" - ");
     row.append(preview, meta);
+    schedulePreviewOverflowCheck(preview, previewText);
     row.addEventListener("mouseenter", () => {
       updatePreviewOverflowState(preview, previewText);
       startPreviewAutoScroll(preview, previewText);
@@ -5704,33 +5535,13 @@
     return row;
   }
 
-  function montageVersionBadge(item, forcedVersionId = "") {
-    const versions = embeddedVersions(item);
-    if (versions.length <= 1) return null;
-    const activeId = forcedVersionId || montageActiveVersionId(item);
-    const activeIndex = Math.max(0, versions.findIndex((version) => version.id === activeId));
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "manager-montage-version-badge";
-    button.textContent = t("versioning.shortLabel", { number: activeIndex + 1 });
-    button.title = t("versioning.showNextVersion");
-    button.setAttribute("aria-label", t("versioning.showNextVersion"));
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const nextVersion = versions[(activeIndex + 1) % versions.length];
-      montageState.versionIds[item.id] = nextVersion?.id || versions[0]?.id || "";
-      montageState.finalDraft = "";
-      renderMontage();
-    });
-    return button;
-  }
-
   function montageActiveVersionId(item) {
     const versions = embeddedVersions(item);
     if (!versions.length) return "";
     const remembered = montageState.versionIds[item.id];
     if (remembered && versions.some((version) => version.id === remembered)) return remembered;
+    const currentVersionId = currentEmbeddedVersionId(item, "text");
+    if (currentVersionId && versions.some((version) => version.id === currentVersionId)) return currentVersionId;
     return versions[0]?.id || "";
   }
 
@@ -5795,19 +5606,6 @@
     montageState.finalDraft = "";
     renderMontage();
     showManagerToast(t("montage.added"));
-  }
-
-  function addAllMontageItems() {
-    const selected = new Set(montageState.itemIds);
-    const additions = montageAvailableItems(selected).map((entry) => montageEntryKey(entry.item.id, entry.versionId));
-    if (!additions.length) {
-      showManagerToast(t("montage.noAvailable"));
-      return;
-    }
-    montageState.itemIds = [...montageState.itemIds, ...additions];
-    montageState.finalDraft = "";
-    renderMontage();
-    showManagerToast(t("montage.addedAll", { count: additions.length }));
   }
 
   function removeMontageItem(entryKey) {
@@ -5904,23 +5702,6 @@
     return pieces.join("\n\n");
   }
 
-  function polishMontage() {
-    const itemsById = new Map((state.items || []).map((item) => [item.id, item]));
-    montageState.itemIds.forEach((entryKey) => {
-      const item = itemsById.get(montageEntryItemId(entryKey));
-      if (!item) return;
-      const versionId = montageEntryVersionId(entryKey);
-      const content = getMontageItemContent(item, versionId)
-        .replace(/[ \t]+/g, " ")
-        .replace(/\n{3,}/g, "\n\n")
-        .trim();
-      montageState.edits[montageEditKey(item, versionId)] = { content };
-    });
-    montageState.finalDraft = "";
-    renderMontage();
-    showManagerToast(t("montage.polished"));
-  }
-
   async function copyMontage() {
     const content = buildMontageContent();
     if (!content.trim()) {
@@ -5928,7 +5709,7 @@
       return;
     }
     await window.MCP.writeClipboardText(content);
-    const copyButton = document.querySelector("#managerMontageModal [data-manager-action='copy-montage']");
+    const copyButton = document.querySelector("#managerMontageWorkspace [data-manager-action='copy-montage']");
     if (copyButton) {
       copyButton.textContent = t("montage.copyButtonReady");
       triggerMicroAnimation(copyButton, "success-pulse", 440);
@@ -5936,29 +5717,47 @@
     showManagerToast(t("montage.readyToPaste"));
   }
 
-  async function saveCurrentMontageAsText() {
+  function classifyCurrentMontage() {
     const content = buildMontageContent();
     if (!content.trim()) {
       showManagerToast(t("montage.emptyCopy"));
       return;
     }
-    await saveMontageAsText(content);
+    openMontageCategoryChooser(content);
   }
 
-  async function saveMontageAsText(content) {
+  function openMontageCategoryChooser(content, title = "") {
+    const normalizedContent = String(content || "").trim();
+    if (!normalizedContent) {
+      showManagerToast(t("montage.emptyCopy"));
+      return;
+    }
+    openManagerClassifier({ id: "montage-capture-draft" }, "text", {
+      mode: "montage",
+      montageContent: normalizedContent,
+      montageTitle: String(title || "").trim().slice(0, 30)
+    });
+  }
+
+  async function saveMontageAsText(content, categoryId = "general", title = "") {
+    if (!await confirmManagerCryptoSensitiveCapture(content)) return null;
     const general = state.categories.find((category) => category.id === "general") || window.MCP.CATEGORY_GENERAL;
-    await window.MCP.saveClipboardItem({
-      title: t("montage.title"),
+    const category = state.categories.find((current) => current.id === categoryId) || general;
+    const captureTitle = String(title || "").trim().slice(0, 30) || t("montage.title");
+    suppressOptimisticRefresh(itemStorageKeyForMediaType("text"), 1100);
+    const result = await window.MCP.saveClipboardItem({
+      title: captureTitle,
       content,
       type: "text",
-      categoryId: general.id,
-      categoryName: general.name,
-      sourceTitle: t("montage.title"),
+      categoryId: category.id,
+      categoryName: category.name,
+      sourceTitle: captureTitle,
       tags: ["montage"]
     });
-    await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.STORAGE_REFRESH_REQUIRED }).catch(() => null);
-    await loadState();
+    if (result?.item) applyOptimisticCreatedItem("text", result.item);
+    render();
     showManagerToast(t("montage.savedAsText"));
+    return result;
   }
 
   function clearMontage() {
@@ -5966,14 +5765,29 @@
     montageState.versionIds = {};
     montageState.edits = {};
     montageState.finalDraft = "";
+    montageState.finalTitle = "";
     renderMontage();
-    const copyButton = document.querySelector("#managerMontageModal [data-manager-action='copy-montage']");
+    const copyButton = document.querySelector("#managerMontageWorkspace [data-manager-action='copy-montage']");
     if (copyButton) copyButton.textContent = t("montage.copyCombined");
   }
 
-  function closeMontage() {
-    const modal = document.getElementById("managerMontageModal");
-    if (modal) modal.hidden = true;
+  function closeMontage(options = {}) {
+    const workspace = document.getElementById("managerMontageWorkspace");
+    const contentPane = document.getElementById("managerContentPane");
+    const front = contentPane?.querySelector(".content-pane-front");
+    montageState.isOpen = false;
+    activeTab = "text";
+    selectedCategory = "general";
+    favoritesOnly = false;
+    selectedIndex = 0;
+    contentPane?.classList.remove("is-montage-open");
+    activateContentPaneFace({ visibleFace: front, hiddenFace: workspace, focusTarget: elements.openMontage });
+    persistManagerViewState();
+    if (options.renderView !== false) {
+      window.setTimeout(() => {
+        render();
+      }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 580);
+    }
   }
 
   function openMontageFinalEditor() {
@@ -5991,8 +5805,9 @@
         "<div class=\"manager-backdrop\" data-manager-action=\"close-montage-final-editor\"></div>",
         "<section class=\"manager-montage-final-card\" role=\"dialog\" aria-modal=\"true\">",
         "<header class=\"mcp-search-head\"><div><strong data-role=\"montage-final-title\"></strong><p data-role=\"montage-final-subtitle\"></p></div><button type=\"button\" data-manager-action=\"close-montage-final-editor\" aria-label=\"Close\">&times;</button></header>",
+        "<label class=\"manager-montage-final-title-field\" for=\"managerMontageFinalTitle\"><span data-role=\"montage-final-capture-title\"></span><input id=\"managerMontageFinalTitle\" type=\"text\" maxlength=\"30\" autocomplete=\"off\"></label>",
         "<textarea id=\"managerMontageFinalContent\" spellcheck=\"true\"></textarea>",
-        "<footer><button type=\"button\" data-manager-action=\"close-montage-final-editor\"></button><button type=\"button\" data-manager-action=\"save-montage-final-editor\"></button><button type=\"button\" class=\"primary\" data-manager-action=\"copy-montage-final-editor\"></button></footer>",
+        "<footer><button type=\"button\" data-manager-action=\"close-montage-final-editor\"></button><button type=\"button\" data-manager-action=\"classify-montage-final-editor\"></button><button type=\"button\" class=\"primary\" data-manager-action=\"copy-montage-final-editor\"></button></footer>",
         "</section>"
       ].join("");
       document.body.appendChild(modal);
@@ -6000,19 +5815,27 @@
         const copyButton = modal.querySelector("[data-manager-action='copy-montage-final-editor']");
         if (copyButton) copyButton.textContent = t("montage.copyCombined");
       });
+      modal.querySelector("#managerMontageFinalTitle")?.addEventListener("input", (event) => {
+        montageState.finalTitle = String(event.target.value || "").slice(0, 30);
+      });
     }
     modal.hidden = false;
     translateMontageFinalEditor(modal);
     modal.querySelector("#managerMontageFinalContent").value = content;
-    modal.querySelector("#managerMontageFinalContent").focus();
+    modal.querySelector("#managerMontageFinalTitle").value = montageState.finalTitle || "";
+    (montageState.finalTitle ? modal.querySelector("#managerMontageFinalContent") : modal.querySelector("#managerMontageFinalTitle"))?.focus({ preventScroll: true });
     triggerMicroAnimation(modal.querySelector(".manager-montage-final-card"), "success-pulse", 440);
   }
 
   function translateMontageFinalEditor(modal) {
     modal.querySelector("[data-role='montage-final-title']").textContent = t("montage.finalEditor");
     modal.querySelector("[data-role='montage-final-subtitle']").textContent = t("montage.finalEditorSubtitle");
+    modal.querySelector("[data-role='montage-final-capture-title']").textContent = t("montage.captureTitle");
+    const titleInput = modal.querySelector("#managerMontageFinalTitle");
+    titleInput.placeholder = t("montage.captureTitlePlaceholder");
+    titleInput.setAttribute("aria-label", t("montage.captureTitle"));
     modal.querySelector("footer [data-manager-action='close-montage-final-editor']").textContent = t("common.cancel");
-    modal.querySelector("[data-manager-action='save-montage-final-editor']").textContent = t("montage.copyToGeneral");
+    modal.querySelector("[data-manager-action='classify-montage-final-editor']").textContent = t("montage.captureAndClassify");
     modal.querySelector("[data-manager-action='copy-montage-final-editor']").textContent = t("montage.copyCombined");
   }
 
@@ -6024,6 +5847,10 @@
     return String(montageFinalTextarea()?.value || "").trim();
   }
 
+  function currentFinalEditorTitle() {
+    return String(document.getElementById("managerMontageFinalTitle")?.value || "").trim().slice(0, 30);
+  }
+
   async function copyMontageFinalDraft() {
     const content = currentFinalEditorContent();
     if (!content) {
@@ -6031,6 +5858,7 @@
       return;
     }
     montageState.finalDraft = content;
+    montageState.finalTitle = currentFinalEditorTitle();
     await window.MCP.writeClipboardText(content);
     const copyButton = document.querySelector("[data-manager-action='copy-montage-final-editor']");
     if (copyButton) {
@@ -6040,14 +5868,16 @@
     showManagerToast(t("montage.readyToPaste"));
   }
 
-  async function saveMontageFinalDraftAsText() {
+  function classifyMontageFinalDraft() {
     const content = currentFinalEditorContent();
     if (!content) {
       showManagerToast(t("editor.emptyContent"));
       return;
     }
+    const title = currentFinalEditorTitle();
     montageState.finalDraft = content;
-    await saveMontageAsText(content);
+    montageState.finalTitle = title;
+    openMontageCategoryChooser(content, title);
   }
 
   function closeMontageFinalEditor() {
@@ -6109,10 +5939,10 @@
     montageEditingVersionId = "";
   }
 
-  async function openManagerSearch() {
-    if (!isDemoMode()) await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.CLOSE_FLOATING_PANEL }).catch(() => null);
+  async function openManagerSearch(options = {}) {
     triggerMicroAnimation(elements.openManagerMenu || elements.openMontage, "success-pulse", 440);
-    managerSearchState = { query: "", selectedIndex: 0, filters: {}, mediaType: activeTab, dateKey: "", calendarMonth: "", results: [] };
+    const requestedMediaType = ["text", "dev", "image"].includes(options.mediaType) ? options.mediaType : activeTab;
+    managerSearchState = { query: "", selectedIndex: 0, filters: {}, mediaType: requestedMediaType, dateKey: "", calendarMonth: "", results: [] };
     let modal = document.getElementById("managerSearchModal");
     if (!modal) {
       modal = document.createElement("div");
@@ -6120,14 +5950,13 @@
       modal.className = "manager-modal manager-search-modal";
       modal.innerHTML = [
         "<div class=\"mcp-search-backdrop\" data-manager-action=\"close-search\"></div>",
-        "<section class=\"manager-search-card manager-search-advanced-card\" role=\"dialog\" aria-modal=\"true\">",
-        "<header class=\"mcp-search-head\"><strong data-role=\"search-title\"></strong><button type=\"button\" data-manager-action=\"close-search\" aria-label=\"Close\">X</button></header>",
-        "<div class=\"manager-search-tabs\" data-role=\"search-tabs\"></div>",
-        "<input id=\"managerSearchInput\" class=\"manager-modal-search\" type=\"search\">",
-        "<div class=\"manager-search-filters\" data-role=\"search-filters\"></div>",
+        "<section class=\"manager-search-card manager-search-advanced-card\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"managerSearchTitle\">",
+        "<header class=\"manager-search-command-head\"><div class=\"manager-search-heading\"><span class=\"manager-search-eyebrow\" data-role=\"search-eyebrow\"></span><h2 id=\"managerSearchTitle\" data-role=\"search-title\"></h2><p data-role=\"search-subtitle\"></p></div><div class=\"manager-search-head-meta\"><span class=\"manager-search-result-count\" data-role=\"search-result-count\"></span><button type=\"button\" class=\"manager-search-close\" data-manager-action=\"close-search\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div></header>",
+        "<div class=\"manager-search-query-row\"><label class=\"manager-search-query\" for=\"managerSearchInput\"><span class=\"manager-search-query-icon\" aria-hidden=\"true\"></span><input id=\"managerSearchInput\" class=\"manager-modal-search\" type=\"search\" autocomplete=\"off\"><button type=\"button\" class=\"manager-search-clear\" data-manager-action=\"clear-advanced-search\" hidden></button><kbd>/</kbd></label></div>",
+        "<div class=\"manager-search-navigation\"><div class=\"manager-search-tabs\" data-role=\"search-tabs\" role=\"tablist\"></div><div class=\"manager-search-filters\" data-role=\"search-filters\" role=\"group\"></div></div>",
         "<div class=\"manager-search-layout\">",
-        "<div id=\"managerSearchResults\" class=\"manager-search-results\" data-role=\"search-results\"></div>",
-        "<div id=\"managerSearchDetail\" class=\"manager-search-detail\" data-role=\"search-detail\"></div>",
+        "<section class=\"manager-search-pane manager-search-results-pane\"><header><span data-role=\"search-results-label\"></span><strong data-role=\"search-list-count\"></strong></header><div id=\"managerSearchResults\" class=\"manager-search-results\" data-role=\"search-results\" role=\"listbox\"></div></section>",
+        "<section class=\"manager-search-pane manager-search-preview-pane\"><header><span data-role=\"search-preview-label\"></span></header><div id=\"managerSearchDetail\" class=\"manager-search-detail\" data-role=\"search-detail\" aria-live=\"polite\"></div></section>",
         "</div>",
         "<div class=\"manager-search-date-modal\" data-role=\"manager-search-date-modal\" hidden>",
         "<div class=\"manager-search-date-card\" role=\"dialog\" aria-modal=\"true\">",
@@ -6143,8 +5972,13 @@
       modal.querySelector("#managerSearchInput").addEventListener("input", (event) => {
         managerSearchState.query = event.target.value;
         managerSearchState.selectedIndex = 0;
-        renderManagerSearch();
+        if (managerSearchInputRaf) cancelAnimationFrame(managerSearchInputRaf);
+        managerSearchInputRaf = requestAnimationFrame(() => {
+          managerSearchInputRaf = 0;
+          renderManagerSearch();
+        });
       });
+      modal.addEventListener("keydown", handleManagerSearchKeyboard);
       modal.querySelector("#managerSearchResults").addEventListener("scroll", handleVirtualManagerSearchScroll, { passive: true });
       modal.querySelector("[data-role='manager-search-date-month']").addEventListener("change", (event) => {
         setManagerSearchCalendarMonth(Number(event.target.value), Number(modal.querySelector("[data-role='manager-search-date-year']")?.value));
@@ -6154,24 +5988,47 @@
       });
     }
     translateManagerSearch(modal);
+    managerSearchReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     modal.hidden = false;
+    document.documentElement.classList.add("manager-search-open");
+    document.querySelector(".app-shell")?.setAttribute("inert", "");
+    const input = modal.querySelector("#managerSearchInput");
+    if (input) input.value = "";
     renderManagerSearch();
-    modal.querySelector("#managerSearchInput")?.focus();
+    input?.focus();
+    window.setTimeout(() => window.MCP.startContextualGuidedTour?.("advancedSearch"), 80);
   }
 
   function translateManagerSearch(modal) {
+    modal.querySelector("[data-role='search-eyebrow']").textContent = t("search.commandEyebrow");
     modal.querySelector("[data-role='search-title']").textContent = t("search.advanced");
-    const close = modal.querySelector("[data-manager-action='close-search']");
+    modal.querySelector("[data-role='search-subtitle']").textContent = t("search.commandSubtitle");
+    modal.querySelector("[data-role='search-results-label']").textContent = t("search.results");
+    modal.querySelector("[data-role='search-preview-label']").textContent = t("search.preview");
+    const close = modal.querySelector("button[data-manager-action='close-search']");
     if (close) close.setAttribute("aria-label", t("common.close"));
     const input = modal.querySelector("#managerSearchInput");
     if (input) {
       input.placeholder = t("search.placeholder");
       input.setAttribute("aria-label", t("search.placeholder"));
     }
+    const clear = modal.querySelector("[data-manager-action='clear-advanced-search']");
+    if (clear) {
+      clear.textContent = t("search.clear");
+      clear.setAttribute("aria-label", t("search.clear"));
+    }
+    modal.querySelector("[data-role='search-results']")?.setAttribute("aria-label", t("search.results"));
   }
 
-  function openManagerClassifier(item, mediaType = "text") {
-    managerClassifyState = { item, mediaType, query: "" };
+  function openManagerClassifier(item, mediaType = "text", options = {}) {
+    managerClassifyState = {
+      item,
+      mediaType,
+      query: "",
+      mode: options.mode === "montage" ? "montage" : "item",
+      montageContent: options.mode === "montage" ? String(options.montageContent || "") : "",
+      montageTitle: options.mode === "montage" ? String(options.montageTitle || "").trim().slice(0, 30) : ""
+    };
     let modal = document.getElementById("managerClassifierModal");
     if (!modal) {
       modal = document.createElement("div");
@@ -6191,6 +6048,7 @@
         renderManagerCategoryChooser();
       });
     }
+    document.body.appendChild(modal);
     modal.hidden = false;
     modal.querySelector("[data-role='classifier-title']").textContent = t("categories.classify");
     const input = modal.querySelector("#managerCategorySearch");
@@ -6205,7 +6063,10 @@
     if (!modal || !managerClassifyState.item) return;
     const node = modal.querySelector("#managerCategoryResults");
     const query = window.MCP.normalizeContent(managerClassifyState.query);
-    const categories = managerClassifyState.mediaType === "image" ? state.imageCategories : managerClassifyState.mediaType === "dev" ? state.devCategories || [] : state.categories;
+    const availableCategories = managerClassifyState.mediaType === "image" ? state.imageCategories : managerClassifyState.mediaType === "dev" ? state.devCategories || [] : state.categories;
+    const categories = managerClassifyState.mode === "montage"
+      ? availableCategories.filter((category) => !isTrashCategoryId(category.id) && !isFavoriteCategoryId(category.id))
+      : availableCategories;
     const tree = buildTreeFromCategories(categories);
     node.replaceChildren();
     const quick = categories.find((category) => category.id === (managerClassifyState.mediaType === "image" ? "image-general" : managerClassifyState.mediaType === "dev" ? "dev-general" : "general"));
@@ -6307,6 +6168,24 @@
     const categories = mediaType === "image" ? state.imageCategories : mediaType === "dev" ? state.devCategories || [] : state.categories;
     const category = categories.find((current) => current.id === categoryId);
     if (!item || !category) return;
+    if (managerClassifyState.mode === "montage") {
+      if (isTrashCategoryId(category.id) || isFavoriteCategoryId(category.id)) return;
+      if (isVaultCategoryId(category.id)) {
+        if (!canUseVault()) {
+          openManagerProUpgradeModal("vault");
+          showManagerToast(t("pro.vaultRequired"));
+          return;
+        }
+        const unlocked = await ensureManagerVaultUnlocked();
+        if (!unlocked) return;
+      }
+      const content = managerClassifyState.montageContent;
+      const title = managerClassifyState.montageTitle;
+      const saved = await saveMontageAsText(content, category.id, title);
+      if (!saved) return;
+      closeManagerClassifier();
+      return;
+    }
     if (isTrashCategoryId(category.id)) {
       if (!canUseTrashManagement()) {
         openManagerProUpgradeModal("trashManagement");
@@ -6351,14 +6230,47 @@
   function closeManagerClassifier() {
     const modal = document.getElementById("managerClassifierModal");
     if (modal) modal.hidden = true;
-    managerClassifyState = { item: null, mediaType: "text", query: "" };
+    managerClassifyState = { item: null, mediaType: "text", query: "", mode: "item", montageContent: "", montageTitle: "" };
   }
 
   function closeManagerSearch() {
     const modal = document.getElementById("managerSearchModal");
+    if (managerSearchInputRaf) cancelAnimationFrame(managerSearchInputRaf);
+    managerSearchInputRaf = 0;
     cancelManagerSearchRenderJob();
     closeManagerSearchDateCalendar();
-    if (modal) modal.hidden = true;
+    managerSearchState.results = [];
+    managerSearchSelectedRow = null;
+    virtualSearchState = null;
+    if (modal) {
+      modal.hidden = true;
+      modal.querySelector("[data-role='search-results']")?.replaceChildren();
+      modal.querySelector("[data-role='search-detail']")?.replaceChildren();
+    }
+    document.documentElement.classList.remove("manager-search-open");
+    document.querySelector(".app-shell")?.removeAttribute("inert");
+    if (managerSearchReturnFocus?.isConnected) managerSearchReturnFocus.focus({ preventScroll: true });
+    managerSearchReturnFocus = null;
+  }
+
+  function handleManagerSearchKeyboard(event) {
+    const modal = document.getElementById("managerSearchModal");
+    if (!modal || modal.hidden) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      if (!modal.querySelector("[data-role='manager-search-date-modal']")?.hidden) closeManagerSearchDateCalendar();
+      else closeManagerSearch();
+      return;
+    }
+    if (event.key === "/" && event.target !== modal.querySelector("#managerSearchInput")) {
+      event.preventDefault();
+      modal.querySelector("#managerSearchInput")?.focus();
+      return;
+    }
+    if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
+    event.preventDefault();
+    const delta = event.key === "ArrowDown" ? 1 : -1;
+    selectManagerSearchResult(managerSearchState.selectedIndex + delta);
   }
 
   function openSourceTimelineModal() {
@@ -6393,12 +6305,16 @@
     renderSourceTimeline(modal);
     modal.hidden = false;
     triggerMicroAnimation(modal.querySelector(".manager-source-timeline-card"), "soft-bounce", 280);
+    window.setTimeout(() => window.MCP.startContextualGuidedTour?.("sourceTimeline"), 80);
   }
 
   function closeSourceTimelineModal() {
     cancelSourceTimelineRenderJob();
     const modal = document.getElementById("managerSourceTimelineModal");
-    if (modal) modal.hidden = true;
+    if (!modal) return;
+    modal.hidden = true;
+    modal.querySelector("[data-role='source-timeline-list']")?.replaceChildren();
+    modal.querySelector("[data-role='source-timeline-detail']")?.replaceChildren();
   }
 
   function renderSourceTimeline(modal) {
@@ -6605,7 +6521,8 @@
     const nextVersions = [...versions, nextVersion];
     const itemUpdates = cleanSharedVersionUpdates(Object.assign({}, updates, {
       captureVersions: nextVersions,
-      activeVersionId: nextVersion.id
+      activeVersionId: nextVersion.id,
+      sourceVersionId: itemForVersion.sourceVersionId || versions[0]?.id || ""
     }));
     managerItemVersionSelection.set(itemForVersion.id, nextVersion.id);
     itemForVersion.captureVersions = nextVersions;
@@ -6613,16 +6530,17 @@
     itemForVersion.title = nextVersion.title || "";
     itemForVersion.content = nextVersion.content || "";
     itemForVersion.note = nextVersion.note || "";
-    if (isDev) await window.MCP.updateDevItem(itemForVersion.id, itemUpdates);
-    else await window.MCP.updateClipboardItem(itemForVersion.id, itemUpdates);
-    await loadStatePreservingManagerScroll(scrollTop);
+    suppressOptimisticRefresh(itemStorageKeyForMediaType(isDev ? "dev" : "text"), 1100);
+    const updatedItem = isDev
+      ? await window.MCP.updateDevItem(itemForVersion.id, itemUpdates)
+      : await window.MCP.updateClipboardItem(itemForVersion.id, itemUpdates);
+    applyOptimisticItem(isDev ? "dev" : "text", itemForVersion.id, updatedItem || itemUpdates, { replace: Boolean(updatedItem) });
     managerItemVersionSelection.set(itemForVersion.id, nextVersion.id);
     pendingManagerItemsScrollTop = Math.max(0, Math.round(Number(scrollTop) || 0));
     pendingManagerCategoryScrollTop = Math.max(0, Math.round(elements.categories?.scrollTop || 0));
-    renderItems();
+    render();
     restoreManagerScrollPositions(8);
     persistManagerViewState();
-    showStatus(t("versioning.created"));
     showManagerToast(t("versioning.created"));
   }
 
@@ -7093,13 +7011,17 @@
     preview.textContent = String(displayItem.preview || displayItem.content || item.altText || "").slice(0, 180);
     const actions = document.createElement("div");
     actions.className = "manager-source-timeline-actions";
-    if (item.sourceUrl && (!hasVersions || versionIndex === 0)) {
+    const sourceVersionId = item.sourceVersionId || versions[0]?.id || "";
+    if (item.sourceUrl && mediaType !== "dev" && (!hasVersions || activeVersionId === sourceVersionId)) {
       const open = document.createElement("button");
       open.type = "button";
       open.textContent = t("source.open");
-      open.addEventListener("click", (event) => {
-        if (blockDemoAction(event)) return;
-        chrome.tabs.create({ url: item.sourceUrl }).catch(() => window.open(item.sourceUrl, "_blank"));
+      open.addEventListener("click", () => {
+        const type = mediaType === "image" ? MESSAGE_TYPES.OPEN_SOURCE_IMAGE : MESSAGE_TYPES.OPEN_SOURCE_ITEM;
+        chrome.runtime.sendMessage({ type, itemId: item.id }).catch(() => {
+          const safeSourceUrl = window.MCP.sanitizeUrlForPurpose(item.sourceUrl, "source");
+          if (safeSourceUrl) window.open(safeSourceUrl, "_blank", "noopener");
+        });
       });
       actions.appendChild(open);
     }
@@ -7157,12 +7079,17 @@
     managerSearchSelectedRow = null;
     resultsNode.replaceChildren();
     detailNode.replaceChildren();
+    detailNode.classList.toggle("is-image-detail", managerSearchState.mediaType === "image");
     renderManagerSearchDateCalendar();
     const results = getManagerSearchResults();
     managerSearchState.results = results;
+    updateManagerSearchChrome(modal, results.length);
     if (!results.length) {
       const empty = document.createElement("div");
       empty.className = "empty-state";
+      empty.setAttribute("role", "option");
+      empty.setAttribute("aria-disabled", "true");
+      empty.setAttribute("aria-selected", "false");
       empty.textContent = t("search.noResults");
       resultsNode.appendChild(empty);
       detailNode.textContent = t("search.trySimple");
@@ -7172,6 +7099,14 @@
     if (managerSearchState.mediaType === "image") renderManagerImageSearchDetail(detailNode, results[managerSearchState.selectedIndex]);
     else renderManagerTextSearchDetail(detailNode, results[managerSearchState.selectedIndex]);
     renderManagerSearchResultsProgressively(resultsNode, results);
+  }
+
+  function updateManagerSearchChrome(modal, count) {
+    const countLabel = t("search.resultCount", { count });
+    modal.querySelector("[data-role='search-result-count']").textContent = countLabel;
+    modal.querySelector("[data-role='search-list-count']").textContent = String(count);
+    const clear = modal.querySelector("[data-manager-action='clear-advanced-search']");
+    if (clear) clear.hidden = !managerSearchState.query;
   }
 
   function renderManagerSearchResultsProgressively(resultsNode, results) {
@@ -7300,15 +7235,25 @@
   function renderManagerSearchTabs(node) {
     if (!node) return;
     const tabs = [
-      ["text", t("tabs.text")],
-      ["dev", t("tabs.dev")],
-      ["image", t("images.tab")]
+      ["text", t("tabs.text"), "../assets/icons/text_icon.png"],
+      ["dev", t("tabs.dev"), "../assets/icons/dev.png"],
+      ["image", t("images.tab"), "../assets/icons/images_icon.png"]
     ];
-    node.replaceChildren(...tabs.map(([id, label]) => {
+    node.replaceChildren(...tabs.map(([id, label, iconPath]) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = id === managerSearchState.mediaType ? "is-active" : "";
-      button.textContent = label;
+      button.className = `manager-search-tab ${id === managerSearchState.mediaType ? "is-active" : ""}`.trim();
+      button.dataset.mediaType = id;
+      button.title = label;
+      button.setAttribute("aria-label", label);
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", String(id === managerSearchState.mediaType));
+      const icon = document.createElement("img");
+      icon.className = "manager-search-tab-icon";
+      icon.src = iconPath;
+      icon.alt = "";
+      icon.setAttribute("aria-hidden", "true");
+      button.appendChild(icon);
       button.addEventListener("click", () => {
         managerSearchState.mediaType = id;
         managerSearchState.selectedIndex = 0;
@@ -7335,6 +7280,7 @@
       button.type = "button";
       button.className = isManagerSearchFilterActive(id) ? "is-active" : "";
       button.textContent = label;
+      button.setAttribute("aria-pressed", String(isManagerSearchFilterActive(id)));
       button.addEventListener("click", () => {
         if (id === "date") openManagerSearchDateCalendar();
         else toggleManagerSearchFilter(id);
@@ -7366,11 +7312,8 @@
     if (managerSearchState.dateKey) {
       return managerTextItemsForDate(managerSearchState.dateKey);
     }
-    const showAllCaptures = shouldShowAllManagerSearchCaptures();
     const options = {
       filters: managerSearchState.filters || {},
-      favoritesFirst: state.settings.searchFavoritesFirst,
-      maxResults: showAllCaptures ? Number.MAX_SAFE_INTEGER : state.settings.searchMaxResults || 80,
       language: state.settings.language || "en"
     };
     if (managerSearchState.mediaType === "dev") {
@@ -7389,14 +7332,7 @@
       if (filters.dateRange === "30d" && now - (item.createdAt || 0) > 30 * 86400000) return false;
       return true;
     });
-    return showAllCaptures ? images : images.slice(0, state.settings.searchMaxResults || 80);
-  }
-
-  function shouldShowAllManagerSearchCaptures() {
-    const hasQuery = Boolean(window.MCP.normalizeContent(managerSearchState.query || ""));
-    const filters = managerSearchState.filters || {};
-    const hasActiveFilter = Object.keys(filters).some((key) => Boolean(filters[key]));
-    return !hasQuery && !hasActiveFilter;
+    return images;
   }
 
   function isSameManagerSearchDay(timestamp, reference) {
@@ -7516,12 +7452,11 @@
 
   function renderManagerSearchMonthSelect(select, selectedMonth, selectedYear) {
     if (!select) return;
-    const formatter = new Intl.DateTimeFormat(state.settings.language || "en", { month: "long" });
     const maxMonth = managerSearchMaxMonthDate();
     select.replaceChildren(...Array.from({ length: 12 }, (_, index) => {
       const option = document.createElement("option");
       option.value = String(index);
-      option.textContent = formatter.format(new Date(2024, index, 1));
+      option.textContent = window.MCP.formatLocalizedDatePart(new Date(2024, index, 1), { month: "long" }, state.settings.language || "en");
       option.selected = index === selectedMonth;
       option.disabled = new Date(selectedYear, index, 1) > maxMonth;
       return option;
@@ -7531,10 +7466,9 @@
 
   function renderManagerSearchWeekdays(node) {
     if (!node) return;
-    const formatter = new Intl.DateTimeFormat(state.settings.language || "en", { weekday: "short" });
     node.replaceChildren(...Array.from({ length: 7 }, (_, index) => {
       const span = document.createElement("span");
-      span.textContent = formatter.format(new Date(2024, 0, index + 1));
+      span.textContent = window.MCP.formatLocalizedDatePart(new Date(2024, 0, index + 1), { weekday: "short" }, state.settings.language || "en");
       return span;
     }));
   }
@@ -7588,12 +7522,15 @@
   function formatManagerSearchDateLabel(dateKey) {
     const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateKey || ""));
     if (!match) return "";
-    return new Intl.DateTimeFormat(state.settings.language || "en", { dateStyle: "medium" }).format(new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+    return window.MCP.formatLocalizedDateOnly(new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])), state.settings.language || "en", { dateFormat: "medium" });
   }
 
   function renderManagerSearchResult(item, index) {
     const row = document.createElement("article");
     row.className = `manager-search-result ${index === managerSearchState.selectedIndex ? "is-selected" : ""} ${item.isPinned ? "is-pinned" : ""}`;
+    row.setAttribute("role", "option");
+    row.setAttribute("aria-selected", String(index === managerSearchState.selectedIndex));
+    row.tabIndex = index === managerSearchState.selectedIndex ? 0 : -1;
     row.dataset.searchIndex = String(index);
     if (index === managerSearchState.selectedIndex) managerSearchSelectedRow = row;
     row.addEventListener("click", () => {
@@ -7605,7 +7542,8 @@
       ? item.title || item.altText || item.imageFileName || item.fileName || item.imageUrl || t("images.image")
       : displayItem.title || displayItem.preview || displayItem.content || "";
     const meta = document.createElement("span");
-    renderInlineSourceMeta(meta, item, [managerSearchItemCategoryPath(item), window.MCP.formatLocalizedDate(item.createdAt, state.settings.language || "en")]);
+    meta.className = "manager-search-result-meta";
+    renderManagerSearchResultMeta(meta, item, managerSearchItemCategoryPath(item), window.MCP.formatLocalizedDate(item.createdAt, state.settings.language || "en"));
     row.append(title, meta);
     return row;
   }
@@ -7619,11 +7557,17 @@
     if (!item) return;
     if (nextIndex === managerSearchState.selectedIndex && row?.classList.contains("is-selected")) return;
     managerSearchState.selectedIndex = nextIndex;
-    managerSearchSelectedRow?.classList.remove("is-selected");
+    if (managerSearchSelectedRow) {
+      managerSearchSelectedRow.classList.remove("is-selected");
+      managerSearchSelectedRow.setAttribute("aria-selected", "false");
+      managerSearchSelectedRow.tabIndex = -1;
+    }
     const nextRow = row
       || modal.querySelector(`.manager-search-result[data-search-index="${CSS.escape(String(nextIndex))}"]`)
       || scrollVirtualManagerSearchIndexIntoView(nextIndex);
     nextRow?.classList.add("is-selected");
+    nextRow?.setAttribute("aria-selected", "true");
+    if (nextRow) nextRow.tabIndex = 0;
     managerSearchSelectedRow = nextRow || null;
     const detailNode = modal.querySelector("#managerSearchDetail");
     if (!detailNode) return;
@@ -7639,15 +7583,10 @@
 
   function scheduleManagerSearchDetailRender(detailNode, item, index) {
     cancelManagerSearchDetailRender();
-    managerSearchDetailRenderTimer = window.setTimeout(() => {
-      managerSearchDetailRenderTimer = 0;
-      requestAnimationFrame(() => {
-        managerSearchDetailRenderRaf = requestAnimationFrame(() => {
-          managerSearchDetailRenderRaf = 0;
-          renderScheduledManagerSearchDetail(detailNode, item, index);
-        });
-      });
-    }, 72);
+    managerSearchDetailRenderRaf = requestAnimationFrame(() => {
+      managerSearchDetailRenderRaf = 0;
+      renderScheduledManagerSearchDetail(detailNode, item, index);
+    });
   }
 
   function renderScheduledManagerSearchDetail(detailNode, item, index) {
@@ -7661,9 +7600,14 @@
     return translatedCategoryPath(item.categoryId) || item.categoryName || "";
   }
 
+  function isManagerSearchTrashItem(item) {
+    return isTrashCategoryId(item?.categoryId) || Boolean(item?.trashedAt);
+  }
+
   function renderManagerTextSearchDetail(node, item) {
     if (!item) return;
     const mediaType = managerSearchState.mediaType === "dev" ? "dev" : "text";
+    const inTrash = isManagerSearchTrashItem(item);
     const displayItem = itemDisplayVersion(item, mediaType);
     const sourceVersionActive = isEmbeddedSourceVersionActive(item, mediaType);
     const content = document.createElement("p");
@@ -7671,15 +7615,35 @@
     content.textContent = displayItem.content || displayItem.preview || "";
     const actions = document.createElement("div");
     actions.className = "manager-search-detail-actions";
-    actions.append(
-      actionButton(t("common.useCapture"), "primary use-capture-action", () => copyItem(displayItem, mediaType)),
-      actionButton(t("common.edit"), "icon-only", () => openEditor(item, mediaType), "edit.png")
-    );
-    actions.append(actionButton(t("versioning.addButtonLabel"), "version-create-action", () => openCreateVersionModal(item, mediaType, displayItem?.activeVersionId || "")));
-    if (sourceVersionActive) {
+    actions.append(actionButton(t("common.useCapture"), "primary use-capture-action", () => copyItem(displayItem, mediaType)));
+    if (!inTrash) {
       actions.append(
-        actionButton(t("source.open"), "icon-only", () => openSource(item), "reverse.png"),
-        actionButton(t("categories.classify"), "", () => managerSearchState.mediaType === "dev" ? classifyDev(item) : classifyText(item)),
+        actionButton(t("common.edit"), "icon-only", () => openEditor(item, mediaType), "edit.png"),
+        actionButton(t("versioning.addButtonLabel"), "version-create-action", () => openCreateVersionModal(item, mediaType, displayItem?.activeVersionId || ""), "", {
+          accessibleLabel: t("versioning.addVersion")
+        })
+      );
+    }
+    if (sourceVersionActive) {
+      if (mediaType === "text" || mediaType === "dev") {
+        actions.append(actionButton(t("source.open"), "icon-only", () => openSource(item), "reverse.png"));
+      }
+      actions.append(actionButton(t("categories.classify"), "", () => managerSearchState.mediaType === "dev" ? classifyDev(item) : classifyText(item)));
+    }
+    if (inTrash) {
+      actions.append(
+        actionButton(t("trash.restore"), "restore-action", async () => {
+          await restoreItem(item, mediaType);
+          renderManagerSearch();
+        }),
+        actionButton(t("trash.permanentDelete"), "icon-only", async () => {
+          if (mediaType === "dev") await deleteDev(item.id, true);
+          else await deleteItem(item.id, true);
+          renderManagerSearch();
+        }, "erase.png")
+      );
+    } else {
+      actions.append(
         actionButton(item.isFavorite ? t("common.favoriteRemove") : t("common.favoriteAdd"), item.isFavorite ? "is-active icon-only" : "icon-only", async () => {
         if (mediaType === "dev") await updateDev(item.id, { isFavorite: !item.isFavorite });
         else await updateItem(item.id, { isFavorite: !item.isFavorite });
@@ -7691,19 +7655,20 @@
         renderManagerSearch();
         }, item.isPinned ? "go_unpin.png" : "go_pin.png")
       );
+      actions.append(
+        actionButton(t("common.delete"), "icon-only", async () => {
+          if (managerSearchState.mediaType === "dev") await deleteDev(item.id);
+          else await deleteItem(item.id);
+          renderManagerSearch();
+        }, "erase.png")
+      );
     }
-    actions.append(
-      actionButton(t("common.delete"), "icon-only", async () => {
-        if (managerSearchState.mediaType === "dev") await deleteDev(item.id);
-        else await deleteItem(item.id);
-        renderManagerSearch();
-      }, "erase.png")
-    );
     node.append(content, actions);
   }
 
   function renderManagerImageSearchDetail(node, item) {
     if (!item) return;
+    const inTrash = isManagerSearchTrashItem(item);
     const image = document.createElement("img");
     image.className = "manager-search-image-preview";
     image.src = item.thumbnailUrl || item.imageUrl || item.dataUrl || "";
@@ -7711,29 +7676,43 @@
     const meta = document.createElement("p");
     meta.className = "manager-search-detail-meta";
     renderInlineSourceMeta(meta, item, [managerSearchItemCategoryPath(item), window.MCP.formatLocalizedDate(item.createdAt, state.settings.language || "en")]);
-    const info = renderImageInfoRows(item);
     const actions = document.createElement("div");
     actions.className = "manager-search-detail-actions";
-    actions.append(
-      actionButton(t("common.useCapture"), "primary use-capture-action", () => copyImage(item)),
-      actionButton(t("source.open"), "icon-only", () => openImageSource(item), "reverse.png"),
-      actionButton(t("images.info"), "image-info-action", () => openImageInfo(item)),
-      actionButton(t("images.download"), "image-download-action", () => downloadImage(item)),
-      actionButton(t("categories.classify"), "", () => classifyImage(item)),
-      actionButton(item.isFavorite ? t("common.favoriteRemove") : t("common.favoriteAdd"), item.isFavorite ? "is-active icon-only" : "icon-only", async () => {
-        await updateImage(item.id, { isFavorite: !item.isFavorite });
-        renderManagerSearch();
-      }, item.isFavorite ? "favorited.png" : "not_yet_favorited.png"),
-      actionButton(item.isPinned ? t("common.unpin") : t("common.pin"), item.isPinned ? "is-active icon-only" : "icon-only", async () => {
-        await updateImage(item.id, { isPinned: !item.isPinned });
-        renderManagerSearch();
-      }, item.isPinned ? "go_unpin.png" : "go_pin.png"),
-      actionButton(t("common.delete"), "icon-only", async () => {
-        await deleteImage(item.id);
-        renderManagerSearch();
-      }, "erase.png")
-    );
-    node.append(image, meta, info, actions);
+    if (inTrash) {
+      actions.append(
+        actionButton(t("trash.restore"), "restore-action", async () => {
+          await restoreItem(item, "image");
+          renderManagerSearch();
+        }),
+        actionButton(t("images.info"), "image-info-action", () => openImageInfo(item)),
+        actionButton(t("images.download"), "image-download-action", () => downloadImage(item)),
+        actionButton(t("trash.permanentDelete"), "icon-only", async () => {
+          await deleteImage(item.id, true);
+          renderManagerSearch();
+        }, "erase.png", { forceDarkIcon: true })
+      );
+    } else {
+      actions.append(
+        actionButton(t("common.useCapture"), "primary use-capture-action", () => copyImage(item)),
+        actionButton(t("source.open"), "icon-only", () => openImageSource(item), "reverse.png"),
+        actionButton(t("images.info"), "image-info-action", () => openImageInfo(item)),
+        actionButton(t("images.download"), "image-download-action", () => downloadImage(item)),
+        actionButton(t("categories.classify"), "", () => classifyImage(item)),
+        actionButton(item.isFavorite ? t("common.favoriteRemove") : t("common.favoriteAdd"), item.isFavorite ? "is-active icon-only" : "icon-only", async () => {
+          await updateImage(item.id, { isFavorite: !item.isFavorite });
+          renderManagerSearch();
+        }, item.isFavorite ? "favorited.png" : "not_yet_favorited.png"),
+        actionButton(item.isPinned ? t("common.unpin") : t("common.pin"), item.isPinned ? "is-active icon-only" : "icon-only", async () => {
+          await updateImage(item.id, { isPinned: !item.isPinned });
+          renderManagerSearch();
+        }, item.isPinned ? "go_unpin.png" : "go_pin.png"),
+        actionButton(t("common.delete"), "icon-only", async () => {
+          await deleteImage(item.id);
+          renderManagerSearch();
+        }, "erase.png")
+      );
+    }
+    node.append(image, meta, actions);
   }
 
   function openCreateVersionModal(item, mediaType = "text", versionId = "") {
@@ -8117,6 +8096,19 @@
       || (editorCategorySelection || originalCategory) !== originalCategory;
   }
 
+  async function confirmManagerCryptoSensitiveCapture(content) {
+    const detection = window.MCP?.detectCryptoSensitiveData?.(content);
+    if (!detection?.shouldWarn) return true;
+    const messageKey = detection.risk === "critical" ? "cryptoWarning.criticalMessage" : "cryptoWarning.addressMessage";
+    return openManagerConfirmDialog({
+      title: t(detection.risk === "critical" ? "cryptoWarning.criticalTitle" : "cryptoWarning.addressTitle"),
+      message: `${t(messageKey)}\n\n${t(detection.risk === "critical" ? "cryptoWarning.advice" : "cryptoWarning.addressAdvice")}`,
+      confirmText: t("cryptoWarning.confirm"),
+      cancelText: t("cryptoWarning.decline"),
+      icon: "crypto-warning.svg"
+    });
+  }
+
   function openManagerConfirmDialog({ title, message, confirmText, cancelText, icon = "" }) {
     return new Promise((resolve) => {
       let modal = document.getElementById("managerConfirmModal");
@@ -8298,6 +8290,7 @@
       } else {
         result = await saveCreatedTextItem({ title, content, note, categoryId });
       }
+      if (!result) return;
       await finishCreateItemSave(result, categoryId, isDev ? t("creator.codeSaved") : t("creator.textSaved"));
     } catch (error) {
       if (handleCreateCaptureLimitError(error, modal)) return;
@@ -8335,6 +8328,7 @@
   }
 
   async function saveCreatedTextItem({ title = "", content, note, categoryId }) {
+    if (!await confirmManagerCryptoSensitiveCapture(content)) return null;
     const category = state.categories.find((item) => item.id === categoryId);
     const categoryName = category?.name || "General";
     const classification = window.MCP.classifyContent(content);
@@ -8350,6 +8344,7 @@
   }
 
   async function saveCreatedDevItem({ title = "", content, note, categoryId, detection }) {
+    if (!await confirmManagerCryptoSensitiveCapture(content)) return null;
     const category = (state.devCategories || []).find((item) => item.id === categoryId);
     const categoryName = category?.name || "General";
     const rootId = rootCategoryIdFor(categoryId, state.devCategories || []);
@@ -8369,17 +8364,19 @@
   }
 
   async function finishCreateItemSave(result, categoryId, toastText) {
-    await chrome.runtime.sendMessage({ type: MESSAGE_TYPES.STORAGE_REFRESH_REQUIRED }).catch(() => null);
     selectedCategory = categoryId;
     favoritesOnly = false;
-    await loadState();
+    const mediaType = activeTab === "dev" ? "dev" : "text";
+    if (result?.item?.id) {
+      rememberCurrentScrollForOptimisticRender();
+      suppressOptimisticRefresh(itemStorageKeyForMediaType(mediaType), 1100);
+      applyOptimisticCreatedItem(mediaType, result.item);
+      selectedIndex = Math.max(0, activeItems().findIndex((item) => item.id === result.item.id));
+    }
     showManagerToast(toastText);
     closeCreateCodeMismatchModal();
     closeCreateCurrentItemModal();
-    if (result?.item?.id) {
-      selectedIndex = Math.max(0, activeItems().findIndex((item) => item.id === result.item.id));
-      render();
-    }
+    render();
   }
 
   function openCreateCodeMismatchModal({ title = "", content, note, currentCategoryId, detectedCategoryId, detection }) {
@@ -8437,6 +8434,7 @@
         categoryId: targetCategoryId,
         detection: createCodeMismatchState.detection
       });
+      if (!result) return;
       await finishCreateItemSave(result, targetCategoryId, t("creator.codeSaved"));
     } catch (error) {
       if (handleCreateCaptureLimitError(error, document.getElementById("managerCreateCodeMismatchModal"))) return;
@@ -8624,9 +8622,12 @@
     const insertBefore = dropPosition === "before";
     orderedIds.splice(Math.max(0, targetIndex + (insertBefore ? 0 : 1)), 0, source.id);
     try {
-      if (editingItem?.mediaType === "dev") await window.MCP.reorderDevCategories(parentId, orderedIds);
-      else await window.MCP.reorderCategories(parentId, orderedIds);
-      await loadState();
+      const mediaType = editingItem?.mediaType === "dev" ? "dev" : "text";
+      suppressOptimisticRefresh(mediaType === "dev" ? window.MCP.STORAGE_KEYS.DEV_CATEGORIES : window.MCP.STORAGE_KEYS.CATEGORIES, 1100);
+      const categories = mediaType === "dev"
+        ? await window.MCP.reorderDevCategories(parentId, orderedIds)
+        : await window.MCP.reorderCategories(parentId, orderedIds);
+      applyOptimisticCategories(mediaType, categories);
       renderEditorCategoryTree(document.getElementById("managerEditorModal"), editorCategorySelection);
       renderCategories();
       showManagerToast(t("categories.reordered"));
@@ -8663,13 +8664,15 @@
     });
     if (!name) return;
     try {
+      suppressOptimisticRefresh(categoryStorageKeyForActiveTab(), 1200);
       const data = await createCategoryViaBackground({
         name,
         icon: "folder",
         color: state.settings.accentColor || "#e50914"
       });
-      if (data) applyStateData(data);
-      await loadState();
+      if (data) applyCategoryResponseData(data);
+      suppressOptimisticRefresh(categoryStorageKeyForActiveTab(), 900);
+      render();
       showManagerToast(t("categories.created"));
     } catch (error) {
       showManagerToast(error?.message || t("common.error"));
@@ -8686,6 +8689,7 @@
     });
     if (!name) return;
     try {
+      suppressOptimisticRefresh(categoryStorageKeyForActiveTab(), 1200);
       const data = await createCategoryViaBackground({
         name,
         parentId: parent.id,
@@ -8693,8 +8697,9 @@
         color: parent.color || state.settings.accentColor || "#e50914"
       });
       expandedCategories.add(parent.id);
-      if (data) applyStateData(data);
-      await loadState();
+      if (data) applyCategoryResponseData(data);
+      suppressOptimisticRefresh(categoryStorageKeyForActiveTab(), 900);
+      render();
       showManagerToast(t("categories.created"));
     } catch (error) {
       showManagerToast(error?.message || t("common.error"));
@@ -8738,7 +8743,29 @@
     const favicon = window.MCP.createSourceFaviconImage?.(item);
     if (favicon) span.appendChild(favicon);
     span.append(document.createTextNode(item.sourceDomain));
+    window.MCP.decorateMetaOverflowToken(span, "source");
     meta.appendChild(span);
+  }
+
+  function renderManagerSearchResultMeta(node, item, category, dateLabel) {
+    if (!node) return;
+    const categoryToken = document.createElement("span");
+    categoryToken.textContent = category || "";
+    window.MCP.decorateMetaOverflowToken(categoryToken, "category");
+
+    const sourceToken = document.createElement("span");
+    sourceToken.className = "source-domain-with-favicon";
+    if (item?.sourceDomain) {
+      const favicon = window.MCP.createSourceFaviconImage?.(item);
+      if (favicon) sourceToken.appendChild(favicon);
+      sourceToken.append(document.createTextNode(item.sourceDomain));
+    }
+    window.MCP.decorateMetaOverflowToken(sourceToken, "source");
+
+    const dateToken = document.createElement("span");
+    dateToken.textContent = dateLabel || "";
+    window.MCP.decorateMetaOverflowToken(dateToken, "date");
+    node.replaceChildren(categoryToken, sourceToken, dateToken);
   }
 
   function renderInlineSourceMeta(node, item, parts = []) {
@@ -8778,7 +8805,9 @@
       card.setAttribute("aria-modal", "true");
       const header = document.createElement("header");
       const title = document.createElement("h2");
-      setVaultModalTitle(title, t(configured ? "vault.unlockTitle" : "vault.setTitle"));
+      const dialogTitle = t(configured ? "vault.unlockTitle" : "vault.setTitle");
+      setVaultModalTitle(title, dialogTitle);
+      card.setAttribute("aria-label", dialogTitle);
       const close = document.createElement("button");
       close.type = "button";
       close.className = "manager-text-close";
@@ -8790,7 +8819,7 @@
       info.textContent = t("vault.localOnly");
       const fields = document.createElement("div");
       fields.className = "manager-vault-fields";
-      const password = vaultPasswordField(configured ? "vault.password" : "vault.newPassword");
+      const password = vaultPasswordField(configured ? "vault.password" : "vault.newPassword", { showRequirement: !configured });
       fields.appendChild(password.wrap);
       let confirmField = null;
       let secretQuestion = null;
@@ -8803,6 +8832,8 @@
       }
       const error = document.createElement("p");
       error.className = "manager-vault-error";
+      error.setAttribute("role", "alert");
+      error.setAttribute("aria-live", "polite");
       const actions = document.createElement("div");
       actions.className = "manager-vault-actions";
       const forgot = document.createElement("button");
@@ -8827,10 +8858,15 @@
       overlay.addEventListener("click", (event) => {
         if (event.target === overlay) finish(false);
       });
-      primary.addEventListener("click", async (event) => {
-        if (blockDemoAction(event)) return;
+      primary.addEventListener("click", async () => {
         try {
           error.textContent = "";
+          if (!configured && password.input.value.length < 8) {
+            password.wrap.classList.add("is-invalid");
+            password.help?.classList.add("is-error");
+            password.input.focus();
+            return;
+          }
           if (!configured && password.input.value !== confirmField.input.value) {
             error.textContent = t("vault.passwordMismatch");
             return;
@@ -8854,19 +8890,17 @@
           showManagerToast(t("vault.created"));
           finish(true);
         } catch (err) {
-          error.textContent = err?.message || t("common.error");
+          error.textContent = err?.messageKey ? t(err.messageKey) : (err?.message || t("common.error"));
         }
       });
-      forgot.addEventListener("click", async (event) => {
-        if (blockDemoAction(event)) return;
+      forgot.addEventListener("click", async () => {
         const recovered = await openManagerVaultRecoveryModal();
         if (!recovered) return;
         vaultSessionUnlocked = true;
         showManagerToast(t("vault.recoveryUnlocked"));
         finish(true);
       });
-      reset.addEventListener("click", async (event) => {
-        if (blockDemoAction(event)) return;
+      reset.addEventListener("click", async () => {
         const confirmed = await openManagerVaultResetConfirm();
         if (!confirmed) return;
         await window.MCP.resetVaultPasswordAndItems();
@@ -8928,17 +8962,16 @@
       };
       card.querySelector("[data-role='vault-nested-close']")?.addEventListener("click", () => finish(false));
       cancel.addEventListener("click", () => finish(false));
-      primary.addEventListener("click", async (event) => {
-        if (blockDemoAction(event)) return;
+      primary.addEventListener("click", async () => {
         try {
           error.textContent = "";
-          const ok = await window.MCP.verifyVaultRecovery(question.select.value, answer.input.value);
-          if (!ok) {
+          const authorizationToken = await window.MCP.verifyVaultRecovery(question.select.value, answer.input.value);
+          if (!authorizationToken) {
             error.textContent = t("vault.recoveryFailed");
             showManagerToast(t("vault.recoveryFailed"));
             return;
           }
-          const changed = await openManagerVaultRecoveryPasswordModal(question.select.value, answer.input.value);
+          const changed = await openManagerVaultRecoveryPasswordModal(question.select.value, answer.input.value, authorizationToken);
           if (changed) finish(true);
         } catch (err) {
           error.textContent = err?.message || t("common.error");
@@ -8949,7 +8982,7 @@
     });
   }
 
-  function openManagerVaultRecoveryPasswordModal(questionId, answerValue) {
+  function openManagerVaultRecoveryPasswordModal(questionId, answerValue, authorizationToken) {
     return new Promise((resolve) => {
       const overlay = document.createElement("div");
       overlay.className = "manager-vault-modal is-nested";
@@ -8959,11 +8992,13 @@
       info.textContent = t("vault.changePasswordText");
       const fields = document.createElement("div");
       fields.className = "manager-vault-fields";
-      const password = vaultPasswordField("vault.newPassword");
+      const password = vaultPasswordField("vault.newPassword", { showRequirement: true });
       const confirmField = vaultPasswordField("vault.confirmPassword");
       fields.append(password.wrap, confirmField.wrap);
       const error = document.createElement("p");
       error.className = "manager-vault-error";
+      error.setAttribute("role", "alert");
+      error.setAttribute("aria-live", "polite");
       const actions = document.createElement("div");
       actions.className = "manager-vault-actions";
       const cancel = document.createElement("button");
@@ -8982,22 +9017,28 @@
       };
       card.querySelector("[data-role='vault-nested-close']")?.addEventListener("click", () => finish(false));
       cancel.addEventListener("click", () => finish(false));
-      primary.addEventListener("click", async (event) => {
-        if (blockDemoAction(event)) return;
+      primary.addEventListener("click", async () => {
         try {
           error.textContent = "";
+          if (password.input.value.length < 8) {
+            password.wrap.classList.add("is-invalid");
+            password.help?.classList.add("is-error");
+            password.input.focus();
+            return;
+          }
           if (password.input.value !== confirmField.input.value) {
             error.textContent = t("vault.passwordMismatch");
             return;
           }
           await window.MCP.setVaultPassword(password.input.value, {
             questionId,
-            answer: answerValue
+            answer: answerValue,
+            authorizationToken
           });
           showManagerToast(t("vault.passwordUpdated"));
           finish(true);
         } catch (err) {
-          error.textContent = err?.message || t("common.error");
+          error.textContent = err?.messageKey ? t(err.messageKey) : (err?.message || t("common.error"));
         }
       });
       document.body.appendChild(overlay);
@@ -9031,10 +9072,7 @@
       };
       card.querySelector("[data-role='vault-nested-close']")?.addEventListener("click", () => finish(false));
       cancel.addEventListener("click", () => finish(false));
-      primary.addEventListener("click", (event) => {
-        if (blockDemoAction(event)) return;
-        finish(true);
-      });
+      primary.addEventListener("click", () => finish(true));
       document.body.appendChild(overlay);
       primary.focus();
     });
@@ -9048,6 +9086,7 @@
     const header = document.createElement("header");
     const title = document.createElement("h2");
     setVaultModalTitle(title, titleText);
+    card.setAttribute("aria-label", titleText);
     const close = document.createElement("button");
     close.type = "button";
     close.className = "manager-text-close";
@@ -9072,15 +9111,27 @@
     title.replaceChildren(icon, label);
   }
 
-  function vaultPasswordField(labelKey) {
+  function vaultPasswordField(labelKey, { showRequirement = false } = {}) {
     const wrap = document.createElement("label");
     const span = document.createElement("span");
     span.textContent = t(labelKey);
     const input = document.createElement("input");
     input.type = "password";
-    input.autocomplete = "current-password";
+    input.autocomplete = showRequirement || labelKey === "vault.confirmPassword" ? "new-password" : "current-password";
+    if (showRequirement || labelKey === "vault.confirmPassword") input.minLength = 8;
     wrap.append(span, input);
-    return { wrap, input };
+    let help = null;
+    if (showRequirement) {
+      help = document.createElement("small");
+      help.className = "manager-vault-field-help";
+      help.textContent = t("vault.passwordTooShort");
+      wrap.appendChild(help);
+      input.addEventListener("input", () => {
+        wrap.classList.remove("is-invalid");
+        help.classList.remove("is-error");
+      });
+    }
+    return { wrap, input, help };
   }
 
   function isGeneralCategoryId(id) {
@@ -9100,8 +9151,7 @@
     if (!name || name === category.name) return;
     try {
       const data = await updateCategoryViaBackground(category.id, { name });
-      if (data) applyStateData(data);
-      await loadState();
+      if (data) applyCategoryResponseData(data);
       selectedCategory = category.id;
       render();
       showManagerToast(t("categories.updated"));
@@ -9215,6 +9265,7 @@
       toast.setAttribute("aria-live", "polite");
       document.body.appendChild(toast);
     }
+    document.body.appendChild(toast);
     toast.textContent = text;
     toast.classList.add("is-visible");
     clearTimeout(showManagerToast.timer);
@@ -9283,7 +9334,6 @@
         preview: item.altText || item.title || item.sourceTitle || ""
       }));
       return window.MCP.searchItems(searchable, query, state.imageCategories || [], {
-        maxResults: Number.MAX_SAFE_INTEGER,
         language: state.settings.language || "en"
       }).map((item) => byId.get(item.id) || item);
     }

@@ -9,7 +9,6 @@
   function searchItems(items, query, categories = [], options = {}) {
     const tokens = tokenize(query);
     const filters = options.filters || {};
-    const maxResults = Number(options.maxResults || 80);
     const categoryById = new Map(categories.map((category) => [category.id, category]));
     const now = Date.now();
 
@@ -19,14 +18,13 @@
       .filter((item) => passesFilters(item, filters, now));
 
     if (!tokens.length) {
-      return normalized.slice(0, maxResults);
+      return normalized;
     }
 
     return normalized
       .map((item) => ({ item, score: scoreItem(item, tokens, options) }))
       .filter((result) => result.score > 0)
       .sort((a, b) => b.score - a.score || (b.item.lastCopiedAt || b.item.createdAt || 0) - (a.item.lastCopiedAt || a.item.createdAt || 0))
-      .slice(0, maxResults)
       .map((result) => result.item);
   }
 
@@ -157,7 +155,6 @@
 
   function baseScore(item, options = {}) {
     let score = 0;
-    if (item.isFavorite && options.favoritesFirst !== false) score += 8;
     if (item.isPinned) score += 10;
     if (item.lastUsedAt) score += 4;
     score += Math.min(Number(item.usageCount || 0), 10);

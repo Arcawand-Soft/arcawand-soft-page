@@ -1291,6 +1291,7 @@ test("language menu routes to English product page", async ({ page }) => {
       onboardingCompleted: true,
       floatingLauncherOpenedOnce: true,
       managerOpenedOnce: true,
+      recentToolIds: ["emojiPicker", "variableInjector", "longTextSplitter"],
       floatingLauncherBottom: 94,
       floatingLauncherCollapsed: false,
       managerImageViewMode: "medium",
@@ -1345,6 +1346,21 @@ test("language menu routes to English product page", async ({ page }) => {
       mcp_snippets: [],
       mcp_templates: [],
       mcp_manager_view_state: {},
+      ucp_guided_tours_v2: {
+        version: 2,
+        completed: {
+          popup: 1,
+          panel: 1,
+          manager: 1,
+          options: 1,
+          advancedSearch: 1,
+          montage: 1,
+          toolsCatalog: 1,
+          toolWorkspace: 1,
+          sourceTimeline: 1
+        },
+        progress: {}
+      },
       mcp_vault_auth: {
         version: 1,
         algorithm: "PBKDF2-SHA-256",
@@ -1533,7 +1549,11 @@ test("language menu routes to English product page", async ({ page }) => {
             return Promise.resolve(values);
           }
         },
-        tabs: { query: () => Promise.resolve([]), create: () => Promise.resolve(null) },
+        tabs: {
+          getCurrent: () => Promise.resolve(null),
+          query: () => Promise.resolve([]),
+          create: () => Promise.resolve(null)
+        },
         windows: { getCurrent: () => Promise.resolve({ id: 1 }) }
       };
     }
@@ -1553,26 +1573,42 @@ test("language menu routes to English product page", async ({ page }) => {
   }
 
   async function loadSharedScripts(language = resolveLanguage()) {
-    await loadScript(`${runtimeBase}shared/constants.js`);
-    await loadScript(`${runtimeBase}shared/utils.js`);
-    const localeScripts = ["shared/locales/en.js", "shared/locales/categorySlugs.js"];
-    if (language !== "en") localeScripts.push(`shared/locales/${language}.js`);
-    await Promise.all(localeScripts.map((script) => loadScript(`${runtimeBase}${script}`)));
     const scripts = [
+      "shared/toolMetadata.js",
+      "shared/constants.js",
+      "shared/utils.js",
+      "shared/security.js",
+      "shared/textVisuals.js",
+      "shared/sourceLocators.js",
+      "shared/locales/en.js",
+      "shared/locales/categorySlugs.js"
+    ];
+    if (language !== "en") scripts.push(`shared/locales/${language}.js`);
+    scripts.push(
       "shared/i18n.js",
+      "shared/dialogKeyboard.js",
       "shared/dodoConfig.js",
+      "shared/vendor/tweetnacl/nacl.min.js",
+      "shared/licenseConfig.js",
+      "shared/licenseToken.js",
+      "shared/premiumPricing.js",
       "shared/featureGate.js",
       "shared/search.js",
       "shared/defaultCategories.js",
       "shared/defaultImageCategories.js",
       "shared/defaultDevCategories.js",
-      "shared/codeDetector.js",
-      "shared/tools.js",
-      "shared/classifier.js",
+      "shared/settingsRepository.js",
+      "shared/snippetTemplateRepository.js",
+      "shared/quickSettingsMenu.js",
       "shared/storage.js",
-      "shared/licenseManager.js",
-      "shared/clipboard.js"
-    ];
+      "shared/codeProbabilityModel.js",
+      "shared/codeDetector.js",
+      "shared/aiCopyAdapters.js",
+      "shared/captureDedupe.js",
+      "shared/pageMarkdownCapture.js",
+      "shared/previewAutoScroll.js",
+      "shared/metaOverflowMarquee.js"
+    );
     for (const script of scripts) await loadScript(`${runtimeBase}${script}`);
   }
 

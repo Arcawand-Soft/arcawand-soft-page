@@ -1,5 +1,5 @@
 (function initStorage(global) {
-  const { STORAGE_KEYS, DEFAULT_SETTINGS, CATEGORY_GENERAL, DEFAULT_CATEGORIES = [CATEGORY_GENERAL], DEFAULT_IMAGE_CATEGORIES = [], DEFAULT_DEV_CATEGORIES = [], DEV_GENERAL_CATEGORY_ID = "dev-general", createId, normalizeContent, createPreview, sortItems } = global.MCP;
+  const { STORAGE_KEYS, DEFAULT_SETTINGS, CATEGORY_GENERAL, DEFAULT_CATEGORIES = [CATEGORY_GENERAL], DEFAULT_IMAGE_CATEGORIES = [], DEFAULT_DEV_CATEGORIES = [], DEV_GENERAL_CATEGORY_ID = "dev-general", createId, normalizeContent, createPreview, sortItems, sourceLocatorStorageKey, sanitizeSourceLocator } = global.MCP;
   const IMAGE_GENERAL_ID = "image-general";
   const TEXT_FAVORITE_ID = "favorites";
   const IMAGE_FAVORITE_ID = "image-favorites";
@@ -17,13 +17,63 @@
   const FAVORITE_CATEGORY_IDS = new Set(["favorite", TEXT_FAVORITE_ID, IMAGE_FAVORITE_ID, DEV_FAVORITE_ID]);
   const TRASH_CATEGORY_IDS = new Set([TEXT_TRASH_ID, IMAGE_TRASH_ID, DEV_TRASH_ID]);
   const VAULT_CATEGORY_IDS = new Set([TEXT_VAULT_ID, IMAGE_VAULT_ID, DEV_VAULT_ID]);
+  let vaultMutationAuthorization = null;
+
+  function getLocalStorageArea() {
+    try {
+      const storage = global.chrome?.storage?.local;
+      return storage || null;
+    } catch (error) {
+      return null;
+    }
+  }
 
   async function chromeGet(keys) {
-    return chrome.storage.local.get(keys);
+    const storage = getLocalStorageArea();
+    if (!storage?.get) return {};
+    try {
+      return await storage.get(keys);
+    } catch (error) {
+      return {};
+    }
   }
 
   async function chromeSet(data) {
-    return chrome.storage.local.set(await sanitizePurgedItemWrites(data));
+    const storage = getLocalStorageArea();
+    if (!storage?.set) return false;
+    try {
+      await storage.set(await sanitizePurgedItemWrites(data));
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async function getSourceLocator(itemId) {
+    const key = sourceLocatorStorageKey(itemId);
+    if (!key) return null;
+    const stored = await chromeGet(key).catch(() => ({}));
+    return stored?.[key] || null;
+  }
+
+  async function saveSourceLocator(itemId, locator) {
+    const key = sourceLocatorStorageKey(itemId);
+    const sanitized = sanitizeSourceLocator(locator);
+    if (!key || !sanitized) return null;
+    await chromeSet({ [key]: sanitized });
+    return sanitized;
+  }
+
+  async function deleteSourceLocators(itemIds = []) {
+    const keys = [...new Set((itemIds || []).map(sourceLocatorStorageKey).filter(Boolean))];
+    if (!keys.length) return;
+    const storage = getLocalStorageArea();
+    if (!storage?.remove) return;
+    try {
+      await storage.remove(keys);
+    } catch (error) {
+      // A reloaded extension invalidates APIs in already-open tabs. Nothing remains to persist there.
+    }
   }
 
   async function chromeSetWithPurgeMarkers(data, purgedKeys = []) {
@@ -39,18 +89,56 @@
     return chromeSet(Object.assign({}, data, { [purgeKey]: purgeMarkers }));
   }
 
+  async function chromeSetWithItemTombstones(data, itemKey, itemIds = []) {
+    const ids = [...new Set((itemIds || []).map((id) => String(id || "").trim()).filter(Boolean))];
+    if (!itemKey || !ids.length) return chromeSet(data);
+    const tombstoneKey = STORAGE_KEYS.DRIVE_TOMBSTONES || "mcp_drive_tombstones";
+    const stored = await chromeGet(tombstoneKey).catch(() => ({}));
+    const allTombstones = Object.assign({}, stored?.[tombstoneKey] || {});
+    const listTombstones = Object.assign({}, allTombstones[itemKey] || {});
+    const deletedAt = Date.now();
+    ids.forEach((id) => {
+      listTombstones[id] = Math.max(Number(listTombstones[id]) || 0, deletedAt);
+    });
+    const protectedData = Object.assign({}, data);
+    if (Array.isArray(protectedData[itemKey])) {
+      const idSet = new Set(ids);
+      protectedData[itemKey] = protectedData[itemKey].map((item) => {
+        if (!idSet.has(String(item?.id || "")) || !Number(item?.trashedAt)) return item;
+        return Object.assign({}, item, {
+          trashedAt: Math.max(Number(item.trashedAt) || 0, deletedAt + 1),
+          updatedAt: Math.max(Number(item.updatedAt) || 0, deletedAt + 1)
+        });
+      });
+    }
+    allTombstones[itemKey] = Object.fromEntries(
+      Object.entries(listTombstones)
+        .sort((left, right) => Number(right[1]) - Number(left[1]))
+        .slice(0, 5000)
+    );
+    return chromeSet(Object.assign({}, protectedData, { [tombstoneKey]: allTombstones }));
+  }
+
   async function sanitizePurgedItemWrites(data = {}) {
     const purgeKey = STORAGE_KEYS.PURGE_MARKERS || "mcp_purge_markers";
+    const tombstoneKey = STORAGE_KEYS.DRIVE_TOMBSTONES || "mcp_drive_tombstones";
     const itemKeys = [STORAGE_KEYS.ITEMS, STORAGE_KEYS.DEV_ITEMS, STORAGE_KEYS.IMAGE_ITEMS].filter(Boolean);
     if (!itemKeys.some((key) => Array.isArray(data?.[key]))) return data;
-    const markers = data[purgeKey] || (await chromeGet(purgeKey).catch(() => ({})))?.[purgeKey] || {};
-    if (!markers || typeof markers !== "object") return data;
+    const storedProtection = await chromeGet([purgeKey, tombstoneKey]).catch(() => ({}));
+    const markers = data[purgeKey] || storedProtection?.[purgeKey] || {};
+    const allTombstones = data[tombstoneKey] || storedProtection?.[tombstoneKey] || {};
     const next = Object.assign({}, data);
     itemKeys.forEach((key) => {
       if (!Array.isArray(next[key])) return;
       const purgeAt = Number(markers[key]) || 0;
-      if (!purgeAt) return;
-      next[key] = next[key].filter((item) => latestItemTimestamp(item) > purgeAt);
+      const tombstones = allTombstones?.[key] && typeof allTombstones[key] === "object" ? allTombstones[key] : {};
+      next[key] = next[key].filter((item) => {
+        const itemTimestamp = latestItemTimestamp(item);
+        const deletedAt = Number(tombstones[item?.id]) || 0;
+        if (purgeAt && itemTimestamp <= purgeAt) return false;
+        if (deletedAt && itemTimestamp <= deletedAt) return false;
+        return true;
+      });
     });
     return next;
   }
@@ -70,49 +158,20 @@
       Number(item.updatedAt) || 0,
       Number(item.lastCopiedAt) || 0,
       Number(item.trashedAt) || 0,
+      Number(item.restoredAt) || 0,
       Number(item.capturedAt) || 0,
       Number(item.savedAt) || 0,
       embeddedVersionTimestamp
     );
   }
 
-  async function getSettings() {
-    const data = await chromeGet(STORAGE_KEYS.SETTINGS);
-    const settings = Object.assign({}, DEFAULT_SETTINGS, data[STORAGE_KEYS.SETTINGS] || {});
-    settings.dodoEnv = "live";
-    delete settings.searchOpenAsOverlay;
-    delete settings.searchIncludeNotes;
-    delete settings.searchIncludeSourceUrls;
-    if (!data[STORAGE_KEYS.SETTINGS]?.accentColor || data[STORAGE_KEYS.SETTINGS]?.accentColor === "#6366f1") {
-      settings.accentColor = DEFAULT_SETTINGS.accentColor;
-    }
-    if (settings.privateModeUntil && Date.now() > settings.privateModeUntil) {
-      settings.privateMode = false;
-      settings.privateModeUntil = null;
-      await saveSettings(settings);
-    }
-    if (global.MCP?.normalizeLicenseSettings) {
-      const normalizedSettings = await global.MCP.normalizeLicenseSettings(settings);
-      if (normalizedSettings && JSON.stringify(normalizedSettings) !== JSON.stringify(settings)) {
-        const stampedSettings = Object.assign({}, normalizedSettings, { settingsUpdatedAt: Date.now() });
-        await chromeSet({ [STORAGE_KEYS.SETTINGS]: stampedSettings });
-        global.MCP?.cacheThemeSettings?.(stampedSettings);
-        return stampedSettings;
-      }
-      if (normalizedSettings) return normalizedSettings;
-    }
-    return settings;
-  }
-
-  async function saveSettings(settings) {
-    const merged = Object.assign({}, DEFAULT_SETTINGS, settings || {}, { dodoEnv: "live", settingsUpdatedAt: Date.now() });
-    delete merged.searchOpenAsOverlay;
-    delete merged.searchIncludeNotes;
-    delete merged.searchIncludeSourceUrls;
-    await chromeSet({ [STORAGE_KEYS.SETTINGS]: merged });
-    global.MCP?.cacheThemeSettings?.(merged);
-    return merged;
-  }
+  const settingsRepository = global.MCP.createSettingsRepository({
+    storageKey: STORAGE_KEYS.SETTINGS,
+    defaults: DEFAULT_SETTINGS,
+    read: chromeGet,
+    write: chromeSet
+  });
+  const { getSettings, saveSettings } = settingsRepository;
 
   function localizeCategoriesForLanguage(categories, language) {
     if (!language) return categories;
@@ -427,12 +486,28 @@
   }
 
   async function setVaultPassword(password, recoveryOptions = {}) {
+    const existingAuth = await getVaultAuth();
+    if (existingAuth?.hash && !consumeVaultMutationAuthorization(recoveryOptions?.authorizationToken)) {
+      throw new Error("Vault authorization required.");
+    }
     const value = String(password || "");
-    if (value.length < 8) throw new Error(resolveLocalizedMessage("vault.passwordTooShort", "Use at least 8 characters."));
+    if (value.length < 8) {
+      const error = new Error(resolveLocalizedMessage("vault.passwordTooShort", "Use at least 8 characters."));
+      error.messageKey = "vault.passwordTooShort";
+      throw error;
+    }
     const recoveryQuestionId = String(recoveryOptions?.questionId || "");
     const recoveryAnswer = String(recoveryOptions?.answer || "").trim();
-    if (!recoveryQuestionId) throw new Error(resolveLocalizedMessage("vault.secretQuestionRequired", "Choose a secret question."));
-    if (recoveryAnswer.length < 2) throw new Error(resolveLocalizedMessage("vault.secretAnswerRequired", "Enter a secret answer."));
+    if (!recoveryQuestionId) {
+      const error = new Error(resolveLocalizedMessage("vault.secretQuestionRequired", "Choose a secret question."));
+      error.messageKey = "vault.secretQuestionRequired";
+      throw error;
+    }
+    if (recoveryAnswer.length < 2) {
+      const error = new Error(resolveLocalizedMessage("vault.secretAnswerRequired", "Enter a secret answer."));
+      error.messageKey = "vault.secretAnswerRequired";
+      throw error;
+    }
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const recoverySalt = crypto.getRandomValues(new Uint8Array(16));
     const iterations = 250000;
@@ -461,7 +536,7 @@
     const auth = await getVaultAuth();
     if (!auth?.hash || !auth?.salt) return false;
     const hash = await deriveVaultPasswordHash(password, base64ToBytes(auth.salt), Number(auth.iterations || 250000));
-    return safeEqual(hash, auth.hash);
+    return safeEqual(hash, auth.hash) ? issueVaultMutationAuthorization() : false;
   }
 
   function normalizeVaultRecoveryAnswer(value) {
@@ -473,7 +548,24 @@
     const recovery = auth?.recovery || null;
     if (!recovery?.hash || !recovery?.salt || String(recovery.questionId || "") !== String(questionId || "")) return false;
     const hash = await deriveVaultPasswordHash(normalizeVaultRecoveryAnswer(answer), base64ToBytes(recovery.salt), Number(recovery.iterations || auth.iterations || 250000));
-    return safeEqual(hash, recovery.hash);
+    return safeEqual(hash, recovery.hash) ? issueVaultMutationAuthorization() : false;
+  }
+
+  function issueVaultMutationAuthorization() {
+    const token = crypto.randomUUID?.()
+      || bytesToBase64(crypto.getRandomValues(new Uint8Array(24)));
+    vaultMutationAuthorization = { token, expiresAt: Date.now() + 2 * 60 * 1000 };
+    return token;
+  }
+
+  function consumeVaultMutationAuthorization(token) {
+    const authorization = vaultMutationAuthorization;
+    vaultMutationAuthorization = null;
+    return Boolean(
+      authorization
+      && authorization.expiresAt >= Date.now()
+      && safeEqual(authorization.token, token)
+    );
   }
 
   async function resetVaultPasswordAndItems() {
@@ -626,17 +718,17 @@
     idsToDelete.forEach((categoryId) => {
       if (defaultIds.has(categoryId)) deletedDefaultIds.add(categoryId);
     });
-    await chromeSet({
+    await chromeSetWithItemTombstones({
       [STORAGE_KEYS.CATEGORIES]: categories.filter((category) => !idsToDelete.has(category.id)),
       [STORAGE_KEYS.DELETED_DEFAULT_CATEGORIES]: [...deletedDefaultIds]
-    });
+    }, STORAGE_KEYS.CATEGORIES, [...idsToDelete]);
     const items = await getClipboardItems();
     const fallbackCategory = category?.parentId
       ? categories.find((item) => item.id === category.parentId) || CATEGORY_GENERAL
       : CATEGORY_GENERAL;
     await chromeSet({
       [STORAGE_KEYS.ITEMS]: items.map((item) => idsToDelete.has(item.categoryId)
-        ? Object.assign({}, item, { categoryId: fallbackCategory.id, categoryName: fallbackCategory.name })
+        ? Object.assign({}, item, { categoryId: fallbackCategory.id, categoryName: fallbackCategory.name, updatedAt: Date.now() })
         : item)
     });
     return true;
@@ -680,15 +772,15 @@
     idsToDelete.forEach((categoryId) => {
       if (defaultIds.has(categoryId)) deletedDefaultIds.add(categoryId);
     });
-    await chromeSet({
+    await chromeSetWithItemTombstones({
       [STORAGE_KEYS.IMAGE_CATEGORIES]: categories.filter((item) => !idsToDelete.has(item.id)),
       [STORAGE_KEYS.DELETED_DEFAULT_IMAGE_CATEGORIES]: [...deletedDefaultIds]
-    });
+    }, STORAGE_KEYS.IMAGE_CATEGORIES, [...idsToDelete]);
     const fallbackCategory = categories.find((item) => item.id === IMAGE_GENERAL_ID) || DEFAULT_IMAGE_CATEGORIES[0];
     const images = await getImageItems();
     await chromeSet({
       [STORAGE_KEYS.IMAGE_ITEMS]: images.map((item) => idsToDelete.has(item.categoryId)
-        ? Object.assign({}, item, { categoryId: fallbackCategory.id, categoryName: fallbackCategory.name })
+        ? Object.assign({}, item, { categoryId: fallbackCategory.id, categoryName: fallbackCategory.name, updatedAt: Date.now() })
         : item)
     });
     return true;
@@ -768,9 +860,9 @@
     if (!category || !category.parentId || category.isSystem || category.isDefault) return false;
     const descendants = collectDescendantCategoryIds(categories, id);
     const idsToDelete = new Set([id, ...descendants]);
-    await chromeSet({
+    await chromeSetWithItemTombstones({
       [STORAGE_KEYS.DEV_CATEGORIES]: categories.filter((item) => !idsToDelete.has(item.id))
-    });
+    }, STORAGE_KEYS.DEV_CATEGORIES, [...idsToDelete]);
     const fallbackCategory = categories.find((item) => item.id === category.parentId)
       || categories.find((item) => item.id === DEV_GENERAL_CATEGORY_ID)
       || DEFAULT_DEV_CATEGORIES[0];
@@ -781,7 +873,8 @@
           categoryId: fallbackCategory.id,
           categoryName: fallbackCategory.name,
           languageId: fallbackCategory.id,
-          languageName: fallbackCategory.name
+          languageName: fallbackCategory.name,
+          updatedAt: Date.now()
         })
         : item)
     });
@@ -934,15 +1027,50 @@
     return sortItems((data[STORAGE_KEYS.DEV_ITEMS] || []).map(normalizeDevItem));
   }
 
+  async function getUiStateCollections(language = "") {
+    const keys = [
+      STORAGE_KEYS.ITEMS,
+      STORAGE_KEYS.CATEGORIES,
+      STORAGE_KEYS.IMAGE_ITEMS,
+      STORAGE_KEYS.IMAGE_CATEGORIES,
+      STORAGE_KEYS.DEV_ITEMS,
+      STORAGE_KEYS.DEV_CATEGORIES,
+      STORAGE_KEYS.SNIPPETS,
+      STORAGE_KEYS.TEMPLATES
+    ].filter(Boolean);
+    const data = await chromeGet(keys);
+    const storedCategories = Array.isArray(data[STORAGE_KEYS.CATEGORIES])
+      ? data[STORAGE_KEYS.CATEGORIES]
+      : DEFAULT_CATEGORIES;
+    const storedImageCategories = Array.isArray(data[STORAGE_KEYS.IMAGE_CATEGORIES])
+      ? data[STORAGE_KEYS.IMAGE_CATEGORIES]
+      : DEFAULT_IMAGE_CATEGORIES;
+    const storedDevCategories = Array.isArray(data[STORAGE_KEYS.DEV_CATEGORIES])
+      ? data[STORAGE_KEYS.DEV_CATEGORIES]
+      : DEFAULT_DEV_CATEGORIES;
+    return {
+      items: sortItems((data[STORAGE_KEYS.ITEMS] || []).map(normalizeClipboardItem)),
+      categories: localizeCategoriesForLanguage(sortCategories(storedCategories), language),
+      imageItems: sortItems((data[STORAGE_KEYS.IMAGE_ITEMS] || []).map(normalizeImageItem)),
+      imageCategories: localizeCategoriesForLanguage(sortCategories(storedImageCategories), language),
+      devItems: sortItems((data[STORAGE_KEYS.DEV_ITEMS] || []).map(normalizeDevItem)),
+      devCategories: localizeCategoriesForLanguage(sortCategories(storedDevCategories), language),
+      snippets: data[STORAGE_KEYS.SNIPPETS] || [],
+      templates: data[STORAGE_KEYS.TEMPLATES] || []
+    };
+  }
+
   function normalizeDevItem(item) {
     const now = Date.now();
     const content = String(item?.content || "");
+    const plainContent = typeof item?.plainContent === "string" ? item.plainContent : normalizeContent(content);
+    const preview = typeof item?.preview === "string" ? item.preview : createPreview(content);
     return Object.assign({
       id: createId("dev"),
       title: "",
       content,
-      plainContent: normalizeContent(content),
-      preview: createPreview(content),
+      plainContent,
+      preview,
       type: "code",
       languageId: DEV_GENERAL_CATEGORY_ID,
       languageName: "General",
@@ -965,8 +1093,8 @@
     }, item || {}, {
       title: item?.title || "",
       content,
-      plainContent: normalizeContent(content),
-      preview: item?.preview || createPreview(content),
+      plainContent,
+      preview,
       languageId: item?.languageId || item?.categoryId || DEV_GENERAL_CATEGORY_ID,
       languageName: item?.languageName || item?.categoryName || "General",
       categoryId: item?.categoryId || item?.languageId || DEV_GENERAL_CATEGORY_ID,
@@ -1035,7 +1163,7 @@
     const items = await getDevItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => item.id !== id) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => item.id !== id) }, STORAGE_KEYS.DEV_ITEMS, [id]);
       return null;
     }
     let movedItem = null;
@@ -1059,8 +1187,19 @@
       }));
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(next) }, STORAGE_KEYS.DEV_ITEMS, [id]);
     return movedItem;
+  }
+
+  async function deleteDevItemVersion(id, versionId, options = {}) {
+    const items = await getDevItems();
+    const settings = await getSettings();
+    const result = deleteEmbeddedItemVersion(items, id, versionId, {
+      permanent: options?.permanent || !canUseTrashManagement(settings),
+      mediaType: "dev"
+    });
+    await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(result.items) });
+    return result;
   }
 
   async function deleteDevItems(ids = [], options = {}) {
@@ -1069,7 +1208,7 @@
     const items = await getDevItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => !idSet.has(item.id)) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => !idSet.has(item.id)) }, STORAGE_KEYS.DEV_ITEMS, [...idSet]);
       return [];
     }
     const now = Date.now();
@@ -1095,13 +1234,18 @@
       movedItems.push(movedItem);
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(next) }, STORAGE_KEYS.DEV_ITEMS, [...idSet]);
     return movedItems;
   }
 
   function normalizeImageItem(item) {
     const now = Date.now();
     const imageUrl = String(item?.imageUrl || item?.srcUrl || "");
+    const dataUrl = item?.dataUrl || "";
+    const requestedThumbnail = item?.thumbnailUrl || dataUrl || imageUrl;
+    const thumbnailUrl = /^https?:\/\//i.test(imageUrl) && requestedThumbnail === dataUrl
+      ? imageUrl
+      : requestedThumbnail;
     return Object.assign({
       id: createId("img"),
       title: "",
@@ -1136,8 +1280,8 @@
       lastUsedAt: null
     }, item || {}, {
       imageUrl,
-      thumbnailUrl: item?.thumbnailUrl || item?.dataUrl || imageUrl,
-      dataUrl: item?.dataUrl || "",
+      thumbnailUrl,
+      dataUrl,
       title: item?.title || "",
       originalImageUrl: item?.originalImageUrl || "",
       imageCandidates: Array.isArray(item?.imageCandidates) ? item.imageCandidates : [],
@@ -1196,7 +1340,8 @@
     const images = await getImageItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => item.id !== id) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => item.id !== id) }, STORAGE_KEYS.IMAGE_ITEMS, [id]);
+      await deleteSourceLocators([id]);
       return null;
     }
     let movedItem = null;
@@ -1216,7 +1361,7 @@
       }));
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.IMAGE_ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.IMAGE_ITEMS]: sortItems(next) }, STORAGE_KEYS.IMAGE_ITEMS, [id]);
     return movedItem;
   }
 
@@ -1226,7 +1371,8 @@
     const images = await getImageItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => !idSet.has(item.id)) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => !idSet.has(item.id)) }, STORAGE_KEYS.IMAGE_ITEMS, [...idSet]);
+      await deleteSourceLocators([...idSet]);
       return [];
     }
     const now = Date.now();
@@ -1248,7 +1394,7 @@
       movedItems.push(movedItem);
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.IMAGE_ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.IMAGE_ITEMS]: sortItems(next) }, STORAGE_KEYS.IMAGE_ITEMS, [...idSet]);
     return movedItems;
   }
 
@@ -1257,17 +1403,21 @@
     const images = await getImageItems();
     const next = settings.keepImageFavoritesOnClear ? images.filter((item) => item.isFavorite) : [];
     await chromeSetWithPurgeMarkers({ [STORAGE_KEYS.IMAGE_ITEMS]: next }, [STORAGE_KEYS.IMAGE_ITEMS]);
+    const keptIds = new Set(next.map((item) => item.id));
+    await deleteSourceLocators(images.filter((item) => !keptIds.has(item.id)).map((item) => item.id));
   }
 
   function normalizeClipboardItem(item) {
     const now = Date.now();
     const content = String(item?.content || "");
+    const plainContent = typeof item?.plainContent === "string" ? item.plainContent : normalizeContent(content);
+    const preview = typeof item?.preview === "string" ? item.preview : createPreview(content);
     return Object.assign({
       id: createId("copy"),
       title: "",
       content,
-      plainContent: normalizeContent(content),
-      preview: createPreview(content),
+      plainContent,
+      preview,
       type: "text",
       categoryId: CATEGORY_GENERAL.id,
       categoryName: CATEGORY_GENERAL.name,
@@ -1380,6 +1530,7 @@
   }
 
   function clearTrashMetadata(item) {
+    const wasTrashed = Number(item.trashedAt) > 0;
     delete item.previousCategoryId;
     delete item.previousCategoryName;
     delete item.previousLanguageId;
@@ -1387,6 +1538,7 @@
     delete item.previousIsFavorite;
     delete item.previousIsPinned;
     delete item.trashedAt;
+    if (wasTrashed) item.restoredAt = Date.now();
     return item;
   }
 
@@ -1394,7 +1546,8 @@
     const items = await getClipboardItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.ITEMS]: items.filter((item) => item.id !== id) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.ITEMS]: items.filter((item) => item.id !== id) }, STORAGE_KEYS.ITEMS, [id]);
+      await deleteSourceLocators([id]);
       return null;
     }
     let movedItem = null;
@@ -1414,8 +1567,115 @@
       });
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.ITEMS]: sortItems(next) }, STORAGE_KEYS.ITEMS, [id]);
     return movedItem;
+  }
+
+  async function deleteClipboardItemVersion(id, versionId, options = {}) {
+    const items = await getClipboardItems();
+    const settings = await getSettings();
+    const result = deleteEmbeddedItemVersion(items, id, versionId, {
+      permanent: options?.permanent || !canUseTrashManagement(settings),
+      mediaType: "text"
+    });
+    await chromeSet({ [STORAGE_KEYS.ITEMS]: sortItems(result.items) });
+    return result;
+  }
+
+  function deleteEmbeddedItemVersion(items = [], id, versionId, options = {}) {
+    const mediaType = options.mediaType === "dev" ? "dev" : "text";
+    const permanent = Boolean(options.permanent);
+    const item = (items || []).find((candidate) => candidate.id === id);
+    const versions = embeddedVersionsForStorage(item);
+    if (!item || versions.length <= 1 || !versionId) {
+      return { items, item: null, trashedItem: null, deletedVersionId: "", activeVersionId: "" };
+    }
+    const versionIndex = versions.findIndex((version) => version.id === versionId);
+    if (versionIndex < 0) {
+      return { items, item: null, trashedItem: null, deletedVersionId: "", activeVersionId: "" };
+    }
+    const now = Date.now();
+    const deletedVersion = versions[versionIndex];
+    const nextVersions = versions.filter((version) => version.id !== versionId);
+    const nextActive = nextVersions[Math.min(versionIndex, nextVersions.length - 1)] || nextVersions[nextVersions.length - 1];
+    const updatedSource = normalizeVersionSourceItem(Object.assign({}, item, {
+      captureVersions: nextVersions,
+      activeVersionId: nextActive?.id || "",
+      title: nextActive?.title || "",
+      content: nextActive?.content || "",
+      note: nextActive?.note || "",
+      plainContent: normalizeContent(nextActive?.content || ""),
+      preview: createPreview(nextActive?.content || ""),
+      updatedAt: now
+    }), mediaType);
+    const trashedItem = permanent ? null : versionTrashItemFromSource(item, deletedVersion, versionIndex + 1, mediaType, now);
+    const nextItems = [];
+    (items || []).forEach((candidate) => {
+      if (candidate.id === id) nextItems.push(updatedSource);
+      else nextItems.push(candidate);
+    });
+    if (trashedItem) nextItems.unshift(trashedItem);
+    return {
+      items: nextItems,
+      item: updatedSource,
+      trashedItem,
+      deletedVersionId: versionId,
+      activeVersionId: updatedSource.activeVersionId || ""
+    };
+  }
+
+  function embeddedVersionsForStorage(item) {
+    return Array.isArray(item?.captureVersions)
+      ? item.captureVersions
+        .filter((version) => version && version.id && typeof version.content === "string")
+        .sort((left, right) => Number(left.createdAt || 0) - Number(right.createdAt || 0) || String(left.id).localeCompare(String(right.id)))
+      : [];
+  }
+
+  function normalizeVersionSourceItem(item, mediaType = "text") {
+    return mediaType === "dev" ? normalizeDevItem(item) : Object.assign({}, item);
+  }
+
+  function versionTrashItemFromSource(item, version, number = 1, mediaType = "text", now = Date.now()) {
+    const isDev = mediaType === "dev";
+    const id = createId(isDev ? "dev" : "clip");
+    const trashId = isDev ? DEV_TRASH_ID : TEXT_TRASH_ID;
+    const trashName = isDev ? "Trash" : "Corbeille";
+    const content = String(version?.content || "");
+    const base = Object.assign({}, item, {
+      id,
+      title: version?.title || item?.title || "",
+      content,
+      note: version?.note || "",
+      plainContent: normalizeContent(content),
+      preview: createPreview(content),
+      captureVersions: [],
+      activeVersionId: "",
+      originalVersionItemId: item?.id || "",
+      originalVersionId: version?.id || "",
+      originalVersionNumber: number,
+      originalVersionCreatedAt: version?.createdAt || item?.createdAt || now,
+      originalVersionUpdatedAt: version?.updatedAt || version?.createdAt || item?.updatedAt || now,
+      previousCategoryId: item?.previousCategoryId || item?.categoryId || (isDev ? DEV_GENERAL_CATEGORY_ID : CATEGORY_GENERAL.id),
+      previousCategoryName: item?.previousCategoryName || item?.categoryName || item?.languageName || (isDev ? "General" : CATEGORY_GENERAL.name),
+      previousIsFavorite: Object.prototype.hasOwnProperty.call(item || {}, "previousIsFavorite") ? item.previousIsFavorite : Boolean(item?.isFavorite),
+      previousIsPinned: Object.prototype.hasOwnProperty.call(item || {}, "previousIsPinned") ? item.previousIsPinned : Boolean(item?.isPinned),
+      categoryId: trashId,
+      categoryName: trashName,
+      isFavorite: false,
+      isPinned: false,
+      createdAt: version?.createdAt || item?.createdAt || now,
+      updatedAt: now,
+      trashedAt: now
+    });
+    if (isDev) {
+      base.previousLanguageId = item?.previousLanguageId || item?.languageId || item?.categoryId || DEV_GENERAL_CATEGORY_ID;
+      base.previousLanguageName = item?.previousLanguageName || item?.languageName || item?.categoryName || "General";
+      base.languageId = DEV_TRASH_ID;
+      base.languageName = "Trash";
+      return normalizeDevItem(base);
+    }
+    return base;
   }
 
   async function deleteClipboardItems(ids = [], options = {}) {
@@ -1424,7 +1684,8 @@
     const items = await getClipboardItems();
     const settings = await getSettings();
     if (options?.permanent || !canUseTrashManagement(settings)) {
-      await chromeSet({ [STORAGE_KEYS.ITEMS]: items.filter((item) => !idSet.has(item.id)) });
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.ITEMS]: items.filter((item) => !idSet.has(item.id)) }, STORAGE_KEYS.ITEMS, [...idSet]);
+      await deleteSourceLocators([...idSet]);
       return [];
     }
     const now = Date.now();
@@ -1446,12 +1707,18 @@
       movedItems.push(movedItem);
       return movedItem;
     });
-    await chromeSet({ [STORAGE_KEYS.ITEMS]: sortItems(next) });
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.ITEMS]: sortItems(next) }, STORAGE_KEYS.ITEMS, [...idSet]);
     return movedItems;
   }
 
   async function restoreClipboardItem(id) {
     const items = await getClipboardItems();
+    const trashedVersion = items.find((item) => item.id === id && item.originalVersionItemId && item.originalVersionId);
+    if (trashedVersion) {
+      const restoredVersion = restoreEmbeddedVersionTrashItem(items, trashedVersion, "text");
+      await chromeSet({ [STORAGE_KEYS.ITEMS]: sortItems(restoredVersion.items) });
+      return restoredVersion.item;
+    }
     let restoredItem = null;
     const categories = await getCategories();
     const next = items.map((item) => {
@@ -1462,6 +1729,7 @@
         categoryName: category.name,
         isFavorite: Boolean(item.previousIsFavorite),
         isPinned: Boolean(item.previousIsPinned),
+        restoredAt: Date.now(),
         updatedAt: Date.now()
       });
       delete restoredItem.previousCategoryId;
@@ -1477,6 +1745,12 @@
 
   async function restoreDevItem(id) {
     const items = await getDevItems();
+    const trashedVersion = items.find((item) => item.id === id && item.originalVersionItemId && item.originalVersionId);
+    if (trashedVersion) {
+      const restoredVersion = restoreEmbeddedVersionTrashItem(items, trashedVersion, "dev");
+      await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(restoredVersion.items) });
+      return restoredVersion.item;
+    }
     const categories = await getDevCategories();
     let restoredItem = null;
     const next = items.map((item) => {
@@ -1492,6 +1766,7 @@
         languageName: language.name,
         isFavorite: Boolean(item.previousIsFavorite),
         isPinned: Boolean(item.previousIsPinned),
+        restoredAt: Date.now(),
         updatedAt: Date.now()
       }));
       delete restoredItem.previousCategoryId;
@@ -1505,6 +1780,82 @@
     });
     await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: sortItems(next) });
     return restoredItem;
+  }
+
+  function restoreEmbeddedVersionTrashItem(items = [], trashedVersion, mediaType = "text") {
+    const isDev = mediaType === "dev";
+    const sourceId = String(trashedVersion?.originalVersionItemId || "");
+    const versionId = String(trashedVersion?.originalVersionId || "");
+    const source = items.find((item) => item.id === sourceId) || null;
+    const restoredVersion = {
+      id: versionId,
+      title: trashedVersion?.title || "",
+      content: String(trashedVersion?.content || ""),
+      note: trashedVersion?.note || "",
+      createdAt: trashedVersion?.originalVersionCreatedAt || trashedVersion?.createdAt || Date.now(),
+      updatedAt: trashedVersion?.originalVersionUpdatedAt || trashedVersion?.updatedAt || trashedVersion?.createdAt || Date.now()
+    };
+    const existingVersions = embeddedVersionsForStorage(source);
+    const mergedVersions = existingVersions.some((version) => version.id === versionId)
+      ? existingVersions
+      : embeddedVersionsForStorage({ captureVersions: [...existingVersions, restoredVersion] });
+    const activeVersion = mergedVersions.find((version) => version.id === versionId)
+      || mergedVersions[mergedVersions.length - 1]
+      || restoredVersion;
+    const fallbackCategoryId = isDev ? DEV_GENERAL_CATEGORY_ID : CATEGORY_GENERAL.id;
+    const fallbackCategoryName = isDev ? "General" : CATEGORY_GENERAL.name;
+    const sourceWasTrashed = source && TRASH_CATEGORY_IDS.has(String(source.categoryId || source.languageId || ""));
+    const restoredSourceBase = Object.assign({}, source || trashedVersion, {
+      id: sourceId || createId(isDev ? "dev" : "copy"),
+      captureVersions: mergedVersions.length ? mergedVersions : [restoredVersion],
+      activeVersionId: activeVersion.id,
+      title: activeVersion.title || "",
+      content: activeVersion.content || "",
+      note: activeVersion.note || "",
+      plainContent: normalizeContent(activeVersion.content || ""),
+      preview: createPreview(activeVersion.content || ""),
+      categoryId: sourceWasTrashed
+        ? (source.previousCategoryId || trashedVersion.previousCategoryId || fallbackCategoryId)
+        : (source?.categoryId || trashedVersion.previousCategoryId || fallbackCategoryId),
+      categoryName: sourceWasTrashed
+        ? (source.previousCategoryName || trashedVersion.previousCategoryName || fallbackCategoryName)
+        : (source?.categoryName || trashedVersion.previousCategoryName || fallbackCategoryName),
+      isFavorite: sourceWasTrashed
+        ? Boolean(source.previousIsFavorite)
+        : Boolean(source?.isFavorite ?? trashedVersion.previousIsFavorite),
+      isPinned: sourceWasTrashed
+        ? Boolean(source.previousIsPinned)
+        : Boolean(source?.isPinned ?? trashedVersion.previousIsPinned),
+      restoredAt: Date.now(),
+      updatedAt: Date.now()
+    });
+    if (isDev) {
+      restoredSourceBase.languageId = sourceWasTrashed
+        ? (source.previousLanguageId || trashedVersion.previousLanguageId || restoredSourceBase.categoryId)
+        : (source?.languageId || trashedVersion.previousLanguageId || restoredSourceBase.categoryId);
+      restoredSourceBase.languageName = sourceWasTrashed
+        ? (source.previousLanguageName || trashedVersion.previousLanguageName || restoredSourceBase.categoryName)
+        : (source?.languageName || trashedVersion.previousLanguageName || restoredSourceBase.categoryName);
+    }
+    [
+      "originalVersionItemId",
+      "originalVersionId",
+      "originalVersionNumber",
+      "originalVersionCreatedAt",
+      "originalVersionUpdatedAt",
+      "previousCategoryId",
+      "previousCategoryName",
+      "previousLanguageId",
+      "previousLanguageName",
+      "previousIsFavorite",
+      "previousIsPinned",
+      "trashedAt"
+    ].forEach((key) => delete restoredSourceBase[key]);
+    const restoredSource = normalizeVersionSourceItem(restoredSourceBase, mediaType);
+    const nextItems = items
+      .filter((item) => item.id !== trashedVersion.id && item.id !== sourceId)
+      .concat(restoredSource);
+    return { items: nextItems, item: restoredSource, restoredVersionId: versionId };
   }
 
   async function restoreImageItem(id) {
@@ -1521,6 +1872,7 @@
         categoryName: category.name,
         isFavorite: Boolean(item.previousIsFavorite),
         isPinned: Boolean(item.previousIsPinned),
+        restoredAt: Date.now(),
         updatedAt: Date.now()
       }));
       delete restoredItem.previousCategoryId;
@@ -1537,16 +1889,21 @@
   async function emptyTrash(mediaType = "text") {
     if (mediaType === "image") {
       const images = await getImageItems();
-      await chromeSet({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => item.categoryId !== IMAGE_TRASH_ID) });
+      const removed = images.filter((item) => item.categoryId === IMAGE_TRASH_ID);
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.IMAGE_ITEMS]: images.filter((item) => item.categoryId !== IMAGE_TRASH_ID) }, STORAGE_KEYS.IMAGE_ITEMS, removed.map((item) => item.id));
+      await deleteSourceLocators(removed.map((item) => item.id));
       return;
     }
     if (mediaType === "dev") {
       const items = await getDevItems();
-      await chromeSet({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => item.categoryId !== DEV_TRASH_ID) });
+      const removed = items.filter((item) => item.categoryId === DEV_TRASH_ID);
+      await chromeSetWithItemTombstones({ [STORAGE_KEYS.DEV_ITEMS]: items.filter((item) => item.categoryId !== DEV_TRASH_ID) }, STORAGE_KEYS.DEV_ITEMS, removed.map((item) => item.id));
       return;
     }
     const items = await getClipboardItems();
-    await chromeSet({ [STORAGE_KEYS.ITEMS]: items.filter((item) => item.categoryId !== TEXT_TRASH_ID) });
+    const removed = items.filter((item) => item.categoryId === TEXT_TRASH_ID);
+    await chromeSetWithItemTombstones({ [STORAGE_KEYS.ITEMS]: items.filter((item) => item.categoryId !== TEXT_TRASH_ID) }, STORAGE_KEYS.ITEMS, removed.map((item) => item.id));
+    await deleteSourceLocators(removed.map((item) => item.id));
   }
 
   async function clearHistory() {
@@ -1554,54 +1911,70 @@
     const items = await getClipboardItems();
     const next = settings.keepFavoritesOnClear ? items.filter((item) => item.isFavorite) : [];
     await chromeSetWithPurgeMarkers({ [STORAGE_KEYS.ITEMS]: next }, [STORAGE_KEYS.ITEMS]);
+    const keptIds = new Set(next.map((item) => item.id));
+    await deleteSourceLocators(items.filter((item) => !keptIds.has(item.id)).map((item) => item.id));
   }
 
-  async function getSnippets() {
-    const data = await chromeGet(STORAGE_KEYS.SNIPPETS);
-    return data[STORAGE_KEYS.SNIPPETS] || [];
+  async function deleteLocalCaptureData(kind = "") {
+    const keysByKind = {
+      texts: [STORAGE_KEYS.ITEMS],
+      codes: [STORAGE_KEYS.DEV_ITEMS],
+      images: [STORAGE_KEYS.IMAGE_ITEMS],
+      all: [STORAGE_KEYS.ITEMS, STORAGE_KEYS.DEV_ITEMS, STORAGE_KEYS.IMAGE_ITEMS]
+    };
+    const selectedKeys = keysByKind[kind];
+    if (!selectedKeys) throw new Error("Invalid local data deletion kind.");
+    const purgeKey = STORAGE_KEYS.PURGE_MARKERS || "mcp_purge_markers";
+    const stored = await chromeGet([...selectedKeys, purgeKey]);
+    const locatorItemIds = [STORAGE_KEYS.ITEMS, STORAGE_KEYS.IMAGE_ITEMS]
+      .filter((key) => selectedKeys.includes(key))
+      .flatMap((key) => Array.isArray(stored?.[key]) ? stored[key].map((item) => item?.id).filter(Boolean) : []);
+    // These settings-page actions are deliberately local-only. Purge markers
+    // are part of Drive conflict resolution, so creating one here would allow a
+    // later sync to propagate the deletion. Remove any legacy markers for the
+    // selected collections and write only the local empty lists.
+    const nextPurgeMarkers = Object.assign({}, stored?.[purgeKey] || {});
+    selectedKeys.forEach((key) => {
+      delete nextPurgeMarkers[key];
+    });
+    await chromeSet(Object.assign(
+      Object.fromEntries(selectedKeys.map((key) => [key, []])),
+      { [purgeKey]: nextPurgeMarkers }
+    ));
+    await deleteSourceLocators(locatorItemIds);
+    return { kind, deleted: Object.fromEntries(selectedKeys.map((key) => [key, Array.isArray(stored?.[key]) ? stored[key].length : 0])) };
   }
 
-  async function saveSnippet(snippet) {
-    const snippets = await getSnippets();
-    const now = Date.now();
-    const nextSnippet = Object.assign({ id: createId("snippet"), tags: [], createdAt: now, updatedAt: now, usageCount: 0 }, snippet || {}, { updatedAt: now });
-    await chromeSet({ [STORAGE_KEYS.SNIPPETS]: snippets.filter((item) => item.id !== nextSnippet.id).concat(nextSnippet) });
-    return nextSnippet;
-  }
-
-  async function deleteSnippet(id) {
-    const snippets = await getSnippets();
-    await chromeSet({ [STORAGE_KEYS.SNIPPETS]: snippets.filter((item) => item.id !== id) });
-  }
-
-  async function getTemplates() {
-    const data = await chromeGet(STORAGE_KEYS.TEMPLATES);
-    return data[STORAGE_KEYS.TEMPLATES] || [];
-  }
-
-  async function saveTemplate(template) {
-    const templates = await getTemplates();
-    const now = Date.now();
-    const nextTemplate = Object.assign({ id: createId("template"), createdAt: now, updatedAt: now }, template || {}, { updatedAt: now });
-    await chromeSet({ [STORAGE_KEYS.TEMPLATES]: templates.filter((item) => item.id !== nextTemplate.id).concat(nextTemplate) });
-    return nextTemplate;
-  }
-
-  async function deleteTemplate(id) {
-    const templates = await getTemplates();
-    await chromeSet({ [STORAGE_KEYS.TEMPLATES]: templates.filter((item) => item.id !== id) });
-  }
+  const snippetTemplateRepository = global.MCP.createSnippetTemplateRepository({
+    keys: STORAGE_KEYS,
+    createId,
+    read: chromeGet,
+    write: chromeSet,
+    removeItems: async (key, id) => {
+      const stored = await chromeGet(key);
+      const items = Array.isArray(stored?.[key]) ? stored[key] : [];
+      await chromeSetWithItemTombstones({ [key]: items.filter((item) => item.id !== id) }, key, [id]);
+    }
+  });
+  const { getSnippets, saveSnippet, deleteSnippet, getTemplates, saveTemplate, deleteTemplate } = snippetTemplateRepository;
 
   global.MCP = Object.assign(global.MCP || {}, {
     getSettings,
     saveSettings,
+    getUiStateCollections,
+    localizeCategoriesForLanguage,
+    getSourceLocator,
+    saveSourceLocator,
+    deleteSourceLocators,
     getClipboardItems,
     saveClipboardItem,
     updateClipboardItem,
     deleteClipboardItem,
+    deleteClipboardItemVersion,
     deleteClipboardItems,
     restoreClipboardItem,
     clearHistory,
+    deleteLocalCaptureData,
     getCategories,
     getCategoryTree,
     getImageCategories,
@@ -1635,6 +2008,7 @@
     saveDevItem,
     updateDevItem,
     deleteDevItem,
+    deleteDevItemVersion,
     deleteDevItems,
     restoreDevItem,
     emptyTrash,

@@ -74,7 +74,13 @@
   }
 
   async function persistGenericFaviconForItem(item = {}, failedSrc = "") {
-    if (!item?.id || !global.chrome?.storage?.local) return;
+    let storage = null;
+    try {
+      storage = global.chrome?.runtime?.id ? global.chrome?.storage?.local : null;
+    } catch (error) {
+      storage = null;
+    }
+    if (!item?.id || !storage) return;
     const genericDataUrl = await readGenericFaviconDataUrl();
     if (!genericDataUrl) return;
     const storageKeys = global.MCP?.STORAGE_KEYS || {};
@@ -85,7 +91,7 @@
     ];
     const domain = String(item.sourceDomain || item.domain || "").replace(/^www\./, "");
     const origin = sourceOriginKey(item.sourceUrl || item.url || "");
-    const store = await global.chrome.storage.local.get(collectionKeys).catch(() => ({}));
+    const store = await storage.get(collectionKeys).catch(() => ({}));
     const patch = {};
     collectionKeys.forEach((key) => {
       const list = Array.isArray(store?.[key]) ? store[key] : [];
@@ -103,7 +109,7 @@
       });
       if (changed) patch[key] = next;
     });
-    if (Object.keys(patch).length) await global.chrome.storage.local.set(patch).catch(() => {});
+    if (Object.keys(patch).length) await storage.set(patch).catch(() => {});
   }
 
   function extractQueryParam(url = "", key = "") {
@@ -140,25 +146,36 @@
     return image;
   }
 
-  function isDomainExcluded(domain, excludedDomains = []) {
-    const current = String(domain || "").toLowerCase();
+  function normalizeExcludedUrl(value) {
+    try {
+      const parsed = new URL(String(value || "").trim());
+      const path = parsed.pathname.endsWith("/") ? parsed.pathname : `${parsed.pathname}/`;
+      return {
+        host: parsed.hostname.replace(/^www\./, "").toLowerCase(),
+        path: path.toLowerCase()
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function isDomainExcluded(domainOrUrl, excludedDomains = [], sourceUrl = "") {
+    const source = normalizeExcludedUrl(sourceUrl || domainOrUrl);
+    const current = String(source?.host || domainOrUrl || "").toLowerCase().replace(/^www\./, "");
     return excludedDomains.some((entry) => {
+      const blockedUrl = normalizeExcludedUrl(entry);
+      if (blockedUrl) {
+        return !!source && current === blockedUrl.host && source.path.startsWith(blockedUrl.path);
+      }
       const blocked = String(entry || "").trim().toLowerCase().replace(/^www\./, "");
       return blocked && (current === blocked || current.endsWith(`.${blocked}`));
     });
   }
 
   function formatDateTime(timestamp) {
-    if (!timestamp) return global.MCP?.t ? global.MCP.t("dates.unknown") : "Unknown date";
-    try {
-      return new Intl.DateTimeFormat(global.MCP?.resolveDateLocale?.() || undefined, {
-        dateStyle: "short",
-        timeStyle: "short",
-        timeZone: global.MCP?.resolveLocalTimeZone?.()
-      }).format(new Date(timestamp));
-    } catch (error) {
-      return new Date(timestamp).toLocaleString();
-    }
+    return global.MCP?.formatLocalizedDate
+      ? global.MCP.formatLocalizedDate(timestamp, global.MCP.currentLanguage?.() || "en")
+      : String(timestamp || "");
   }
 
   function sortItems(items) {
@@ -209,6 +226,83 @@
   function shortcutModifierFromKey(key = "") {
     const normalized = normalizeShortcutKey(key);
     return ["ctrl", "meta", "alt", "shift"].includes(normalized) ? normalized : "";
+  }
+
+  function shortcutCapturePartLabel(part = "") {
+    const normalized = normalizeShortcutKey(part);
+    if (isMacPlatform()) {
+      const macLabels = {
+        ctrl: "\u2303 Control",
+        meta: "\u2318 Command",
+        alt: "\u2325 Option",
+        shift: "\u21e7 Shift"
+      };
+      return macLabels[normalized] || formatShortcutKey(normalized);
+    }
+    const windowsLabels = {
+      ctrl: "Ctrl",
+      meta: "Win",
+      alt: "Alt",
+      shift: "Shift"
+    };
+    return windowsLabels[normalized] || formatShortcutKey(normalized);
+  }
+
+  function createShortcutCaptureFlow() {
+    let modifiers = [];
+    let finalKey = "";
+    let error = "";
+
+    const snapshot = () => {
+      const isComplete = modifiers.length === 2 && Boolean(finalKey);
+      const stage = isComplete
+        ? "complete"
+        : modifiers.length === 0
+          ? "firstModifier"
+          : modifiers.length === 1
+            ? "secondModifier"
+            : "finalKey";
+      return {
+        stage,
+        modifiers: modifiers.slice(),
+        finalKey,
+        error,
+        isComplete,
+        shortcut: isComplete ? `custom:${[...modifiers, finalKey].join("+")}` : ""
+      };
+    };
+
+    return {
+      reset() {
+        modifiers = [];
+        finalKey = "";
+        error = "";
+        return snapshot();
+      },
+      snapshot,
+      input(event) {
+        if (!event || event.repeat || snapshot().isComplete) return snapshot();
+        error = "";
+        const normalized = normalizeShortcutKey(event.key || "");
+        if (modifiers.length < 2) {
+          const modifier = shortcutModifierFromKey(normalized);
+          if (!modifier) {
+            error = "modifierRequired";
+          } else if (modifiers.includes(modifier)) {
+            error = "distinctModifierRequired";
+          } else {
+            modifiers.push(modifier);
+          }
+          return snapshot();
+        }
+        if (!/^[a-z0-9]$/.test(normalized)) {
+          error = "letterOrDigitRequired";
+          return snapshot();
+        }
+        finalKey = normalized;
+        return snapshot();
+      }
+    };
   }
 
   function normalizeShortcutValue(shortcut = "ctrl_alt_c") {
@@ -300,6 +394,13 @@
     return labels.join(" + ") || shortcutLabel("ctrl_alt_c");
   }
 
+  function configuredCaptureShortcutLabel(settings = {}) {
+    const configuredShortcut = settings?.textCaptureShortcut
+      || global.MCP?.DEFAULT_SETTINGS?.textCaptureShortcut
+      || "ctrl_alt_c";
+    return shortcutLabel(configuredShortcut);
+  }
+
   function eventMatchesShortcut(event, shortcut = "ctrl_alt_c") {
     if (!event) return false;
     const normalized = normalizeShortcutValue(shortcut);
@@ -353,6 +454,10 @@
     ].join(", ");
   }
 
+  function accentContrastColor() {
+    return "#ffffff";
+  }
+
   function resolveTheme(theme = "system") {
     if (theme === "light" || theme === "dark") return theme;
     try {
@@ -371,6 +476,7 @@
     root.dataset.resolvedTheme = resolvedTheme;
     root.style.setProperty("--accent", accent);
     root.style.setProperty("--accent-rgb", hexToRgbParts(accent));
+    root.style.setProperty("--accent-contrast", accentContrastColor());
     root.style.colorScheme = resolvedTheme;
     root.dataset.themeReady = "true";
     root.removeAttribute("data-theme-pending");
@@ -424,7 +530,8 @@
       if (global.location?.protocol !== "chrome-extension:") return;
       const value = {
         theme: settings.theme || "system",
-        accentColor: normalizeHexColor(settings.accentColor || "#e50914")
+        accentColor: normalizeHexColor(settings.accentColor || "#e50914"),
+        settingsUpdatedAt: Number(settings.settingsUpdatedAt) || 0
       };
       global.localStorage?.setItem("ucp_theme_boot_v1", JSON.stringify(value));
     } catch (error) {
@@ -448,10 +555,13 @@
     isMacPlatform,
     normalizeShortcutValue,
     shortcutModifierFromKey,
+    shortcutCapturePartLabel,
+    createShortcutCaptureFlow,
     shortcutFromEvent,
     shortcutPartLabel,
     eventMatchesShortcut,
     shortcutLabel,
+    configuredCaptureShortcutLabel,
     normalizeHexColor,
     hexToRgbParts,
     resolveTheme,

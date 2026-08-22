@@ -1,62 +1,8 @@
 (function initTools(global) {
-  const TOOL_IDS = [
-    "imageText",
-    "snippetLibrary",
-    "promptTemplateManager",
-    "emojiPicker",
-    "informationExtractor",
-    "duplicateDetector",
-    "longTextSplitter",
-    "textCleaner",
-    "typographyNormalizer",
-    "caseConverter",
-    "advancedCounter",
-    "universalEncoder",
-    "colorPicker",
-    "listTransformer",
-    "localAnonymizer",
-    "variableInjector",
-    "loremGenerator",
-    "jsonFormatter",
-    "markdownToolkit",
-    "textComparator"
-  ];
+  const { TOOL_IDS, PRIORITY_TOOL_IDS, TOOL_ICON_FILES } = global.MCP;
 
-  const PRIORITY_TOOL_IDS = [
-    "imageText",
-    "snippetLibrary",
-    "promptTemplateManager",
-    "emojiPicker",
-    "informationExtractor",
-    "duplicateDetector",
-    "longTextSplitter",
-    "caseConverter",
-    "advancedCounter",
-    "variableInjector"
-  ];
-
-  const TOOL_ICON_FILES = {
-    textCleaner: "nettoyeur.png",
-    typographyNormalizer: "normalisateur.png",
-    caseConverter: "casse.png",
-    advancedCounter: "compteurs.png",
-    longTextSplitter: "assets/icons/special-characters.png",
-    duplicateDetector: "doublons.png",
-    promptTemplateManager: "archi-prompt.png",
-    variableInjector: "assets/icons/replace-word.png",
-    snippetLibrary: "prompt-images.png",
-    listTransformer: "listes.png",
-    informationExtractor: "extracteur.png",
-    localAnonymizer: "anonymiseur.png",
-    emojiPicker: "emojis.png",
-    colorPicker: "assets/icons/color.png",
-    universalEncoder: "encodeur-decodeur.png",
-    jsonFormatter: "json.png",
-    loremGenerator: "lorem-ipsum.png",
-    markdownToolkit: "markdown.png",
-    textComparator: "comparateur.png",
-    imageText: "assets/icons/screen-to-text.png"
-  };
+  const MAX_TEXT_COMPARE_MATRIX_CELLS = 2_000_000;
+  const TEXT_COMPARE_LOOKAHEAD = 32;
 
   function normalizeToolOrder(order = []) {
     const requested = Array.isArray(order) ? order : [];
@@ -86,17 +32,12 @@
   function getTools(t = (key) => key, order = []) {
     return normalizeToolOrder(order).map((id) => ({
       id,
-      title: titleCaseToolTitle(t(`tools.${id}.title`)),
+      title: t(`tools.${id}.title`),
       description: t(`tools.${id}.description`),
       icon: toolIconPath(id),
-      layout: toolLayout(id)
+      layout: toolLayout(id),
+      category: toolCategory(id)
     }));
-  }
-
-  function titleCaseToolTitle(value) {
-    return String(value || "").replace(/(^|[\s/|–—-])([^\s/|–—-])/g, (match, separator, char) => {
-      return `${separator}${String(char).toLocaleUpperCase()}`;
-    });
   }
 
   function toolLayout(id) {
@@ -109,11 +50,30 @@
     return "editor";
   }
 
-  function toolIconPath(id) {
-    const file = TOOL_ICON_FILES[id];
-    if (!file) return "";
-    return file.includes("/") ? file : `assets/icons/tools-icons/${file}`;
+  function toolCategory(id) {
+    if (["imageText", "colorPicker"].includes(id)) return "capture";
+    if (["snippetLibrary", "promptTemplateManager", "emojiPicker", "longTextSplitter", "loremGenerator"].includes(id)) return "write";
+    if (["textCleaner", "typographyNormalizer", "caseConverter", "listTransformer", "variableInjector"].includes(id)) return "organize";
+    if (["advancedCounter", "informationExtractor", "duplicateDetector", "localAnonymizer", "textComparator"].includes(id)) return "analyze";
+    return "developer";
   }
+
+  function toolIconPath(id) {
+    return global.MCP.toolIconPath(id);
+  }
+
+  const EMOJI_CATEGORIES = Object.freeze([
+    { id: "all", icon: "✨", labelKey: "tools.emojiCategory.all" },
+    { id: "smileys", icon: "😀", labelKey: "tools.emojiCategory.smileys" },
+    { id: "people", icon: "🫶", labelKey: "tools.emojiCategory.people" },
+    { id: "animals", icon: "🦋", labelKey: "tools.emojiCategory.animals" },
+    { id: "food", icon: "🍜", labelKey: "tools.emojiCategory.food" },
+    { id: "travel", icon: "🧭", labelKey: "tools.emojiCategory.travel" },
+    { id: "activities", icon: "🎯", labelKey: "tools.emojiCategory.activities" },
+    { id: "objects", icon: "📎", labelKey: "tools.emojiCategory.objects" },
+    { id: "symbols", icon: "💜", labelKey: "tools.emojiCategory.symbols" },
+    { id: "flags", icon: "🏁", labelKey: "tools.emojiCategory.flags" }
+  ]);
 
   const EMOJI_ROWS = `
 😀|grinning face|visage souriant|grinsendes gesicht|cara sonriente|viso sorridente|smile happy joy face
@@ -835,19 +795,90 @@
 🏴|black flag|drapeau noir|schwarze flagge|bandera negra|bandiera nera|flag
 🏁|chequered flag|drapeau damier|zielflagge|bandera cuadros|bandiera scacchi|race
 🚩|triangular flag|drapeau triangulaire|dreiecksflagge|bandera triangular|bandiera triangolare|flag
+🔗|link|lien|link|enlace|collegamento|url chain hyperlink web|objects
+🛜|wireless|sans fil|drahtlos|inalambrico|senza fili|wifi network connection internet|objects
+🪫|low battery|batterie faible|schwache batterie|bateria baja|batteria scarica|power energy empty|objects
+🫶|heart hands|mains coeur|herz haende|manos corazon|mani cuore|love support thanks|people
+🫨|shaking face|visage tremblant|zitterndes gesicht|cara temblando|viso tremante|shock surprise earthquake|smileys
+🫡|saluting face|salut militaire|salutierendes gesicht|cara saludando|viso che saluta|respect yes understood|smileys
+🫠|melting face|visage qui fond|schmelzendes gesicht|cara derritiendose|viso che si scioglie|heat embarrassed irony|smileys
+🩷|pink heart|coeur rose|rosa herz|corazon rosa|cuore rosa|love affection|symbols
+🩵|light blue heart|coeur bleu clair|hellblaues herz|corazon azul claro|cuore azzurro|love affection|symbols
+🩶|grey heart|coeur gris|graues herz|corazon gris|cuore grigio|love affection|symbols
+🪪|identification card|carte d identite|personalausweis|tarjeta de identidad|carta d identita|id profile identity|objects
+🧾|receipt|recu|quittung|recibo|ricevuta|invoice purchase payment|objects
+🗂️|card index dividers|intercalaires|karteikarten|separadores|divisori|files folders archive organize|objects
+🗒️|spiral notepad|bloc notes|spiralblock|bloc de notas|blocco note|notes memo writing|objects
+🪄|magic wand|baguette magique|zauberstab|varita magica|bacchetta magica|sparkle create transform|objects
+🛰️|satellite|satellite|satellit|satelite|satellite|space signal communication|travel
+🛝|playground slide|toboggan|rutsche|tobogan|scivolo|play park activity|activities
+🪩|mirror ball|boule disco|diskokugel|bola de espejos|palla da discoteca|party dance music|activities
+🪷|lotus|lotus|lotus|loto|loto|flower nature calm|animals
+🪿|goose|oie|gans|ganso|oca|bird animal nature|animals
+🫎|moose|orignal|elch|alce|alce|animal nature|animals
+🫏|donkey|ane|esel|burro|asino|animal nature|animals
+🪽|wing|aile|fluegel|ala|ala|bird flight nature|animals
+🪻|hyacinth|jacinthe|hyazinthe|jacinto|giacinto|flower plant nature|animals
+🪼|jellyfish|meduse|qualle|medusa|medusa|sea animal nature|animals
+🪭|folding fan|eventail|faecher|abanico|ventaglio|cool object|objects
+🪮|hair pick|peigne afro|haarkamm|peine afro|pettine afro|hair object|objects
+🪇|maracas|maracas|maracas|maracas|maracas|music instrument activity|activities
+🪈|flute|flute|floete|flauta|flauto|music instrument activity|activities
+🫚|ginger|gingembre|ingwer|jengibre|zenzero|food spice root|food
+🫛|pea pod|cosse de pois|erbsenschote|vaina de guisantes|baccello di piselli|food vegetable|food
+🫗|pouring liquid|liquide verse|fluessigkeit giessen|vertiendo liquido|versare liquido|drink spill|food
 `.trim();
 
+  let emojiLibraryCache = null;
+
   function getEmojiLibrary() {
-    return EMOJI_ROWS.split(/\n+/).map((row, index) => {
-      const [emoji, en, fr, de, es, it, tags = ""] = row.split("|");
+    if (emojiLibraryCache) return emojiLibraryCache;
+    const localizedRows = new Map(EMOJI_ROWS.split(/\n+/).map((row) => [row.split("|")[0], row.split("|")]));
+    const unicodeCatalog = Array.isArray(global.MCP_UNICODE_EMOJI_CATALOG) ? global.MCP_UNICODE_EMOJI_CATALOG : [];
+    const sourceRows = unicodeCatalog.length
+      ? unicodeCatalog
+      : [...localizedRows.values()].map(([emoji, en, , , , , , category]) => [emoji, en, emojiCategoryToUnicodeGroup(category), "legacy", ""]);
+    emojiLibraryCache = sourceRows.map(([emoji, unicodeName, unicodeGroup, unicodeSubgroup, emojiVersion], index) => {
+      const localized = localizedRows.get(emoji) || [];
+      const [, en = unicodeName, fr, de, es, it, tags = ""] = localized;
       return {
         id: `emoji-${index}`,
         emoji,
-        names: { en, fr, de, es, it },
-        tags,
-        search: normalizeEmojiSearch([emoji, en, fr, de, es, it, tags].join(" "))
+        names: { en: en || unicodeName, fr, de, es, it },
+        tags: `${tags} ${unicodeSubgroup.replaceAll("-", " ")}`.trim(),
+        category: unicodeGroupToEmojiCategory(unicodeGroup),
+        unicodeGroup,
+        unicodeSubgroup,
+        emojiVersion,
+        flagAsset: unicodeGroup === "Flags" ? emojiFlagAsset(emoji) : "",
+        search: normalizeEmojiSearch([emoji, unicodeName, en, fr, de, es, it, tags, unicodeGroup, unicodeSubgroup].join(" "))
       };
     });
+    return emojiLibraryCache;
+  }
+
+  function getEmojiCategories() {
+    return EMOJI_CATEGORIES.map((category) => ({ ...category }));
+  }
+
+  function unicodeGroupToEmojiCategory(group) {
+    return ({
+      "Smileys & Emotion": "smileys", "People & Body": "people", "Component": "people",
+      "Animals & Nature": "animals", "Food & Drink": "food", "Travel & Places": "travel",
+      "Activities": "activities", "Objects": "objects", "Symbols": "symbols", "Flags": "flags"
+    })[group] || "symbols";
+  }
+
+  function emojiCategoryToUnicodeGroup(category) {
+    return ({ smileys: "Smileys & Emotion", people: "People & Body", animals: "Animals & Nature", food: "Food & Drink", travel: "Travel & Places", activities: "Activities", objects: "Objects", symbols: "Symbols", flags: "Flags" })[category] || "Symbols";
+  }
+
+  function emojiFlagAsset(emoji) {
+    const filename = [...String(emoji || "")]
+      .map((character) => character.codePointAt(0))
+      .filter((point) => point !== 0xfe0f)
+      .map((point) => point.toString(16)).join("-");
+    return filename ? `assets/emoji-flags/${filename}.svg` : "";
   }
 
   function normalizeEmojiSearch(value) {
@@ -997,29 +1028,29 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     const locale = options.locale || "en";
     switch (id) {
       case "textCleaner":
-        return cleanText(text);
+        return cleanText(text, options.cleanLevel || "standard");
       case "typographyNormalizer":
-        return normalizeTypography(text, options.locale || "fr");
+        return normalizeTypography(text, options.locale || "fr", options.typographyMode || "editorial");
       case "caseConverter":
         return convertCase(text, options.caseMode || "upper");
       case "advancedCounter":
-        return countAdvanced(text, locale);
+        return countAdvanced(text, locale, options);
       case "longTextSplitter":
         return "";
       case "duplicateDetector":
-        return detectDuplicateText(text, locale).cleanedText;
+        return detectDuplicateText(text, locale, options).cleanedText;
       case "promptTemplateManager":
         return buildPromptArchitect(text, locale, options);
       case "variableInjector":
-        return replaceWords(text, options.replaceFind || "", options.replaceWith || "");
+        return replaceWords(text, options.replaceFind || "", options.replaceWith || "", options);
       case "snippetLibrary":
         return buildImagePrompt(text, locale, options);
       case "listTransformer":
         return transformList(text, options.listMode || "bullets");
       case "informationExtractor":
-        return extractInformation(text, locale);
+        return extractInformation(text, locale, options.extractFormat || "report");
       case "localAnonymizer":
-        return anonymizeLocal(text);
+        return anonymizeLocal(text, options.anonymizeMode || "labels");
       case "emojiPicker":
         return "";
       case "colorPicker":
@@ -1029,13 +1060,13 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       case "universalEncoder":
         return universalEncodeDecode(text, options.encodeMode || "urlEncode", locale);
       case "jsonFormatter":
-        return formatJson(text, options.jsonMode || "pretty", locale);
+        return formatJson(text, options.jsonMode || "pretty", locale, options);
       case "loremGenerator":
-        return lorem(Number(options.wordCount || 120));
+        return lorem(Number(options.wordCount || 120), Number(options.paragraphCount || 3));
       case "markdownToolkit":
         return markdownTool(text, options.markdownMode || "checklist", locale);
       case "textComparator":
-        return compareTexts(text, options.compareText || "", locale);
+        return compareTexts(text, options.compareText || "", locale, options);
       default:
         return text;
     }
@@ -1099,7 +1130,336 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
 
   function out(locale, key) {
     const lang = String(locale || "en").slice(0, 2).toLowerCase();
+    const localeKeys = {
+      words: "tools.insight.words", characters: "tools.insight.characters", charsNoSpaces: "tools.insight.charsNoSpaces",
+      spaces: "tools.insight.spaces", lines: "tools.insight.lines", paragraphs: "tools.insight.paragraphs",
+      sentences: "tools.insight.sentences", avgWordsPerSentence: "tools.insight.avgWordsPerSentence",
+      avgCharsPerWord: "tools.insight.avgCharsPerWord", readingTime: "tools.insight.readingMinutes",
+      tokens: "tools.insight.tokens", urls: "tools.insight.urls", domain: "tools.insight.domain", domains: "tools.insight.domain",
+      error: "tools.insight.error", parameters: "tools.insight.parameters", invalidUrl: "tools.insight.invalid"
+    };
+    if (localeKeys[key]) {
+      const translated = localeValue(lang, localeKeys[key], "");
+      if (translated && translated !== localeKeys[key]) return translated;
+    }
     return (OUTPUT_LABELS[lang] || OUTPUT_LABELS.en)[key] || OUTPUT_LABELS.en[key] || key;
+  }
+
+  function toolSmartPreset(id) {
+    const presets = {
+      textCleaner: { cleanLevel: "deep" },
+      typographyNormalizer: { typographyMode: "editorial" },
+      caseConverter: { caseMode: "sentence" },
+      advancedCounter: { readingSpeed: "220", targetLimit: "0" },
+      duplicateDetector: { duplicateSensitivity: "balanced" },
+      promptTemplateManager: { promptPreset: "general", promptDepth: "deep", promptTone: "expert", promptFormat: "structured" },
+      variableInjector: { replaceCaseSensitive: "false", replaceWholeWord: "true", replaceRegex: "false" },
+      snippetLibrary: { imagePromptQuality: "commercial", imagePromptDetail: "ultraDetailed", imagePromptStylize: "balanced", imagePromptNegative: "standard" },
+      listTransformer: { listMode: "bullets" },
+      informationExtractor: { extractFormat: "report" },
+      localAnonymizer: { anonymizeMode: "pseudonyms" },
+      universalEncoder: { encodeMode: "urlEncode" },
+      jsonFormatter: { jsonMode: "pretty", sortJsonKeys: "true" },
+      loremGenerator: { wordCount: "160", paragraphCount: "3" },
+      markdownToolkit: { markdownMode: "checklist" },
+      textComparator: { ignoreWhitespace: "true", compareCaseSensitive: "false" }
+    };
+    return Object.assign({}, presets[id] || {});
+  }
+
+  function localeValue(locale, key, fallback = "") {
+    const lang = String(locale || "en").slice(0, 2).toLowerCase();
+    const dictionary = global.MCP_LOCALES?.[lang] || global.MCP_LOCALES?.en || {};
+    return dictionary[key] || global.MCP_LOCALES?.en?.[key] || fallback || key;
+  }
+
+  const TOOL_EXAMPLE_DISABLED = new Set(["imageText", "emojiPicker", "longTextSplitter", "colorPicker", "loremGenerator"]);
+
+  const TOOL_EXAMPLE_COPY = {
+    en: {
+      image: "A launch campaign for {subject}: a precise hero subject, premium materials, a believable setting and enough negative space for a short headline.",
+      promptGeneral: "Turn my rough idea into a practical launch plan for a collaborative note-taking app aimed at small creative teams.",
+      promptCreative: "Create a memorable campaign for a reusable bottle that keeps drinks cold for 24 hours, aimed at urban commuters.",
+      promptTechnical: "Diagnose why a browser extension event fires twice after the side panel opens, then propose a safe fix and regression tests.",
+      promptResearch: "Compare three ways for a small team to organize customer feedback, with criteria, trade-offs and a final recommendation.",
+      prose: "ultimate clipboard pro helps creative teams capture useful ideas, organize them quickly and reuse them without losing context.",
+      dirty: "  The launch is confirmed.   \n\n\nThe team\twill meet on Tuesday.  \n Contact: hello@example.com   ",
+      private: "Client Lina Martin can be reached at lina.martin@example.com or +33 6 12 34 56 78. Internal file: https://intranet.example.com/cases/4821 from 192.168.10.24.",
+      compareLeft: "Launch date: 12 September\nAudience: freelance designers\nPrice: 39 EUR\nSupport: email only",
+      compareRight: "Launch date: 19 September\nAudience: freelance designers and studios\nPrice: 39 EUR\nSupport: email and live chat"
+    },
+    fr: {
+      image: "Une campagne de lancement autour de {subject} : un sujet principal précis, des matières premium, un décor crédible et assez d’espace négatif pour un titre court.",
+      promptGeneral: "Transforme mon idée brute en plan de lancement concret pour une application de notes collaboratives destinée aux petites équipes créatives.",
+      promptCreative: "Imagine une campagne mémorable pour une gourde réutilisable qui garde les boissons froides pendant 24 heures, destinée aux actifs urbains.",
+      promptTechnical: "Diagnostique pourquoi l’événement d’une extension de navigateur se déclenche deux fois après l’ouverture du panneau latéral, puis propose un correctif sûr et des tests de non-régression.",
+      promptResearch: "Compare trois méthodes permettant à une petite équipe d’organiser les retours clients, avec critères, compromis et recommandation finale.",
+      prose: "ultimate clipboard pro aide les équipes créatives à capturer les bonnes idées, à les organiser rapidement et à les réutiliser sans perdre leur contexte.",
+      dirty: "  Le lancement est confirmé.   \n\n\nL’équipe\tse réunira mardi.  \n Contact : bonjour@example.com   ",
+      private: "La cliente Lina Martin est joignable à lina.martin@example.com ou au +33 6 12 34 56 78. Dossier interne : https://intranet.example.com/dossiers/4821 depuis 192.168.10.24.",
+      compareLeft: "Date de lancement : 12 septembre\nPublic : designers indépendants\nPrix : 39 EUR\nSupport : e-mail uniquement",
+      compareRight: "Date de lancement : 19 septembre\nPublic : designers indépendants et studios\nPrix : 39 EUR\nSupport : e-mail et chat en direct"
+    },
+    de: {
+      image: "Eine Launch-Kampagne rund um {subject}: ein klarer Hauptgegenstand, hochwertige Materialien, eine glaubwürdige Umgebung und Freiraum für eine kurze Überschrift.",
+      promptGeneral: "Verwandle meine grobe Idee in einen praktischen Launch-Plan für eine kollaborative Notiz-App für kleine Kreativteams.",
+      promptCreative: "Entwickle eine einprägsame Kampagne für eine wiederverwendbare Flasche, die Getränke 24 Stunden kalt hält und sich an Stadtpendler richtet.",
+      promptTechnical: "Analysiere, warum ein Browser-Erweiterungsereignis nach dem Öffnen des Seitenpanels zweimal ausgelöst wird, und schlage eine sichere Korrektur samt Regressionstests vor.",
+      promptResearch: "Vergleiche drei Methoden, mit denen ein kleines Team Kundenfeedback organisieren kann, einschließlich Kriterien, Kompromissen und Empfehlung.",
+      prose: "ultimate clipboard pro hilft Kreativteams, nützliche Ideen zu erfassen, schnell zu ordnen und ohne Kontextverlust wiederzuverwenden.",
+      dirty: "  Der Start ist bestätigt.   \n\n\nDas Team\ttrifft sich am Dienstag.  \n Kontakt: hallo@example.com   ",
+      private: "Kundin Lina Martin ist unter lina.martin@example.com oder +49 151 2345678 erreichbar. Interne Datei: https://intranet.example.com/faelle/4821 von 192.168.10.24.",
+      compareLeft: "Startdatum: 12. September\nZielgruppe: freiberufliche Designer\nPreis: 39 EUR\nSupport: nur E-Mail",
+      compareRight: "Startdatum: 19. September\nZielgruppe: freiberufliche Designer und Studios\nPreis: 39 EUR\nSupport: E-Mail und Live-Chat"
+    },
+    es: {
+      image: "Una campaña de lanzamiento sobre {subject}: un protagonista claro, materiales prémium, un entorno creíble y espacio negativo para un titular breve.",
+      promptGeneral: "Convierte mi idea inicial en un plan de lanzamiento práctico para una aplicación de notas colaborativas dirigida a pequeños equipos creativos.",
+      promptCreative: "Crea una campaña memorable para una botella reutilizable que mantiene las bebidas frías durante 24 horas, dirigida a trabajadores urbanos.",
+      promptTechnical: "Diagnostica por qué un evento de una extensión del navegador se ejecuta dos veces al abrir el panel lateral y propone una solución segura con pruebas de regresión.",
+      promptResearch: "Compara tres formas de organizar los comentarios de clientes en un equipo pequeño, con criterios, ventajas, límites y recomendación final.",
+      prose: "ultimate clipboard pro ayuda a los equipos creativos a capturar buenas ideas, organizarlas rápidamente y reutilizarlas sin perder el contexto.",
+      dirty: "  El lanzamiento está confirmado.   \n\n\nEl equipo\tse reunirá el martes.  \n Contacto: hola@example.com   ",
+      private: "La clienta Lina Martin está disponible en lina.martin@example.com o +34 612 34 56 78. Archivo interno: https://intranet.example.com/casos/4821 desde 192.168.10.24.",
+      compareLeft: "Fecha de lanzamiento: 12 de septiembre\nPúblico: diseñadores independientes\nPrecio: 39 EUR\nSoporte: solo correo",
+      compareRight: "Fecha de lanzamiento: 19 de septiembre\nPúblico: diseñadores y estudios\nPrecio: 39 EUR\nSoporte: correo y chat en directo"
+    },
+    it: {
+      image: "Una campagna di lancio dedicata a {subject}: un soggetto principale preciso, materiali premium, un ambiente credibile e spazio negativo per un titolo breve.",
+      promptGeneral: "Trasforma la mia idea iniziale in un piano di lancio concreto per un’app di note collaborative destinata a piccoli team creativi.",
+      promptCreative: "Crea una campagna memorabile per una borraccia riutilizzabile che mantiene le bevande fredde per 24 ore, rivolta ai pendolari urbani.",
+      promptTechnical: "Diagnostica perché un evento di un’estensione del browser si attiva due volte dopo l’apertura del pannello laterale e proponi una correzione sicura con test di regressione.",
+      promptResearch: "Confronta tre metodi per organizzare i feedback dei clienti in un piccolo team, con criteri, compromessi e raccomandazione finale.",
+      prose: "ultimate clipboard pro aiuta i team creativi a catturare idee utili, organizzarle rapidamente e riutilizzarle senza perdere il contesto.",
+      dirty: "  Il lancio è confermato.   \n\n\nIl team\tsi riunirà martedì.  \n Contatto: ciao@example.com   ",
+      private: "La cliente Lina Martin è raggiungibile a lina.martin@example.com o +39 312 345 6789. File interno: https://intranet.example.com/casi/4821 da 192.168.10.24.",
+      compareLeft: "Data di lancio: 12 settembre\nPubblico: designer freelance\nPrezzo: 39 EUR\nSupporto: solo e-mail",
+      compareRight: "Data di lancio: 19 settembre\nPubblico: designer freelance e studi\nPrezzo: 39 EUR\nSupporto: e-mail e chat dal vivo"
+    },
+    pt: {
+      image: "Uma campanha de lançamento sobre {subject}: um tema principal claro, materiais premium, um ambiente credível e espaço negativo para um título curto.",
+      promptGeneral: "Transforma a minha ideia inicial num plano de lançamento prático para uma aplicação de notas colaborativas destinada a pequenas equipas criativas.",
+      promptCreative: "Cria uma campanha memorável para uma garrafa reutilizável que mantém as bebidas frias durante 24 horas, dirigida a profissionais urbanos.",
+      promptTechnical: "Diagnostica por que um evento de uma extensão do navegador é acionado duas vezes após abrir o painel lateral e propõe uma correção segura com testes de regressão.",
+      promptResearch: "Compara três formas de uma pequena equipa organizar o feedback dos clientes, com critérios, compromissos e recomendação final.",
+      prose: "ultimate clipboard pro ajuda equipas criativas a captar boas ideias, organizá-las rapidamente e reutilizá-las sem perder o contexto.",
+      dirty: "  O lançamento está confirmado.   \n\n\nA equipa\treunir-se-á na terça-feira.  \n Contacto: ola@example.com   ",
+      private: "A cliente Lina Martin pode ser contactada em lina.martin@example.com ou +351 912 345 678. Ficheiro interno: https://intranet.example.com/casos/4821 a partir de 192.168.10.24.",
+      compareLeft: "Data de lançamento: 12 de setembro\nPúblico: designers independentes\nPreço: 39 EUR\nSuporte: apenas e-mail",
+      compareRight: "Data de lançamento: 19 de setembro\nPúblico: designers e estúdios\nPreço: 39 EUR\nSuporte: e-mail e chat em direto"
+    },
+    nl: {
+      image: "Een lanceringscampagne rond {subject}: een duidelijk hoofdonderwerp, premium materialen, een geloofwaardige omgeving en witruimte voor een korte titel.",
+      promptGeneral: "Werk mijn ruwe idee uit tot een praktisch lanceringsplan voor een gezamenlijke notitie-app voor kleine creatieve teams.",
+      promptCreative: "Maak een opvallende campagne voor een herbruikbare fles die dranken 24 uur koud houdt, gericht op stedelijke forenzen.",
+      promptTechnical: "Onderzoek waarom een browserextensie-event twee keer afgaat nadat het zijpaneel opent en stel een veilige oplossing met regressietests voor.",
+      promptResearch: "Vergelijk drie manieren waarop een klein team klantfeedback kan organiseren, met criteria, afwegingen en een eindadvies.",
+      prose: "ultimate clipboard pro helpt creatieve teams nuttige ideeën vast te leggen, snel te ordenen en zonder contextverlies opnieuw te gebruiken.",
+      dirty: "  De lancering is bevestigd.   \n\n\nHet team\tkomt dinsdag bijeen.  \n Contact: hallo@example.com   ",
+      private: "Klant Lina Martin is bereikbaar via lina.martin@example.com of +31 6 12345678. Intern dossier: https://intranet.example.com/zaken/4821 vanaf 192.168.10.24.",
+      compareLeft: "Lanceringsdatum: 12 september\nDoelgroep: freelance ontwerpers\nPrijs: 39 EUR\nSupport: alleen e-mail",
+      compareRight: "Lanceringsdatum: 19 september\nDoelgroep: ontwerpers en studio’s\nPrijs: 39 EUR\nSupport: e-mail en livechat"
+    },
+    pl: {
+      image: "Kampania premierowa wokół {subject}: wyraźny główny motyw, materiały premium, wiarygodne otoczenie i wolna przestrzeń na krótki nagłówek.",
+      promptGeneral: "Zamień mój wstępny pomysł w praktyczny plan premiery aplikacji do wspólnych notatek dla małych zespołów kreatywnych.",
+      promptCreative: "Stwórz zapadającą w pamięć kampanię butelki wielokrotnego użytku, która utrzymuje zimne napoje przez 24 godziny, dla miejskich dojeżdżających.",
+      promptTechnical: "Ustal, dlaczego zdarzenie rozszerzenia przeglądarki uruchamia się dwa razy po otwarciu panelu bocznego, i zaproponuj bezpieczną poprawkę oraz testy regresji.",
+      promptResearch: "Porównaj trzy sposoby organizowania opinii klientów w małym zespole, uwzględniając kryteria, kompromisy i końcową rekomendację.",
+      prose: "ultimate clipboard pro pomaga zespołom kreatywnym zapisywać dobre pomysły, szybko je porządkować i ponownie wykorzystywać bez utraty kontekstu.",
+      dirty: "  Premiera jest potwierdzona.   \n\n\nZespół\tspotka się we wtorek.  \n Kontakt: witaj@example.com   ",
+      private: "Klientka Lina Martin jest dostępna pod lina.martin@example.com lub +48 612 345 678. Plik wewnętrzny: https://intranet.example.com/sprawy/4821 z 192.168.10.24.",
+      compareLeft: "Data premiery: 12 września\nOdbiorcy: niezależni projektanci\nCena: 39 EUR\nWsparcie: tylko e-mail",
+      compareRight: "Data premiery: 19 września\nOdbiorcy: projektanci i studia\nCena: 39 EUR\nWsparcie: e-mail i czat na żywo"
+    },
+    tr: {
+      image: "{subject} etrafında bir lansman kampanyası: net bir ana konu, premium malzemeler, inandırıcı bir ortam ve kısa başlık için boş alan.",
+      promptGeneral: "Ham fikrimi küçük yaratıcı ekipler için ortak not uygulamasına yönelik uygulanabilir bir lansman planına dönüştür.",
+      promptCreative: "İçecekleri 24 saat soğuk tutan yeniden kullanılabilir bir şişe için şehirde işe gidip gelenlere yönelik akılda kalıcı bir kampanya oluştur.",
+      promptTechnical: "Yan panel açıldıktan sonra bir tarayıcı uzantısı olayının neden iki kez çalıştığını teşhis et; güvenli bir düzeltme ve regresyon testleri öner.",
+      promptResearch: "Küçük bir ekibin müşteri geri bildirimlerini düzenlemesi için üç yöntemi kriterler, ödünleşimler ve nihai öneriyle karşılaştır.",
+      prose: "ultimate clipboard pro yaratıcı ekiplerin iyi fikirleri yakalamasına, hızla düzenlemesine ve bağlamı kaybetmeden yeniden kullanmasına yardımcı olur.",
+      dirty: "  Lansman onaylandı.   \n\n\nEkip\tsalı günü buluşacak.  \n İletişim: merhaba@example.com   ",
+      private: "Müşteri Lina Martin’e lina.martin@example.com veya +90 532 123 45 67 üzerinden ulaşılabilir. Dahili dosya: https://intranet.example.com/kayit/4821, IP: 192.168.10.24.",
+      compareLeft: "Lansman tarihi: 12 Eylül\nHedef: serbest tasarımcılar\nFiyat: 39 EUR\nDestek: yalnızca e-posta",
+      compareRight: "Lansman tarihi: 19 Eylül\nHedef: tasarımcılar ve stüdyolar\nFiyat: 39 EUR\nDestek: e-posta ve canlı sohbet"
+    },
+    ro: {
+      image: "O campanie de lansare despre {subject}: un subiect principal clar, materiale premium, un decor credibil și spațiu liber pentru un titlu scurt.",
+      promptGeneral: "Transformă ideea mea brută într-un plan practic de lansare pentru o aplicație colaborativă de notițe destinată echipelor creative mici.",
+      promptCreative: "Creează o campanie memorabilă pentru o sticlă reutilizabilă care păstrează băuturile reci 24 de ore, destinată navetiștilor urbani.",
+      promptTechnical: "Identifică de ce un eveniment al extensiei de browser se declanșează de două ori după deschiderea panoului lateral și propune o remediere sigură cu teste de regresie.",
+      promptResearch: "Compară trei metode prin care o echipă mică poate organiza feedbackul clienților, cu criterii, compromisuri și recomandare finală.",
+      prose: "ultimate clipboard pro ajută echipele creative să capteze idei utile, să le organizeze rapid și să le refolosească fără pierderea contextului.",
+      dirty: "  Lansarea este confirmată.   \n\n\nEchipa\tse va întâlni marți.  \n Contact: salut@example.com   ",
+      private: "Clienta Lina Martin poate fi contactată la lina.martin@example.com sau +40 712 345 678. Fișier intern: https://intranet.example.com/cazuri/4821 de la 192.168.10.24.",
+      compareLeft: "Data lansării: 12 septembrie\nPublic: designeri independenți\nPreț: 39 EUR\nAsistență: doar e-mail",
+      compareRight: "Data lansării: 19 septembrie\nPublic: designeri și studiouri\nPreț: 39 EUR\nAsistență: e-mail și chat live"
+    },
+    ru: {
+      image: "Кампания запуска вокруг {subject}: чёткий главный объект, премиальные материалы, правдоподобная среда и свободное место для короткого заголовка.",
+      promptGeneral: "Преврати мою сырую идею в практический план запуска приложения для совместных заметок для небольших творческих команд.",
+      promptCreative: "Создай запоминающуюся кампанию для многоразовой бутылки, которая сохраняет напитки холодными 24 часа, для городских пассажиров.",
+      promptTechnical: "Определи, почему событие расширения браузера срабатывает дважды после открытия боковой панели, и предложи безопасное исправление с регрессионными тестами.",
+      promptResearch: "Сравни три способа организации отзывов клиентов в небольшой команде, указав критерии, компромиссы и итоговую рекомендацию.",
+      prose: "ultimate clipboard pro помогает творческим командам сохранять полезные идеи, быстро их упорядочивать и повторно использовать без потери контекста.",
+      dirty: "  Запуск подтверждён.   \n\n\nКоманда\tвстретится во вторник.  \n Контакт: hello@example.com   ",
+      private: "Клиентка Lina Martin доступна по адресу lina.martin@example.com или номеру +7 912 345-67-89. Внутренний файл: https://intranet.example.com/cases/4821 с 192.168.10.24.",
+      compareLeft: "Дата запуска: 12 сентября\nАудитория: независимые дизайнеры\nЦена: 39 EUR\nПоддержка: только почта",
+      compareRight: "Дата запуска: 19 сентября\nАудитория: дизайнеры и студии\nЦена: 39 EUR\nПоддержка: почта и чат"
+    },
+    ar: {
+      image: "حملة إطلاق حول {subject}: عنصر رئيسي واضح، وخامات فاخرة، وبيئة واقعية، ومساحة فارغة لعنوان قصير.",
+      promptGeneral: "حوّل فكرتي الأولية إلى خطة إطلاق عملية لتطبيق ملاحظات تعاوني مخصص للفرق الإبداعية الصغيرة.",
+      promptCreative: "أنشئ حملة لا تُنسى لزجاجة قابلة لإعادة الاستخدام تحفظ المشروبات باردة لمدة 24 ساعة وموجهة للموظفين في المدن.",
+      promptTechnical: "شخّص سبب تشغيل حدث إضافة المتصفح مرتين بعد فتح اللوحة الجانبية، ثم اقترح إصلاحًا آمنًا واختبارات لمنع التراجع.",
+      promptResearch: "قارن بين ثلاث طرق لتنظيم ملاحظات العملاء داخل فريق صغير، مع المعايير والمقايضات والتوصية النهائية.",
+      prose: "يساعد ultimate clipboard pro الفرق الإبداعية على التقاط الأفكار المفيدة وتنظيمها بسرعة وإعادة استخدامها دون فقدان السياق.",
+      dirty: "  تم تأكيد الإطلاق.   \n\n\nسيجتمع\tالفريق يوم الثلاثاء.  \n التواصل: hello@example.com   ",
+      private: "يمكن التواصل مع العميلة Lina Martin عبر lina.martin@example.com أو +971 50 123 4567. الملف الداخلي: https://intranet.example.com/cases/4821 من 192.168.10.24.",
+      compareLeft: "تاريخ الإطلاق: 12 سبتمبر\nالجمهور: مصممون مستقلون\nالسعر: 39 EUR\nالدعم: البريد فقط",
+      compareRight: "تاريخ الإطلاق: 19 سبتمبر\nالجمهور: مصممون واستوديوهات\nالسعر: 39 EUR\nالدعم: البريد والدردشة المباشرة"
+    },
+    zh: {
+      image: "围绕{subject}的发布活动：清晰的主体、高级材质、可信的场景，并为短标题保留足够留白。",
+      promptGeneral: "把我的初步想法整理成一份可执行的发布计划，用于面向小型创意团队的协作笔记应用。",
+      promptCreative: "为一款可保持饮品低温 24 小时的可重复使用水瓶设计一场令人难忘的宣传活动，目标人群是城市通勤者。",
+      promptTechnical: "诊断浏览器扩展在侧边栏打开后为何会触发两次事件，并提出安全修复方案和回归测试。",
+      promptResearch: "比较小团队整理客户反馈的三种方法，列出评估标准、取舍和最终建议。",
+      prose: "ultimate clipboard pro 帮助创意团队捕捉有用想法、快速整理，并在不丢失上下文的情况下重复使用。",
+      dirty: "  发布已确认。   \n\n\n团队\t将在周二开会。  \n 联系方式：hello@example.com   ",
+      private: "客户 Lina Martin 的联系方式为 lina.martin@example.com 或 +86 138 0013 8000。内部文件：https://intranet.example.com/cases/4821，来源 192.168.10.24。",
+      compareLeft: "发布日期：9 月 12 日\n受众：自由设计师\n价格：39 EUR\n支持：仅电子邮件",
+      compareRight: "发布日期：9 月 19 日\n受众：设计师和工作室\n价格：39 EUR\n支持：电子邮件和在线聊天"
+    },
+    ja: {
+      image: "{subject}を中心にしたローンチキャンペーン。明確な主役、上質な素材、自然な背景、短い見出し用の余白を含める。",
+      promptGeneral: "小規模なクリエイティブチーム向け共同メモアプリの大まかなアイデアを、実行可能なローンチ計画に変えてください。",
+      promptCreative: "飲み物を24時間冷たく保つ再利用可能なボトルについて、都市部の通勤者向けに記憶に残るキャンペーンを作成してください。",
+      promptTechnical: "サイドパネルを開いた後にブラウザー拡張機能のイベントが二重に発火する原因を診断し、安全な修正と回帰テストを提案してください。",
+      promptResearch: "小規模チームが顧客フィードバックを整理する3つの方法を、基準、トレードオフ、最終提案とともに比較してください。",
+      prose: "ultimate clipboard pro は、クリエイティブチームが有用なアイデアを記録し、すばやく整理し、文脈を失わず再利用できるようにします。",
+      dirty: "  ローンチが確定しました。   \n\n\nチームは\t火曜日に会議を行います。  \n 連絡先：hello@example.com   ",
+      private: "顧客 Lina Martin の連絡先は lina.martin@example.com または +81 90-1234-5678 です。社内ファイル：https://intranet.example.com/cases/4821、IP 192.168.10.24。",
+      compareLeft: "公開日：9月12日\n対象：フリーランスデザイナー\n価格：39 EUR\nサポート：メールのみ",
+      compareRight: "公開日：9月19日\n対象：デザイナーとスタジオ\n価格：39 EUR\nサポート：メールとライブチャット"
+    },
+    ko: {
+      image: "{subject} 중심의 출시 캠페인: 명확한 주인공, 고급 소재, 현실적인 배경, 짧은 제목을 위한 충분한 여백.",
+      promptGeneral: "소규모 크리에이티브 팀을 위한 협업 메모 앱의 거친 아이디어를 실행 가능한 출시 계획으로 바꿔 주세요.",
+      promptCreative: "음료를 24시간 차갑게 유지하는 재사용 물병을 위해 도시 통근자를 대상으로 기억에 남는 캠페인을 만들어 주세요.",
+      promptTechnical: "사이드 패널을 연 뒤 브라우저 확장 이벤트가 두 번 실행되는 원인을 진단하고 안전한 수정안과 회귀 테스트를 제안해 주세요.",
+      promptResearch: "소규모 팀이 고객 피드백을 정리하는 세 가지 방법을 기준, 장단점, 최종 권고안과 함께 비교해 주세요.",
+      prose: "ultimate clipboard pro는 크리에이티브 팀이 유용한 아이디어를 기록하고 빠르게 정리하며 맥락을 잃지 않고 재사용하도록 돕습니다.",
+      dirty: "  출시가 확정되었습니다.   \n\n\n팀은\t화요일에 회의합니다.  \n 연락처: hello@example.com   ",
+      private: "고객 Lina Martin의 연락처는 lina.martin@example.com 또는 +82 10-1234-5678입니다. 내부 파일: https://intranet.example.com/cases/4821, IP 192.168.10.24.",
+      compareLeft: "출시일: 9월 12일\n대상: 프리랜서 디자이너\n가격: 39 EUR\n지원: 이메일만",
+      compareRight: "출시일: 9월 19일\n대상: 디자이너 및 스튜디오\n가격: 39 EUR\n지원: 이메일과 실시간 채팅"
+    },
+    hi: {
+      image: "{subject} पर आधारित लॉन्च अभियान: स्पष्ट मुख्य विषय, प्रीमियम सामग्री, विश्वसनीय परिवेश और छोटे शीर्षक के लिए पर्याप्त खाली जगह।",
+      promptGeneral: "छोटी रचनात्मक टीमों के लिए सहयोगी नोट्स ऐप के मेरे शुरुआती विचार को व्यावहारिक लॉन्च योजना में बदलें।",
+      promptCreative: "शहरी यात्रियों के लिए ऐसी दोबारा उपयोग होने वाली बोतल का यादगार अभियान बनाएं जो पेय को 24 घंटे ठंडा रखती है।",
+      promptTechnical: "साइड पैनल खुलने के बाद ब्राउज़र एक्सटेंशन इवेंट दो बार क्यों चलता है, इसका निदान करें और सुरक्षित सुधार व रिग्रेशन टेस्ट सुझाएं।",
+      promptResearch: "छोटी टीम द्वारा ग्राहक फीडबैक व्यवस्थित करने के तीन तरीकों की तुलना मानदंड, समझौतों और अंतिम सिफारिश के साथ करें।",
+      prose: "ultimate clipboard pro रचनात्मक टीमों को उपयोगी विचार पकड़ने, जल्दी व्यवस्थित करने और संदर्भ खोए बिना दोबारा उपयोग करने में मदद करता है।",
+      dirty: "  लॉन्च की पुष्टि हो गई है।   \n\n\nटीम\tमंगलवार को मिलेगी।  \n संपर्क: hello@example.com   ",
+      private: "ग्राहक Lina Martin से lina.martin@example.com या +91 98765 43210 पर संपर्क करें। आंतरिक फ़ाइल: https://intranet.example.com/cases/4821, IP 192.168.10.24।",
+      compareLeft: "लॉन्च तिथि: 12 सितंबर\nदर्शक: स्वतंत्र डिज़ाइनर\nमूल्य: 39 EUR\nसहायता: केवल ईमेल",
+      compareRight: "लॉन्च तिथि: 19 सितंबर\nदर्शक: डिज़ाइनर और स्टूडियो\nमूल्य: 39 EUR\nसहायता: ईमेल और लाइव चैट"
+    }
+  };
+
+  function toolSupportsExample(id) {
+    return TOOL_IDS.includes(id) && !TOOL_EXAMPLE_DISABLED.has(id);
+  }
+
+  function toolExample(id, options = {}, locale = "en", index = 0) {
+    if (!toolSupportsExample(id)) return null;
+    const lang = String(locale || "en").slice(0, 2).toLowerCase();
+    const copy = TOOL_EXAMPLE_COPY[lang] || TOOL_EXAMPLE_COPY.en;
+    const variant = Math.abs(Number(index) || 0) % 2;
+    const result = { input: "", compareText: "", options: {} };
+
+    if (id === "snippetLibrary") {
+      const subjectKey = `tools.imagePrompt.subject.${options.imagePromptSubject || "premiumScene"}`;
+      const subject = localeValue(lang, subjectKey, options.imagePromptSubject || "premium scene");
+      result.input = copy.image.replace("{subject}", subject) + (variant ? ` ${copy.promptCreative}` : "");
+    } else if (id === "promptTemplateManager") {
+      const preset = options.promptPreset || "general";
+      const technical = new Set(["code", "debug", "data", "automation"]);
+      const creative = new Set(["marketing", "seo", "social", "email", "sales", "product", "ux", "imagePrompt"]);
+      const research = new Set(["research", "summary", "teaching", "recruiting", "project", "strategy"]);
+      result.input = technical.has(preset) ? copy.promptTechnical : creative.has(preset) ? copy.promptCreative : research.has(preset) ? copy.promptResearch : copy.promptGeneral;
+      if (variant) result.input = `${result.input}\n\n${copy.promptResearch}`;
+    } else if (id === "informationExtractor") {
+      result.input = `${copy.private}\nProject page: https://example.com/launch?source=team\nMeeting: 12/09/2026 at 14:30\nBudget: 4,900 EUR\n#launch @product-team`;
+    } else if (id === "duplicateDetector") {
+      result.input = variant
+        ? "Newsletter August\nnewsletter august\nNewsletter  August\nProduct roadmap\nProduct road map\nCustomer interviews"
+        : "Alpha Studio\nNova Design\nAlpha Studio\nBright Lab\nNova Design\nNorth Agency";
+    } else if (id === "textCleaner") {
+      result.input = copy.dirty + (variant ? "\n\n\u200BHidden formatting noise\u00a0\u00a0and extra spaces." : "");
+    } else if (id === "typographyNormalizer") {
+      result.input = variant
+        ? `"${copy.prose}" -- 39 EUR ... (launch)`
+        : `'${copy.prose}' - 12/09/2026 - email@example.com`;
+    } else if (id === "caseConverter") {
+      const mode = options.caseMode || "upper";
+      result.input = ["camel", "snake", "kebab", "pascal"].includes(mode) ? "ultimate clipboard pro launch campaign" : copy.prose;
+    } else if (id === "advancedCounter") {
+      result.input = `${copy.promptGeneral}\n\n${copy.prose}\n\n${copy.promptResearch}`;
+      if (variant) result.input += `\n\n${copy.promptTechnical}`;
+    } else if (id === "variableInjector") {
+      result.input = variant
+        ? "Hello ACME Studio,\n\nYour ACME Studio workspace is ready. The ACME Studio team can now invite collaborators."
+        : `${copy.prose}\n\nProject status: draft. The draft will be reviewed before launch.`;
+      result.options = variant
+        ? { replaceFind: "ACME Studio", replaceWith: "Nova Studio", replaceCaseSensitive: "true", replaceWholeWord: "false", replaceRegex: "false" }
+        : { replaceFind: "draft", replaceWith: "approved", replaceCaseSensitive: "false", replaceWholeWord: "true", replaceRegex: "false" };
+    } else if (id === "universalEncoder") {
+      const samples = {
+        urlEncode: "https://example.com/search?q=café & category=design",
+        urlDecode: "https%3A%2F%2Fexample.com%2Fsearch%3Fq%3Dcaf%C3%A9%2520design",
+        base64Encode: copy.prose,
+        base64Decode: "VWx0aW1hdGUgQ2xpcGJvYXJkIFBybw==",
+        htmlEncode: '<article class="offer">Price & availability</article>',
+        htmlDecode: "&lt;strong&gt;Ultimate Clipboard Pro&lt;/strong&gt; &amp; Drive",
+        jwtDecode: "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJkZW1vLXVzZXIiLCJwbGFuIjoibGlmZXRpbWUiLCJpYXQiOjE3NTAwMDAwMDB9.",
+        hexEncode: "Ultimate Clipboard Pro",
+        hexDecode: "556c74696d61746520436c6970626f6172642050726f",
+        unicodeEscape: "Café ✓",
+        unicodeUnescape: "Caf\u00e9 \u2713",
+        jsonString: `${copy.prose}\nSecond line`,
+        jsonUnstring: '"Ultimate Clipboard Pro\\nSecond line"'
+      };
+      result.input = samples[options.encodeMode || "urlEncode"] || samples.urlEncode;
+    } else if (id === "listTransformer") {
+      const mode = options.listMode || "bullets";
+      if (mode === "queryParams") result.input = "query=clipboard manager\nplan=lifetime\nlanguage=fr";
+      else if (mode === "csv") result.input = "Design\nDevelopment\nMarketing";
+      else if (mode === "markdownTable") result.input = "Research\nPrototype\nLaunch";
+      else if (mode === "unique") result.input = "Design\nResearch\nDesign\nLaunch\nResearch";
+      else if (mode === "sort") result.input = "Zulu\nAlpha\nNova\nBeta";
+      else result.input = variant ? "Audit accessibility\nFix duplicate event\nTest dark mode\nPrepare release" : "Research\nPrototype\nUser test\nLaunch";
+    } else if (id === "localAnonymizer") {
+      result.input = copy.private;
+    } else if (id === "jsonFormatter") {
+      result.input = variant
+        ? '{"project":"Ultimate Clipboard Pro","release":{"status":"ready","date":"2026-09-12"},"features":["capture","search","sync"]}'
+        : '{"user":{"name":"Lina","plan":"lifetime"},"settings":{"theme":"dark","language":"fr"},"active":true}';
+    } else if (id === "markdownToolkit") {
+      const mode = options.markdownMode || "checklist";
+      if (mode === "html") result.input = "# Release notes\n\n**Faster capture** and a [complete guide](https://example.com/guide).\n\n- Text\n- Code\n- Images";
+      else if (mode === "code") result.input = "function openPanel() {\n  return chrome.sidePanel.open({ windowId });\n}";
+      else if (mode === "headings") result.input = "Product vision\nUser problems\nCore workflow\nPerformance goals\nLaunch checklist";
+      else result.input = "Audit accessibility\nFix duplicate event\nTest dark mode\nPrepare release";
+    } else if (id === "textComparator") {
+      result.input = variant ? copy.compareRight : copy.compareLeft;
+      result.compareText = variant ? copy.compareLeft : copy.compareRight;
+    }
+
+    return result.input ? result : null;
   }
 
   const PROMPT_ARCHITECT_LABELS = {
@@ -1288,7 +1648,7 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       addCard(label("characters", "Characters"), getSpecialCharacterLibrary(options.locale || "en").length, "accent");
       addChip(label("local", "Local"), "accent");
     } else if (id === "duplicateDetector") {
-      const report = detectDuplicateText(text, options.locale || "en");
+      const report = detectDuplicateText(text, options.locale || "en", options);
       addCard(label("duplicates", "Duplicates"), report.duplicateCount, report.duplicateCount ? "danger" : "");
       addCard(label("duplicateGroups", "Duplicate groups"), report.groupCount, report.groupCount ? "accent" : "");
       addCard(label("kept", "Kept"), report.keptCount, "accent");
@@ -1300,7 +1660,7 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       addChip("Prompt", "accent");
       addChip(label("instantStats", "Instant statistics"));
     } else if (id === "variableInjector") {
-      const matchCount = countWordReplacerMatches(text, options.replaceFind || "");
+      const matchCount = countWordReplacerMatches(text, options.replaceFind || "", options);
       addCard(label("matches", "Matches"), matchCount, matchCount ? "accent" : "");
       addCard(label("replaced", "Replaced"), matchCount, matchCount ? "accent" : "");
       addCard(label("characters", "Characters"), resultMetrics.chars);
@@ -1343,12 +1703,14 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       addCard(label("after", "After"), resultMetrics.chars, "accent");
       addChip(options.encodeMode || "urlEncode", "accent");
     } else if (id === "jsonFormatter") {
-      const parsed = parseJsonSafe(text);
-      addCard(label("status", "Status"), parsed.ok ? label("valid", "Valid") : label("invalid", "Invalid"), parsed.ok ? "accent" : "danger");
-      if (parsed.ok) {
-        addCard(label("keys", "Keys"), countJsonKeys(parsed.value), "accent");
-        addCard(label("depth", "Depth"), jsonDepth(parsed.value));
-      } else addSection(label("error", "Error"), [parsed.error]);
+      if (String(text || "").trim()) {
+        const parsed = parseJsonSafe(text);
+        addCard(label("status", "Status"), parsed.ok ? label("valid", "Valid") : label("invalid", "Invalid"), parsed.ok ? "accent" : "danger");
+        if (parsed.ok) {
+          addCard(label("keys", "Keys"), countJsonKeys(parsed.value), "accent");
+          addCard(label("depth", "Depth"), jsonDepth(parsed.value));
+        } else addSection(label("error", "Error"), [parsed.error]);
+      }
     } else if (id === "loremGenerator") {
       addCard(label("words", "Words"), resultMetrics.words, "accent");
       addCard(label("characters", "Characters"), resultMetrics.chars);
@@ -1388,7 +1750,7 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
   function baseMetrics(text) {
     const value = String(text || "");
     const trimmed = value.trim();
-    const words = trimmed ? trimmed.split(/\s+/).length : 0;
+    const words = countWordsSmart(trimmed, "en");
     const chars = value.length;
     const lines = value ? value.split(/\r?\n/).length : 0;
     const paragraphs = trimmed ? trimmed.split(/\n\s*\n/).length : 0;
@@ -1706,25 +2068,44 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     }
   }
 
-  function cleanText(text) {
-    return text
-      .replace(/[\u200B-\u200D\uFEFF]/g, "")
+  function cleanText(text, level = "standard") {
+    let next = String(text || "")
+      .normalize("NFC")
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
+      .replace(/[\u200B-\u200D\u2060\uFEFF]/g, "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/\u00a0/g, " ")
+      .replace(/[ \t]+\n/g, "\n");
+    if (level === "gentle") return next.replace(/\n{4,}/g, "\n\n\n").trim();
+    next = next
       .replace(/\t/g, " ")
-      .replace(/[ \u00a0]{2,}/g, " ")
+      .replace(/[ ]{2,}/g, " ")
       .replace(/[ \t]*([,.;:?!])[ \t]*/g, "$1 ")
       .replace(/\s+([.)\]])/g, "$1")
       .replace(/([([\{])\s+/g, "$1")
-      .replace(/[ \t]+\n/g, "\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim();
+      .replace(/\n{3,}/g, "\n\n");
+    if (level === "deep") {
+      next = next
+        .replace(/^[•·▪◦]\s*/gm, "- ")
+        .replace(/([.!?])\1{2,}/g, "$1$1")
+        .replace(/^\s*(?:copied|copy|share|print|advertisement|publicité|werbung|publicidad)\s*$/gim, "")
+        .replace(/\n{3,}/g, "\n\n");
+    }
+    return next.trim();
   }
 
-  function normalizeTypography(text, locale) {
-    let next = cleanText(text)
-      .replace(/'/g, "’")
-      .replace(/"([^"]+)"/g, "“$1”")
-      .replace(/\s*--\s*/g, " — ")
-      .replace(/\s*-\s*/g, " – ")
+  function normalizeTypography(text, locale, mode = "editorial") {
+    if (mode === "codeSafe") {
+      return cleanText(text, "gentle")
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        .replace(/[–—]/g, "-");
+    }
+    let next = cleanText(text, mode === "web" ? "standard" : "gentle")
+      .replace(/(^|[\s([{])'([^'\n]+)'(?=$|[\s,.;:!?)}\]])/g, "$1‘$2’")
+      .replace(/(^|[\s([{])\"([^\"\n]+)\"(?=$|[\s,.;:!?)}\]])/g, "$1“$2”")
+      .replace(/\s*---\s*/g, " — ")
+      .replace(/\s*--\s*/g, " – ")
       .replace(/\s+([,.)\]])/g, "$1")
       .replace(/([([\{])\s+/g, "$1");
     if (String(locale).startsWith("fr")) {
@@ -1736,7 +2117,11 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
   }
 
   function convertCase(text, mode) {
-    const words = text.trim().split(/[\s_-]+/).filter(Boolean);
+    const words = String(text || "")
+      .trim()
+      .replace(/([\p{Ll}\d])([\p{Lu}])/gu, "$1 $2")
+      .split(/[^\p{L}\p{N}]+/u)
+      .filter(Boolean);
     const lower = words.map((word) => word.toLowerCase());
     const cap = (word) => word.charAt(0).toUpperCase() + word.slice(1);
     if (mode === "lower") return text.toLowerCase();
@@ -1746,17 +2131,33 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     if (mode === "snake") return lower.join("_");
     if (mode === "kebab") return lower.join("-");
     if (mode === "pascal") return lower.map(cap).join("");
+    if (mode === "constant") return lower.join("_").toUpperCase();
+    if (mode === "dot") return lower.join(".");
+    if (mode === "path") return lower.join("/");
+    if (mode === "slug") return lower
+      .join("-")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9-]+/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    if (mode === "swap") return [...String(text || "")].map((character) => {
+      const upper = character.toLocaleUpperCase();
+      const lowerCharacter = character.toLocaleLowerCase();
+      return character === upper && character !== lowerCharacter ? lowerCharacter : character === lowerCharacter && character !== upper ? upper : character;
+    }).join("");
     return text.toUpperCase();
   }
 
-  function countAdvanced(text, locale) {
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  function countAdvanced(text, locale, options = {}) {
+    const words = countWordsSmart(text, locale);
     const chars = text.length;
     const charsNoSpaces = text.replace(/\s/g, "").length;
     const lines = text ? text.split(/\r?\n/).length : 0;
     const paragraphs = text.trim() ? text.trim().split(/\n\s*\n/).length : 0;
     const sentences = text.trim() ? (text.match(/[^.!?]+[.!?]+/g) || [text]).length : 0;
-    const readMinutes = Math.max(1, Math.ceil(words / 220));
+    const readingSpeed = Math.max(80, Math.min(800, Number(options.readingSpeed || 220)));
+    const readMinutes = words ? Math.max(1, Math.ceil(words / readingSpeed)) : 0;
     const tokens = Math.ceil(chars / 4);
     const avgWordsPerSentence = sentences ? Math.round(words / sentences) : 0;
     const avgCharsPerWord = words ? Math.round(charsNoSpaces / words) : 0;
@@ -1770,8 +2171,21 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       `${out(locale, "avgWordsPerSentence")}: ${avgWordsPerSentence}`,
       `${out(locale, "avgCharsPerWord")}: ${avgCharsPerWord}`,
       `${out(locale, "readingTime")}: ${readMinutes} ${out(locale, "min")}`,
-      `${out(locale, "tokens")}: ${tokens}`
-    ].join("\n");
+      `${out(locale, "tokens")}: ${tokens}`,
+      options.targetLimit ? `${localeValue(locale, "tools.workbench.targetProgress", "Target")}: ${Math.min(999, Math.round((chars / Math.max(1, Number(options.targetLimit))) * 100))}%` : ""
+    ].filter(Boolean).join("\n");
+  }
+
+  function countWordsSmart(text, locale = "en") {
+    const value = String(text || "").trim();
+    if (!value) return 0;
+    const lang = String(locale || "en").slice(0, 2).toLowerCase();
+    if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+      try {
+        return [...new Intl.Segmenter(lang, { granularity: "word" }).segment(value)].filter((part) => part.isWordLike).length;
+      } catch (error) {}
+    }
+    return value.split(/\s+/).length;
   }
 
   function splitLongText(text, size, mode, locale = "en") {
@@ -1786,7 +2200,7 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     return chunks.map((chunk, index) => `--- ${out(locale, "block")} ${index + 1}/${chunks.length} ---\n${chunk.trim()}`).join("\n\n");
   }
 
-  function detectDuplicateText(text, locale = "en") {
+  function detectDuplicateText(text, locale = "en", options = {}) {
     const source = String(text || "");
     const segments = segmentDuplicateText(source);
     const seen = new Map();
@@ -1799,17 +2213,20 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
         cleaned.push(segment.raw);
         return;
       }
-      if (!seen.has(key)) {
-        seen.set(key, segment);
+      const sensitivity = options.duplicateSensitivity || "balanced";
+      const matchedKey = sensitivity === "exact" ? (seen.has(segment.value) ? segment.value : "") : findDuplicateKey(key, seen, sensitivity);
+      const storeKey = sensitivity === "exact" ? segment.value : key;
+      if (!matchedKey) {
+        seen.set(storeKey, segment);
         cleaned.push(segment.raw);
         return;
       }
       duplicateCount += 1;
-      const first = seen.get(key);
-      const group = groups.get(key) || { key, text: first.value, count: 1, segments: [first] };
+      const first = seen.get(matchedKey);
+      const group = groups.get(matchedKey) || { key: normalizeDuplicateSegment(first.value), text: first.value, count: 1, segments: [first] };
       group.count += 1;
       group.segments.push(segment);
-      groups.set(key, group);
+      groups.set(matchedKey, group);
     });
     const cleanedText = normalizeCleanedDuplicateOutput(cleaned.join(""));
     const duplicateGroups = [...groups.values()].sort((left, right) => right.count - left.count || right.text.length - left.text.length);
@@ -1823,6 +2240,41 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       groups: duplicateGroups,
       segments
     };
+  }
+
+  function findDuplicateKey(key, seen, sensitivity = "balanced") {
+    if (seen.has(key)) return key;
+    if (sensitivity !== "fuzzy" || key.length < 24) return "";
+    let bestKey = "";
+    let bestScore = 0;
+    for (const candidate of seen.keys()) {
+      if (candidate.length < 24) continue;
+      const score = diceSimilarity(key, candidate);
+      if (score > bestScore) {
+        bestScore = score;
+        bestKey = candidate;
+      }
+    }
+    return bestScore >= 0.88 ? bestKey : "";
+  }
+
+  function diceSimilarity(left, right) {
+    if (left === right) return 1;
+    if (left.length < 2 || right.length < 2) return 0;
+    const pairs = new Map();
+    for (let index = 0; index < left.length - 1; index += 1) {
+      const pair = left.slice(index, index + 2);
+      pairs.set(pair, (pairs.get(pair) || 0) + 1);
+    }
+    let intersection = 0;
+    for (let index = 0; index < right.length - 1; index += 1) {
+      const pair = right.slice(index, index + 2);
+      const count = pairs.get(pair) || 0;
+      if (!count) continue;
+      intersection += 1;
+      pairs.set(pair, count - 1);
+    }
+    return (2 * intersection) / (left.length + right.length - 2);
   }
 
   function segmentDuplicateText(text) {
@@ -1919,18 +2371,31 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
-  function countWordReplacerMatches(text, needle) {
-    const source = String(text || "");
-    const search = String(needle || "");
-    if (!source || !search) return 0;
-    return (source.match(new RegExp(escapeRegExp(search), "gi")) || []).length;
+  function wordReplacerRegex(needle, options = {}) {
+    const raw = String(needle || "");
+    if (!raw) return null;
+    const source = options.replaceRegex === "true" || options.replaceRegex === true ? raw : escapeRegExp(raw);
+    const wrapped = options.replaceWholeWord === "true" || options.replaceWholeWord === true ? `\\b(?:${source})\\b` : source;
+    const flags = options.replaceCaseSensitive === "true" || options.replaceCaseSensitive === true ? "g" : "gi";
+    try {
+      return new RegExp(wrapped, flags);
+    } catch (error) {
+      return null;
+    }
   }
 
-  function replaceWords(text, needle, replacement) {
+  function countWordReplacerMatches(text, needle, options = {}) {
     const source = String(text || "");
-    const search = String(needle || "");
-    if (!source || !search) return source;
-    return source.replace(new RegExp(escapeRegExp(search), "gi"), String(replacement || ""));
+    const regex = wordReplacerRegex(needle, options);
+    if (!source || !regex) return 0;
+    return (source.match(regex) || []).length;
+  }
+
+  function replaceWords(text, needle, replacement, options = {}) {
+    const source = String(text || "");
+    const regex = wordReplacerRegex(needle, options);
+    if (!source || !regex) return source;
+    return source.replace(regex, String(replacement || ""));
   }
 
   function buildPromptArchitect(text, locale = "en", options = {}) {
@@ -2276,33 +2741,64 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     if (mode === "sort") return [...lines].sort((a, b) => a.localeCompare(b)).join("\n");
     if (mode === "unique") return [...new Set(lines)].join("\n");
     if (mode === "reverse") return [...lines].reverse().join("\n");
+    if (mode === "jsonArray") return JSON.stringify(lines, null, 2);
+    if (mode === "queryParams") return lines.map((line, index) => {
+      const separator = line.indexOf("=");
+      const key = separator >= 0 ? line.slice(0, separator).trim() : `item${index + 1}`;
+      const value = separator >= 0 ? line.slice(separator + 1).trim() : line;
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    }).join("&");
     return lines.map((line) => `- ${line}`).join("\n");
   }
 
-  function extractInformation(text, locale = "en") {
-    const patterns = {
-      emails: /[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi,
-      urls: /https?:\/\/[^\s<>"']+/gi,
-      phones: /(?:\+?\d[\d\s().-]{7,}\d)/g,
-      dates: /\b\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}\b/g,
-      hashtags: /#[\p{L}\p{N}_-]+/gu,
-      mentions: /@[\p{L}\p{N}_-]+/gu,
-      amounts: /\b\d+(?:[.,]\d{2})?\s?(?:€|\$|£|EUR|USD|GBP)\b/gi,
-      ips: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
-      domains: /\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/gi
-    };
-    return Object.entries(patterns).map(([label, regex]) => {
-      const matches = [...new Set(text.match(regex) || [])];
-      return `${out(locale, label).toUpperCase()}\n${matches.length ? matches.join("\n") : "-"}`;
-    }).join("\n\n");
+  function extractInformation(text, locale = "en", format = "report") {
+    const groups = extractInformationGroups(text);
+    if (format === "json") return JSON.stringify(groups, null, 2);
+    if (format === "csv") {
+      return ["type,value", ...Object.entries(groups).flatMap(([type, values]) => values.map((value) => `"${type}","${String(value).replace(/"/g, '""')}"`))].join("\n");
+    }
+    return Object.entries(groups).map(([label, matches]) => `${out(locale, label).toUpperCase()}\n${matches.length ? matches.join("\n") : "-"}`).join("\n\n");
   }
 
-  function anonymizeLocal(text) {
-    return text
-      .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, "[EMAIL]")
-      .replace(/https?:\/\/[^\s<>"']+/gi, "[URL]")
-      .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[IP]")
-      .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, "[PHONE]");
+  function anonymizeLocal(text, mode = "labels") {
+    const counters = new Map();
+    const aliases = new Map();
+    const replacement = (type) => (match) => {
+      if (mode === "mask") return maskSensitiveValue(match, type);
+      if (mode === "pseudonyms") {
+        const key = `${type}:${match.toLowerCase()}`;
+        if (!aliases.has(key)) {
+          counters.set(type, (counters.get(type) || 0) + 1);
+          aliases.set(key, `[${type}_${counters.get(type)}]`);
+        }
+        return aliases.get(key);
+      }
+      return `[${type}]`;
+    };
+    return String(text || "")
+      .replace(/(\bAuthorization\s*:\s*Bearer\s+)[A-Za-z0-9._~+/=-]{12,}/gi, "$1[SECRET]")
+      .replace(/(\b(?:api[_-]?key|access[_-]?token|auth[_-]?token|client[_-]?secret|password)\s*[:=]\s*["']?)[^\s"'&,;]{8,}/gi, "$1[SECRET]")
+      .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, replacement("EMAIL"))
+      .replace(/https?:\/\/[^\s<>"']+/gi, replacement("URL"))
+      .replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, replacement("IP"))
+      .replace(/(?:\+?\d[\d\s().-]{7,}\d)/g, replacement("PHONE"));
+  }
+
+  function maskSensitiveValue(value, type) {
+    const source = String(value || "");
+    if (type === "EMAIL") {
+      const [name, domain = ""] = source.split("@");
+      return `${name.slice(0, 2)}${"•".repeat(Math.max(3, name.length - 2))}@${domain}`;
+    }
+    if (type === "URL") {
+      try {
+        const url = new URL(source);
+        return `${url.protocol}//${url.hostname}/•••`;
+      } catch (error) {}
+    }
+    const digits = source.replace(/\D/g, "");
+    const tail = digits.slice(-3);
+    return `${"•".repeat(Math.max(4, digits.length - 3))}${tail}`;
   }
 
   const COLOR_LABELS = {
@@ -2499,32 +2995,68 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
   function universalEncodeDecode(text, mode, locale = "en") {
     try {
       if (mode === "urlDecode") return decodeURIComponent(text);
-      if (mode === "base64Encode") return btoa(unescape(encodeURIComponent(text)));
-      if (mode === "base64Decode") return decodeURIComponent(escape(atob(text)));
+      if (mode === "base64Encode") return bytesToBase64(new TextEncoder().encode(text));
+      if (mode === "base64Decode") return new TextDecoder().decode(base64ToBytes(text));
       if (mode === "htmlEncode") return text.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[char]);
       if (mode === "htmlDecode") {
-        const area = document.createElement("textarea");
-        area.innerHTML = text;
-        return area.value;
+        const inertMarkup = String(text || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return new DOMParser().parseFromString(`<body>${inertMarkup}</body>`, "text/html").body.textContent || "";
       }
-      if (mode === "jwtDecode") return text.split(".").slice(0, 2).map((part) => JSON.stringify(JSON.parse(atob(part.replace(/-/g, "+").replace(/_/g, "/"))), null, 2)).join("\n\n");
+      if (mode === "jwtDecode") return text.split(".").slice(0, 2).map((part) => JSON.stringify(JSON.parse(new TextDecoder().decode(base64ToBytes(part.replace(/-/g, "+").replace(/_/g, "/")))), null, 2)).join("\n\n");
+      if (mode === "hexEncode") return [...new TextEncoder().encode(text)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      if (mode === "hexDecode") {
+        const clean = text.replace(/\s+/g, "");
+        if (!/^(?:[0-9a-f]{2})*$/i.test(clean)) throw new Error("Invalid hexadecimal input");
+        return new TextDecoder().decode(Uint8Array.from(clean.match(/.{2}/g) || [], (pair) => parseInt(pair, 16)));
+      }
+      if (mode === "unicodeEscape") return [...text].map((char) => {
+        const code = char.codePointAt(0);
+        return code <= 0xffff ? `\\u${code.toString(16).padStart(4, "0")}` : `\\u{${code.toString(16)}}`;
+      }).join("");
+      if (mode === "unicodeUnescape") return text.replace(/\\u\{([0-9a-f]+)\}|\\u([0-9a-f]{4})/gi, (match, wide, basic) => String.fromCodePoint(parseInt(wide || basic, 16)));
+      if (mode === "jsonString") return JSON.stringify(text);
+      if (mode === "jsonUnstring") return JSON.parse(text);
       return encodeURIComponent(text);
     } catch (error) {
       return `${out(locale, "error")}: ${error.message}`;
     }
   }
 
-  function formatJson(text, mode, locale = "en") {
+  function bytesToBase64(bytes) {
+    let binary = "";
+    for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+    return btoa(binary);
+  }
+
+  function base64ToBytes(value) {
+    const normalized = String(value || "").replace(/\s+/g, "");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    const binary = atob(padded);
+    return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  }
+
+  function formatJson(text, mode, locale = "en", options = {}) {
+    if (!String(text || "").trim()) return "";
     try {
-      const data = JSON.parse(text);
-      if (mode === "minify") return JSON.stringify(data);
-      return JSON.stringify(data, null, 2);
+      const data = JSON.parse(text.replace(/^\uFEFF/, ""));
+      const normalized = options.sortJsonKeys === "true" || options.sortJsonKeys === true ? sortJsonKeysDeep(data) : data;
+      if (mode === "minify") return JSON.stringify(normalized);
+      return JSON.stringify(normalized, null, 2);
     } catch (error) {
       return `${out(locale, "jsonError")}: ${error.message}`;
     }
   }
 
-  function lorem(count) {
+  function sortJsonKeysDeep(value) {
+    if (Array.isArray(value)) return value.map(sortJsonKeysDeep);
+    if (!value || typeof value !== "object") return value;
+    return Object.keys(value).sort((left, right) => left.localeCompare(right)).reduce((result, key) => {
+      result[key] = sortJsonKeysDeep(value[key]);
+      return result;
+    }, {});
+  }
+
+  function lorem(count, paragraphCount = 3) {
     const base = [
       "lorem ipsum dolor sit amet consectetur adipiscing elit sed non risus suspendisse lectus tortor dignissim sit amet adipiscing nec ultricies sed dolor",
       "cras elementum ultrices diam maecenas ligula massa varius a semper congue euismod non mi proin porttitor orci nec nonummy molestie enim est eleifend mi",
@@ -2550,11 +3082,13 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
     const total = Math.max(1, count || 120);
     const offset = total % base.length;
     const words = Array.from({ length: total }, (_, index) => base[(index + offset) % base.length]);
+    const requestedParagraphs = Math.max(1, Math.min(20, paragraphCount || 1));
+    const wordsPerParagraph = Math.max(1, Math.ceil(total / requestedParagraphs));
     return words.reduce((paragraphs, word, index) => {
       const sentenceIndex = index % 18;
       const value = sentenceIndex === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word;
       paragraphs.push(value + (sentenceIndex === 17 || index === words.length - 1 ? "." : ""));
-      if ((index + 1) % 126 === 0 && index < words.length - 1) paragraphs.push("\n\n");
+      if ((index + 1) % wordsPerParagraph === 0 && index < words.length - 1) paragraphs.push("\n\n");
       return paragraphs;
     }, []).join(" ").replace(/\s+\n/g, "\n").trim();
   }
@@ -2838,19 +3372,86 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       .replace(/'/g, "&#39;");
   }
 
-  function compareTexts(text, other, locale = "en") {
-    const left = text.split(/\r?\n/);
+  function compareTexts(text, other, locale = "en", options = {}) {
+    const left = String(text || "").split(/\r?\n/);
     const right = String(other || "").split(/\r?\n/);
-    const max = Math.max(left.length, right.length);
-    const result = [];
-    for (let index = 0; index < max; index += 1) {
-      if (left[index] === right[index]) result.push(`  ${left[index] || ""}`);
-      else {
-        if (left[index]) result.push(`- ${left[index]}`);
-        if (right[index]) result.push(`+ ${right[index]}`);
+    const normalize = (value) => {
+      let next = String(value || "");
+      if (options.ignoreWhitespace === "true" || options.ignoreWhitespace === true) next = next.replace(/\s+/g, " ").trim();
+      if (!(options.compareCaseSensitive === "true" || options.compareCaseSensitive === true)) next = next.toLocaleLowerCase(locale);
+      return next;
+    };
+    const leftNormalized = left.map(normalize);
+    const rightNormalized = right.map(normalize);
+    if ((left.length + 1) * (right.length + 1) > MAX_TEXT_COMPARE_MATRIX_CELLS) {
+      return compareTextsBounded(left, right, leftNormalized, rightNormalized);
+    }
+    const rows = Array.from({ length: left.length + 1 }, () => new Uint32Array(right.length + 1));
+    for (let leftIndex = left.length - 1; leftIndex >= 0; leftIndex -= 1) {
+      for (let rightIndex = right.length - 1; rightIndex >= 0; rightIndex -= 1) {
+        rows[leftIndex][rightIndex] = leftNormalized[leftIndex] === rightNormalized[rightIndex]
+          ? rows[leftIndex + 1][rightIndex + 1] + 1
+          : Math.max(rows[leftIndex + 1][rightIndex], rows[leftIndex][rightIndex + 1]);
       }
     }
+    const result = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+    while (leftIndex < left.length && rightIndex < right.length) {
+      if (leftNormalized[leftIndex] === rightNormalized[rightIndex]) {
+        result.push(`  ${right[rightIndex]}`);
+        leftIndex += 1;
+        rightIndex += 1;
+      } else if (rows[leftIndex + 1][rightIndex] >= rows[leftIndex][rightIndex + 1]) {
+        result.push(`- ${left[leftIndex]}`);
+        leftIndex += 1;
+      } else {
+        result.push(`+ ${right[rightIndex]}`);
+        rightIndex += 1;
+      }
+    }
+    while (leftIndex < left.length) result.push(`- ${left[leftIndex++]}`);
+    while (rightIndex < right.length) result.push(`+ ${right[rightIndex++]}`);
     return result.join("\n");
+  }
+
+  function compareTextsBounded(left, right, leftNormalized, rightNormalized) {
+    const result = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+    while (leftIndex < left.length && rightIndex < right.length) {
+      if (leftNormalized[leftIndex] === rightNormalized[rightIndex]) {
+        result.push(`  ${right[rightIndex]}`);
+        leftIndex += 1;
+        rightIndex += 1;
+        continue;
+      }
+
+      const deleteDistance = findNearbyMatch(leftNormalized, leftIndex, rightNormalized[rightIndex]);
+      const insertDistance = findNearbyMatch(rightNormalized, rightIndex, leftNormalized[leftIndex]);
+      if (deleteDistance && (!insertDistance || deleteDistance <= insertDistance)) {
+        for (let offset = 0; offset < deleteDistance; offset += 1) result.push(`- ${left[leftIndex++]}`);
+        continue;
+      }
+      if (insertDistance) {
+        for (let offset = 0; offset < insertDistance; offset += 1) result.push(`+ ${right[rightIndex++]}`);
+        continue;
+      }
+
+      result.push(`- ${left[leftIndex++]}`);
+      result.push(`+ ${right[rightIndex++]}`);
+    }
+    while (leftIndex < left.length) result.push(`- ${left[leftIndex++]}`);
+    while (rightIndex < right.length) result.push(`+ ${right[rightIndex++]}`);
+    return result.join("\n");
+  }
+
+  function findNearbyMatch(values, startIndex, target) {
+    const maxIndex = Math.min(values.length - 1, startIndex + TEXT_COMPARE_LOOKAHEAD);
+    for (let index = startIndex + 1; index <= maxIndex; index += 1) {
+      if (values[index] === target) return index - startIndex;
+    }
+    return 0;
   }
 
   function testRegex(text, pattern, flags, locale = "en") {
@@ -2869,15 +3470,19 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
       PRIORITY_TOOL_IDS,
       TOOL_ICON_FILES,
       normalizeToolOrder,
+      toolSmartPreset,
+      toolSupportsExample,
+      toolExample,
+      getEmojiCategories,
       getEmojiLibrary,
       getSpecialCharacterLibrary,
       getTools,
-    runTool,
-    countWordReplacerMatches,
-    detectDuplicateText,
-    parseColorSafe,
-    colorFormats,
-    buildColorPalette,
-    inspectTool
+      runTool,
+      countWordReplacerMatches,
+      detectDuplicateText,
+      parseColorSafe,
+      colorFormats,
+      buildColorPalette,
+      inspectTool
   });
 })(globalThis);

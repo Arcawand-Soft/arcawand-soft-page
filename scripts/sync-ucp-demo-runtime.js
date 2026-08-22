@@ -2,7 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const siteRoot = path.resolve(__dirname, "..");
-const extensionRoot = path.resolve(siteRoot, "..", "multi-copy-paste");
+const extensionRoot = path.resolve(siteRoot, "..", "multi-copy-paste", "extension");
+const runtimeRoot = path.join(siteRoot, "assets", "extension-runtime");
 const localeNames = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
 
 function copy(relativeSource, relativeTarget = relativeSource) {
@@ -13,10 +14,42 @@ function copy(relativeSource, relativeTarget = relativeSource) {
   fs.copyFileSync(source, target);
 }
 
-copy(path.join("shared", "i18n.js"));
-copy(path.join("shared", "locales", "categorySlugs.js"));
-localeNames.forEach((language) => copy(path.join("shared", "locales", `${language}.js`)));
-copy(path.join("assets", "icons", "arrow_right.png"));
-copy(path.join("assets", "icons", "pro-icon.png"));
+function copyDirectory(relativeSource, relativeTarget = relativeSource, filter = () => true) {
+  const sourceRoot = path.join(extensionRoot, relativeSource);
+  const targetRoot = path.join(siteRoot, "assets", "extension-runtime", relativeTarget);
+  if (!fs.existsSync(sourceRoot)) throw new Error(`Missing canonical extension directory: ${sourceRoot}`);
+  for (const entry of fs.readdirSync(sourceRoot, { withFileTypes: true })) {
+    const source = path.join(relativeSource, entry.name);
+    const target = path.join(relativeTarget, entry.name);
+    if (!filter(source, entry)) continue;
+    if (entry.isDirectory()) {
+      copyDirectory(source, target, filter);
+    } else {
+      copy(source, target);
+    }
+  }
+}
 
-console.log(`Synced canonical Ultimate Clipboard Pro i18n for ${localeNames.length} languages.`);
+function removeExcludedRuntimeDirectory(relativeTarget) {
+  const target = path.resolve(runtimeRoot, relativeTarget);
+  if (!target.startsWith(`${path.resolve(runtimeRoot)}${path.sep}`)) {
+    throw new Error(`Refusing to remove a path outside the demo runtime: ${target}`);
+  }
+  fs.rmSync(target, { recursive: true, force: true });
+}
+
+// The public demo deliberately reuses the extension's production renderers.
+// Synchronizing the public renderer directories prevents UI drift. OCR model
+// binaries are intentionally excluded: the website demo never runs OCR and
+// shipping them would add tens of megabytes to every deployment.
+copyDirectory("shared", "shared", (source) => !source.replace(/\\/g, "/").includes("shared/vendor/tesseract"));
+removeExcludedRuntimeDirectory(path.join("shared", "vendor", "tesseract"));
+copy(path.join("content", "contentScript.js"));
+copy(path.join("content", "floatingPanel.css"));
+copy(path.join("sidepanel", "sidepanel.js"));
+copy(path.join("sidepanel", "sidepanel.css"));
+copyDirectory(path.join("assets", "icons"), path.join("assets", "icons"), (source) => !source.replace(/\\/g, "/").includes("assets/icons/welcome"));
+removeExcludedRuntimeDirectory(path.join("assets", "icons", "welcome"));
+copyDirectory(path.join("assets", "emoji-flags"));
+
+console.log(`Synced the canonical Ultimate Clipboard Pro demo runtime for ${localeNames.length} languages.`);

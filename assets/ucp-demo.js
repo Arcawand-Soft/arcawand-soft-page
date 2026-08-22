@@ -6,7 +6,7 @@
 
   const runtimeBase = "/assets/extension-runtime/";
   const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
-  const demoFloatingHostId = "mcp-demo-floating-host";
+  const demoFloatingHostId = "mcp-floating-host";
   let managerShell = null;
   let blockedDialog = null;
   const desktopQuery = window.matchMedia("(min-width: 1100px) and (hover: hover) and (pointer: fine)");
@@ -97,6 +97,7 @@
       <span class="ucp-demo-launcher-preboot__brand"><img src="${runtimeBase}assets/icons/icon128.png" alt=""></span>
       <span class="ucp-demo-launcher-preboot__utility"><span aria-hidden="true">↗</span></span>
       <span class="ucp-demo-launcher-preboot__utility"><img src="${runtimeBase}assets/icons/tootls.png" alt=""></span>
+      <span class="ucp-demo-launcher-preboot__utility ucp-demo-launcher-preboot__recent"><img src="${runtimeBase}assets/icons/tools-icons/emojis.png" alt=""></span>
       <span class="ucp-demo-launcher-preboot__utility"><img src="${runtimeBase}assets/icons/screen_full_page_png.png" alt=""></span>
     `;
     document.body.append(launcher);
@@ -222,7 +223,7 @@
       const frame = document.createElement("iframe");
       frame.className = "ucp-real-demo-manager-frame";
       frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-pro-badge&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-current-runtime&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
       managerShell.append(frame);
       document.body.append(managerShell);
       window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
@@ -230,7 +231,7 @@
     }
     const frame = managerShell.querySelector("iframe");
     if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260807-pro-badge&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-current-runtime&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
     }
     managerShell.classList.add("is-visible");
   }
@@ -245,9 +246,9 @@
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260807-demo-i18n-v2`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-current-runtime`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260807-demo-i18n-ltr`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-current-runtime`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -263,7 +264,7 @@
     window.__UCP_DEMO_BRIDGE__ = bridge;
 
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260807-pro-badge`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-current-runtime`);
 
     const floatingHost = await waitForFloatingHost();
     installDemoDirectionGuard(floatingHost);

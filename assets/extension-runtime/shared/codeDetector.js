@@ -1,4 +1,4 @@
-﻿(function initCodeDetector(global) {
+(function initCodeDetector(global) {
   const LANGUAGE_RULES = [
     ["dev-typescript", "TypeScript", [/:\s*(string|number|boolean|unknown|any|void)\b/g, /\binterface\s+\w+/g, /\btype\s+\w+\s*=/g, /\bimplements\s+\w+/g, /\bnamespace\s+\w+/g], ["import", "export", "const", "let"]],
     ["dev-react", "React / JSX", [/<[A-Z][\w.]*[\s>]/g, /\buse(State|Effect|Memo|Callback|Ref)\s*\(/g, /\bReact\./g, /\bclassName=/g, /\bjsx\b/g], ["props", "return", "component"]],
@@ -54,27 +54,7 @@
     if (trimmed.length < 12) return emptyResult();
     const fenced = detectFencedCode(trimmed);
     if (fenced.isCode) return fenced;
-    const structural = detectStructuralLanguage(trimmed);
-    if (structural.isCode) return structural;
-    if (looksLikePlainTextContactMessage(trimmed)) return emptyResult();
-    if (looksLikeProseNotCode(trimmed)) return emptyResult();
-    const codeDensity = codeSymbolDensity(trimmed);
-    const lineCount = trimmed.split(/\r?\n/).length;
-    const scores = LANGUAGE_RULES.map(([id, name, patterns, words]) => {
-      const regexScore = patterns.reduce((score, pattern) => score + countMatches(trimmed, pattern) * 8, 0);
-      const wordScore = words.reduce((score, word) => score + (new RegExp(`\\b${escapeRegex(word)}\\b`, "i").test(trimmed) ? 3 : 0), 0);
-      return { id, name, score: regexScore + wordScore };
-    }).sort((a, b) => b.score - a.score);
-    const best = resolveBestScore(trimmed, scores);
-    const structureScore = codeDensity * 35 + Math.min(lineCount, 12);
-    const isCode = best.score >= 8 || (best.score >= 4 && structureScore >= 15) || (structureScore >= 22 && /[{}();=<>\[\]$]/.test(trimmed));
-    return {
-      isCode,
-      languageId: isCode ? best.id : "dev-general",
-      languageName: isCode ? best.name : "General",
-      confidence: Math.min(0.99, (best.score + structureScore) / 70),
-      scores
-    };
+    return classifyCodeProbabilities(trimmed);
   }
 
   function detectFencedCode(text) {
@@ -87,15 +67,8 @@
     if (!blocks.length) return emptyResult();
     const hinted = blocks.find((block) => block.hint && languageIdFromHint(block.hint));
     if (hinted) {
-      const id = languageIdFromHint(hinted.hint);
-      const name = languageNameFromId(id);
-      return {
-        isCode: true,
-        languageId: id,
-        languageName: name,
-        confidence: 0.96,
-        scores: [{ id, name, score: 80 }]
-      };
+      const result = classifyCodeProbabilities(hinted.code, hinted.hint);
+      if (result.isCode) return Object.assign({}, result, { confidence: Math.max(result.confidence, 0.9) });
     }
     const best = blocks
       .map((block) => detectCodeLanguageWithoutFences(block.code))
@@ -105,27 +78,136 @@
   }
 
   function detectCodeLanguageWithoutFences(trimmed) {
-    const structural = detectStructuralLanguage(trimmed);
-    if (structural.isCode) return structural;
-    if (looksLikePlainTextContactMessage(trimmed)) return emptyResult();
-    if (looksLikeProseNotCode(trimmed)) return emptyResult();
-    const codeDensity = codeSymbolDensity(trimmed);
-    const lineCount = trimmed.split(/\r?\n/).length;
-    const scores = LANGUAGE_RULES.map(([id, name, patterns, words]) => {
-      const regexScore = patterns.reduce((score, pattern) => score + countMatches(trimmed, pattern) * 8, 0);
-      const wordScore = words.reduce((score, word) => score + (new RegExp(`\\b${escapeRegex(word)}\\b`, "i").test(trimmed) ? 3 : 0), 0);
-      return { id, name, score: regexScore + wordScore };
-    }).sort((a, b) => b.score - a.score);
-    const best = resolveBestScore(trimmed, scores);
-    const structureScore = codeDensity * 35 + Math.min(lineCount, 12);
-    const isCode = best.score >= 8 || (best.score >= 4 && structureScore >= 15) || (structureScore >= 22 && /[{}();=<>\[\]$]/.test(trimmed));
+    return classifyCodeProbabilities(String(trimmed || "").trim());
+  }
+
+  function classifyCodeProbabilities(text, languageHint = "") {
+    const value = String(text || "").trim();
+    if (value.length < 12) return emptyResult();
+    const analysisValue = maskCommentsForScoring(value);
+    const lines = analysisValue.split(/\r?\n/);
+    const nonEmptyLines = lines.filter((line) => line.trim());
+    const density = codeSymbolDensity(analysisValue);
+    const definitive = detectDefinitiveLanguage(analysisValue);
+    const hintedId = languageIdFromHint(languageHint);
+    const probabilityModel = global.MCP?.CodeProbabilityModel;
+    if (!probabilityModel) throw new Error("Code probability model is unavailable.");
+    const candidates = LANGUAGE_RULES.map(([id, name, patterns, words]) => {
+      const patternCounts = patterns.map((pattern) => countMatches(analysisValue, pattern));
+      const keywordCounts = words.map((word) => regexCount(analysisValue, new RegExp(`\\b${escapeRegex(word)}\\b`, "gi")));
+      const evidence = probabilityModel.evidenceFromCounts(patternCounts, keywordCounts);
+      const distinctFamilies = evidence.distinctFamilies;
+      let logit = evidence.logit;
+      const coherenceAdjustment = languageCoherenceAdjustment(id, analysisValue, distinctFamilies, nonEmptyLines.length);
+      logit += coherenceAdjustment;
+      if (definitive.isCode) logit += definitive.languageId === id ? 15 : -2.5;
+      if (hintedId) logit += hintedId === id ? 3.2 : 0;
+      return { id, name, logit, evidenceFamilies: distinctFamilies + (coherenceAdjustment >= 3 ? 1 : 0) };
+    });
+
+    const prose = proseEvidence(value, nonEmptyLines);
+    let textLogit = 0.35 + prose * 5.5 + (density < 0.025 ? 1.35 : 0) - Math.min(4.5, density * 28);
+    if (looksLikePlainTextContactMessage(value)) textLogit += 5;
+    if (looksLikeProseNotCode(value)) textLogit += 4;
+    if (hasStrongCodeSignal(value)) textLogit -= 2.1;
+    if (definitive.isCode) textLogit -= 10;
+    candidates.push({ id: "dev-general", name: "General", logit: textLogit, evidenceFamilies: 0 });
+
+    const probabilities = probabilityModel.normalize(candidates);
+    const decision = probabilityModel.decide(probabilities, {
+      definitive: definitive.isCode,
+      hinted: false
+    });
+    const { best, textCandidate, isCode } = decision;
     return {
       isCode,
       languageId: isCode ? best.id : "dev-general",
       languageName: isCode ? best.name : "General",
-      confidence: Math.min(0.99, (best.score + structureScore) / 70),
-      scores
+      confidence: isCode ? best.probability : (textCandidate?.probability || best.probability),
+      scores: probabilities,
+      probabilities
     };
+  }
+
+  function maskCommentsForScoring(text) {
+    return String(text || "")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/^\s*\/\/[^\r\n]*$/gm, "")
+      .replace(/^\s*#(?!\s*(?:include|define|if|ifdef|ifndef|elif|else|endif|pragma|error|warning|line|!|import)\b)[^\r\n]*$/gmi, "")
+      .replace(/^\s*(?:--|%)\s+[^\r\n]*$/gm, "")
+      .replace(/^\s*=begin\b[\s\S]*?^\s*=end\b/gm, "");
+  }
+
+  function languageCoherenceAdjustment(id, text, distinctFamilies, lineCount) {
+    let adjustment = Math.min(1.4, Math.log1p(Math.max(1, lineCount)) * 0.28);
+    if (distinctFamilies === 0) adjustment -= 1.5;
+    const isPowerShell = /\bWrite-(?:Host|Output|Error|Warning)\b|\b(?:Get|Set|New|Remove|Start|Stop|Invoke)-[A-Z]\w+|\$\w+\s*=\s*@\(/.test(text);
+    const isNginx = /\bserver\s*\{[\s\S]*\blisten\s+\d+\s*;/.test(text) && /\blocation\s+[^\{]+\{|\b(?:fastcgi_pass|proxy_pass|try_files)\b/.test(text);
+    const isPerl = /\buse\s+(?:strict|warnings|utf8)\s*;/.test(text) && /\bmy\s+[$@%]\w+|\$\w+->\{/.test(text);
+    const isDart = /\bvoid\s+main\s*\(\)\s*\{|\bfinal\s+(?:String|bool|int|double|List<[^>]+>)\s+\w+|\brequired\s+this\./.test(text) && /\bfinal\b|\bbool\b/.test(text);
+    const isRuby = looksLikeRubyScript(text) || /\.select\s+do\s*\|\w+\||\.each_with_index\s+do\s*\|[^|]+\|/.test(text) && /#\{[^}]+\}/.test(text);
+    const isScss = looksLikeScssStylesheet(text) && !isRuby;
+    const isGraphql = /\btype\s+(?:Query|Mutation|Subscription)\s*\{/.test(text) || looksLikeGraphqlDocument(text);
+    const isReact = /\bfrom\s+["']react["']|\buse(?:State|Effect|Memo|Callback|Ref|Context)\s*\(/.test(text) && /<[A-Za-z][\w.-]*(?:\s|>)/.test(text);
+    const isVue = /<script\s+setup[\s>]/i.test(text) && /<template[\s>]/i.test(text) || /\bfrom\s+["']vue["']/.test(text) && /\bv-(?:if|for|model|bind|on):?|@click=/.test(text);
+    const isSvelte = /<script[\s>][\s\S]*<\/script>/i.test(text) && /\bon:\w+=|\{#(?:if|each|await)\b|\bexport\s+let\b/.test(text);
+    const isRust = /\bfn\s+main\s*\(\)\s*\{|\bvec!\s*\[|\bprintln!\s*\(|\bString::from\s*\(/.test(text);
+    const isSwift = /\b(?:let|var)\s+\w+\s*:\s*(?:String|Bool|Int|Double|Float)\b/.test(text) && /\\\([^\n)]+\)|\bprint\s*\(/.test(text);
+    const isObjectiveC = /#import\s+<[^>]+\.h>|@autoreleasepool\b|\b(?:NSArray|NSDictionary|NSString|NSLog)\b/.test(text);
+    const isMatlab = looksLikeMatlabScript(text) || /\b(?:fprintf|disp|mean|length)\s*\(/.test(text) && /\bfor\s+\w+\s*=\s*\d+\s*:/.test(text);
+    const isCpp = /#include\s+<(?:iostream|string|vector|map|memory|algorithm)>|\bstd::(?:vector|string|cout|cin|endl)\b|\btemplate\s*</.test(text);
+    const isPython = /^\s*from\s+[\w.]+\s+import\s+/m.test(text)
+      || /^\s*import\s+[\w.]+/m.test(text) && /^\s*(?:def|class)\s+\w+[^\n]*:\s*$/m.test(text)
+      || /^\s*@[A-Za-z_]\w*(?:\([^\n]*\))?\s*\n\s*(?:async\s+def|def|class)\s+\w+[^\n]*:/m.test(text);
+    const tsSignals = regexCount(text, /\binterface\s+\w+|\btype\s+\w+\s*=|(?<!:):\s*(?:string|number|boolean|unknown|any|void|never)\b|:\s*[A-Z]\w*(?:\[\])?\s*(?:[=;,){]|$)|\b(?:Record|Partial|Pick|Omit|Readonly)<|\bimplements\s+\w+/g);
+    if (id === "dev-php") {
+      if (looksLikePhpScript(text)) adjustment += 4.8;
+      if (/\$[A-Za-z_]\w*/.test(text) && /;\s*$/m.test(text)) adjustment += 2.4;
+      if (/\b(?:json_encode|json_decode|isset|empty|count|foreach|require_once|declare)\s*\(/.test(text)) adjustment += 2.2;
+      if (isPowerShell || isNginx || isPerl || isDart) adjustment -= 10;
+    }
+    if (id === "dev-typescript") adjustment += isCpp ? -10 : tsSignals >= 2 ? 7 : tsSignals === 1 ? 2.5 : 0;
+    if (id === "dev-javascript" && tsSignals >= 2) adjustment -= 5;
+    if (id === "dev-scss") adjustment += isScss ? 7 : isRuby ? -10 : -2;
+    if (id === "dev-css" && isScss) adjustment -= 6;
+    if (id === "dev-swift") adjustment += isSwift ? 8 : 0;
+    if (id === "dev-objectivec") adjustment += isObjectiveC ? 10 : 0;
+    if (id === "dev-python") adjustment += isPython ? 9 : 0;
+    if (id === "dev-ruby") adjustment += isPython ? -11 : isRuby ? 10 : -3.5;
+    if (id === "dev-cpp") adjustment += isCpp ? 11 : 0;
+    if (id === "dev-rust") adjustment += isRust ? 8 : 0;
+    if (id === "dev-powershell") adjustment += isPowerShell ? 9 : 0;
+    if (id === "dev-nginx") adjustment += isNginx ? 10 : 0;
+    if (id === "dev-graphql") adjustment += isGraphql ? 10 : 0;
+    if (id === "dev-yaml" && isGraphql) adjustment -= 9;
+    if (id === "dev-react") adjustment += isReact ? 9 : 0;
+    if (id === "dev-javascript" && isReact) adjustment -= 5;
+    if (id === "dev-vue") adjustment += isVue ? 11 : 0;
+    if (id === "dev-svelte") adjustment += isSvelte ? 11 : 0;
+    if (id === "dev-matlab") adjustment += isMatlab ? 12 : -3.5;
+    if (id === "dev-regex" && isMatlab) adjustment -= 10;
+    if (id === "dev-dart") adjustment += isDart ? 9 : 0;
+    if (id === "dev-perl") adjustment += isPerl ? 10 : 0;
+    if (id === "dev-elixir") adjustment += looksLikeElixirScript(text) ? 4.5 : -5.5;
+    if (id === "dev-csharp" && /<\?(?:php\b|=)|\$[A-Za-z_]\w*\s*=/.test(text)) adjustment -= 7;
+    if (id === "dev-yaml" && (isRust || isSwift || isDart)) adjustment -= 7;
+    if (id === "dev-yaml" && !looksLikeStrictYaml(text)) adjustment -= 3.5;
+    if (id === "dev-markdown" && !looksLikeMarkdownDocument(text)) adjustment -= 3.5;
+    if (id === "dev-css" && !looksLikeCssStylesheet(text)) adjustment -= 3.5;
+    if (id === "dev-scss" && !looksLikeScssStylesheet(text)) adjustment -= 3.5;
+    if (id === "dev-toml" && !looksLikeTomlDocument(text)) adjustment -= 3.5;
+    return adjustment;
+  }
+
+  function proseEvidence(text, lines) {
+    if (!lines.length) return 1;
+    const proseLines = lines.filter((line) => {
+      const trimmed = line.trim().replace(/^\s*(?:\/\/?\*?|\*|#)\s*/, "");
+      const words = trimmed.match(/[\p{L}]{2,}/gu) || [];
+      const syntax = (trimmed.match(/[{}[\];=<>$`|\\]/g) || []).length;
+      return words.length >= 7 && syntax <= 1 && /[.!?;:]?$/.test(trimmed);
+    }).length;
+    return proseLines / Math.max(1, lines.length);
   }
 
   function resolveBestScore(text, scores) {
@@ -156,6 +238,9 @@
     if (best.id === "dev-ruby" && !looksLikeRubyScript(text)) {
       return scores.find((score) => score.id !== "dev-ruby" && score.id !== "dev-yaml") || { id: "dev-general", name: "General", score: 0 };
     }
+    if (best.id === "dev-elixir" && !looksLikeElixirScript(text)) {
+      return scores.find((score) => score.id !== "dev-elixir" && score.id !== "dev-yaml" && score.id !== "dev-toml") || { id: "dev-general", name: "General", score: 0 };
+    }
     if (best.id !== "dev-yaml" || looksLikeStrictYaml(text)) return best;
     return scores.find((score) => score.id !== "dev-yaml" && (score.id !== "dev-markdown" || looksLikeMarkdownDocument(text))) || { id: "dev-general", name: "General", score: 0 };
   }
@@ -184,6 +269,8 @@
     const value = String(text || "");
     const trimmed = value.trim();
     if (!trimmed) return emptyResult();
+    const definitive = detectDefinitiveLanguage(value);
+    if (definitive.isCode) return definitive;
     if (looksLikePlainTextContactMessage(trimmed) || looksLikeProseNotCode(trimmed)) return emptyResult();
     if (looksLikePythonScript(value)) return languageResult("dev-python", "Python", 0.96, 119);
     if (looksLikeMarkdownDocument(value)) return languageResult("dev-markdown", "Markdown", 0.94, 118);
@@ -201,7 +288,6 @@
     if (looksLikeMatlabScript(value)) return languageResult("dev-matlab", "MATLAB", 0.93, 108);
     if (looksLikeScssStylesheet(value)) return languageResult("dev-scss", "SCSS / Sass", 0.96, 117);
     const cssLike = looksLikeCssStylesheet(value);
-    if (/<\?(?:php|=)/.test(value)) return languageResult("dev-php", "PHP", 0.97, 124);
     if (!cssLike && /\bnamespace\s+[\w\\]+;|\buse\s+[\w\\]+;|\$[A-Za-z_]\w*\s*=|\bfunction\s+\w+\s*\([^)]*\)\s*\{/m.test(value)) {
       const phpSignals = regexCount(value, /\$\w+\s*=|->\w+|::\w+|\becho\b|\barray\s*\(|\bpublic\s+function\b|\bprivate\s+function\b|\bprotected\s+function\b/g);
       if (phpSignals >= 3) return languageResult("dev-php", "PHP", 0.94, 112);
@@ -246,6 +332,21 @@
     if (/\b(?:query|mutation|subscription)\s+\w*|\bfragment\s+\w+\s+on\s+\w+|\btype\s+\w+\s*\{/.test(value)) return languageResult("dev-graphql", "GraphQL", 0.92, 106);
     if (looksLikeTomlDocument(value)) return languageResult("dev-toml", "INI / TOML", 0.9, 96);
     if (looksLikeMatlabScript(value)) return languageResult("dev-matlab", "MATLAB", 0.9, 96);
+    return emptyResult();
+  }
+
+  function detectDefinitiveLanguage(text) {
+    const value = String(text || "");
+    // These markers are language declarations, not heuristics. Resolve them
+    // before broad syntax patterns so PHPDoc annotations, "end" lines or
+    // embedded snippets cannot steal a long document from its real language.
+    if (/<\?(?:php\b|=)/i.test(value)) return languageResult("dev-php", "PHP", 0.995, 160);
+    if (/^\s*<\?xml\b/i.test(value)) return languageResult("dev-xml", "XML", 0.99, 154);
+    if (/<!doctype\s+html\b/i.test(value)) return languageResult("dev-html", "HTML", 0.99, 154);
+    if (/^\s*#!\/usr\/bin\/(?:env\s+)?(?:bash|sh|zsh)\b/m.test(value)) return languageResult("dev-shell", "Shell / Bash", 0.99, 152);
+    if (/^\s*#!\/usr\/bin\/(?:env\s+)?python(?:\d+(?:\.\d+)?)?\b/m.test(value)) return languageResult("dev-python", "Python", 0.99, 152);
+    if (/^\s*defmodule\s+[A-Z]\w*(?:\.[A-Z]\w*)*\s+do\b/m.test(value)) return languageResult("dev-elixir", "Elixir", 0.99, 152);
+    if (/^\s*-module\s*\([a-z][\w@]*\)\s*\./m.test(value)) return languageResult("dev-erlang", "Erlang", 0.99, 152);
     return emptyResult();
   }
 
@@ -409,8 +510,16 @@
 
   function looksLikeElixirScript(text) {
     const value = String(text || "");
-    return /\bdefmodule\s+[A-Z]\w*(?:\.[A-Z]\w*)*\s+do/.test(value)
-      || regexCount(value, /\bdefp?\s+\w+(?:\([^)]*\))?\s+do|\|>|@\w+|\bIO\.\w+\s*\(/g) >= 4;
+    if (/<\?(?:php\b|=)/i.test(value) || /\$[A-Za-z_]\w*\s*=/.test(value) && /;\s*$/m.test(value)) return false;
+    if (/\bdefmodule\s+[A-Z]\w*(?:\.[A-Z]\w*)*\s+do\b/.test(value)) return true;
+    const definitions = regexCount(value, /^\s*defp?\s+[a-z_]\w*(?:\([^)]*\))?\s+do\b/gm);
+    const pipelines = regexCount(value, /\|>/g);
+    const moduleCalls = regexCount(value, /\b[A-Z]\w*(?:\.[A-Z]\w*)*\.\w+[!?]?\s*\(/g);
+    const elixirAttributes = regexCount(value, /^\s*@(moduledoc|doc|spec|type|behaviour|impl|derive|callback)\b/gm);
+    const endings = regexCount(value, /^\s*end\s*$/gm);
+    const elixirFamilies = [definitions > 0, pipelines > 0, moduleCalls > 0, elixirAttributes > 0, endings > 0].filter(Boolean).length;
+    return definitions >= 1 && endings >= 1 && elixirFamilies >= 3
+      || pipelines >= 2 && moduleCalls >= 1 && elixirFamilies >= 3;
   }
 
   function looksLikeScalaScript(text) {
@@ -539,7 +648,7 @@
       const words = line.match(/\b[\p{L}]{3,}\b/gu) || [];
       return words.length >= 8 && !/[{}[\];]|=>|:=|<\/?\w+/.test(line);
     });
-    const colonOnlyHeadings = lines.filter((line) => /^[\p{L}\d '"â€™().,-]{3,80}:\s*$/u.test(line));
+    const colonOnlyHeadings = lines.filter((line) => /^[\p{L}\d '"’().,-]{3,80}:\s*$/u.test(line));
     const proseRatio = (longSentenceLines.length + proseWordLines.length + colonOnlyHeadings.length) / Math.max(1, lines.length);
     const symbolDensity = codeSymbolDensity(text);
     return proseRatio >= 0.42 && symbolDensity < 0.045;
@@ -554,7 +663,7 @@
     if (/=>|:=|::|^\s*[-+*/]|(?:^|\s)(?:def|class|module|function|const|let|var|import|export|return)\b/m.test(withoutEmails)) return false;
     const lines = value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
     const words = withoutEmails.match(/\b[\p{L}]{2,}\b/gu) || [];
-    const naturalPunctuation = /(?:^|[\p{L}\d)"'â€™])\s*:\s+/u.test(withoutEmails)
+    const naturalPunctuation = /(?:^|[\p{L}\d)"'’])\s*:\s+/u.test(withoutEmails)
       || /[.!?…]\s*$/.test(value)
       || words.length >= 7;
     return lines.length <= 3 && words.length >= 4 && naturalPunctuation && codeSymbolDensity(withoutEmails) < 0.055;

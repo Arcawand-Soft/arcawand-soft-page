@@ -268,112 +268,160 @@
       "license.viewPlans": "View plans", "license.chooseOffer": "Choose this plan", "license.currentOffer": "Current plan", "license.activate": "Activate license",
       "license.keyPlaceholder": "Enter your license key here",
       "license.showKey": "Show license key", "license.hideKey": "Hide license key",
-      "license.product": "Product", "license.customer": "License holder", "license.purchasedAt": "Purchased at"
+      "license.product": "Product", "license.customer": "License holder", "license.purchasedAt": "Purchased at",
+      "license.removeRemotePrompt": "This device will be deactivated and its license slot freed. The local license will only be removed after confirmation.",
+      "license.recoveryPrompt": "Choose the old device to deactivate by entering its number:",
+      "license.privacy": "Your copied content stays local. Your license key is sent only to Arcawand's dedicated license service during activation; no copied content or history is sent."
     },
     fr: {
       "license.help": "Après votre souscription à un plan Lifetime, vous recevrez une clé de licence par mail. Collez cette clé ici pour activer Ultimate Clipboard Pro sur cet ordinateur.",
       "license.viewPlans": "Voir les offres", "license.chooseOffer": "Choisir cette offre", "license.currentOffer": "Offre actuelle", "license.activate": "Activer la licence",
       "license.keyPlaceholder": "Saisissez ici votre clé de licence",
       "license.showKey": "Afficher la clé de licence", "license.hideKey": "Masquer la clé de licence",
-      "license.product": "Produit", "license.customer": "Titulaire", "license.purchasedAt": "Achetée le"
+      "license.product": "Produit", "license.customer": "Titulaire", "license.purchasedAt": "Achetée le",
+      "license.removeRemotePrompt": "Cet appareil sera désactivé et son emplacement de licence libéré. La licence locale ne sera supprimée qu’après confirmation.",
+      "license.recoveryPrompt": "Choisissez l’ancien appareil à désactiver en saisissant son numéro :",
+      "license.privacy": "Vos contenus copiés restent en local. Votre clé est envoyée uniquement au service de licence Arcawand dédié lors de l’activation ; aucun contenu copié ni historique n’est transmis."
     },
     es: {
       "license.help": "Después de suscribirte a un plan Lifetime, recibirás una clave de licencia por correo electrónico. Pégala aquí para activar Ultimate Clipboard Pro en este ordenador.",
       "license.viewPlans": "Ver ofertas", "license.chooseOffer": "Elegir esta oferta", "license.currentOffer": "Oferta actual", "license.activate": "Activar licencia",
       "license.keyPlaceholder": "Introduce aquí tu clave de licencia",
       "license.showKey": "Mostrar clave de licencia", "license.hideKey": "Ocultar clave de licencia",
-      "license.product": "Producto", "license.customer": "Titular", "license.purchasedAt": "Comprada el"
+      "license.product": "Producto", "license.customer": "Titular", "license.purchasedAt": "Comprada el",
+      "license.removeRemotePrompt": "Este dispositivo se desactivará y su plaza de licencia quedará libre. La licencia local solo se eliminará tras la confirmación.",
+      "license.recoveryPrompt": "Elige el dispositivo antiguo que deseas desactivar introduciendo su número:",
+      "license.privacy": "El contenido copiado permanece local. La clave solo se envía al servicio de licencias dedicado de Arcawand durante la activación; no se envían contenidos ni historial."
     },
     it: {
       "license.help": "Dopo l'iscrizione a un piano Lifetime riceverai una chiave di licenza via e-mail. Incollala qui per attivare Ultimate Clipboard Pro su questo computer.",
       "license.viewPlans": "Vedi offerte", "license.chooseOffer": "Scegli questa offerta", "license.currentOffer": "Offerta attuale", "license.activate": "Attiva licenza",
       "license.keyPlaceholder": "Inserisci qui la chiave di licenza",
       "license.showKey": "Mostra chiave di licenza", "license.hideKey": "Nascondi chiave di licenza",
-      "license.product": "Prodotto", "license.customer": "Titolare", "license.purchasedAt": "Acquistata il"
+      "license.product": "Prodotto", "license.customer": "Titolare", "license.purchasedAt": "Acquistata il",
+      "license.removeRemotePrompt": "Questo dispositivo verrà disattivato e il posto licenza sarà liberato. La licenza locale verrà rimossa solo dopo la conferma.",
+      "license.recoveryPrompt": "Scegli il vecchio dispositivo da disattivare inserendo il suo numero:",
+      "license.privacy": "I contenuti copiati restano locali. La chiave viene inviata solo al servizio licenze Arcawand dedicato durante l’attivazione; contenuti e cronologia non vengono inviati."
     },
     de: {
       "license.help": "Nach dem Abschluss eines Lifetime-Plans erhältst du per E-Mail einen Lizenzschlüssel. Füge ihn hier ein, um Ultimate Clipboard Pro auf diesem Computer zu aktivieren.",
       "license.viewPlans": "Angebote ansehen", "license.chooseOffer": "Dieses Angebot wählen", "license.currentOffer": "Aktuelles Angebot", "license.activate": "Lizenz aktivieren",
       "license.keyPlaceholder": "Gib hier deinen Lizenzschlüssel ein",
       "license.showKey": "Lizenzschlüssel anzeigen", "license.hideKey": "Lizenzschlüssel ausblenden",
-      "license.product": "Produkt", "license.customer": "Lizenzinhaber", "license.purchasedAt": "Gekauft am"
+      "license.product": "Produkt", "license.customer": "Lizenzinhaber", "license.purchasedAt": "Gekauft am",
+      "license.removeRemotePrompt": "Dieses Gerät wird deaktiviert und der Lizenzplatz freigegeben. Die lokale Lizenz wird erst nach der Bestätigung entfernt.",
+      "license.recoveryPrompt": "Wähle das alte Gerät zur Deaktivierung durch Eingabe seiner Nummer:",
+      "license.privacy": "Kopierte Inhalte bleiben lokal. Der Schlüssel wird nur bei der Aktivierung an Arcawands dedizierten Lizenzdienst gesendet; Inhalte und Verlauf werden nie übertragen."
     },
     ro: {
       "license.help": "După abonarea la un plan Lifetime, vei primi prin e-mail o cheie de licență. Lipește-o aici pentru a activa Ultimate Clipboard Pro pe acest computer.",
       "license.viewPlans": "Vezi ofertele", "license.chooseOffer": "Alege această ofertă", "license.currentOffer": "Oferta actuală", "license.activate": "Activează licența",
       "license.keyPlaceholder": "Introdu aici cheia de licență",
       "license.showKey": "Afișează cheia de licență", "license.hideKey": "Ascunde cheia de licență",
-      "license.product": "Produs", "license.customer": "Titular", "license.purchasedAt": "Cumpărată la"
+      "license.product": "Produs", "license.customer": "Titular", "license.purchasedAt": "Cumpărată la",
+      "license.removeRemotePrompt": "Acest dispozitiv va fi dezactivat, iar locul licenței va fi eliberat. Licența locală va fi eliminată numai după confirmare.",
+      "license.recoveryPrompt": "Alege dispozitivul vechi de dezactivat introducând numărul său:",
+      "license.privacy": "Conținutul copiat rămâne local. Cheia este trimisă doar serviciului dedicat de licențe Arcawand la activare; conținutul și istoricul nu sunt trimise."
     },
     pt: {
       "license.help": "Depois de subscreveres um plano Lifetime, receberás uma chave de licença por e-mail. Cola-a aqui para ativar o Ultimate Clipboard Pro neste computador.",
       "license.viewPlans": "Ver ofertas", "license.chooseOffer": "Escolher esta oferta", "license.currentOffer": "Oferta atual", "license.activate": "Ativar licença",
       "license.keyPlaceholder": "Introduz aqui a tua chave de licença",
       "license.showKey": "Mostrar chave de licença", "license.hideKey": "Ocultar chave de licença",
-      "license.product": "Produto", "license.customer": "Titular", "license.purchasedAt": "Comprada em"
+      "license.product": "Produto", "license.customer": "Titular", "license.purchasedAt": "Comprada em",
+      "license.removeRemotePrompt": "Este dispositivo será desativado e a vaga da licença será libertada. A licença local só será removida após a confirmação.",
+      "license.recoveryPrompt": "Escolhe o dispositivo antigo a desativar introduzindo o respetivo número:",
+      "license.privacy": "O conteúdo copiado permanece local. A chave só é enviada ao serviço de licenças dedicado da Arcawand durante a ativação; nenhum conteúdo ou histórico é enviado."
     },
     ar: {
       "license.help": "بعد الاشتراك في خطة مدى الحياة، ستتلقى مفتاح ترخيص عبر البريد الإلكتروني. الصقه هنا لتفعيل Ultimate Clipboard Pro على هذا الكمبيوتر.",
       "license.viewPlans": "عرض العروض", "license.chooseOffer": "اختيار هذا العرض", "license.currentOffer": "العرض الحالي", "license.activate": "تفعيل الترخيص",
       "license.keyPlaceholder": "أدخل مفتاح الترخيص هنا",
       "license.showKey": "إظهار مفتاح الترخيص", "license.hideKey": "إخفاء مفتاح الترخيص",
-      "license.product": "المنتج", "license.customer": "صاحب الترخيص", "license.purchasedAt": "تاريخ الشراء"
+      "license.product": "المنتج", "license.customer": "صاحب الترخيص", "license.purchasedAt": "تاريخ الشراء",
+      "license.removeRemotePrompt": "سيتم إلغاء تنشيط هذا الجهاز وتحرير مكان الترخيص. لن يُحذف الترخيص المحلي إلا بعد التأكيد.",
+      "license.recoveryPrompt": "اختر الجهاز القديم المراد إلغاء تنشيطه بإدخال رقمه:",
+      "license.privacy": "يبقى المحتوى المنسوخ محليًا. يُرسل مفتاحك فقط إلى خدمة ترخيص Arcawand المخصصة عند التنشيط، ولا يُرسل أي محتوى أو سجل."
     },
     zh: {
       "license.help": "订阅终身计划后，你会通过电子邮件收到许可证密钥。请将其粘贴到此处，以在这台电脑上激活 Ultimate Clipboard Pro。",
       "license.viewPlans": "查看方案", "license.chooseOffer": "选择此方案", "license.currentOffer": "当前方案", "license.activate": "激活许可证",
       "license.keyPlaceholder": "在此输入许可证密钥",
       "license.showKey": "显示许可证密钥", "license.hideKey": "隐藏许可证密钥",
-      "license.product": "产品", "license.customer": "许可证持有人", "license.purchasedAt": "购买时间"
+      "license.product": "产品", "license.customer": "许可证持有人", "license.purchasedAt": "购买时间",
+      "license.removeRemotePrompt": "此设备将被停用，其许可证名额将被释放。本地许可证仅在确认后删除。",
+      "license.recoveryPrompt": "请输入编号，选择要停用的旧设备：",
+      "license.privacy": "复制内容保留在本地。许可证密钥仅在激活时发送到 Arcawand 专用许可证服务；不会发送复制内容或历史记录。"
     },
     ja: {
       "license.help": "Lifetimeプランに加入すると、ライセンスキーがメールで届きます。ここに貼り付けて、このパソコンでUltimate Clipboard Proを有効化してください。",
       "license.viewPlans": "プランを見る", "license.chooseOffer": "このプランを選ぶ", "license.currentOffer": "現在のプラン", "license.activate": "ライセンスを有効化",
       "license.keyPlaceholder": "ここにライセンスキーを入力",
       "license.showKey": "ライセンスキーを表示", "license.hideKey": "ライセンスキーを隠す",
-      "license.product": "製品", "license.customer": "ライセンス所有者", "license.purchasedAt": "購入日時"
+      "license.product": "製品", "license.customer": "ライセンス所有者", "license.purchasedAt": "購入日時",
+      "license.removeRemotePrompt": "この端末を無効化し、ライセンス枠を解放します。ローカルライセンスは確認後にのみ削除されます。",
+      "license.recoveryPrompt": "無効化する古い端末の番号を入力してください：",
+      "license.privacy": "コピー内容は端末内に留まります。キーは有効化時にArcawand専用ライセンスサービスへのみ送信され、内容や履歴は送信されません。"
     },
     ru: {
       "license.help": "После оформления плана Lifetime вы получите лицензионный ключ по электронной почте. Вставьте его сюда, чтобы активировать Ultimate Clipboard Pro на этом компьютере.",
       "license.viewPlans": "Посмотреть предложения", "license.chooseOffer": "Выбрать это предложение", "license.currentOffer": "Текущее предложение", "license.activate": "Активировать лицензию",
       "license.keyPlaceholder": "Введите лицензионный ключ здесь",
       "license.showKey": "Показать лицензионный ключ", "license.hideKey": "Скрыть лицензионный ключ",
-      "license.product": "Продукт", "license.customer": "Владелец лицензии", "license.purchasedAt": "Дата покупки"
+      "license.product": "Продукт", "license.customer": "Владелец лицензии", "license.purchasedAt": "Дата покупки",
+      "license.removeRemotePrompt": "Это устройство будет деактивировано, а место лицензии освобождено. Локальная лицензия удалится только после подтверждения.",
+      "license.recoveryPrompt": "Введите номер старого устройства, которое нужно деактивировать:",
+      "license.privacy": "Скопированные данные остаются локальными. Ключ отправляется только выделенному сервису лицензий Arcawand при активации; содержимое и история не передаются."
     },
     nl: {
       "license.help": "Na je abonnement op een Lifetime-plan ontvang je per e-mail een licentiesleutel. Plak die hier om Ultimate Clipboard Pro op deze computer te activeren.",
       "license.viewPlans": "Bekijk aanbiedingen", "license.chooseOffer": "Kies deze aanbieding", "license.currentOffer": "Huidige aanbieding", "license.activate": "Licentie activeren",
       "license.keyPlaceholder": "Voer hier je licentiesleutel in",
       "license.showKey": "Licentiesleutel tonen", "license.hideKey": "Licentiesleutel verbergen",
-      "license.product": "Product", "license.customer": "Licentiehouder", "license.purchasedAt": "Gekocht op"
+      "license.product": "Product", "license.customer": "Licentiehouder", "license.purchasedAt": "Gekocht op",
+      "license.removeRemotePrompt": "Dit apparaat wordt gedeactiveerd en de licentieplek wordt vrijgemaakt. De lokale licentie wordt pas na bevestiging verwijderd.",
+      "license.recoveryPrompt": "Kies het oude apparaat dat je wilt deactiveren door het nummer in te voeren:",
+      "license.privacy": "Gekopieerde inhoud blijft lokaal. De sleutel gaat alleen bij activering naar Arcawands speciale licentieservice; inhoud en geschiedenis worden niet verzonden."
     },
     pl: {
       "license.help": "Po wykupieniu planu Lifetime otrzymasz klucz licencyjny e-mailem. Wklej go tutaj, aby aktywować Ultimate Clipboard Pro na tym komputerze.",
       "license.viewPlans": "Zobacz oferty", "license.chooseOffer": "Wybierz tę ofertę", "license.currentOffer": "Aktualna oferta", "license.activate": "Aktywuj licencję",
       "license.keyPlaceholder": "Wpisz tutaj klucz licencyjny",
       "license.showKey": "Pokaż klucz licencyjny", "license.hideKey": "Ukryj klucz licencyjny",
-      "license.product": "Produkt", "license.customer": "Właściciel licencji", "license.purchasedAt": "Data zakupu"
+      "license.product": "Produkt", "license.customer": "Właściciel licencji", "license.purchasedAt": "Data zakupu",
+      "license.removeRemotePrompt": "To urządzenie zostanie dezaktywowane, a miejsce licencji zwolnione. Lokalna licencja zostanie usunięta dopiero po potwierdzeniu.",
+      "license.recoveryPrompt": "Wpisz numer starego urządzenia, które chcesz dezaktywować:",
+      "license.privacy": "Skopiowane treści pozostają lokalne. Klucz trafia wyłącznie do dedykowanej usługi licencyjnej Arcawand podczas aktywacji; treści i historia nie są wysyłane."
     },
     tr: {
       "license.help": "Lifetime planına abone olduktan sonra lisans anahtarın e-postayla gönderilir. Ultimate Clipboard Pro'yu bu bilgisayarda etkinleştirmek için anahtarı buraya yapıştır.",
       "license.viewPlans": "Teklifleri gör", "license.chooseOffer": "Bu teklifi seç", "license.currentOffer": "Mevcut teklif", "license.activate": "Lisansı etkinleştir",
       "license.keyPlaceholder": "Lisans anahtarını buraya gir",
       "license.showKey": "Lisans anahtarını göster", "license.hideKey": "Lisans anahtarını gizle",
-      "license.product": "Ürün", "license.customer": "Lisans sahibi", "license.purchasedAt": "Satın alma tarihi"
+      "license.product": "Ürün", "license.customer": "Lisans sahibi", "license.purchasedAt": "Satın alma tarihi",
+      "license.removeRemotePrompt": "Bu cihaz devre dışı bırakılacak ve lisans yuvası boşaltılacak. Yerel lisans yalnızca onaydan sonra kaldırılacak.",
+      "license.recoveryPrompt": "Devre dışı bırakılacak eski cihazın numarasını gir:",
+      "license.privacy": "Kopyalanan içerik yerelde kalır. Anahtar yalnızca etkinleştirmede Arcawand’ın özel lisans hizmetine gönderilir; içerik ve geçmiş gönderilmez."
     },
     ko: {
       "license.help": "Lifetime 플랜에 가입하면 이메일로 라이선스 키를 받게 됩니다. 이 컴퓨터에서 Ultimate Clipboard Pro를 활성화하려면 여기에 붙여넣으세요.",
       "license.viewPlans": "요금제 보기", "license.chooseOffer": "이 요금제 선택", "license.currentOffer": "현재 요금제", "license.activate": "라이선스 활성화",
       "license.keyPlaceholder": "여기에 라이선스 키 입력",
       "license.showKey": "라이선스 키 표시", "license.hideKey": "라이선스 키 숨기기",
-      "license.product": "제품", "license.customer": "라이선스 소유자", "license.purchasedAt": "구매일"
+      "license.product": "제품", "license.customer": "라이선스 소유자", "license.purchasedAt": "구매일",
+      "license.removeRemotePrompt": "이 기기가 비활성화되고 라이선스 자리가 확보됩니다. 로컬 라이선스는 확인 후에만 삭제됩니다.",
+      "license.recoveryPrompt": "비활성화할 이전 기기의 번호를 입력하세요:",
+      "license.privacy": "복사한 콘텐츠는 로컬에 남습니다. 키는 활성화 시 Arcawand 전용 라이선스 서비스에만 전송되며 콘텐츠와 기록은 전송되지 않습니다."
     },
     hi: {
       "license.help": "Lifetime प्लान लेने के बाद आपको ईमेल से लाइसेंस कुंजी मिलेगी। इस कंप्यूटर पर Ultimate Clipboard Pro सक्रिय करने के लिए उसे यहाँ पेस्ट करें।",
       "license.viewPlans": "ऑफ़र देखें", "license.chooseOffer": "यह ऑफ़र चुनें", "license.currentOffer": "मौजूदा ऑफ़र", "license.activate": "लाइसेंस सक्रिय करें",
       "license.keyPlaceholder": "यहाँ अपनी लाइसेंस कुंजी दर्ज करें",
       "license.showKey": "लाइसेंस कुंजी दिखाएँ", "license.hideKey": "लाइसेंस कुंजी छिपाएँ",
-      "license.product": "उत्पाद", "license.customer": "लाइसेंस धारक", "license.purchasedAt": "खरीद की तारीख"
+      "license.product": "उत्पाद", "license.customer": "लाइसेंस धारक", "license.purchasedAt": "खरीद की तारीख",
+      "license.removeRemotePrompt": "यह डिवाइस निष्क्रिय होगा और लाइसेंस स्थान खाली किया जाएगा। स्थानीय लाइसेंस पुष्टि के बाद ही हटेगा।",
+      "license.recoveryPrompt": "निष्क्रिय करने वाले पुराने डिवाइस का नंबर दर्ज करें:",
+      "license.privacy": "कॉपी की गई सामग्री स्थानीय रहती है। कुंजी केवल सक्रियण के समय Arcawand की समर्पित लाइसेंस सेवा को भेजी जाती है; सामग्री और इतिहास नहीं भेजे जाते।"
     }
   });
 
@@ -561,16 +609,153 @@
     return repaired;
   }
 
-  function formatDate(timestamp, language = "en") {
-    if (!timestamp) return translate("dates.unknown", {}, language);
+  const DATE_FORMAT_VALUES = new Set(["dmy", "mdy", "ymd"]);
+  const TIME_FORMAT_VALUES = new Set(["auto", "h12", "h24"]);
+  const dateTimeFormatterCache = new Map();
+  let dateTimeSettings = Object.freeze({ dateFormat: "dmy", timeFormat: "auto", timeZone: "auto" });
+  let supportedTimeZoneCache = null;
+
+  function supportedTimeZones() {
+    if (supportedTimeZoneCache) return [...supportedTimeZoneCache];
+    let zones = [];
     try {
-      return new Intl.DateTimeFormat(resolveDateLocale(language), {
-        dateStyle: "short",
-        timeStyle: "short",
-        timeZone: resolveLocalTimeZone()
-      }).format(new Date(timestamp));
+      zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
     } catch (error) {
-      return new Date(timestamp).toLocaleString();
+      zones = [];
+    }
+    supportedTimeZoneCache = [...new Set(["UTC", ...zones])];
+    return [...supportedTimeZoneCache];
+  }
+
+  function validTimeZone(value) {
+    if (!value || value === "auto") return "auto";
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: value }).format(0);
+      return value;
+    } catch (error) {
+      return "auto";
+    }
+  }
+
+  function normalizeDateTimePreferences(settings = {}) {
+    return {
+      dateFormat: DATE_FORMAT_VALUES.has(settings.dateFormat) ? settings.dateFormat : preferredNumericDateFormat(settings.language),
+      timeFormat: TIME_FORMAT_VALUES.has(settings.timeFormat) ? settings.timeFormat : "auto",
+      timeZone: validTimeZone(settings.timeZone)
+    };
+  }
+
+  function preferredNumericDateFormat(language = "en") {
+    try {
+      const order = new Intl.DateTimeFormat(resolveDateLocale(language), {
+        year: "numeric", month: "2-digit", day: "2-digit"
+      }).formatToParts(new Date(2001, 10, 22))
+        .map((part) => part.type)
+        .filter((type) => ["year", "month", "day"].includes(type));
+      if (order[0] === "year") return "ymd";
+      return order[0] === "month" ? "mdy" : "dmy";
+    } catch (error) {
+      return "dmy";
+    }
+  }
+
+  function configureDateTimeFormatting(settings = {}) {
+    dateTimeSettings = Object.freeze(normalizeDateTimePreferences(settings));
+    dateTimeFormatterCache.clear();
+    return dateTimeSettings;
+  }
+
+  function resolvedDateTimePreferences(overrides = {}) {
+    return normalizeDateTimePreferences(Object.assign({}, dateTimeSettings, overrides || {}));
+  }
+
+  function resolvedFormattingTimeZone(preferences) {
+    return preferences.timeZone === "auto" ? resolveLocalTimeZone() : preferences.timeZone;
+  }
+
+  function cachedDateTimeFormatter(locale, options) {
+    const key = `${locale}|${JSON.stringify(options)}`;
+    if (!dateTimeFormatterCache.has(key)) {
+      if (dateTimeFormatterCache.size >= 48) dateTimeFormatterCache.clear();
+      dateTimeFormatterCache.set(key, new Intl.DateTimeFormat(locale, options));
+    }
+    return dateTimeFormatterCache.get(key);
+  }
+
+  function timeCycleOptions(preferences) {
+    if (preferences.timeFormat === "h12") return { hour12: true };
+    if (preferences.timeFormat === "h24") return { hourCycle: "h23" };
+    return {};
+  }
+
+  function validDate(timestamp) {
+    if (timestamp === null || timestamp === undefined || timestamp === "") return null;
+    const date = new Date(timestamp);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function customNumericDate(date, locale, preferences) {
+    const parts = cachedDateTimeFormatter(locale, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: resolvedFormattingTimeZone(preferences)
+    }).formatToParts(date);
+    const values = Object.fromEntries(parts.filter((part) => ["year", "month", "day"].includes(part.type)).map((part) => [part.type, part.value]));
+    if (preferences.dateFormat === "ymd") return `${values.year}-${values.month}-${values.day}`;
+    if (preferences.dateFormat === "mdy") return `${values.month}/${values.day}/${values.year}`;
+    return `${values.day}/${values.month}/${values.year}`;
+  }
+
+  function formatLocalizedDateOnly(timestamp, language = "en", overrides = {}) {
+    const date = validDate(timestamp);
+    if (!date) return translate("dates.unknown", {}, language);
+    const preferences = resolvedDateTimePreferences(overrides);
+    const locale = resolveDateLocale(language);
+    try {
+      return customNumericDate(date, locale, preferences);
+    } catch (error) {
+      return date.toISOString().slice(0, 10);
+    }
+  }
+
+  function formatLocalizedTime(timestamp, language = "en", overrides = {}) {
+    const date = validDate(timestamp);
+    if (!date) return translate("dates.unknown", {}, language);
+    const preferences = resolvedDateTimePreferences(overrides);
+    try {
+      return cachedDateTimeFormatter(resolveDateLocale(language), Object.assign({
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: resolvedFormattingTimeZone(preferences)
+      }, timeCycleOptions(preferences))).format(date);
+    } catch (error) {
+      return date.toISOString().slice(11, 16);
+    }
+  }
+
+  function formatLocalizedDatePart(timestamp, options = {}, language = "en", overrides = {}) {
+    const date = validDate(timestamp);
+    if (!date) return translate("dates.unknown", {}, language);
+    const preferences = resolvedDateTimePreferences(overrides);
+    try {
+      return cachedDateTimeFormatter(resolveDateLocale(language), Object.assign({}, options, {
+        timeZone: resolvedFormattingTimeZone(preferences)
+      })).format(date);
+    } catch (error) {
+      return formatLocalizedDateOnly(date, language, preferences);
+    }
+  }
+
+  function formatDate(timestamp, language = "en", overrides = {}) {
+    const date = validDate(timestamp);
+    if (!date) return translate("dates.unknown", {}, language);
+    const preferences = resolvedDateTimePreferences(overrides);
+    const locale = resolveDateLocale(language);
+    try {
+      return `${customNumericDate(date, locale, preferences)}, ${formatLocalizedTime(date, language, preferences)}`;
+    } catch (error) {
+      return `${date.toISOString().slice(0, 10)}, ${date.toISOString().slice(11, 16)}`;
     }
   }
 
@@ -630,6 +815,13 @@
     repairMojibake,
     resolveDateLocale,
     resolveLocalTimeZone,
+    supportedTimeZones,
+    normalizeDateTimePreferences,
+    preferredNumericDateFormat,
+    configureDateTimeFormatting,
+    formatLocalizedDateOnly,
+    formatLocalizedTime,
+    formatLocalizedDatePart,
     formatLocalizedDate: formatDate
   });
 })(globalThis);

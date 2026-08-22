@@ -171,6 +171,10 @@
   object-fit: contain;
 }
 
+.ucp-demo-launcher-preboot__recent {
+  background: linear-gradient(145deg, #c7b8eb, #a999da);
+}
+
 .ucp-demo-desktop-only {
   margin-top: 1.4rem;
   border: 1px solid rgba(255, 255, 255, .12);

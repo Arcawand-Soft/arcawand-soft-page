@@ -24,6 +24,10 @@
     ].join(", ");
   }
 
+  function accentContrastColor() {
+    return "#ffffff";
+  }
+
   function resolveTheme(theme = "system") {
     if (theme === "light" || theme === "dark") return theme;
     try {
@@ -46,7 +50,8 @@
     try {
       const value = {
         theme: settings?.theme || "system",
-        accentColor: normalizeHexColor(settings?.accentColor || "#e50914")
+        accentColor: normalizeHexColor(settings?.accentColor || "#e50914"),
+        settingsUpdatedAt: Number(settings?.settingsUpdatedAt) || 0
       };
       global.localStorage?.setItem(CACHE_KEY, JSON.stringify(value));
     } catch (error) {
@@ -54,10 +59,19 @@
     }
   }
 
+  let latestSettings = Object.assign({}, FALLBACK_SETTINGS);
+  let latestSettingsUpdatedAt = 0;
+
   function applyTheme(settings = {}, ready = true) {
     const root = global.document?.documentElement;
     if (!root) return;
     const next = Object.assign({}, FALLBACK_SETTINGS, settings || {});
+    const settingsUpdatedAt = Number(next.settingsUpdatedAt) || 0;
+    if (settingsUpdatedAt > 0 && settingsUpdatedAt < latestSettingsUpdatedAt) return;
+    latestSettings = next;
+    if (settingsUpdatedAt > 0) {
+      latestSettingsUpdatedAt = Math.max(latestSettingsUpdatedAt, settingsUpdatedAt);
+    }
     const accent = normalizeHexColor(next.accentColor || "#e50914");
     const requestedTheme = next.theme || "system";
     const resolvedTheme = resolveTheme(requestedTheme);
@@ -65,6 +79,7 @@
     root.dataset.resolvedTheme = resolvedTheme;
     root.style.setProperty("--accent", accent);
     root.style.setProperty("--accent-rgb", hexToRgbParts(accent));
+    root.style.setProperty("--accent-contrast", accentContrastColor());
     root.style.colorScheme = resolvedTheme;
     if (ready) {
       root.dataset.themeReady = "true";
@@ -97,9 +112,15 @@
   }, 900);
 
   try {
+    global.chrome?.storage?.onChanged?.addListener?.((changes, areaName) => {
+      if (areaName !== "local" || !changes?.[SETTINGS_KEY]?.newValue) return;
+      const settings = changes[SETTINGS_KEY].newValue;
+      applyTheme(settings, true);
+      cacheSettings(settings);
+    });
     global.matchMedia?.("(prefers-color-scheme: light)")?.addEventListener?.("change", () => {
-      const currentTheme = root?.dataset.theme || cached?.theme || "system";
-      if (currentTheme === "system") applyTheme(readCachedSettings() || FALLBACK_SETTINGS, true);
+      const currentTheme = root?.dataset.theme || latestSettings.theme || "system";
+      if (currentTheme === "system") applyTheme(readCachedSettings() || latestSettings, true);
     });
   } catch (error) {
     // Older browser builds can miss addEventListener on MediaQueryList.
