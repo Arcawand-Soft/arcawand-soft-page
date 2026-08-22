@@ -29,6 +29,14 @@ for (const stylesheet of ["content/floatingPanel.css", "sidepanel/sidepanel.css"
   const canonicalCss = fs.readFileSync(path.join(extensionRoot, stylesheet), "utf8");
   assert.strictEqual(css, canonicalCss, `${stylesheet} must remain byte-identical to the extension renderer`);
 }
+const managerCss = fs.readFileSync(path.join(root, "assets", "extension-runtime", "sidepanel", "sidepanel.css"), "utf8");
+assert.match(
+  managerCss,
+  /:root:not\(\[data-resolved-theme="light"\]\) \.embedded-version-tab:not\(\.is-active\)\s*\{[\s\S]*?--version-tab-bg:\s*color-mix\(/,
+  "Inactive demo version tabs need the same lighter dark-theme surface as the extension"
+);
+const demoSidepanelHtml = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-sidepanel.html"), "utf8");
+assert(demoSidepanelHtml.includes("sidepanel.css?v=20260822-version-contrast-v4"), "The demo manager stylesheet needs a cache-busting version for the contrast fix");
 
 function contextFor(language) {
   const window = { location: { search: `?lang=${language}`, pathname: `/${language}/ultimate-clipboard-pro/demo/` } };

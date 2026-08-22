@@ -2866,6 +2866,10 @@ img.category-button-vault {
   opacity: 1;
 }
 
+:root:not([data-resolved-theme="light"]) .embedded-version-tab:not(.is-active) {
+  --version-tab-bg: color-mix(in srgb, var(--version-tab-strip-bg, #303640) 78%, #ffffff 22%);
+}
+
 :root[data-resolved-theme="light"] .embedded-version-tabs {
   background: transparent;
 }
