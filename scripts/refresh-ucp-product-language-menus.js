@@ -3,7 +3,7 @@ const path = require("path");
 const { LANGUAGE_CODES, languageMenu } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const pageKeys = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms" };
+const pageKeys = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms", sales: "ucpSales" };
 const chromeLabels = {
   en: { language: "Change language", back: "Back to ArcaWand Soft" },
   fr: { language: "Changer de langue", back: "Retour vers ArcaWand Soft" },
@@ -29,7 +29,7 @@ function refreshUcpProductLanguageMenus() {
     const base = language === "en" ? "ultimate-clipboard-pro" : path.join(language, "ultimate-clipboard-pro");
     for (const [page, pageKey] of Object.entries(pageKeys)) {
       const file = path.join(root, base, page, "index.html");
-      if (!fs.existsSync(file)) throw new Error(`Missing Ultimate Clipboard Pro route: ${file}`);
+      if (!fs.existsSync(file)) continue;
       const html = fs.readFileSync(file, "utf8");
       const labels = chromeLabels[language];
       const next = html

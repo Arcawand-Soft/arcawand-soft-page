@@ -4,6 +4,9 @@ const { generateAll: generateUcpLandingPages } = require("./generate-ucp-landing
 const { applyCurrentProductContent } = require("./update-ucp-current-product-content");
 const { languageMenu: fullLanguageMenu } = require("./language-config");
 const { refreshUcpProductLanguageMenus } = require("./refresh-ucp-product-language-menus");
+const legalContent = require("./ucp-legal-content.json");
+const { cloneFullLanguagePages } = require("./clone-full-language-pages");
+const { apply: applyLegalCompliance } = require("./apply-ucp-legal-compliance");
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
@@ -745,7 +748,7 @@ function jsonLd(data) {
 }
 function structuredData(lang, page, title, desc, canonical) {
   const l = langs[lang];
-  const pageLabel = page === "faq" ? l.faq : page === "terms" ? l.terms : page === "demo" ? l.demo : l.privacy;
+  const pageLabel = page === "faq" ? l.faq : page === "terms" ? legalLabel(lang, "popup.terms", l.terms) : page === "sales" ? legalLabel(lang, "popup.salesTerms", "Terms of sale") : page === "demo" ? l.demo : l.privacy;
   const graph = [
     {
       "@context": "https://schema.org",
@@ -843,8 +846,8 @@ function structuredData(lang, page, title, desc, canonical) {
 }
 function relFromProductPage(page) {
   return page === "presentation"
-    ? { presentation: "./", demo: "demo/", faq: "faq/", privacy: "privacy/", terms: "terms/" }
-    : { presentation: "../", demo: "../demo/", faq: "../faq/", privacy: "../privacy/", terms: "../terms/" };
+    ? { presentation: "./", demo: "demo/", faq: "faq/", privacy: "privacy/", terms: "terms/", sales: "sales/" }
+    : { presentation: "../", demo: "../demo/", faq: "../faq/", privacy: "../privacy/", terms: "../terms/", sales: "../sales/" };
 }
 function homeHrefs(depth) {
   const prefix = depth === 0 ? "" : "../".repeat(depth);
@@ -854,31 +857,37 @@ function homeHrefs(depth) {
     faq: `${prefix}ultimate-clipboard-pro/faq/`,
     privacy: `${prefix}ultimate-clipboard-pro/privacy/`,
     terms: `${prefix}ultimate-clipboard-pro/terms/`
+    ,sales: `${prefix}ultimate-clipboard-pro/sales/`
   };
 }
 function languageMenu(current, page) {
-  const pageKey = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms" }[page];
+  const pageKey = { demo: "ucpDemo", faq: "ucpFaq", privacy: "ucpPrivacy", terms: "ucpTerms", sales: "ucpSales" }[page];
   return fullLanguageMenu(current, pageKey, esc(langs[current]?.languageButtonLabel || "Change language"));
 }
 function demoPrebootLauncher() {
   return `<aside class="ucp-demo-launcher-preboot" dir="ltr" aria-hidden="true"><span class="ucp-demo-launcher-preboot__collapse"><img src="/assets/extension-runtime/assets/icons/arrow_right.png" alt=""></span><span class="ucp-demo-launcher-preboot__brand"><img src="/assets/extension-runtime/assets/icons/icon128.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility"><span aria-hidden="true">↗</span></span><span class="ucp-demo-launcher-preboot__utility"><img src="/assets/extension-runtime/assets/icons/tootls.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility ucp-demo-launcher-preboot__recent"><img src="/assets/extension-runtime/assets/icons/tools-icons/emojis.png" alt=""></span><span class="ucp-demo-launcher-preboot__utility"><img src="/assets/extension-runtime/assets/icons/screen_full_page_png.png" alt=""></span></aside>`;
 }
+function legalLabel(lang, key, fallback) {
+  return legalContent[lang]?.[key] || legalContent.en?.[key] || fallback;
+}
 function productNav(lang, active, rel) {
   const l = langs[lang];
-  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.demo}" data-ucp-nav="demo"${active === "demo" ? ' aria-current="page"' : ""}>${esc(l.demo)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(l.terms)}</a></nav>`;
+  return `<nav class="ucp-product-nav" aria-label="Ultimate Clipboard Pro"><a href="${rel.presentation}" data-ucp-nav="presentation"${active === "presentation" ? ' aria-current="page"' : ""}>${esc(l.presentation)}</a><a href="${rel.demo}" data-ucp-nav="demo"${active === "demo" ? ' aria-current="page"' : ""}>${esc(l.demo)}</a><a href="${rel.faq}" data-ucp-nav="faq"${active === "faq" ? ' aria-current="page"' : ""}>${esc(l.faq)}</a><a href="${rel.privacy}" data-ucp-nav="privacy"${active === "privacy" ? ' aria-current="page"' : ""}>${esc(l.privacy)}</a><a href="${rel.terms}" data-ucp-nav="terms"${active === "terms" ? ' aria-current="page"' : ""}>${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}" data-ucp-nav="sales"${active === "sales" ? ' aria-current="page"' : ""}>${esc(legalLabel(lang, "popup.salesTerms", "Terms of sale"))}</a></nav>`;
 }
 function staticProductPage(lang, page) {
   const l = langs[lang];
   const rel = relFromProductPage(page);
-  const title = page === "faq" ? l.faqTitle : page === "terms" ? l.termsTitle : page === "demo" ? l.demoTitle : l.privacyTitle;
-  const desc = page === "faq" ? l.faqDesc : page === "terms" ? l.termsDesc : page === "demo" ? l.demoDesc : l.privacyDesc;
-  const kicker = page === "faq" ? l.faqKicker : page === "terms" ? l.termsKicker : page === "demo" ? l.demoKicker : l.privacyKicker;
-  const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : page === "demo" ? l.demoLead : l.privacyLead;
+  const title = page === "faq" ? l.faqTitle : page === "terms" ? l.termsTitle : page === "sales" ? legalLabel(lang, "popup.salesTermsTitle", "Ultimate Clipboard Pro Terms of Sale") : page === "demo" ? l.demoTitle : l.privacyTitle;
+  const desc = page === "faq" ? l.faqDesc : page === "terms" ? l.termsDesc : page === "sales" ? legalLabel(lang, "popup.salesTerms.01", "Terms governing the purchase of Ultimate Clipboard Pro.") : page === "demo" ? l.demoDesc : l.privacyDesc;
+  const kicker = page === "faq" ? l.faqKicker : page === "terms" ? l.termsKicker : page === "sales" ? legalLabel(lang, "popup.salesTerms", "Terms of sale") : page === "demo" ? l.demoKicker : l.privacyKicker;
+  const lead = page === "faq" ? l.faqLead : page === "terms" ? l.termsLead : page === "sales" ? legalLabel(lang, "popup.salesTerms.02", "Commercial terms for the Pro lifetime license.") : page === "demo" ? l.demoLead : l.privacyLead;
   const canonical = absProduct(lang, page);
   const main = page === "demo"
     ? `<section class="ucp-demo-intro"><article>${demoFeatureList(lang)}${installExtensionButton(lang)}</article></section><div class="ucp-demo-root" data-ucp-demo-lang="${lang}"></div>`
     : page === "faq"
     ? `<div class="ucp-faq-list">${l.faqItems.map(([q, a]) => `<article class="ucp-faq-item"><h2>${esc(q)}</h2><p>${esc(a)}</p></article>`).join("\n")}</div>`
+    : page === "sales"
+    ? `<article class="ucp-page-content"><p>${esc(l.updated)}</p><ol class="ucp-legal-list">${Array.from({ length: 14 }, (_, index) => `<li><p>${esc(legalLabel(lang, `popup.salesTerms.${String(index + 1).padStart(2, "0")}`, ""))}</p></li>`).join("")}</ol></article>`
     : `<article class="ucp-page-content"><p>${esc(l.updated)}</p>${(page === "terms" ? l.termsSections : l.privacySections).map(([h, ps]) => `<h2>${esc(h)}</h2>${ps.map((p) => `<p>${esc(p)}</p>`).join("")}`).join("\n")}</article>`;
   return `<!doctype html>
 <html lang="${l.html}">
@@ -927,7 +936,7 @@ ${languageMenu(lang, page)}
 ${productNav(lang, page, rel)}
 <main class="ucp-static-main">
 <section class="ucp-static-hero"><span class="ucp-static-kicker">${esc(kicker)}</span><h1>${productHeading(lang, page)}</h1><p>${esc(lead)}</p></section>
-<section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(l.terms)}</a></nav></aside></section>
+<section class="ucp-page-grid${page === "demo" ? " ucp-demo-page-grid" : ""}"><div>${main}</div><aside class="ucp-side-card"><h2>${esc(l.sideTitle)}</h2><p>${esc(l.sideText)}</p><nav><a href="${rel.presentation}">${esc(l.presentation)}</a><a href="${rel.demo}">${esc(l.demo)}</a><a href="${rel.faq}">${esc(l.faq)}</a><a href="${rel.privacy}">${esc(l.privacy)}</a><a href="${rel.terms}">${esc(legalLabel(lang, "popup.terms", l.terms))}</a><a href="${rel.sales}">${esc(legalLabel(lang, "popup.salesTerms", "Terms of sale"))}</a></nav></aside></section>
 </main>
 <footer class="ucp-static-footer"><span>${esc(l.footer)}</span><span><a href="mailto:contact@arcawand-soft.com">contact@arcawand-soft.com</a></span></footer>
 </body>
@@ -964,7 +973,7 @@ function patchSiteJs() {
 }
 function writeProductPages() {
   for (const lang of Object.keys(langs)) {
-    for (const page of ["demo", "faq", "privacy", "terms"]) {
+    for (const page of ["demo", "faq", "privacy", "terms", "sales"]) {
       const dir = path.join(root, productBase(lang), page);
       fs.mkdirSync(dir, { recursive: true });
       fs.writeFileSync(path.join(dir, "index.html"), staticProductPage(lang, page), "utf8");
@@ -974,7 +983,7 @@ function writeProductPages() {
 function patchSitemap() {
   const file = path.join(root, "sitemap.xml");
   let content = fs.readFileSync(file, "utf8");
-  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "demo"), absProduct(lang, "faq"), absProduct(lang, "privacy"), absProduct(lang, "terms")]);
+  const urls = Object.keys(langs).flatMap((lang) => [absProduct(lang, "demo"), absProduct(lang, "faq"), absProduct(lang, "privacy"), absProduct(lang, "terms"), absProduct(lang, "sales")]);
   const additions = urls.filter((url) => !content.includes(`<loc>${url}</loc>`)).map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>`).join("\n");
   if (additions) content = content.replace("</urlset>", `${additions}\n</urlset>`);
   fs.writeFileSync(file, content, "utf8");
@@ -993,3 +1002,7 @@ refreshUcpProductLanguageMenus();
 ].forEach(([file, lang, depth]) => patchSiteNav(path.join(root, file), lang, depth));
 patchSiteJs();
 patchSitemap();
+cloneFullLanguagePages();
+generateUcpLandingPages();
+applyLegalCompliance();
+refreshUcpProductLanguageMenus();

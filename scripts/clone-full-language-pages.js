@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { LANGUAGES, languageByCode, languageMenu, localizedPath, localizedUrl } = require("./language-config");
+const legalContent = require("./ucp-legal-content.json");
 
 const root = path.resolve(__dirname, "..");
 const baseLanguages = new Set(["en", "fr", "es", "it", "de"]);
@@ -15,6 +16,7 @@ const pageKeys = [
   "ucpFaq",
   "ucpPrivacy",
   "ucpTerms",
+  "ucpSales",
   "figgliz",
   "figglizFaq",
   "figglizStats",
@@ -31,6 +33,7 @@ const sourcePaths = {
   ucpFaq: "ultimate-clipboard-pro/faq/index.html",
   ucpPrivacy: "ultimate-clipboard-pro/privacy/index.html",
   ucpTerms: "ultimate-clipboard-pro/terms/index.html",
+  ucpSales: "ultimate-clipboard-pro/sales/index.html",
   figgliz: "figgliz/index.html",
   figglizFaq: "figgliz/faq/index.html",
   figglizStats: "figgliz/stats/index.html",
@@ -181,6 +184,14 @@ function pack(code) {
   return seo[code] || fallbackSeo[code] || buildGenericSeo(code);
 }
 
+function pageSeo(code, pageKey) {
+  if (pageKey === "ucpSales") {
+    const dictionary = legalContent[code] || legalContent.en;
+    return [dictionary["popup.salesTermsTitle"], dictionary["popup.salesTerms.01"]];
+  }
+  return pack(code)[pageKey];
+}
+
 function readSource(pageKey) {
   return fs.readFileSync(path.join(root, sourcePaths[pageKey]), "utf8");
 }
@@ -214,7 +225,7 @@ function patchUcpBundleAssets(content) {
 }
 
 function replaceTitleAndMeta(content, code, pageKey) {
-  const [title, desc] = pack(code)[pageKey];
+  const [title, desc] = pageSeo(code, pageKey);
   const canonical = localizedUrl(code, pageKey);
   return content
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
@@ -267,7 +278,7 @@ function patchLanguageState(content, code, pageKey) {
 }
 
 function patchJsonLd(content, code, pageKey) {
-  const [title, desc] = pack(code)[pageKey];
+  const [title, desc] = pageSeo(code, pageKey);
   const canonical = localizedUrl(code, pageKey);
   return content.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, () => {
     const data = {
@@ -347,12 +358,15 @@ ${rows.join("\n")}
 `, "utf8");
 }
 
-for (const language of targetLanguages) {
-  for (const pageKey of pageKeys) clonePage(language.code, pageKey);
+function cloneFullLanguagePages() {
+  for (const language of targetLanguages) {
+    for (const pageKey of pageKeys) clonePage(language.code, pageKey);
+  }
+  for (const language of LANGUAGES) {
+    for (const pageKey of pageKeys) patchExistingPage(language.code, pageKey);
+  }
+  writeSitemap();
 }
 
-for (const language of LANGUAGES) {
-  for (const pageKey of pageKeys) patchExistingPage(language.code, pageKey);
-}
-
-writeSitemap();
+if (require.main === module) cloneFullLanguagePages();
+module.exports = { cloneFullLanguagePages };

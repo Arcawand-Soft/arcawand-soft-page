@@ -34,6 +34,7 @@ function localizedUrl(code, pageKey = "home") {
     ucpFaq: "ultimate-clipboard-pro/faq/",
     ucpPrivacy: "ultimate-clipboard-pro/privacy/",
     ucpTerms: "ultimate-clipboard-pro/terms/",
+    ucpSales: "ultimate-clipboard-pro/sales/",
     figgliz: "figgliz/",
     figglizFaq: "figgliz/faq/",
     figglizStats: "figgliz/stats/",
