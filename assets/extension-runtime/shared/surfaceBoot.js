@@ -62,6 +62,7 @@
     await loadScript("shared/textVisuals.js");
     if (surface === "welcome") await loadScript("shared/backup.js");
     await ensureLocaleLoaded(language);
+    if (surface === "popup" || surface === "manager") await loadScript(`shared/legalLocales/${language}.js`);
     await loadScript("shared/cryptoWarningLocales.js");
     await loadScript("shared/locales/categorySlugs.js");
     await loadScript("shared/i18n.js");
@@ -114,7 +115,8 @@
         loadScript("shared/aiCopyAdapters.js"),
         loadScript("shared/captureDedupe.js"),
         loadScript("shared/pageMarkdownCapture.js"),
-        loadScript("shared/quickSettingsMenu.js")
+        loadScript("shared/quickSettingsMenu.js"),
+        loadScript("shared/codeSyntaxHighlighter.js")
       ]);
       await loadScript("content/contentScript.js");
       await loadScript(entry);
@@ -134,6 +136,7 @@
       loadScript("shared/defaultImageCategories.js"),
       loadScript("shared/defaultDevCategories.js"),
       loadScript("shared/codeDetector.js"),
+      loadScript("shared/codeSyntaxHighlighter.js"),
       loadScript("shared/cryptoSensitiveDetector.js"),
       loadScript("shared/sourceLocators.js"),
       loadScript("shared/settingsRepository.js"),

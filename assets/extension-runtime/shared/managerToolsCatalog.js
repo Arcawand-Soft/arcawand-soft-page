@@ -193,6 +193,7 @@
       });
       managerToolsRuntimePromise = inject("shared/toolUpgradeLocales.js")
         .then(() => inject("shared/emojiUnicodeCatalog.js"))
+        .then(() => inject("shared/specialCharacterCatalog.js"))
         .then(() => inject("shared/tools.js")).finally(() => {
         if (typeof toolApi.getTools !== "function" || typeof toolApi.runTool !== "function") managerToolsRuntimePromise = null;
       });

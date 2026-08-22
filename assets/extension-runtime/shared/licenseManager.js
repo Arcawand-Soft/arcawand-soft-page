@@ -192,7 +192,6 @@
       dodoEnv: settings.licenseDodoEnv || settings.dodoEnv || config.env,
       currentEnv: config.env,
       paymentLink: config.paymentLink,
-      apiBase: config.apiBase,
       appId: config.appId,
       planId: config.planId
       , entitlementId: settings.licenseEntitlementId || ""

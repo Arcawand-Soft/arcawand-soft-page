@@ -1002,6 +1002,8 @@ $|dollar sign|symbole dollar|Dollarzeichen|simbolo dolar|simbolo dollaro||curren
 
   function getSpecialCharacterLibrary(locale = "en") {
     const lang = String(locale || "en").slice(0, 2).toLowerCase();
+    const catalog = global.MCP?.getSpecialCharacterCatalog?.(lang);
+    if (Array.isArray(catalog) && catalog.length) return catalog;
     return SPECIAL_CHARACTER_ROWS.split(/\n+/)
       .map((row, index) => {
         const [symbol, en, fr, de, es, it, languages = "", tags = ""] = row.split("|");

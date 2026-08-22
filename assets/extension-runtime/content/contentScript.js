@@ -3147,7 +3147,7 @@ const floatingToolHistory = new Map();
   }
 
   function injectFloatingPanel(options = {}) {
-    const editorVersion = "unified-text-editor-v5";
+    const editorVersion = "unified-text-editor-v6";
     const existingHost = document.getElementById("ucp-demo-floating-host");
     if (existingHost) {
       const existingEditor = existingHost.shadowRoot?.querySelector("[data-role='editor']");
@@ -3457,7 +3457,7 @@ const floatingToolHistory = new Map();
     const modal = document.createElement("div");
     modal.className = "mcp-editor-modal";
     modal.dataset.role = "editor";
-    modal.dataset.editorVersion = "unified-text-editor-v5";
+    modal.dataset.editorVersion = "unified-text-editor-v6";
     modal.hidden = true;
     modal.innerHTML = [
       "<div class=\"mcp-search-backdrop\" data-action=\"close-editor\"></div>",
@@ -4142,6 +4142,17 @@ const floatingToolHistory = new Map();
     return (state.devItems || []).filter((item) => !pendingId || item.id !== pendingId);
   }
 
+  function renderCodeSyntaxSafely(element, value, languageId = "dev-general") {
+    if (!element) return false;
+    const source = String(value ?? "");
+    try {
+      if (globalThis.MCP?.renderCodeSyntax?.(element, source, languageId)) return true;
+    } catch (_) {}
+    element.textContent = source;
+    element.classList.add("ucp-code-syntax");
+    return false;
+  }
+
   function renderTextLikePanelItems(list, items, mediaType = "text") {
     const query = shadowRoot.querySelector("[data-role='search']")?.value || "";
     if (!items.length) {
@@ -4174,7 +4185,8 @@ const floatingToolHistory = new Map();
       const fullPreviewText = String(displayItem.content || "").trim()
         ? String(displayItem.content || "")
         : stripGeneratedPreviewEllipsis(displayItem.preview || "");
-      previewText.textContent = fullPreviewText;
+      if (mediaType === "dev") renderCodeSyntaxSafely(previewText, fullPreviewText, displayItem.languageId || item.languageId);
+      else previewText.textContent = fullPreviewText;
       preview.appendChild(previewText);
       if (shouldScrollPreview(fullPreviewText)) {
         preview.classList.add("is-scrollable");
@@ -4358,7 +4370,8 @@ const floatingToolHistory = new Map();
       const fullPreviewText = String(displayItem.content || "").trim()
         ? String(displayItem.content || "")
         : stripGeneratedPreviewEllipsis(displayItem.preview || "");
-      previewText.textContent = fullPreviewText;
+      if (mediaType === "dev") renderCodeSyntaxSafely(previewText, fullPreviewText, displayItem.languageId || item.languageId);
+      else previewText.textContent = fullPreviewText;
       if (preview) {
         stopPreviewAutoScroll(preview);
         preview.classList.toggle("is-scrollable", shouldScrollPreview(fullPreviewText));
@@ -8623,8 +8636,8 @@ const floatingToolHistory = new Map();
   function createVaultCategoryIcon() {
     const img = document.createElement("img");
     img.className = "category-button-vault";
-    const suffix = resolvedThemeForIcons() === "light" ? "lightmod" : "darkmod";
-    img.src = chrome.runtime.getURL(`assets/icons/locker-${suffix}.png`);
+    img.src = chrome.runtime.getURL(`assets/icons/${themedIconName("locker.png")}`);
+    img.dataset.themedIcon = "locker.png";
     img.alt = "";
     img.setAttribute("aria-hidden", "true");
     return img;
@@ -9099,8 +9112,8 @@ const floatingToolHistory = new Map();
     title.className = "mcp-vault-title";
     const icon = document.createElement("img");
     icon.className = "mcp-vault-title-icon";
-    const suffix = resolvedThemeForIcons() === "light" ? "lightmod" : "darkmod";
-    icon.src = chrome.runtime.getURL(`assets/icons/locker-${suffix}.png`);
+    icon.src = chrome.runtime.getURL(`assets/icons/${themedIconName("locker.png")}`);
+    icon.dataset.themedIcon = "locker.png";
     icon.alt = "";
     icon.setAttribute("aria-hidden", "true");
     const label = document.createElement("span");
@@ -9166,7 +9179,7 @@ const floatingToolHistory = new Map();
     const probability = Math.max(0, Math.min(100, Math.round(Number(detection.confidence || item.detectionConfidence || 0) * 100)));
     modal.querySelector("[data-role='dev-suggestion-title']").textContent = tr("dev.suggestionTitle");
     animateDevMatch(modal, probability, language);
-    modal.querySelector("[data-role='dev-suggestion-preview']").textContent = String(item.content || "");
+    renderCodeSyntaxSafely(modal.querySelector("[data-role='dev-suggestion-preview']"), String(item.content || ""), detection.languageId || item.languageId);
     modal.querySelector("[data-action='accept-dev-suggestion']").textContent = tr("dev.acceptSuggestion", { language });
     const other = modal.querySelector("[data-action='choose-dev-language']");
     if (other) {
@@ -9244,7 +9257,7 @@ const floatingToolHistory = new Map();
     modal.dataset.stage = "text-choice";
     modal.querySelector("[data-role='dev-suggestion-title']").textContent = tr("dev.captureAsTextTitle");
     modal.querySelector("[data-role='dev-suggestion-text']").textContent = tr("dev.captureAsTextText");
-    modal.querySelector("[data-role='dev-suggestion-preview']").textContent = String(item.content || "");
+    renderCodeSyntaxSafely(modal.querySelector("[data-role='dev-suggestion-preview']"), String(item.content || ""), item.languageId);
     const primary = modal.querySelector("[data-action='accept-dev-suggestion'], [data-action='choose-dev-subcategory'], [data-action='capture-dev-text-general']");
     const other = modal.querySelector("[data-action='choose-dev-language'], [data-action='capture-dev-text-classify']");
     const asText = modal.querySelector("[data-action='capture-dev-as-text']");
@@ -9310,7 +9323,7 @@ const floatingToolHistory = new Map();
     const language = category ? categoryLabel(category) : item.languageName || item.categoryName || "General";
     modal.querySelector("[data-role='dev-suggestion-title']").textContent = tr("dev.subcategoryPromptTitle");
     modal.querySelector("[data-role='dev-suggestion-text']").textContent = tr("dev.subcategoryPromptText", { language });
-    modal.querySelector("[data-role='dev-suggestion-preview']").textContent = String(item.content || "");
+    renderCodeSyntaxSafely(modal.querySelector("[data-role='dev-suggestion-preview']"), String(item.content || ""), item.languageId || category?.id);
     const primary = modal.querySelector("[data-action='accept-dev-suggestion']");
     const secondary = modal.querySelector("[data-action='reject-dev-suggestion']");
     const other = modal.querySelector("[data-action='choose-dev-language']");
@@ -10341,7 +10354,10 @@ const floatingToolHistory = new Map();
         : (item.__versionNumber || 1) === 1);
     const versionHeader = overlaySearchVersionHeader(item);
     const content = document.createElement("p");
-    content.textContent = displayItem.content;
+    if (mediaType === "dev") {
+      content.className = "mcp-search-detail-code";
+      renderCodeSyntaxSafely(content, displayItem.content || displayItem.preview || "", displayItem.languageId || sourceItem.languageId);
+    } else content.textContent = displayItem.content;
     const actions = document.createElement("div");
     actions.className = "mcp-detail-actions";
     actions.append(
@@ -10554,11 +10570,13 @@ const floatingToolHistory = new Map();
       "erase.png",
       "reverse.png",
       "go_pin.png",
-      "go_unpin.png"
+      "go_unpin.png",
+      "locker.png"
     ]);
     if (!themedIcons.has(fileName)) return fileName;
     const suffix = options.forceDarkIcon ? "darkmod" : resolvedThemeForIcons() === "light" ? "lightmod" : "darkmod";
-    return fileName.replace(/\.png$/i, `_${suffix}.png`);
+    const separator = fileName === "locker.png" ? "-" : "_";
+    return fileName.replace(/\.png$/i, `${separator}${suffix}.png`);
   }
 
   function resolvedThemeForIcons() {
@@ -10572,9 +10590,15 @@ const floatingToolHistory = new Map();
     editingItem.mediaType = mediaType;
     const editor = shadowRoot.querySelector("[data-role='editor']");
     editor.hidden = false;
+    const editorCard = shadowRoot.querySelector("[data-role='editor-card']");
+    editorCard?.classList.toggle("is-code-editor", mediaType === "dev");
     translateFloatingUi();
     shadowRoot.querySelector("[data-role='editor-title']").value = item.title || "";
     shadowRoot.querySelector("[data-role='editor-content']").value = item.content || "";
+    globalThis.MCP.setCodeSyntaxEditor?.(shadowRoot.querySelector("[data-role='editor-content']"), {
+      enabled: mediaType === "dev",
+      language: item.languageId
+    });
     shadowRoot.querySelector("[data-role='editor-note']").value = item.note || "";
     shadowRoot.querySelector("[data-role='editor-error']").textContent = "";
     editorCategorySelection = item.categoryId || (mediaType === "dev" ? "dev-general" : "general");
@@ -11190,7 +11214,9 @@ const floatingToolHistory = new Map();
     const panel = shadowRoot?.querySelector(".mcp-panel");
     const isReduced = Boolean(panel?.classList.contains("is-minimized"));
     const isPro = globalThis.MCP.isProPlan ? globalThis.MCP.isProPlan(state.settings) : false;
-    badge.hidden = !isPro || isReduced;
+    const icon = badge.querySelector("img");
+    if (icon) icon.src = chrome.runtime.getURL(`assets/icons/${isPro ? "pro-icon.png" : "no-pro-icon.png"}`);
+    badge.hidden = isReduced;
   }
 
   function updateFirstUseButtonPrompts() {

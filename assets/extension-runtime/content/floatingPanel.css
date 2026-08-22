@@ -22,6 +22,15 @@
   --list-fade-stop: var(--floating-list-bg);
   --menu-button-bg: #303947;
   --control-fill: rgba(219, 230, 242, 0.09);
+  --syntax-comment: #8b9aaa;
+  --syntax-keyword: #c792ea;
+  --syntax-string: #ecc48d;
+  --syntax-number: #f78c6c;
+  --syntax-function: #82aaff;
+  --syntax-type: #ffcb6b;
+  --syntax-operator: #89ddff;
+  --syntax-tag: #f07178;
+  --syntax-attribute: #c3e88d;
   --utility-action-bg: #38475a;
   --utility-action-hover: #465a72;
   --utility-action-border: rgba(255, 255, 255, 0.16);
@@ -85,6 +94,15 @@
   --list-fade-stop: var(--panel-solid);
   --menu-button-bg: #e8e8e2;
   --control-fill: rgba(17, 24, 39, 0.09);
+  --syntax-comment: #5f6b76;
+  --syntax-keyword: #7c3aed;
+  --syntax-string: #8a4b08;
+  --syntax-number: #b42318;
+  --syntax-function: #135fb4;
+  --syntax-type: #8a5200;
+  --syntax-operator: #036b79;
+  --syntax-tag: #b4234d;
+  --syntax-attribute: #347318;
   --button-neutral-bg: #e3e5e8;
   --button-neutral-hover: #d8dbe0;
   --button-neutral-border: rgba(17, 17, 17, 0.18);
@@ -515,7 +533,8 @@ button:active,
   height: 13px;
 }
 
-img[src$="pro-icon.png"] {
+img[src$="/pro-icon.png"],
+img[src$="/no-pro-icon.png"] {
   filter: drop-shadow(1.25px 0 0 #fff) drop-shadow(-1.25px 0 0 #fff) drop-shadow(0 1.25px 0 #fff) drop-shadow(0 -1.25px 0 #fff);
 }
 
@@ -1674,7 +1693,7 @@ img[src$="pro-icon.png"] {
   letter-spacing: 0.02em;
 }
 
-.mcp-pro-plan-card.is-pro > .mcp-pro-plan-head > strong img {
+.mcp-pro-plan-title-icon {
   width: 46px;
   height: 46px;
   object-fit: contain;
@@ -1727,6 +1746,7 @@ img[src$="pro-icon.png"] {
 
 .mcp-pro-plan-price {
   display: grid;
+  align-self: start;
   justify-items: end;
   gap: 2px;
   flex: 0 0 auto;
@@ -5177,6 +5197,28 @@ img[src$="pro-icon.png"] {
   transition: none !important;
 }
 
+.ucp-code-syntax {
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-variant-ligatures: none;
+  tab-size: 2;
+}
+
+.ucp-syntax-comment { color: var(--syntax-comment); font-style: italic; }
+.ucp-syntax-keyword, .ucp-syntax-boolean { color: var(--syntax-keyword); font-weight: 700; }
+.ucp-syntax-string { color: var(--syntax-string); }
+.ucp-syntax-number { color: var(--syntax-number); }
+.ucp-syntax-function { color: var(--syntax-function); }
+.ucp-syntax-type { color: var(--syntax-type); }
+.ucp-syntax-operator { color: var(--syntax-operator); }
+.ucp-syntax-tag { color: var(--syntax-tag); }
+.ucp-syntax-attribute { color: var(--syntax-attribute); }
+.ucp-syntax-punctuation { color: color-mix(in srgb, currentColor 72%, var(--muted)); }
+
+.mcp-search-detail-code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 :host([data-resolved-theme="light"]) .mcp-item {
   --mcp-item-bg: var(--panel-soft);
   --mcp-preview-fade-bg: var(--panel-soft);
@@ -6882,6 +6924,71 @@ img.category-button-vault {
 .manager-editor-card [data-role="editor-content"] {
   min-height: 0;
   height: 100%;
+}
+
+.ucp-code-editor-shell {
+  --editor-code-font-family: "Cascadia Mono", "Consolas", monospace;
+  --editor-code-font-size: 13px;
+  --editor-code-line-height: 19px;
+  --editor-code-font-weight: 400;
+  --editor-code-letter-spacing: 0;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.ucp-code-editor-shell > .ucp-code-editor-highlight,
+.ucp-code-editor-shell > [data-role="editor-content"] {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.ucp-code-editor-highlight {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: hidden;
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  pointer-events: none;
+  white-space: pre;
+  overflow-wrap: normal;
+  word-break: normal;
+  font-family: var(--editor-code-font-family);
+  font-size: var(--editor-code-font-size);
+  font-weight: var(--editor-code-font-weight);
+  line-height: var(--editor-code-line-height);
+  letter-spacing: var(--editor-code-letter-spacing);
+  font-variant-ligatures: none;
+}
+
+.ucp-code-editor-shell.is-syntax-editor > [data-role="editor-content"] {
+  position: relative;
+  z-index: 1;
+  color: transparent;
+  caret-color: var(--text);
+  background: transparent;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--editor-code-font-family);
+  font-size: var(--editor-code-font-size);
+  font-weight: var(--editor-code-font-weight);
+  font-variant-ligatures: none;
+  line-height: var(--editor-code-line-height);
+  letter-spacing: var(--editor-code-letter-spacing);
+  overflow-wrap: normal;
+  tab-size: 2;
+  white-space: pre;
+  word-break: normal;
+}
+
+.ucp-code-editor-shell.is-syntax-editor > [data-role="editor-content"]::selection {
+  background: color-mix(in srgb, var(--accent) 42%, transparent);
 }
 
 .manager-editor-layout {

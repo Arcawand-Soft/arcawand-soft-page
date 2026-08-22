@@ -1,5 +1,5 @@
 (function initBackup(global) {
-  const BACKUP_VERSION = 2;
+  const BACKUP_VERSION = 3;
   const BACKUP_APP = "Ultimate Clipboard Pro";
   const MAX_BACKUP_FILE_BYTES = 512 * 1024 * 1024;
   const MAX_BACKUP_MANIFEST_BYTES = 256 * 1024 * 1024;
@@ -40,7 +40,14 @@
   const PORTABLE_SESSION_SETTINGS_KEYS = [
     "floatingPanelOpen",
     "floatingPanelOpenedAt",
-    "floatingPanelManualClosedAt"
+    "floatingPanelManualClosedAt",
+    "privateMode",
+    "privateModeUntil",
+    "activeDisplayIds",
+    "welcomePageCompleted",
+    "onboardingCompleted",
+    "floatingLauncherOpenedOnce",
+    "managerOpenedOnce"
   ];
 
   const PORTABLE_DRIVE_SETTINGS_KEYS = [
@@ -140,8 +147,16 @@
       driveSyncEnabled: false,
       floatingPanelOpen: false,
       floatingPanelOpenedAt: 0,
-      floatingPanelManualClosedAt: 0
+      floatingPanelManualClosedAt: 0,
+      privateMode: false,
+      privateModeUntil: null,
+      activeDisplayIds: [],
+      welcomePageCompleted: false,
+      onboardingCompleted: false,
+      floatingLauncherOpenedOnce: false,
+      managerOpenedOnce: false
     });
+    next.settingsFieldUpdatedAt = sanitizePortableSettingsClocks(next.settingsFieldUpdatedAt);
     return stripDeprecatedSettings(next);
   }
 
@@ -156,6 +171,13 @@
     PORTABLE_SESSION_SETTINGS_KEYS.forEach((key) => {
       delete next[key];
     });
+    next.settingsFieldUpdatedAt = sanitizePortableSettingsClocks(next.settingsFieldUpdatedAt);
+    return next;
+  }
+
+  function sanitizePortableSettingsClocks(clocks = {}) {
+    const next = Object.assign({}, clocks && typeof clocks === "object" && !Array.isArray(clocks) ? clocks : {});
+    [...LICENSE_RESTORE_KEYS, ...PORTABLE_DRIVE_SETTINGS_KEYS, ...PORTABLE_SESSION_SETTINGS_KEYS].forEach((key) => delete next[key]);
     return next;
   }
 
@@ -313,7 +335,7 @@
 
   function prepareBackupStorage(storage = {}, overrides = {}) {
     const keys = global.MCP?.STORAGE_KEYS || {};
-    const nextStorage = normalizePortableBackupStorage(stripVaultStorageForPortableBackup(Object.assign({}, storage || {})));
+    const nextStorage = stripVaultStorageForPortableBackup(normalizePortableBackupStorage(storage));
     const settingsOverride = overrides.settings || {};
     nextStorage[keys.SETTINGS] = normalizePortableBackupSettings(Object.assign({}, nextStorage[keys.SETTINGS] || {}, settingsOverride));
     return nextStorage;
@@ -344,14 +366,37 @@
 
   function normalizePortableBackupStorage(storage = {}) {
     const keys = global.MCP?.STORAGE_KEYS || {};
-    const nextStorage = Object.assign({}, storage || {});
-    [
-      keys.DRIVE_SYNC_META,
-      keys.INSTALLATION_ID,
-      keys.VAULT_AUTH
-    ].filter(Boolean).forEach((key) => {
-      delete nextStorage[key];
+    const source = storage && typeof storage === "object" && !Array.isArray(storage) ? storage : {};
+    const nextStorage = {};
+    const portableKeys = [
+      keys.SETTINGS,
+      keys.ITEMS,
+      keys.CATEGORIES,
+      keys.DELETED_DEFAULT_CATEGORIES,
+      keys.IMAGE_ITEMS,
+      keys.IMAGE_CATEGORIES,
+      keys.DELETED_DEFAULT_IMAGE_CATEGORIES,
+      keys.DEV_ITEMS,
+      keys.DEV_CATEGORIES,
+      keys.SNIPPETS,
+      keys.TEMPLATES,
+      keys.PURGE_MARKERS,
+      keys.DRIVE_TOMBSTONES,
+      keys.MANAGER_VIEW_STATE,
+      keys.PREMIUM_CURRENCY
+    ].filter(Boolean);
+    portableKeys.forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(source, key)) nextStorage[key] = source[key];
     });
+    const sourceLocatorPrefix = keys.SOURCE_LOCATOR_PREFIX || "mcp_source_locator_";
+    Object.keys(source).forEach((key) => {
+      if (key.startsWith(sourceLocatorPrefix) && key.length > sourceLocatorPrefix.length && key.length <= sourceLocatorPrefix.length + 256) {
+        nextStorage[key] = source[key];
+      }
+    });
+    if (keys.SETTINGS && Object.prototype.hasOwnProperty.call(nextStorage, keys.SETTINGS)) {
+      nextStorage[keys.SETTINGS] = normalizePortableBackupSettings(nextStorage[keys.SETTINGS]);
+    }
     [
       keys.ITEMS,
       keys.IMAGE_ITEMS,
@@ -552,7 +597,34 @@
     if (!payload || typeof payload !== "object") throw new Error("Invalid backup file.");
     const storage = payload.storage || payload.storageData || payload.data;
     if (!storage || typeof storage !== "object" || Array.isArray(storage)) throw new Error("Invalid backup storage.");
+    assertSafeBackupValue(storage);
     return storage;
+  }
+
+  function assertSafeBackupValue(root) {
+    const budget = { nodes: 0 };
+    const visit = (value, depth = 0) => {
+      budget.nodes += 1;
+      if (budget.nodes > 500000 || depth > 20) throw new Error("Invalid backup file.");
+      if (value === null || ["string", "number", "boolean"].includes(typeof value)) {
+        if (typeof value === "number" && !Number.isFinite(value)) throw new Error("Invalid backup file.");
+        return;
+      }
+      if (Array.isArray(value)) {
+        if (value.length > 100000) throw new Error("Invalid backup file.");
+        value.forEach((entry) => visit(entry, depth + 1));
+        return;
+      }
+      if (!value || typeof value !== "object") throw new Error("Invalid backup file.");
+      const entries = Object.entries(value);
+      if (entries.length > 100000) throw new Error("Invalid backup file.");
+      entries.forEach(([key, entry]) => {
+        if (["__proto__", "prototype", "constructor"].includes(key) || key.length > 512) throw new Error("Invalid backup file.");
+        visit(entry, depth + 1);
+      });
+    };
+    visit(root);
+    return root;
   }
 
   function sameStoredValue(first, second) {
@@ -1266,6 +1338,7 @@
     preserveLocalInterfaceStateForRestore,
     reapplyLocalInterfaceSnapshotAfterRestore,
     preserveLocalDriveStateForRestore,
+    assertSafeBackupValue,
     normalizePortableBackupStorage,
     stripVaultStorageForPortableBackup
   });

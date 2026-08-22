@@ -10,6 +10,17 @@ const languages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "
 const runtimeSource = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-runtime.js"), "utf8");
 assert.ok(runtimeSource.includes("global.MCP.DEFAULT_EXCLUDED_DEMO_URLS = []"), "Demo runtime must bypass extension-only demo URL exclusions");
 
+const syntaxHighlighter = fs.readFileSync(path.join(root, "assets", "extension-runtime", "shared", "codeSyntaxHighlighter.js"), "utf8");
+const surfaceBoot = fs.readFileSync(path.join(root, "assets", "extension-runtime", "shared", "surfaceBoot.js"), "utf8");
+const demoContentScript = fs.readFileSync(path.join(root, "assets", "extension-runtime", "content", "contentScript.js"), "utf8");
+assert(syntaxHighlighter.includes("renderCodeSyntax"), "The demo must ship the canonical syntax-highlighting engine");
+assert(surfaceBoot.includes("shared/codeSyntaxHighlighter.js"), "The demo surface boot must load syntax highlighting before rendering cards");
+assert.match(
+  demoContentScript,
+  /mediaType === "dev"[\s\S]{0,180}renderCodeSyntaxSafely\(previewText, fullPreviewText/,
+  "Switching a demo code card between V1-V10 must preserve syntax highlighting"
+);
+
 const proIcon = fs.readFileSync(path.join(root, "assets", "extension-runtime", "assets", "icons", "pro-icon.png"));
 const canonicalProIcon = fs.readFileSync(path.join(extensionRoot, "assets", "icons", "pro-icon.png"));
 assert.deepStrictEqual(proIcon, canonicalProIcon, "Demo must use the extension's current Pro badge asset");

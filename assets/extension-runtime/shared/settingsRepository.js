@@ -39,10 +39,12 @@
     async function saveSettings(settings) {
       const stored = await read(storageKey).catch(() => ({}));
       const previous = stored?.[storageKey] || {};
-      const merged = Object.assign({}, defaults, settings || {}, { dodoEnv: "live", settingsUpdatedAt: now() });
+      const savedAt = now();
+      const merged = Object.assign({}, defaults, settings || {}, { dodoEnv: "live", settingsUpdatedAt: savedAt });
       Object.assign(merged, global.MCP?.normalizeDateTimePreferences?.(merged) || {});
       preserveNewerLauncherState(previous, merged);
       removeRetiredSettings(merged);
+      merged.settingsFieldUpdatedAt = stampChangedSettingsFields(previous, merged, savedAt);
       await write({ [storageKey]: merged });
       global.MCP?.cacheThemeSettings?.(merged);
       global.MCP?.configureDateTimeFormatting?.(merged);
@@ -50,6 +52,25 @@
     }
 
     return Object.freeze({ getSettings, saveSettings });
+  }
+
+  function stampChangedSettingsFields(previous = {}, next = {}, savedAt = Date.now()) {
+    const clocks = Object.assign({}, previous.settingsFieldUpdatedAt || {}, next.settingsFieldUpdatedAt || {});
+    const ignored = new Set(["settingsUpdatedAt", "settingsFieldUpdatedAt"]);
+    new Set([...Object.keys(previous || {}), ...Object.keys(next || {})]).forEach((key) => {
+      if (ignored.has(key)) return;
+      if (!sameSettingValue(previous[key], next[key])) clocks[key] = savedAt;
+    });
+    return clocks;
+  }
+
+  function sameSettingValue(first, second) {
+    if (Object.is(first, second)) return true;
+    try {
+      return JSON.stringify(first) === JSON.stringify(second);
+    } catch (_) {
+      return false;
+    }
   }
 
   function preserveNewerLauncherState(previous, merged) {

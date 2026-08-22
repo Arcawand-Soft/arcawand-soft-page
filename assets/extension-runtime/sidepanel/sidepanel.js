@@ -197,7 +197,7 @@
     { title: "popup.aboutSectionIdentity", keys: ["popup.aboutVersion", "popup.aboutIntro"] },
     { title: "popup.aboutSectionCapture", keys: ["popup.aboutCapture", "popup.aboutImages", "popup.aboutVersioning"] },
     { title: "popup.aboutSectionFind", keys: ["popup.aboutSearch", "popup.aboutMontage"] },
-    { title: "popup.aboutSectionControl", keys: ["popup.aboutSecurity", "popup.aboutBackup", "popup.aboutDrive", "popup.aboutMultiDevice"] },
+    { title: "popup.aboutSectionControl", keys: ["popup.aboutSecurity", "popup.aboutBackup", "popup.aboutDrive", "popup.aboutMultiDevice", "popup.aboutDataBoundaries", "popup.aboutExternalServices"] },
     { title: "popup.aboutSectionTechnical", keys: ["popup.aboutTechnical", "popup.aboutCompatibility", "popup.aboutLicense"] },
     { title: "popup.aboutSectionSupport", keys: ["popup.aboutSupport"] }
   ];
@@ -211,14 +211,23 @@
     "popup.privacyControl",
     "popup.privacyDodo",
     "popup.privacyMultiDevice",
+    "popup.privacyGoogleData",
+    "popup.privacyLicenseService",
+    "popup.privacyRetention",
+    "popup.privacySecurity",
+    "popup.privacyLimitedUse",
+    "popup.privacyWebsite",
     "popup.privacyContact"
   ];
+  const TERMS_KEYS = Array.from({ length: 14 }, (_, index) => `popup.terms.${String(index + 1).padStart(2, "0")}`);
+  const SALES_TERMS_KEYS = Array.from({ length: 14 }, (_, index) => `popup.salesTerms.${String(index + 1).padStart(2, "0")}`);
   const PRO_KEYS = [
     "popup.proIntro"
   ];
   const FAQ_IDS = [
     "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
-    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "76", "77"
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "76", "77",
+    "78", "79", "80", "81", "82", "83", "84", "85"
   ];
   const FAQ_KEYS = FAQ_IDS.map((id) => [`faq.${id}.q`, `faq.${id}.a`]);
 
@@ -1119,7 +1128,10 @@
   function updateManagerBrandProBadge() {
     const badge = document.querySelector("[data-role='brand-pro-badge']");
     if (!badge) return;
-    badge.hidden = !(window.MCP.isProPlan ? window.MCP.isProPlan(state.settings) : false);
+    const isPro = window.MCP.isProPlan ? window.MCP.isProPlan(state.settings) : false;
+    const icon = badge.querySelector("img");
+    if (icon) icon.src = `../assets/icons/${isPro ? "pro-icon.png" : "no-pro-icon.png"}`;
+    badge.hidden = false;
   }
 
   function renderCurrentViewTitle() {
@@ -1435,6 +1447,7 @@
     if (action === "tool-reset") resetManagerToolWorkspace();
     if (action === "copy-emoji") copyManagerEmoji(event.target.closest("[data-emoji]")?.dataset.emoji || "");
     if (action === "copy-special-character") copyManagerSpecialCharacter(event.target.closest("[data-symbol]")?.dataset.symbol || "");
+    if (action === "copy-special-encoding") copyManagerSpecialCharacter(event.target.closest("[data-encoding]")?.dataset.encoding || "");
     if (action === "start-color-pick") startManagerColorPick();
     if (action === "start-image-text-capture") startManagerImageTextCapture();
     if (action === "search-word-replacer") searchManagerWordReplacer();
@@ -1512,6 +1525,8 @@
       ["settings", t("ui.options")],
       ["quick-settings", t("quickSettings.title")],
       ["privacy", t("popup.privacy")],
+      ["terms", t("popup.terms")],
+      ["sales-terms", t("popup.salesTerms")],
       isPro ? ["pro-status", "", "pro-status"] : ["pro", t("popup.pro"), "pro"],
       ...(isPro ? [["support-developer", t("popup.supportDeveloper"), "support"]] : []),
       ["contact", t("popup.contactDeveloper"), "contact"]
@@ -1611,6 +1626,8 @@
     if (action === "faq") return openManagerTextModal("popup.faqTitle", FAQ_KEYS);
     if (action === "advanced-search") return openUnifiedAdvancedSearch();
     if (action === "privacy") return openManagerTextModal("popup.privacyTitle", PRIVACY_KEYS);
+    if (action === "terms") return openManagerTextModal("popup.termsTitle", TERMS_KEYS);
+    if (action === "sales-terms") return openManagerTextModal("popup.salesTermsTitle", SALES_TERMS_KEYS);
     if (action === "pro") return openManagerProUpgradeModal("pro");
     if (action === "pro-status") return chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_OPTIONS, section: "license" }).catch(() => {});
     if (action === "settings") return chrome.runtime.sendMessage({ type: MESSAGE_TYPES.OPEN_OPTIONS }).catch(() => {});
@@ -1649,6 +1666,8 @@
       content.replaceChildren(createManagerFaqContent(paragraphKeys));
     } else if (titleKey === "popup.aboutTitle") {
       content.replaceChildren(createManagerAboutContent(paragraphKeys));
+    } else if (["popup.termsTitle", "popup.salesTermsTitle"].includes(titleKey)) {
+      content.replaceChildren(createManagerLegalContent(paragraphKeys));
     } else {
       content.replaceChildren(...paragraphKeys.map((key) => {
         const paragraph = document.createElement("p");
@@ -1663,6 +1682,22 @@
     requestAnimationFrame(() => {
       content.scrollTop = 0;
     });
+  }
+
+  function createManagerLegalContent(keys) {
+    const wrap = document.createElement("div");
+    wrap.className = "manager-about-content manager-legal-content";
+    keys.forEach((key, index) => {
+      const article = document.createElement("section");
+      article.className = "manager-about-section manager-legal-section";
+      const heading = document.createElement("h3");
+      heading.textContent = String(index + 1).padStart(2, "0");
+      const paragraph = document.createElement("p");
+      paragraph.textContent = t(key);
+      article.append(heading, paragraph);
+      wrap.appendChild(article);
+    });
+    return wrap;
   }
 
   function createManagerFaqContent(items) {
@@ -1902,6 +1937,10 @@
     if (emojiSearch) emojiSearch.value = "";
     const emojiBrowser = modal.querySelector("[data-role='emoji-browser']");
     if (emojiBrowser && tool.id === "emojiPicker") emojiBrowser.dataset.emojiCategory = "all";
+    if (emojiBrowser && tool.id === "longTextSplitter") {
+      emojiBrowser.dataset.specialLanguage = String(state.settings.language || navigator.language || "en").slice(0, 2).toLowerCase();
+      emojiBrowser.dataset.specialGroup = "";
+    }
     resetManagerToolWorkspaceMode(modal, tool.id);
     restoreManagerToolState(modal, tool.id);
     modal.querySelector("[data-role='tool-input']").placeholder = tool.id === "loremGenerator" ? "" : tool.id === "variableInjector" ? t("tools.wordReplacer.inputPlaceholder") : t("tools.inputPlaceholder");
@@ -2599,7 +2638,10 @@
   function getManagerToolCollectionRenderers() {
     if (managerToolCollectionRenderers) return managerToolCollectionRenderers;
     managerToolCollectionRenderers = window.MCP.createManagerToolCollectionRenderers({
-      t, getLanguage: () => state.settings.language || "en", toolApi: window.MCP
+      t,
+      getLanguage: () => state.settings.language || "en",
+      onLanguageChange: (modal) => scheduleManagerToolStateSave(modal),
+      toolApi: window.MCP
     });
     return managerToolCollectionRenderers;
   }
@@ -2738,8 +2780,8 @@
   function createVaultCategoryIcon() {
     const img = document.createElement("img");
     img.className = "category-button-vault";
-    const suffix = document.documentElement.getAttribute("data-resolved-theme") === "light" ? "lightmod" : "darkmod";
-    img.src = `../assets/icons/locker-${suffix}.png`;
+    img.src = `../assets/icons/${themedIconName("locker.png")}`;
+    img.dataset.themedIcon = "locker.png";
     img.alt = "";
     img.setAttribute("aria-hidden", "true");
     return img;
@@ -3903,7 +3945,9 @@
     preview.className = "item-preview";
     const previewText = document.createElement("div");
     previewText.className = "item-preview-text";
-    previewText.textContent = fullTextForPreview(displayItem);
+    const fullPreviewText = fullTextForPreview(displayItem);
+    if (mediaType === "dev") renderCodeSyntaxSafely(previewText, fullPreviewText, displayItem.languageId || item.languageId);
+    else previewText.textContent = fullPreviewText;
     preview.appendChild(previewText);
 
     const meta = document.createElement("div");
@@ -3989,6 +4033,17 @@
   function fullTextForPreview(item) {
     const content = String(item?.content || "");
     return content.trim() ? content : String(item?.preview || "").replace(/(?:\u2026|\.{3})\s*$/, "").trimEnd();
+  }
+
+  function renderCodeSyntaxSafely(element, value, languageId = "dev-general") {
+    if (!element) return false;
+    const source = String(value ?? "");
+    try {
+      if (window.MCP?.renderCodeSyntax?.(element, source, languageId)) return true;
+    } catch (_) {}
+    element.textContent = source;
+    element.classList.add("ucp-code-syntax");
+    return false;
   }
 
   function startPreviewAutoScroll(container, inner) {
@@ -4860,11 +4915,13 @@
       "erase.png",
       "reverse.png",
       "go_pin.png",
-      "go_unpin.png"
+      "go_unpin.png",
+      "locker.png"
     ]);
     if (!themedIcons.has(fileName)) return fileName;
     const suffix = options.forceDarkIcon ? "darkmod" : document.documentElement.getAttribute("data-resolved-theme") === "light" ? "lightmod" : "darkmod";
-    return fileName.replace(/\.png$/i, `_${suffix}.png`);
+    const separator = fileName === "locker.png" ? "-" : "_";
+    return fileName.replace(/\.png$/i, `${separator}${suffix}.png`);
   }
 
   function openImageInfo(item) {
@@ -7008,7 +7065,9 @@
       window.MCP.formatLocalizedDate(displayItem.createdAt, state.settings.language || "en")
     ].filter(Boolean).join(" - ");
     const preview = document.createElement("p");
-    preview.textContent = String(displayItem.preview || displayItem.content || item.altText || "").slice(0, 180);
+    const previewValue = String(displayItem.preview || displayItem.content || item.altText || "").slice(0, 180);
+    if (mediaType === "dev") renderCodeSyntaxSafely(preview, previewValue, displayItem.languageId || item.languageId);
+    else preview.textContent = previewValue;
     const actions = document.createElement("div");
     actions.className = "manager-source-timeline-actions";
     const sourceVersionId = item.sourceVersionId || versions[0]?.id || "";
@@ -7612,7 +7671,8 @@
     const sourceVersionActive = isEmbeddedSourceVersionActive(item, mediaType);
     const content = document.createElement("p");
     content.className = "manager-search-detail-text";
-    content.textContent = displayItem.content || displayItem.preview || "";
+    if (mediaType === "dev") renderCodeSyntaxSafely(content, displayItem.content || displayItem.preview || "", displayItem.languageId || item.languageId);
+    else content.textContent = displayItem.content || displayItem.preview || "";
     const actions = document.createElement("div");
     actions.className = "manager-search-detail-actions";
     actions.append(actionButton(t("common.useCapture"), "primary use-capture-action", () => copyItem(displayItem, mediaType)));
@@ -7724,7 +7784,7 @@
     }
     closeManagerSearch();
     const sourceItem = itemDisplayVersionById(item, mediaType, versionId || currentEmbeddedVersionId(item, mediaType));
-    const editorVersion = "create-version-editor-v1";
+    const editorVersion = "create-version-editor-v2";
     let modal = document.getElementById("managerCreateVersionModal");
     if (modal && modal.dataset.editorVersion !== editorVersion) {
       modal.remove();
@@ -7771,6 +7831,10 @@
     modal.querySelector("#managerCreateVersionTitle").value = String(sourceItem?.title || "").slice(0, 30);
     modal.querySelector("#managerCreateVersionContent").value = sourceItem?.content || "";
     modal.querySelector("#managerCreateVersionContent").setAttribute("wrap", mediaType === "dev" ? "off" : "soft");
+    window.MCP.setCodeSyntaxEditor?.(modal.querySelector("#managerCreateVersionContent"), {
+      enabled: mediaType === "dev",
+      language: sourceItem?.languageId || item.languageId
+    });
     modal.querySelector("#managerCreateVersionNote").value = sourceItem?.note || "";
     modal.querySelector("#managerCreateVersionError").textContent = "";
     updateCreateVersionModalState(modal);
@@ -7847,7 +7911,7 @@
     editingItem.mediaType = mediaType;
     editorVersionSelection = currentEmbeddedVersionId(item, mediaType);
     const editorItem = itemDisplayVersion(item, mediaType);
-    const editorVersion = "unified-text-editor-v8";
+    const editorVersion = "unified-text-editor-v9";
     let modal = document.getElementById("managerEditorModal");
     if (modal && modal.dataset.editorVersion !== editorVersion) {
       modal.remove();
@@ -7889,6 +7953,10 @@
     modal.querySelector("#managerEditorContent").setAttribute("wrap", mediaType === "dev" ? "off" : "soft");
     modal.querySelector("#managerEditorTitle").value = editorItem.title || "";
     modal.querySelector("#managerEditorContent").value = editorItem.content || "";
+    window.MCP.setCodeSyntaxEditor?.(modal.querySelector("#managerEditorContent"), {
+      enabled: mediaType === "dev",
+      language: editorItem.languageId || item.languageId
+    });
     modal.querySelector("#managerEditorNote").value = editorItem.note || "";
     modal.querySelector("#managerEditorError").textContent = "";
     editorCategorySelection = item.categoryId || (mediaType === "dev" ? "dev-general" : "general");
@@ -9102,8 +9170,8 @@
     title.className = "manager-vault-title";
     const icon = document.createElement("img");
     icon.className = "manager-vault-title-icon";
-    const suffix = document.documentElement.getAttribute("data-resolved-theme") === "light" ? "lightmod" : "darkmod";
-    icon.src = `../assets/icons/locker-${suffix}.png`;
+    icon.src = `../assets/icons/${themedIconName("locker.png")}`;
+    icon.dataset.themedIcon = "locker.png";
     icon.alt = "";
     icon.setAttribute("aria-hidden", "true");
     const label = document.createElement("span");

@@ -25,9 +25,16 @@
       const input = modal.querySelector("[data-role='tool-input']");
       const compare = modal.querySelector("[data-role='tool-compare-input']");
       const emojiSearch = modal.querySelector("[data-role='emoji-search']");
+      const emojiBrowser = modal.querySelector("[data-role='emoji-browser']");
       if (input && typeof saved.input === "string") input.value = saved.input;
       if (compare && typeof saved.compare === "string") compare.value = saved.compare;
       if (emojiSearch && typeof saved.emojiSearch === "string") emojiSearch.value = saved.emojiSearch;
+      if (emojiBrowser && typeof saved.specialLanguage === "string" && /^[a-z]{2}$/.test(saved.specialLanguage)) {
+        emojiBrowser.dataset.specialLanguage = saved.specialLanguage;
+      }
+      if (emojiBrowser && typeof saved.specialGroup === "string" && /^[a-z]*$/.test(saved.specialGroup)) {
+        emojiBrowser.dataset.specialGroup = saved.specialGroup;
+      }
       const savedOptions = saved.options && typeof saved.options === "object" ? saved.options : {};
       modal.querySelectorAll("[data-tool-option]").forEach((field) => {
         if (Object.prototype.hasOwnProperty.call(savedOptions, field.dataset.toolOption)) {
@@ -45,6 +52,8 @@
         input: modal.querySelector("[data-role='tool-input']")?.value || "",
         compare: modal.querySelector("[data-role='tool-compare-input']")?.value || "",
         emojiSearch: modal.querySelector("[data-role='emoji-search']")?.value || "",
+        specialLanguage: modal.querySelector("[data-role='emoji-browser']")?.dataset.specialLanguage || "",
+        specialGroup: modal.querySelector("[data-role='emoji-browser']")?.dataset.specialGroup || "",
         options: collectedOptions
       };
     }

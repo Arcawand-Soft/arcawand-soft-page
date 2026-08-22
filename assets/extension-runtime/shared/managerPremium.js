@@ -215,14 +215,14 @@
       const head = document.createElement("div");
       head.className = "manager-pro-plan-head";
       const title = document.createElement("strong");
+      const titleIcon = document.createElement("img");
+      titleIcon.className = "manager-pro-plan-title-icon";
+      titleIcon.src = `../assets/icons/${variant === "pro" ? "pro-icon.png" : "no-pro-icon.png"}`;
+      titleIcon.alt = "";
+      titleIcon.setAttribute("aria-hidden", "true");
+      const titleText = document.createElement("span");
+      titleText.textContent = t(titleKey);
       if (variant === "pro") {
-        const titleIcon = document.createElement("img");
-        titleIcon.className = "manager-pro-plan-title-icon";
-        titleIcon.src = "../assets/icons/pro-icon.png";
-        titleIcon.alt = "";
-        titleIcon.setAttribute("aria-hidden", "true");
-        const titleText = document.createElement("span");
-        titleText.textContent = t(titleKey);
         const titleCopy = document.createElement("span");
         titleCopy.className = "manager-pro-plan-title-copy";
         const lifetime = document.createElement("small");
@@ -230,7 +230,7 @@
         titleCopy.append(titleText, lifetime);
         title.append(titleIcon, titleCopy);
       } else {
-        title.textContent = t(titleKey);
+        title.append(titleIcon, titleText);
       }
       const price = document.createElement("div");
       price.className = "manager-pro-plan-price";

@@ -31,9 +31,12 @@
     "SNIPPETS",
     "TEMPLATES",
     "PURGE_MARKERS",
-    "DRIVE_TOMBSTONES"
+    "DRIVE_TOMBSTONES",
+    "MANAGER_VIEW_STATE",
+    "PREMIUM_CURRENCY"
   ];
   let queuedSyncTimer = null;
+  let pendingMetaWritePromise = null;
   let runningSyncPromise = null;
   let activeDriveOperation = null;
   let remoteCheckPromise = null;
@@ -863,8 +866,14 @@
   async function queueDriveSync(reason = "local-change") {
     if (localDeletionInProgress) return { skipped: true, reason: "local-deletion" };
     localChangeGeneration += 1;
-    await saveMeta({ pendingLocalChangeAt: Date.now(), lastError: "" });
-    chrome.alarms?.create?.(DRIVE_PENDING_ALARM_NAME, { delayInMinutes: 0.5 });
+    if (!queuedSyncTimer) {
+      if (!pendingMetaWritePromise) {
+        pendingMetaWritePromise = saveMeta({ pendingLocalChangeAt: Date.now(), lastError: "" })
+          .finally(() => { pendingMetaWritePromise = null; });
+      }
+      await pendingMetaWritePromise;
+      chrome.alarms?.create?.(DRIVE_PENDING_ALARM_NAME, { delayInMinutes: minimumLiveAlarmMinutes() });
+    }
     clearTimeout(queuedSyncTimer);
     queuedSyncTimer = setTimeout(async () => {
       queuedSyncTimer = null;
@@ -915,13 +924,19 @@
     await chrome.alarms.clear(DRIVE_ALARM_NAME);
     await chrome.alarms.clear(DRIVE_LIVE_ALARM_NAME);
     if (!settings.driveSyncEnabled || !meta.folderId) return;
-    chrome.alarms.create(DRIVE_LIVE_ALARM_NAME, { periodInMinutes: 0.5, delayInMinutes: 0.5 });
+    const liveAlarmMinutes = minimumLiveAlarmMinutes();
+    chrome.alarms.create(DRIVE_LIVE_ALARM_NAME, { periodInMinutes: liveAlarmMinutes, delayInMinutes: liveAlarmMinutes });
     if (!meta.syncInitialized) return;
     const periodInMinutes = DRIVE_FREQUENCIES[normalizeFrequency(settings.driveSyncFrequency)] || DRIVE_FREQUENCIES["6h"];
     const lastSyncAt = Number(meta.lastSyncAt || 0);
     const nextSyncAt = lastSyncAt ? lastSyncAt + periodInMinutes * 60000 : Date.now() + periodInMinutes * 60000;
     const delayInMinutes = Math.max(1, Math.ceil((nextSyncAt - Date.now()) / 60000));
     chrome.alarms.create(DRIVE_ALARM_NAME, { periodInMinutes, delayInMinutes });
+  }
+
+  function minimumLiveAlarmMinutes() {
+    const major = Number.parseInt(String(global.navigator?.userAgent || "").match(/(?:Chrome|Chromium)\/(\d+)/)?.[1] || "0", 10);
+    return major >= 120 ? 0.5 : 1;
   }
 
   function normalizeFrequency(value) {
@@ -1571,6 +1586,18 @@
       validateNode(value, key, 0);
     }
 
+    const settingsClocks = storage[storageKeys.SETTINGS]?.settingsFieldUpdatedAt;
+    if (settingsClocks !== undefined) {
+      if (!settingsClocks || typeof settingsClocks !== "object" || Array.isArray(settingsClocks) || Object.keys(settingsClocks).length > 256) {
+        throw invalidDriveBackup();
+      }
+      for (const [field, timestamp] of Object.entries(settingsClocks)) {
+        if (!field || field.length > 128 || !Number.isFinite(Number(timestamp)) || Number(timestamp) < 0 || Number(timestamp) > nowLimit) {
+          throw invalidDriveBackup();
+        }
+      }
+    }
+
     const purgeMarkers = storage[storageKeys.PURGE_MARKERS];
     if (purgeMarkers !== undefined) {
       if (!purgeMarkers || typeof purgeMarkers !== "object" || Array.isArray(purgeMarkers)) throw invalidDriveBackup();
@@ -2004,6 +2031,8 @@
       merged[settingsKey] = mergeSettings({}, merged[settingsKey]);
     }
     merged[settingsKey] = preserveConnectedDriveSettings(merged[settingsKey], localStorage[settingsKey]);
+    mergeTimestampedPortableValue(merged, remote, storageKeys.MANAGER_VIEW_STATE, "savedAt");
+    mergeTimestampedPortableValue(merged, remote, storageKeys.PREMIUM_CURRENCY, "updatedAt");
     [
       storageKeys.CATEGORIES,
       storageKeys.IMAGE_CATEGORIES,
@@ -2053,6 +2082,15 @@
         if (!sourceItemIds.has(itemId)) delete merged[key];
       });
     return merged;
+  }
+
+  function mergeTimestampedPortableValue(localTarget, remoteSource, key, timestampKey) {
+    if (!key || !Object.prototype.hasOwnProperty.call(remoteSource, key)) return;
+    const localValue = localTarget[key];
+    const remoteValue = remoteSource[key];
+    const localAt = Number(localValue?.[timestampKey]) || 0;
+    const remoteAt = Number(remoteValue?.[timestampKey]) || 0;
+    if (remoteAt > localAt || localValue === undefined) localTarget[key] = remoteValue;
   }
 
   function preserveConnectedDriveSettings(storageOrSettings = {}, localSettings = {}) {
@@ -2355,6 +2393,21 @@
     const primary = localIsNewer ? local : remote;
     const secondary = localIsNewer ? remote : local;
     const merged = Object.assign({}, secondary, primary);
+    const remoteClocks = remote.settingsFieldUpdatedAt || {};
+    const localClocks = local.settingsFieldUpdatedAt || {};
+    const mergedClocks = Object.assign({}, remoteClocks, localClocks);
+    const fieldNames = new Set([...Object.keys(remote), ...Object.keys(local)]);
+    fieldNames.delete("settingsUpdatedAt");
+    fieldNames.delete("settingsFieldUpdatedAt");
+    fieldNames.forEach((key) => {
+      const remoteAt = Number(remoteClocks[key]) || remoteUpdatedAt;
+      const localAt = Number(localClocks[key]) || localUpdatedAt;
+      if (remoteAt > localAt) merged[key] = remote[key];
+      else if (Object.prototype.hasOwnProperty.call(local, key)) merged[key] = local[key];
+      mergedClocks[key] = Math.max(remoteAt, localAt);
+    });
+    merged.settingsUpdatedAt = Math.max(remoteUpdatedAt, localUpdatedAt);
+    merged.settingsFieldUpdatedAt = mergedClocks;
     merged.toolStates = Object.assign({}, secondary.toolStates || {}, primary.toolStates || {});
     if (!Array.isArray(primary.toolOrder) || !primary.toolOrder.length) merged.toolOrder = secondary.toolOrder || [];
     if (global.MCP?.normalizeBackupSettings) return global.MCP.normalizeBackupSettings(merged);
@@ -2686,6 +2739,7 @@
     normalizeDriveSyncFrequency: normalizeFrequency,
     filterStorageForDrive: cleanStorageForDrive,
     normalizeDrivePayloadForWorkspace,
-    validateDrivePayloadStorage
+    validateDrivePayloadStorage,
+    mergeDriveSettings: mergeSettings
   });
 })(globalThis);

@@ -2,9 +2,7 @@
   const API_BASE = "https://api.arcawand-soft.com";
   const CATALOG = "ultimate-clipboard-pro";
   const CURRENCY_KEY = "premiumCheckoutCurrency";
-  const DETECTION_KEY = "premiumCheckoutCurrencyDetection";
   const PRICE_CACHE_KEY = "premiumCheckoutPriceCache";
-  const DETECTION_TTL_MS = 24 * 60 * 60 * 1000;
   const PRICE_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
   const PRICE_CACHE_STALE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
   const SUPPORTED_CURRENCIES = Object.freeze([
@@ -102,22 +100,30 @@
     }
   }
 
-  function detectCurrency(language, geo = null) {
+  function explicitRegion(locale) {
+    try {
+      return String(new Intl.Locale(String(locale || "")).region || "").toUpperCase();
+    } catch {
+      return String(locale || "").match(/[-_]([A-Za-z]{2})(?:$|[-_])/)?.[1]?.toUpperCase() || "";
+    }
+  }
+
+  function detectCurrency(language) {
     const scores = new Map();
     const add = (currency, score) => {
       const normalized = optionalCurrency(currency);
       if (normalized) scores.set(normalized, (scores.get(normalized) || 0) + score);
     };
-    add(CURRENCY_BY_REGION[DEFAULT_REGION_BY_LANGUAGE[normalizeLanguage(language)]], 40);
-    add(geo?.currency, 10);
-    add(CURRENCY_BY_REGION[String(geo?.country || "").toUpperCase()], 8);
     const locales = [
       ...(Array.isArray(navigator.languages) ? navigator.languages : []),
-      navigator.language,
-      browserLocale(language)
-    ].filter(Boolean);
-    locales.forEach((locale, index) => add(CURRENCY_BY_REGION[extractRegion(locale)], index === 0 ? 5 : 2));
-    add(CURRENCY_BY_REGION[REGION_BY_TIMEZONE[Intl.DateTimeFormat().resolvedOptions().timeZone]], 4);
+      navigator.language
+    ].filter(Boolean).filter((locale, index, values) => values.indexOf(locale) === index);
+    locales.forEach((locale, index) => {
+      const region = explicitRegion(locale);
+      add(CURRENCY_BY_REGION[region || extractRegion(locale)], region ? (index === 0 ? 30 : 16) : (index === 0 ? 6 : 3));
+    });
+    add(CURRENCY_BY_REGION[REGION_BY_TIMEZONE[Intl.DateTimeFormat().resolvedOptions().timeZone]], 20);
+    add(CURRENCY_BY_REGION[DEFAULT_REGION_BY_LANGUAGE[normalizeLanguage(language)]], 2);
     if (!scores.size) add("EUR", 1);
     return [...scores].sort((left, right) => right[1] - left[1] || currencyRank(left[0]) - currencyRank(right[0]))[0][0];
   }
@@ -244,29 +250,6 @@
       await chrome.storage.local.set(value);
     } catch {
       // Pricing remains functional without its optional local cache.
-    }
-  }
-
-  async function fetchGeo() {
-    const cached = await storageGet(DETECTION_KEY);
-    if (cached?.savedAt && Date.now() - Number(cached.savedAt) < DETECTION_TTL_MS) return cached;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 1800);
-    try {
-      const response = await fetch("https://ipapi.co/json/", { cache: "no-store", signal: controller.signal });
-      const data = await response.json();
-      if (!response.ok) return null;
-      const clean = {
-        country: String(data.country_code || data.country || "").toUpperCase().slice(0, 3),
-        currency: optionalCurrency(data.currency || data.currency_code),
-        savedAt: Date.now()
-      };
-      await storageSet({ [DETECTION_KEY]: clean });
-      return clean;
-    } catch {
-      return null;
-    } finally {
-      clearTimeout(timeout);
     }
   }
 
@@ -455,7 +438,7 @@
     if (next === controller.currency && persist) return;
     controller.currency = next;
     updateWidget(controller);
-    if (persist) await storageSet({ [CURRENCY_KEY]: next });
+    if (persist) await storageSet({ [CURRENCY_KEY]: { value: next, updatedAt: Date.now() } });
     await refreshPrice(controller);
   }
 
@@ -554,10 +537,11 @@
     renderStaticPrices(controller);
     updateWidget(controller);
     bindWidget(controller);
-    const stored = optionalCurrency(await storageGet(CURRENCY_KEY));
+    const storedCurrency = await storageGet(CURRENCY_KEY);
+    const stored = optionalCurrency(storedCurrency?.value || storedCurrency);
     if (stored) await selectCurrency(controller, stored, false);
     else {
-      const recommended = detectCurrency(language, await fetchGeo());
+      const recommended = detectCurrency(language);
       await selectCurrency(controller, recommended, false);
     }
     return controller;
@@ -570,6 +554,7 @@
   global.MCP = Object.assign(global.MCP || {}, {
     PREMIUM_CHECKOUT_CATALOG: CATALOG,
     PREMIUM_CURRENCIES: SUPPORTED_CURRENCIES,
+    detectPremiumCurrency: detectCurrency,
     mountPremiumPricing,
     getPremiumCurrency
   });

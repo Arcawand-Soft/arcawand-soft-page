@@ -16,6 +16,8 @@
     INSTALLATION_ID: "mcp_installation_id",
     VAULT_AUTH: "mcp_vault_auth",
     PURGE_MARKERS: "mcp_purge_markers",
+    MANAGER_VIEW_STATE: "ucp_manager_view_state_v1",
+    PREMIUM_CURRENCY: "premiumCheckoutCurrency",
     SOURCE_LOCATOR_PREFIX: "mcp_source_locator_"
   };
 
@@ -73,6 +75,7 @@
     captureAiCopyButtons: true,
     activeDisplayIds: [],
     settingsUpdatedAt: 0,
+    settingsFieldUpdatedAt: {},
     onboardingCompleted: false,
     floatingLauncherOpenedOnce: false,
     managerOpenedOnce: false,
