@@ -4,7 +4,7 @@ const assert = require("assert");
 const { LANGUAGES, localizedUrl } = require("./language-config");
 
 const root = path.resolve(__dirname, "..");
-const version = "20260807-landing-pagespeed";
+const version = "20260822-product-refresh";
 const installModal = fs.readFileSync(path.join(root, "assets", "install-extension-modal.js"), "utf8");
 const landingCss = fs.readFileSync(path.join(root, "assets", "ucp-landing.css"), "utf8");
 

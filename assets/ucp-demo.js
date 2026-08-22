@@ -223,7 +223,7 @@
       const frame = document.createElement("iframe");
       frame.className = "ucp-real-demo-manager-frame";
       frame.title = "Ultimate Clipboard Pro demo manager";
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-current-runtime&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-production-v2&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
       managerShell.append(frame);
       document.body.append(managerShell);
       window.setTimeout(() => managerShell?.classList.add("is-visible"), 20);
@@ -231,7 +231,7 @@
     }
     const frame = managerShell.querySelector("iframe");
     if (frame) {
-      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-current-runtime&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
+      frame.src = `${runtimeBase}demo-sidepanel.html?v=20260822-production-v2&lang=${encodeURIComponent(lang)}&tab=${encodeURIComponent(message.mediaType || "text")}`;
     }
     managerShell.classList.add("is-visible");
   }
@@ -246,9 +246,9 @@
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-current-runtime`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260822-production-v2`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-current-runtime`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260822-production-v2`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -264,7 +264,7 @@
     window.__UCP_DEMO_BRIDGE__ = bridge;
 
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-current-runtime`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260822-production-v2`);
 
     const floatingHost = await waitForFloatingHost();
     installDemoDirectionGuard(floatingHost);

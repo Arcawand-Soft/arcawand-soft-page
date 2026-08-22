@@ -12,8 +12,8 @@ for (const language of languages) {
   let html = fs.readFileSync(file, "utf8");
   html = html.replace(/<!doctype html>[\s\S]*?<html/i, "<!doctype html>\n<html");
   html = html.replace(/data-ucp-demo-lang="[^"]+"/g, `data-ucp-demo-lang="${language}"`);
-  html = html.replace(/\/assets\/ucp-demo\.css\?v=[^"']+/g, "/assets/ucp-demo.css?v=20260807-launcher-match");
-  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260807-pro-badge");
+  html = html.replace(/\/assets\/ucp-demo\.css\?v=[^"']+/g, "/assets/ucp-demo.css?v=20260822-production-v2");
+  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260822-production-v2");
   if (!html.includes("assets/icons/arrow_right.png")) {
     html = html.replace(
       /(<link[^>]+href="\/assets\/extension-runtime\/assets\/icons\/icon128\.png"[^>]*>)/i,

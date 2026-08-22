@@ -20,10 +20,10 @@
         document.documentElement.lang = language;
         document.documentElement.dir = "ltr";
         document.documentElement.style.direction = "ltr";
-        if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260822-current-runtime"><\/script>`);
+        if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260822-production-v2"><\/script>`);
       })();
     </script>
-    <script src="../demo-runtime.js?v=20260822-current-runtime"></script>
+    <script src="../demo-runtime.js?v=20260822-production-v2"></script>
     <script>
       (function installDemoManagerBridge() {
         const params = new URLSearchParams(location.search);

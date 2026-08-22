@@ -5,8 +5,8 @@ const { applyCurrentProductContent } = require("./update-ucp-current-product-con
 
 const root = path.resolve(__dirname, "..");
 const productPagesScript = "/assets/ucp-product-pages.js?v=20260515-heading-flow";
-const demoScript = "/assets/ucp-demo.js?v=20260822-current-runtime";
-const demoStylesheet = "/assets/ucp-demo.css?v=20260822-current-runtime";
+const demoScript = "/assets/ucp-demo.js?v=20260822-production-v2";
+const demoStylesheet = "/assets/ucp-demo.css?v=20260822-production-v2";
 const socialImage = "https://arcawand-soft.com/assets/Ultimate_Clipboard_Pro_SEO_Image.png";
 const socialImageAlt = "Ultimate Clipboard Pro browser extension preview";
 
