@@ -36,7 +36,7 @@
   const storageArea = "local";
   function publicRuntimeUrl(pathname) {
     const relative = String(pathname || "").replace(/^\/+/, "");
-    const version = relative === "content/floatingPanel.css" ? "?v=20260823-zoom-parity-v1" : "";
+    const version = relative === "content/floatingPanel.css" ? "?v=20260823-menu-typography-v2" : "";
     return `${runtimeBase}${relative}${version}`;
   }
   function normalizeDemoZoomFactor(value) {

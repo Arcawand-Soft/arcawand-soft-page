@@ -256,7 +256,7 @@
     managerFrame = document.createElement("iframe");
     managerFrame.className = "ucp-real-demo-manager-frame";
     managerFrame.title = "Ultimate Clipboard Pro demo manager";
-    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260823-zoom-parity-v1&lang=${encodeURIComponent(language)}&tab=text`;
+    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260823-menu-typography-v2&lang=${encodeURIComponent(language)}&tab=text`;
     managerFrame.addEventListener("load", () => { managerReady = true; }, { once: true });
     managerShell.append(managerFrame);
     managerShell.addEventListener("wheel", (event) => {
@@ -296,9 +296,9 @@
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260823-zoom-parity-v1`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260823-menu-typography-v2`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260823-zoom-parity-v1`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260823-menu-typography-v2`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -317,7 +317,7 @@
     const demoHostObserver = prepareIsolatedDemoHost();
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
     window.UCP_DEMO_RUNTIME.forceDemoProRuntime();
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260823-zoom-parity-v1`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260823-menu-typography-v2`);
 
     const floatingHost = await waitForFloatingHost();
     demoHostObserver.disconnect();

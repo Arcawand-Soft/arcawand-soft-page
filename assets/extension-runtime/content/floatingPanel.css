@@ -888,6 +888,8 @@ img[src$="/no-pro-icon.png"] {
   gap: 9px;
   justify-content: flex-start;
   padding: 0 12px;
+  font-size: 14px;
+  line-height: 1.2;
   border: 0;
   border-radius: 10px;
   color: var(--text);

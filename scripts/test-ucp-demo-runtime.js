@@ -52,6 +52,19 @@ for (const stylesheet of ["content/floatingPanel.css", "sidepanel/sidepanel.css"
     : css;
   assert.strictEqual(normalizedDemoCss, canonicalCss, `${stylesheet} must remain canonical apart from its public import URL`);
 }
+for (const [stylesheet, selector] of [
+  ["content/floatingPanel.css", ".mcp-floating-menu button"],
+  ["sidepanel/sidepanel.css", ".manager-menu-popover button"],
+  ["popup/popup.css", ".popup-menu-popover button"]
+]) {
+  const css = fs.readFileSync(path.join(extensionRoot, stylesheet), "utf8");
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  assert.match(
+    css,
+    new RegExp(`${escapedSelector}\\s*\\{[\\s\\S]*?font-size:\\s*14px;[\\s\\S]*?line-height:\\s*1\\.2;`),
+    `${stylesheet} must define the same compact menu typography explicitly`
+  );
+}
 assert(
   fs.readFileSync(path.join(root, "assets", "extension-runtime", "content", "floatingPanel.css"), "utf8")
     .startsWith('@import url("/assets/extension-runtime/shared/managerButton.css");'),
@@ -70,7 +83,7 @@ assert.match(
 );
 const demoSidepanelHtml = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-sidepanel.html"), "utf8");
 assert(demoSidepanelHtml.includes('../shared/uiZoomGuard.js'), "The demo manager must boot the canonical zoom guard before rendering");
-assert(demoSidepanelHtml.includes("sidepanel.css?v=20260822-version-contrast-v4"), "The demo manager stylesheet needs a cache-busting version for the contrast fix");
+assert(demoSidepanelHtml.includes("sidepanel.css?v=20260823-menu-typography-v2"), "The demo manager stylesheet needs a cache-busting version for compact menu typography");
 
 function contextFor(language) {
   const window = { location: { search: `?lang=${language}`, pathname: `/${language}/ultimate-clipboard-pro/demo/` } };
@@ -202,7 +215,7 @@ for (const language of languages) {
   bridge.installChromeMock();
   assert.strictEqual(
     context.window.chrome.runtime.getURL("content/floatingPanel.css"),
-    "/assets/extension-runtime/content/floatingPanel.css?v=20260823-zoom-parity-v1",
+    "/assets/extension-runtime/content/floatingPanel.css?v=20260823-menu-typography-v2",
     "The canonical floating stylesheet must bypass stale public caches"
   );
   const zoomResponse = await context.window.chrome.runtime.sendMessage({ type: "MCP_GET_PAGE_ZOOM" });
