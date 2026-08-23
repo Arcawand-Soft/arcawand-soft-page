@@ -8,6 +8,11 @@ html.ucp-demo-surface-open body {
   overscroll-behavior: none;
 }
 
+html.ucp-demo-surface-open #ucp-demo-floating-host,
+html.ucp-demo-surface-open .ucp-demo-launcher-preboot {
+  display: none;
+}
+
 .ucp-demo-page-grid {
   align-items: start;
 }
@@ -209,9 +214,9 @@ html.ucp-demo-surface-open body {
   inset: 0;
   z-index: 2147483200;
   display: grid;
-  place-items: center;
-  padding: clamp(.75rem, 2vw, 1.5rem);
-  background: rgba(0, 0, 0, .48);
+  place-items: stretch;
+  padding: 0;
+  background: #000;
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
@@ -225,12 +230,12 @@ html.ucp-demo-surface-open body {
 }
 
 .ucp-real-demo-manager-frame {
-  width: min(1560px, 98vw);
-  height: min(910px, 94vh);
+  width: 100vw;
+  height: 100vh;
   border: 0;
-  border-radius: 18px;
+  border-radius: 0;
   background: #111;
-  box-shadow: 0 24px 90px rgba(0, 0, 0, .5);
+  box-shadow: none;
 }
 
 .ucp-real-demo-dialog {
@@ -293,10 +298,6 @@ html.ucp-demo-surface-open body {
 }
 
 @media (max-width: 760px) {
-  .ucp-real-demo-manager-shell {
-    padding: .35rem;
-  }
-
   .ucp-real-demo-manager-frame {
     width: 100vw;
     height: 100vh;

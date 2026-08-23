@@ -9,6 +9,8 @@ const extensionRoot = path.resolve(root, "..", "multi-copy-paste", "extension");
 const languages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
 const runtimeSource = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-runtime.js"), "utf8");
 assert.ok(runtimeSource.includes("global.MCP.DEFAULT_EXCLUDED_DEMO_URLS = []"), "Demo runtime must bypass extension-only demo URL exclusions");
+assert(runtimeSource.includes("DEMO_MUTATION_MESSAGE_TYPES"), "Demo mutations must be governed by an explicit deny-list");
+assert(runtimeSource.includes("installMutationGuards"), "Direct storage mutation helpers must be guarded in demo mode");
 
 const syntaxHighlighter = fs.readFileSync(path.join(root, "assets", "extension-runtime", "shared", "codeSyntaxHighlighter.js"), "utf8");
 const surfaceBoot = fs.readFileSync(path.join(root, "assets", "extension-runtime", "shared", "surfaceBoot.js"), "utf8");
@@ -54,6 +56,8 @@ for (const language of languages) {
   const context = contextFor(language);
   const runtime = context.window.UCP_DEMO_RUNTIME;
   assert(runtime.supportedLanguages.includes(language), `${language} must be supported`);
+  assert(runtime.copyByLang[language]?.blockedTitle, `${language} demo blocked-action title is missing`);
+  assert(runtime.copyByLang[language]?.blocked, `${language} demo blocked-action explanation is missing`);
   const state = runtime.createDemoState(language);
   assert.strictEqual(state.settings.language, language, `${language} state language mismatch`);
   assert(state.items.length >= 20, `${language} needs a rich text dataset`);
@@ -100,6 +104,26 @@ assert(demoManagerHtml.includes("__UCP_DEMO_FORCE_PRO__"), "The manager must ena
 assert(demoManagerHtml.includes("UCP_DEMO_SELECT_TAB"), "The warmed manager must switch tabs without reloading its iframe");
 assert(demoManagerHtml.includes("driveQuickSyncControl.css"), "The Drive quick-sync renderer needs its component stylesheet");
 assert(demoManagerHtml.includes("data-manager-action=\"open-tool\""), "The demo manager must intercept tool execution at the interaction boundary");
+assert(demoManagerHtml.includes("installMutationGuards()"), "The manager must arm demo mutation guards before user interaction");
+
+const mutationTypes = [
+  "MCP_CREATE_CATEGORY",
+  "MCP_UPDATE_CATEGORY",
+  "MCP_DELETE_ITEM",
+  "MCP_TOGGLE_FAVORITE",
+  "MCP_UPDATE_DEV_ITEM",
+  "MCP_DELETE_IMAGE_ITEM",
+  "MCP_CLEAR_HISTORY"
+];
+const runtimeContract = contextFor("en").window.UCP_DEMO_RUNTIME;
+mutationTypes.forEach((type) => assert(runtimeContract.isDemoMutationMessage(type), `${type} must be blocked in demo mode`));
+assert(!runtimeContract.isDemoMutationMessage("MCP_GET_STATE"), "Read-only state access must remain available");
+assert(!runtimeContract.isDemoMutationMessage("MCP_OPEN_TOOLS_OVERLAY"), "Opening an exploratory surface must remain available");
+
+const demoCss = fs.readFileSync(path.join(root, "assets", "ucp-demo.css"), "utf8");
+assert.match(demoCss, /\.ucp-real-demo-manager-frame\s*\{[\s\S]*?width:\s*100vw;[\s\S]*?height:\s*100vh;/, "The demo manager must use the same full viewport as the extension");
+assert.match(demoCss, /html\.ucp-demo-surface-open\s+#ucp-demo-floating-host/, "The real demo launcher must disappear behind the manager");
+assert.match(demoCss, /html\.ucp-demo-surface-open\s+\.ucp-demo-launcher-preboot/, "The preboot launcher must disappear behind the manager");
 
 for (const language of languages) {
   for (const page of ["demo", "faq", "privacy", "terms"]) {
@@ -113,4 +137,26 @@ for (const language of languages) {
   }
 }
 
-console.log(`Validated Ultimate Clipboard Pro demo runtime in ${languages.length} languages.`);
+(async () => {
+  const context = contextFor("fr");
+  let blockedCount = 0;
+  const bridge = context.window.UCP_DEMO_RUNTIME.makeStateBridge("fr", { showBlocked: () => { blockedCount += 1; } });
+  bridge.installChromeMock();
+  const initialCategoryCount = bridge.currentState().categories.length;
+  const response = await context.window.chrome.runtime.sendMessage({
+    type: "MCP_CREATE_CATEGORY",
+    category: { id: "demo-forbidden", name: "Interdite" }
+  });
+  assert.strictEqual(response.ok, false, "A final mutation must fail explicitly in demo mode");
+  assert.strictEqual(bridge.currentState().categories.length, initialCategoryCount, "A blocked message must not mutate demo data");
+
+  context.window.MCP = { saveClipboardItem: async () => ({ item: { id: "forbidden" } }) };
+  bridge.installMutationGuards();
+  await assert.rejects(() => context.window.MCP.saveClipboardItem({ content: "forbidden" }), /Demo mode/);
+  assert.strictEqual(blockedCount, 2, "Both message and direct-storage mutation paths must show the demo alert");
+
+  console.log(`Validated Ultimate Clipboard Pro demo runtime in ${languages.length} languages.`);
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

@@ -3,6 +3,36 @@
 
   const runtimeBase = "/assets/extension-runtime/";
   const supportedLanguages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "ru", "nl", "pl", "tr", "ko", "hi"];
+  const DEMO_MUTATION_MESSAGE_TYPES = new Set([
+    "MCP_COMMIT_DEV_CAPTURE", "MCP_FORCE_TEXT_CAPTURE", "MCP_CAPTURE_PAGE_MARKDOWN",
+    "MCP_COPY_ITEM", "MCP_TOGGLE_FAVORITE", "MCP_DELETE_ITEM", "MCP_DELETE_ITEM_VERSION",
+    "MCP_UPDATE_ITEM", "MCP_DELETE_IMAGE_ITEM", "MCP_UPDATE_IMAGE_ITEM", "MCP_DELETE_DEV_ITEM",
+    "MCP_DELETE_DEV_VERSION", "MCP_UPDATE_DEV_ITEM", "MCP_CREATE_CATEGORY", "MCP_UPDATE_CATEGORY",
+    "MCP_DELETE_CATEGORY", "MCP_CREATE_IMAGE_CATEGORY", "MCP_UPDATE_IMAGE_CATEGORY",
+    "MCP_DELETE_IMAGE_CATEGORY", "MCP_CREATE_DEV_CATEGORY", "MCP_UPDATE_DEV_CATEGORY",
+    "MCP_DELETE_DEV_CATEGORY", "MCP_CLEAR_HISTORY", "MCP_DELETE_LOCAL_CAPTURE_DATA",
+    "MCP_DRIVE_CONNECT", "MCP_DRIVE_DISCONNECT", "MCP_DRIVE_SYNC_NOW",
+    "MCP_DRIVE_RESTORE_FROM_DRIVE", "MCP_RESTORE_TRANSACTION_BEGIN", "MCP_RESTORE_TRANSACTION_END",
+    "MCP_START_COLOR_PICKER", "MCP_START_IMAGE_TEXT_CAPTURE", "MCP_CAPTURE_VISIBLE_TAB",
+    "MCP_RUN_OCR", "MCP_ACTIVATE_LICENSE", "MCP_VALIDATE_LICENSE", "MCP_RESET_LICENSE"
+  ]);
+  const DEMO_MUTATING_MCP_METHODS = [
+    "saveSourceLocator", "deleteSourceLocators",
+    "saveClipboardItem", "updateClipboardItem", "deleteClipboardItem", "deleteClipboardItemVersion",
+    "deleteClipboardItems", "restoreClipboardItem", "clearHistory", "deleteLocalCaptureData",
+    "reorderCategories", "reorderImageCategories", "reorderDevCategories",
+    "createCategory", "createSubcategory", "createImageCategory", "createImageSubcategory",
+    "createDevSubcategory", "saveCategory", "updateCategory", "deleteCategory",
+    "updateImageCategory", "deleteImageCategory", "updateDevCategory", "deleteDevCategory",
+    "saveImageItem", "updateImageItem", "deleteImageItem", "deleteImageItems", "restoreImageItem",
+    "clearImageHistory", "saveDevItem", "updateDevItem", "deleteDevItem", "deleteDevItemVersion",
+    "deleteDevItems", "restoreDevItem", "emptyTrash", "setVaultPassword", "resetVaultPasswordAndItems",
+    "saveSnippet", "deleteSnippet", "saveTemplate", "deleteTemplate"
+  ];
+
+  function isDemoMutationMessage(type) {
+    return DEMO_MUTATION_MESSAGE_TYPES.has(String(type || ""));
+  }
   const storageArea = "local";
 
   const copyByLang = {
@@ -1335,6 +1365,7 @@ test("language menu routes to English product page", async ({ page }) => {
     const state = createDemoState(language);
     const listeners = [];
     const changeListeners = [];
+    let mutationGuardsActive = false;
     const store = {
       mcp_settings: state.settings,
       mcp_clipboard_items: state.items,
@@ -1380,7 +1411,24 @@ test("language menu routes to English product page", async ({ page }) => {
 
     function showBlocked() {
       callbacks.showBlocked?.();
+      global.setTimeout?.(() => dispatch("STORAGE_REFRESH_REQUIRED"), 0);
       return { ok: false, error: "Demo mode" };
+    }
+
+    function installMutationGuards() {
+      mutationGuardsActive = true;
+      const api = global.MCP || {};
+      DEMO_MUTATING_MCP_METHODS.forEach((name) => {
+        const original = api[name];
+        if (typeof original !== "function" || original.__ucpDemoMutationGuard) return;
+        const guarded = function demoMutationGuard() {
+          showBlocked();
+          return Promise.reject(new Error("Demo mode"));
+        };
+        guarded.__ucpDemoMutationGuard = true;
+        guarded.__ucpDemoOriginal = original;
+        api[name] = guarded;
+      });
     }
 
     function isDemoDisplayOnlyUpdate(updates = {}) {
@@ -1428,6 +1476,19 @@ test("language menu routes to English product page", async ({ page }) => {
     }
 
     function storageSet(data = {}, callback) {
+      const protectedKeys = new Set([
+        "mcp_clipboard_items", "mcp_categories", "mcp_image_items", "mcp_image_categories",
+        "mcp_dev_items", "mcp_dev_categories", "mcp_snippets", "mcp_templates", "mcp_vault_auth"
+      ]);
+      if (mutationGuardsActive && Object.keys(data).some((key) => protectedKeys.has(key))) {
+        showBlocked();
+        const error = new Error("Demo mode");
+        if (typeof callback === "function") {
+          queueMicrotask(callback);
+          return undefined;
+        }
+        return Promise.reject(error);
+      }
       const changes = {};
       Object.entries(data).forEach(([key, value]) => {
         const nextValue = key === "mcp_settings" ? enforceDemoProSettings(value) : value;
@@ -1512,7 +1573,7 @@ test("language menu routes to English product page", async ({ page }) => {
         callbacks.openTools?.();
         return { ok: true };
       }
-      if (/COPY|CREATE|DELETE|OPEN_OPTIONS|OPEN_SOURCE|CAPTURE|DRIVE|DODO|RUN_OCR|START_|CLEAR|RESTORE|ACTIVATE|VALIDATE|RESET|SEARCH_OVERLAY/.test(type)) {
+      if (isDemoMutationMessage(type) || /OPEN_OPTIONS|OPEN_SOURCE|DODO|SEARCH_OVERLAY/.test(type)) {
         return showBlocked();
       }
       return { ok: true };
@@ -1563,7 +1624,7 @@ test("language menu routes to English product page", async ({ page }) => {
       };
     }
 
-    return { state, store, currentState, storageGet, storageSet, dispatch, installChromeMock };
+    return { state, store, currentState, storageGet, storageSet, dispatch, installChromeMock, installMutationGuards };
   }
 
   function loadScript(src) {
@@ -1637,6 +1698,7 @@ test("language menu routes to English product page", async ({ page }) => {
     resolveLanguage,
     createDemoState,
     makeStateBridge,
+    isDemoMutationMessage,
     forceDemoProRuntime,
     loadSharedScripts,
     loadScript,
