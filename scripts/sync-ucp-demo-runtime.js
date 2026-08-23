@@ -54,6 +54,18 @@ function isolateDemoFloatingHost() {
   fs.writeFileSync(target, source.replaceAll("mcp-floating-host", "ucp-demo-floating-host"), "utf8");
 }
 
+function resolveDemoStylesheetImports() {
+  const target = path.join(runtimeRoot, "content", "floatingPanel.css");
+  const source = fs.readFileSync(target, "utf8");
+  const canonicalImport = '@import url("../shared/managerButton.css");';
+  if (!source.includes(canonicalImport)) throw new Error("Unable to locate the canonical manager-button stylesheet import");
+  fs.writeFileSync(
+    target,
+    source.replace(canonicalImport, '@import url("/assets/extension-runtime/shared/managerButton.css");'),
+    "utf8"
+  );
+}
+
 // The public demo deliberately reuses the extension's production renderers.
 // Synchronizing the public renderer directories prevents UI drift. OCR model
 // binaries are intentionally excluded: the website demo never runs OCR and
@@ -64,6 +76,7 @@ removeExcludedRuntimeDirectory(path.join("shared", "vendor", "tesseract"));
 copy(path.join("content", "contentScript.js"));
 isolateDemoFloatingHost();
 copy(path.join("content", "floatingPanel.css"));
+resolveDemoStylesheetImports();
 copy(path.join("sidepanel", "sidepanel.js"));
 copy(path.join("sidepanel", "sidepanel.css"));
 copyDirectory(path.join("assets", "icons"), path.join("assets", "icons"), (source) => !source.replace(/\\/g, "/").includes("assets/icons/welcome"));

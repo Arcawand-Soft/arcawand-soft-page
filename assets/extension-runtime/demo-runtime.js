@@ -34,6 +34,22 @@
     return DEMO_MUTATION_MESSAGE_TYPES.has(String(type || ""));
   }
   const storageArea = "local";
+  function publicRuntimeUrl(pathname) {
+    const relative = String(pathname || "").replace(/^\/+/, "");
+    const version = relative === "content/floatingPanel.css" ? "?v=20260823-zoom-parity-v1" : "";
+    return `${runtimeBase}${relative}${version}`;
+  }
+  function normalizeDemoZoomFactor(value) {
+    return global.UCP_DEMO_ZOOM?.normalize(value) ?? 1;
+  }
+
+  function snapChromeZoomFactor(value) {
+    return global.UCP_DEMO_ZOOM?.snap(value) ?? 1;
+  }
+
+  function readDemoPageZoom(target = global) {
+    return target.UCP_DEMO_ZOOM?.getFactor() ?? 1;
+  }
 
   const copyByLang = {
     en: {
@@ -1365,7 +1381,10 @@ test("language menu routes to English product page", async ({ page }) => {
     const state = createDemoState(language);
     const listeners = [];
     const changeListeners = [];
+    const zoomChangeListeners = [];
     let mutationGuardsActive = false;
+    let currentZoomFactor = readDemoPageZoom(global);
+    let zoomMonitorInstalled = false;
     const store = {
       mcp_settings: state.settings,
       mcp_clipboard_items: state.items,
@@ -1528,6 +1547,7 @@ test("language menu routes to English product page", async ({ page }) => {
 
     async function sendMessage(message = {}) {
       const type = String(message.type || "");
+      if (type === "MCP_GET_PAGE_ZOOM") return { ok: true, data: { zoomFactor: currentZoomFactor } };
       if (type === "MCP_GET_STATE") return { ok: true, data: currentState() };
       if (type === "MCP_GET_DISPLAY_INFO") return { ok: true, data: { displays: [{ id: "demo-display", name: "Demo display", isPrimary: true }] } };
       if (type === "MCP_CHECK_DISPLAY_ALLOWED") return { ok: true, data: { allowed: true } };
@@ -1584,7 +1604,7 @@ test("language menu routes to English product page", async ({ page }) => {
         runtime: {
           id: "ultimate-clipboard-pro-demo",
           getManifest: () => ({ name: "Ultimate Clipboard Pro Demo", version: "demo" }),
-          getURL: (path) => `${runtimeBase}${String(path || "").replace(/^\/+/, "")}`,
+          getURL: publicRuntimeUrl,
           sendMessage,
           onMessage: {
             addListener: (listener) => listeners.push(listener),
@@ -1617,11 +1637,41 @@ test("language menu routes to English product page", async ({ page }) => {
         },
         tabs: {
           getCurrent: () => Promise.resolve(null),
+          getZoom: () => Promise.resolve(currentZoomFactor),
+          onZoomChange: {
+            addListener: (listener) => zoomChangeListeners.push(listener),
+            removeListener: (listener) => {
+              const index = zoomChangeListeners.indexOf(listener);
+              if (index >= 0) zoomChangeListeners.splice(index, 1);
+            }
+          },
           query: () => Promise.resolve([]),
           create: () => Promise.resolve(null)
         },
         windows: { getCurrent: () => Promise.resolve({ id: 1 }) }
       };
+
+      if (!zoomMonitorInstalled && typeof global.addEventListener === "function") {
+        zoomMonitorInstalled = true;
+        const applyZoomChange = (nextZoomFactor) => {
+          if (nextZoomFactor === currentZoomFactor) return;
+          const oldZoomFactor = currentZoomFactor;
+          currentZoomFactor = nextZoomFactor;
+          const change = { oldZoomFactor, newZoomFactor: nextZoomFactor, zoomFactor: nextZoomFactor };
+          zoomChangeListeners.slice().forEach((listener) => listener(change));
+          listeners.slice().forEach((listener) => listener({
+            type: "MCP_PAGE_ZOOM_CHANGED",
+            extensionUi: true,
+            zoomFactor: nextZoomFactor
+          }, {}, () => {}));
+        };
+        if (global.UCP_DEMO_ZOOM) global.UCP_DEMO_ZOOM.subscribe(applyZoomChange);
+        else {
+          const refreshZoom = () => applyZoomChange(readDemoPageZoom(global));
+          global.addEventListener("resize", refreshZoom, { passive: true });
+          global.visualViewport?.addEventListener?.("resize", refreshZoom, { passive: true });
+        }
+      }
     }
 
     return { state, store, currentState, storageGet, storageSet, dispatch, installChromeMock, installMutationGuards };
@@ -1696,6 +1746,8 @@ test("language menu routes to English product page", async ({ page }) => {
     runtimeBase,
     supportedLanguages,
     resolveLanguage,
+    readDemoPageZoom,
+    snapChromeZoomFactor,
     createDemoState,
     makeStateBridge,
     isDemoMutationMessage,

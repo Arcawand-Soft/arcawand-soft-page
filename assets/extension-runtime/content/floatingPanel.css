@@ -1,4 +1,4 @@
-@import url("../shared/managerButton.css");
+@import url("/assets/extension-runtime/shared/managerButton.css");
 
 :host {
   all: initial;

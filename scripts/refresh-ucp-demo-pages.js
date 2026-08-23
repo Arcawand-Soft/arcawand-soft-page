@@ -13,8 +13,14 @@ for (const language of languages) {
   let html = fs.readFileSync(file, "utf8");
   html = html.replace(/<!doctype html>[\s\S]*?<html/i, "<!doctype html>\n<html");
   html = html.replace(/data-ucp-demo-lang="[^"]+"/g, `data-ucp-demo-lang="${language}"`);
-  html = html.replace(/\/assets\/ucp-demo\.css\?v=[^"']+/g, "/assets/ucp-demo.css?v=20260822-code-syntax-v3");
-  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260822-code-syntax-v3");
+  html = html.replace(/\/assets\/ucp-demo\.css\?v=[^"']+/g, "/assets/ucp-demo.css?v=20260823-zoom-parity-v1");
+  html = html.replace(/\/assets\/ucp-demo\.js\?v=[^"']+/g, "/assets/ucp-demo.js?v=20260823-zoom-parity-v1");
+  if (!html.includes("/assets/ucp-demo-zoom.js")) {
+    html = html.replace(
+      /(<link rel="stylesheet" href="\/assets\/ucp-demo\.css\?v=[^"]+">)/i,
+      '<script src="/assets/ucp-demo-zoom.js?v=20260823-zoom-parity-v1"></script>\n$1'
+    );
+  }
   if (!html.includes('class="ucp-demo-launcher-preboot"')) html = html.replace(/(<body[^>]*>)/i, `$1\n${prebootLauncher}`);
   if (!html.includes("assets/icons/arrow_right.png")) {
     html = html.replace(
