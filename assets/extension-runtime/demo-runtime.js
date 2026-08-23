@@ -16,17 +16,11 @@
     "MCP_START_COLOR_PICKER", "MCP_START_IMAGE_TEXT_CAPTURE", "MCP_CAPTURE_VISIBLE_TAB",
     "MCP_RUN_OCR", "MCP_ACTIVATE_LICENSE", "MCP_VALIDATE_LICENSE", "MCP_RESET_LICENSE"
   ]);
-  const DEMO_MUTATING_MCP_METHODS = [
+  const DEMO_FORBIDDEN_MCP_METHODS = [
     "saveSourceLocator", "deleteSourceLocators",
-    "saveClipboardItem", "updateClipboardItem", "deleteClipboardItem", "deleteClipboardItemVersion",
-    "deleteClipboardItems", "restoreClipboardItem", "clearHistory", "deleteLocalCaptureData",
-    "reorderCategories", "reorderImageCategories", "reorderDevCategories",
-    "createCategory", "createSubcategory", "createImageCategory", "createImageSubcategory",
-    "createDevSubcategory", "saveCategory", "updateCategory", "deleteCategory",
-    "updateImageCategory", "deleteImageCategory", "updateDevCategory", "deleteDevCategory",
-    "saveImageItem", "updateImageItem", "deleteImageItem", "deleteImageItems", "restoreImageItem",
-    "clearImageHistory", "saveDevItem", "updateDevItem", "deleteDevItem", "deleteDevItemVersion",
-    "deleteDevItems", "restoreDevItem", "emptyTrash", "setVaultPassword", "resetVaultPasswordAndItems",
+    "clearHistory", "deleteLocalCaptureData", "clearImageHistory", "emptyTrash",
+    "deleteCategory", "deleteImageCategory", "deleteDevCategory",
+    "saveImageItem", "saveDevItem", "setVaultPassword", "resetVaultPasswordAndItems",
     "saveSnippet", "deleteSnippet", "saveTemplate", "deleteTemplate"
   ];
 
@@ -1428,16 +1422,30 @@ test("language menu routes to English product page", async ({ page }) => {
       }
     };
 
+    const initialCategorySnapshots = new Map([
+      ["mcp_categories", new Map(store.mcp_categories.map((category) => [category.id, clone(category)]))],
+      ["mcp_image_categories", new Map(store.mcp_image_categories.map((category) => [category.id, clone(category)]))],
+      ["mcp_dev_categories", new Map(store.mcp_dev_categories.map((category) => [category.id, clone(category)]))]
+    ]);
+    const initialItemIds = new Map([
+      ["mcp_image_items", new Set(store.mcp_image_items.map((item) => item.id))],
+      ["mcp_dev_items", new Set(store.mcp_dev_items.map((item) => item.id))]
+    ]);
+    let blockedNotificationPending = false;
+
     function showBlocked() {
-      callbacks.showBlocked?.();
-      global.setTimeout?.(() => dispatch("STORAGE_REFRESH_REQUIRED"), 0);
+      if (!blockedNotificationPending) {
+        blockedNotificationPending = true;
+        callbacks.showBlocked?.();
+        global.setTimeout?.(() => { blockedNotificationPending = false; }, 180);
+      }
       return { ok: false, error: "Demo mode" };
     }
 
     function installMutationGuards() {
       mutationGuardsActive = true;
       const api = global.MCP || {};
-      DEMO_MUTATING_MCP_METHODS.forEach((name) => {
+      DEMO_FORBIDDEN_MCP_METHODS.forEach((name) => {
         const original = api[name];
         if (typeof original !== "function" || original.__ucpDemoMutationGuard) return;
         const guarded = function demoMutationGuard() {
@@ -1448,6 +1456,28 @@ test("language menu routes to English product page", async ({ page }) => {
         guarded.__ucpDemoOriginal = original;
         api[name] = guarded;
       });
+    }
+
+    function isInitialCategory(key, categoryId) {
+      return initialCategorySnapshots.get(key)?.has(String(categoryId || "")) || false;
+    }
+
+    function validateSandboxArrayWrite(key, value) {
+      if (!Array.isArray(value)) return false;
+      const initialCategories = initialCategorySnapshots.get(key);
+      if (initialCategories) {
+        const nextById = new Map(value.map((category) => [String(category?.id || ""), category]));
+        const previousIds = new Set((store[key] || []).map((category) => String(category?.id || "")));
+        if ([...previousIds].some((id) => !nextById.has(id))) return false;
+        for (const [id, original] of initialCategories) {
+          const next = nextById.get(id);
+          if (!next || next.name !== original.name || next.icon !== original.icon || next.color !== original.color) return false;
+        }
+        return true;
+      }
+      const allowedIds = initialItemIds.get(key);
+      if (allowedIds) return value.every((item) => allowedIds.has(String(item?.id || "")));
+      return key === "mcp_clipboard_items";
     }
 
     function isDemoDisplayOnlyUpdate(updates = {}) {
@@ -1495,11 +1525,14 @@ test("language menu routes to English product page", async ({ page }) => {
     }
 
     function storageSet(data = {}, callback) {
-      const protectedKeys = new Set([
-        "mcp_clipboard_items", "mcp_categories", "mcp_image_items", "mcp_image_categories",
-        "mcp_dev_items", "mcp_dev_categories", "mcp_snippets", "mcp_templates", "mcp_vault_auth"
+      const sandboxArrayKeys = new Set([
+        "mcp_clipboard_items", "mcp_categories", "mcp_image_items", "mcp_image_categories", "mcp_dev_items", "mcp_dev_categories"
       ]);
-      if (mutationGuardsActive && Object.keys(data).some((key) => protectedKeys.has(key))) {
+      const forbiddenKeys = new Set(["mcp_snippets", "mcp_templates", "mcp_vault_auth"]);
+      const violatesPolicy = mutationGuardsActive && Object.entries(data).some(([key, value]) =>
+        forbiddenKeys.has(key) || (sandboxArrayKeys.has(key) && !validateSandboxArrayWrite(key, value))
+      );
+      if (violatesPolicy) {
         showBlocked();
         const error = new Error("Demo mode");
         if (typeof callback === "function") {
@@ -1570,24 +1603,96 @@ test("language menu routes to English product page", async ({ page }) => {
         return { ok: true };
       }
       if (type === "MCP_DEMO_BLOCKED") return showBlocked();
+      const categoryCreateConfig = {
+        MCP_CREATE_CATEGORY: ["mcp_categories", "cat"],
+        MCP_CREATE_IMAGE_CATEGORY: ["mcp_image_categories", "imgcat"],
+        MCP_CREATE_DEV_CATEGORY: ["mcp_dev_categories", "devcat"]
+      };
+      if (categoryCreateConfig[type]) {
+        const [key, prefix] = categoryCreateConfig[type];
+        const now = Date.now();
+        const category = Object.assign({
+          id: `${prefix}-demo-${now}-${Math.random().toString(36).slice(2, 7)}`,
+          parentId: null,
+          icon: prefix === "imgcat" ? "image" : prefix === "devcat" ? "code" : "folder",
+          color: state.settings.accentColor || "#e50914",
+          createdAt: now,
+          updatedAt: now,
+          order: (store[key] || []).length + 1,
+          isSystem: false,
+          isDefault: false
+        }, message.category || {});
+        store[key] = (store[key] || []).concat(category);
+        dispatch("STORAGE_REFRESH_REQUIRED");
+        const responseKey = key === "mcp_image_categories" ? "imageCategories" : key === "mcp_dev_categories" ? "devCategories" : "categories";
+        return { ok: true, data: { category, [responseKey]: clone(store[key]) } };
+      }
+      const categoryUpdateConfig = {
+        MCP_UPDATE_CATEGORY: "mcp_categories",
+        MCP_UPDATE_IMAGE_CATEGORY: "mcp_image_categories",
+        MCP_UPDATE_DEV_CATEGORY: "mcp_dev_categories"
+      };
+      if (categoryUpdateConfig[type]) {
+        const key = categoryUpdateConfig[type];
+        const categoryId = String(message.categoryId || "");
+        const updates = message.updates || {};
+        if (isInitialCategory(key, categoryId) && Object.prototype.hasOwnProperty.call(updates, "name")) return showBlocked();
+        let category = null;
+        store[key] = (store[key] || []).map((item) => {
+          if (item.id !== categoryId) return item;
+          category = Object.assign({}, item, updates, { updatedAt: Date.now() });
+          return category;
+        });
+        if (!category) return { ok: false, error: "Category not found" };
+        dispatch("STORAGE_REFRESH_REQUIRED");
+        const responseKey = key === "mcp_image_categories" ? "imageCategories" : key === "mcp_dev_categories" ? "devCategories" : "categories";
+        return { ok: true, data: { category, [responseKey]: clone(store[key]) } };
+      }
       if (type === "MCP_UPDATE_ITEM") {
-        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
+        if (typeof global.MCP?.updateClipboardItem === "function") {
+          const item = await global.MCP.updateClipboardItem(message.itemId, message.updates || {});
+          return { ok: true, data: { item } };
+        }
         updateItemList("mcp_clipboard_items", message.itemId, message.updates);
         dispatch("ITEM_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
       if (type === "MCP_UPDATE_DEV_ITEM") {
-        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
+        if (typeof global.MCP?.updateDevItem === "function") {
+          const item = await global.MCP.updateDevItem(message.itemId, message.updates || {});
+          return { ok: true, data: { item } };
+        }
         updateItemList("mcp_dev_items", message.itemId, message.updates);
         dispatch("DEV_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
       if (type === "MCP_UPDATE_IMAGE_ITEM") {
-        if (!isDemoDisplayOnlyUpdate(message.updates || {})) return showBlocked();
+        if (typeof global.MCP?.updateImageItem === "function") {
+          const item = await global.MCP.updateImageItem(message.itemId, message.updates || {});
+          return { ok: true, data: { item } };
+        }
         updateItemList("mcp_image_items", message.itemId, message.updates);
         dispatch("IMAGE_UPDATED", { itemId: message.itemId, updates: message.updates || {} });
         return { ok: true };
       }
+      const deleteConfig = {
+        MCP_DELETE_ITEM: "deleteClipboardItem",
+        MCP_DELETE_DEV_ITEM: "deleteDevItem",
+        MCP_DELETE_IMAGE_ITEM: "deleteImageItem"
+      };
+      if (deleteConfig[type] && typeof global.MCP?.[deleteConfig[type]] === "function") {
+        const item = await global.MCP[deleteConfig[type]](message.itemId, { permanent: false });
+        return { ok: true, data: { item } };
+      }
+      const deleteVersionConfig = {
+        MCP_DELETE_ITEM_VERSION: "deleteClipboardItemVersion",
+        MCP_DELETE_DEV_VERSION: "deleteDevItemVersion"
+      };
+      if (deleteVersionConfig[type] && typeof global.MCP?.[deleteVersionConfig[type]] === "function") {
+        const item = await global.MCP[deleteVersionConfig[type]](message.itemId, message.versionId, { permanent: false });
+        return { ok: true, data: { item } };
+      }
+      if (type === "MCP_COPY_ITEM" || type === "MCP_TOGGLE_FAVORITE") return { ok: true };
       if (type === "MCP_FETCH_IMAGE_AS_DATA_URL") return { ok: true, dataUrl: message.url || "", data: { dataUrl: message.url || "" } };
       if (type === "MCP_OPEN_TOOLS_OVERLAY") {
         callbacks.openTools?.();
@@ -1674,7 +1779,13 @@ test("language menu routes to English product page", async ({ page }) => {
       }
     }
 
-    return { state, store, currentState, storageGet, storageSet, dispatch, installChromeMock, installMutationGuards };
+    return {
+      state, store, currentState, storageGet, storageSet, dispatch, installChromeMock, installMutationGuards,
+      isInitialCategory: (mediaType, categoryId) => isInitialCategory(
+        mediaType === "image" ? "mcp_image_categories" : mediaType === "dev" ? "mcp_dev_categories" : "mcp_categories",
+        categoryId
+      )
+    };
   }
 
   function loadScript(src) {

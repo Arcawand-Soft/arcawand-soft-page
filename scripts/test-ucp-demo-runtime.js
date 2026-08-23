@@ -10,7 +10,7 @@ const languages = ["en", "fr", "es", "it", "de", "ro", "pt", "ar", "zh", "ja", "
 const runtimeSource = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-runtime.js"), "utf8");
 const zoomSource = fs.readFileSync(path.join(root, "assets", "ucp-demo-zoom.js"), "utf8");
 const refreshDemoPagesSource = fs.readFileSync(path.join(root, "scripts", "refresh-ucp-demo-pages.js"), "utf8");
-assert(refreshDemoPagesSource.includes("20260823-zoom-parity-v1"), "The demo route refresher must preserve the zoom-parity asset version");
+assert(refreshDemoPagesSource.includes("20260823-demo-sandbox-v1"), "The demo route refresher must preserve the zoom-parity asset version");
 assert(refreshDemoPagesSource.includes("ucp-demo-zoom.js"), "The demo route refresher must preserve the first-paint zoom bridge");
 const canonicalZoomGuard = fs.readFileSync(path.join(extensionRoot, "shared", "uiZoomGuard.js"), "utf8");
 const demoZoomGuard = fs.readFileSync(path.join(root, "assets", "extension-runtime", "shared", "uiZoomGuard.js"), "utf8");
@@ -83,7 +83,7 @@ assert.match(
 );
 const demoSidepanelHtml = fs.readFileSync(path.join(root, "assets", "extension-runtime", "demo-sidepanel.html"), "utf8");
 assert(demoSidepanelHtml.includes('../shared/uiZoomGuard.js'), "The demo manager must boot the canonical zoom guard before rendering");
-assert(demoSidepanelHtml.includes("sidepanel.css?v=20260823-menu-typography-v2"), "The demo manager stylesheet needs a cache-busting version for compact menu typography");
+assert(demoSidepanelHtml.includes("sidepanel.css?v=20260823-demo-sandbox-v1"), "The demo manager stylesheet needs a cache-busting version for compact menu typography");
 
 function contextFor(language) {
   const window = { location: { search: `?lang=${language}`, pathname: `/${language}/ultimate-clipboard-pro/demo/` } };
@@ -220,18 +220,47 @@ for (const language of languages) {
   );
   const zoomResponse = await context.window.chrome.runtime.sendMessage({ type: "MCP_GET_PAGE_ZOOM" });
   assert.strictEqual(zoomResponse.data.zoomFactor, 1, "The demo runtime must implement the extension zoom-message contract");
-  const initialCategoryCount = bridge.currentState().categories.length;
+  const initialState = bridge.currentState();
+  const initialCategoryCount = initialState.categories.length;
   const response = await context.window.chrome.runtime.sendMessage({
     type: "MCP_CREATE_CATEGORY",
-    category: { id: "demo-forbidden", name: "Interdite" }
+    category: { name: "Ma catégorie", icon: "folder", color: "#e50914" }
   });
-  assert.strictEqual(response.ok, false, "A final mutation must fail explicitly in demo mode");
-  assert.strictEqual(bridge.currentState().categories.length, initialCategoryCount, "A blocked message must not mutate demo data");
+  assert.strictEqual(response.ok, true, "Creating a sandbox category must succeed");
+  assert.strictEqual(bridge.currentState().categories.length, initialCategoryCount + 1, "The created category must live in demo memory");
 
-  context.window.MCP = { saveClipboardItem: async () => ({ item: { id: "forbidden" } }) };
+  const protectedRename = await context.window.chrome.runtime.sendMessage({
+    type: "MCP_UPDATE_CATEGORY",
+    categoryId: "ai",
+    updates: { name: "Renamed default" }
+  });
+  assert.strictEqual(protectedRename.ok, false, "A bundled demo category name must remain immutable");
+  assert.strictEqual(bridge.currentState().categories.find((item) => item.id === "ai").name, initialState.categories.find((item) => item.id === "ai").name);
+
+  context.window.MCP = {
+    saveClipboardItem: async () => ({ item: { id: "allowed-text" } }),
+    saveDevItem: async () => ({ item: { id: "forbidden-code" } })
+  };
   bridge.installMutationGuards();
-  await assert.rejects(() => context.window.MCP.saveClipboardItem({ content: "forbidden" }), /Demo mode/);
-  assert.strictEqual(blockedCount, 2, "Both message and direct-storage mutation paths must show the demo alert");
+  assert.strictEqual((await context.window.MCP.saveClipboardItem({ content: "allowed" })).item.id, "allowed-text", "Text creation stays available in the sandbox");
+  await assert.rejects(() => context.window.MCP.saveDevItem({ content: "forbidden" }), /Demo mode/);
+  assert.strictEqual(blockedCount, 1, "Adjacent denied actions must coalesce into one stable demo alert");
+
+  const sandboxState = bridge.currentState();
+  await context.window.chrome.storage.local.set({
+    mcp_clipboard_items: sandboxState.items.concat({ id: "user-text", content: "Sandbox text", categoryId: "general" })
+  });
+  assert(bridge.currentState().items.some((item) => item.id === "user-text"), "User-created text must persist for the current demo session");
+  await assert.rejects(() => context.window.chrome.storage.local.set({
+    mcp_dev_items: sandboxState.devItems.concat({ id: "user-code", content: "const forbidden = true;" })
+  }), /Demo mode/, "Code creation must remain unavailable");
+
+  const reorderedCategories = bridge.currentState().categories.map((category) => category.id === "ai" ? { ...category, order: 999 } : category);
+  await context.window.chrome.storage.local.set({ mcp_categories: reorderedCategories });
+  assert.strictEqual(bridge.currentState().categories.find((item) => item.id === "ai").order, 999, "Bundled categories may be reordered");
+  await assert.rejects(() => context.window.chrome.storage.local.set({
+    mcp_categories: bridge.currentState().categories.filter((category) => !category.id.startsWith("cat-demo-"))
+  }), /Demo mode/, "Categories must not be deletable in the demo sandbox");
 
   console.log(`Validated Ultimate Clipboard Pro demo runtime in ${languages.length} languages.`);
 })().catch((error) => {

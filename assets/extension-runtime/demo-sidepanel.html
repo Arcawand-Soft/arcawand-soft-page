@@ -23,8 +23,8 @@
         if (language !== "en") document.write(`<script src="/assets/extension-runtime/demo-locales/${language}.js?v=20260823-demo-guard-v1"><\/script>`);
       })();
     </script>
-    <script src="/assets/ucp-demo-zoom.js?v=20260823-zoom-parity-v1"></script>
-    <script src="../demo-runtime.js?v=20260823-zoom-parity-v1"></script>
+    <script src="/assets/ucp-demo-zoom.js?v=20260823-demo-sandbox-v1"></script>
+    <script src="../demo-runtime.js?v=20260823-demo-sandbox-v1"></script>
     <script>
       (function installDemoManagerBridge() {
         const params = new URLSearchParams(location.search);
@@ -50,7 +50,7 @@
     </script>
     <script src="../shared/uiZoomGuard.js"></script>
     <script src="../shared/themeBoot.js"></script>
-    <link rel="stylesheet" href="sidepanel.css?v=20260823-menu-typography-v2">
+    <link rel="stylesheet" href="sidepanel.css?v=20260823-demo-sandbox-v1">
     <link rel="stylesheet" href="../shared/driveQuickSyncControl.css?v=20260822-demo-components">
     <style>
       html,
@@ -195,6 +195,31 @@
 
     <script src="../shared/surfaceBoot.js" data-surface="manager"></script>
     <script>
+      function activeDemoMediaType() {
+        if (document.getElementById("devTab")?.classList.contains("is-active")) return "dev";
+        if (document.getElementById("imageTab")?.classList.contains("is-active")) return "image";
+        return "text";
+      }
+
+      function enforceDemoManagerCapabilities() {
+        const mediaType = activeDemoMediaType();
+        const createButton = document.getElementById("openCreateItemFloating");
+        if (createButton && mediaType === "dev") createButton.hidden = true;
+        document.querySelectorAll("#categoryList .category-node[data-category-id]").forEach((row) => {
+          const isBundled = window.__UCP_DEMO_BRIDGE__?.isInitialCategory?.(mediaType, row.dataset.categoryId);
+          row.querySelector(".category-edit-button")?.toggleAttribute("hidden", Boolean(isBundled));
+        });
+      }
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest('#openCreateItemFloating') && activeDemoMediaType() === "dev") {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+        queueMicrotask(enforceDemoManagerCapabilities);
+      }, true);
+
       window.addEventListener("message", (event) => {
         if (event.origin !== location.origin) return;
         if (event.data?.type === "UCP_DEMO_SELECT_TAB") {
@@ -206,6 +231,8 @@
       });
       window.addEventListener("load", () => {
         window.__UCP_DEMO_BRIDGE__?.installMutationGuards();
+        new MutationObserver(enforceDemoManagerCapabilities).observe(document.getElementById("categoryList"), { childList: true, subtree: true });
+        enforceDemoManagerCapabilities();
         const tab = new URLSearchParams(location.search).get("tab");
         const button = tab === "image" ? document.getElementById("imageTab") : tab === "dev" ? document.getElementById("devTab") : document.getElementById("textTab");
         window.setTimeout(() => button?.click(), 120);

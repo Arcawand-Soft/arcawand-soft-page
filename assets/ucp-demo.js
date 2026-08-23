@@ -11,6 +11,8 @@
   let managerFrame = null;
   let managerReady = false;
   let blockedDialog = null;
+  let blockedDialogTimer = 0;
+  let blockedDialogCooldownUntil = 0;
   const desktopQuery = window.matchMedia("(min-width: 1100px) and (hover: hover) and (pointer: fine)");
   const localCopyByLang = {
     en: {
@@ -181,6 +183,7 @@
   }
 
   function showBlocked(customCopy = null) {
+    if (Date.now() < blockedDialogCooldownUntil) return;
     const copy = customCopy || currentCopy();
     if (!blockedDialog) {
       blockedDialog = document.createElement("section");
@@ -204,7 +207,12 @@
       close.type = "button";
       close.setAttribute("aria-label", copy.closeLabel || "Close demo message");
       close.textContent = "\u00d7";
-      close.addEventListener("click", () => blockedDialog.classList.remove("is-visible"));
+      close.addEventListener("click", () => {
+        window.clearTimeout(blockedDialogTimer);
+        blockedDialogTimer = 0;
+        blockedDialogCooldownUntil = Date.now() + 900;
+        blockedDialog.classList.remove("is-visible");
+      });
 
       const install = document.createElement("button");
       install.className = "ucp-demo-install-cta ucp-real-demo-dialog__install";
@@ -224,7 +232,11 @@
     blockedDialog.querySelector('[data-role="text"]').textContent = copy.blocked;
     blockedDialog.querySelector('[data-ucp-demo-install="true"]').textContent = copy.installLabel || "Install Extension";
     blockedDialog.classList.add("is-visible");
-    window.setTimeout(() => blockedDialog?.classList.remove("is-visible"), 3200);
+    window.clearTimeout(blockedDialogTimer);
+    blockedDialogTimer = window.setTimeout(() => {
+      blockedDialog?.classList.remove("is-visible");
+      blockedDialogTimer = 0;
+    }, 3200);
   }
 
   function renderDesktopOnlyMessage() {
@@ -256,7 +268,7 @@
     managerFrame = document.createElement("iframe");
     managerFrame.className = "ucp-real-demo-manager-frame";
     managerFrame.title = "Ultimate Clipboard Pro demo manager";
-    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260823-menu-typography-v2&lang=${encodeURIComponent(language)}&tab=text`;
+    managerFrame.src = `${runtimeBase}demo-sidepanel.html?v=20260823-demo-sandbox-v1&lang=${encodeURIComponent(language)}&tab=text`;
     managerFrame.addEventListener("load", () => { managerReady = true; }, { once: true });
     managerShell.append(managerFrame);
     managerShell.addEventListener("wheel", (event) => {
@@ -296,9 +308,9 @@
   try {
     const requestedLanguage = resolvePageLanguage();
     if (requestedLanguage !== "en") {
-      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260823-menu-typography-v2`);
+      await loadScript(`${runtimeBase}demo-locales/${requestedLanguage}.js?v=20260823-demo-sandbox-v1`);
     }
-    await loadScript(`${runtimeBase}demo-runtime.js?v=20260823-menu-typography-v2`);
+    await loadScript(`${runtimeBase}demo-runtime.js?v=20260823-demo-sandbox-v1`);
     if (!desktopQuery.matches) {
       renderDesktopOnlyMessage();
       return;
@@ -317,7 +329,7 @@
     const demoHostObserver = prepareIsolatedDemoHost();
     await window.UCP_DEMO_RUNTIME.loadSharedScripts(language);
     window.UCP_DEMO_RUNTIME.forceDemoProRuntime();
-    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260823-menu-typography-v2`);
+    await window.UCP_DEMO_RUNTIME.loadScript(`${runtimeBase}content/contentScript.js?v=20260823-demo-sandbox-v1`);
 
     const floatingHost = await waitForFloatingHost();
     demoHostObserver.disconnect();
